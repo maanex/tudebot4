@@ -1,0 +1,22 @@
+{
+    "bot": {
+        "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.Dm8rIg.pmUM94dgHxnbKUFh0IaH2KAE1kE"
+    },
+    "modules": {
+        "quotes": {
+            "channels": [
+                "342620626592464897/487263535064154113"
+            ]
+        },
+        "modlog": {
+            "channels": {
+                "342620626592464897": "536588235485478930"
+            }
+        },
+        "counting": {
+            "channels": [
+                "342620626592464897/538087974714474635"
+            ]
+        }
+    }
+}
