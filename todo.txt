@@ -1,0 +1,79 @@
+[
+
+
+	{
+		"name": "Memes",
+		"description": "",
+		"id": "memes",
+		"classpath": "de.maanex.tb3.modules.Memes",
+		"properties": {
+			"channel": -1,
+			"dbOptOut": false
+		}
+	},
+	{
+		"name": "Level Up",
+		"description": "",
+		"id": "levelup",
+		"classpath": "de.maanex.tb3.modules.club.Leveling",
+		"properties": {
+			"announcementChannel": -1,
+			"excludedChannels": [],
+			"roleReward": {}
+		}
+	},
+	{
+		"name": "Command Channel",
+		"description": "",
+		"id": "commands",
+		"classpath": "de.maanex.tb3.modules.CommandChannel",
+		"properties": {
+			"channels": []
+		}
+	},
+	{
+		"name": "Turtle Of The Month",
+		"description": "",
+		"id": "totm",
+		"classpath": "de.maanex.tb3.modules.totm.TurtleOfTheMonth",
+		"properties": {
+			"channel": -1
+		}
+	},
+
+
+
+	{
+		"name": "Happy Birthday",
+		"description": "",
+		"id": "birthday",
+		"classpath": "de.maanex.tb3.modules.HappyBirthday",
+		"properties": {
+			"channel": -1
+		}
+	},
+
+
+
+
+	{
+		"name": "Auto Leaderboard",
+		"description": "",
+		"id": "autoleaderboard",
+		"classpath": "de.maanex.tb3.modules.AutoLeaderboard",
+		"properties": {
+			"channel": -1,
+			"useModLog": true
+		}
+	},
+	{
+		"name": "Cleanchat",
+		"description": "",
+		"id": "cleanchat",
+		"classpath": "de.maanex.tb3.modules.CleanChat",
+		"properties": {
+			"tempMuteRole": -1,
+			"useModLog": true
+		}
+	},
+]

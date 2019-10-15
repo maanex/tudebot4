@@ -1,6 +1,6 @@
 import { modlogType } from 'types';
 
-import { Client, Guild } from "discord.js";
+import { Client, Guild, User } from "discord.js";
 
 const settings = require('../config/settings.json');
 
@@ -16,8 +16,12 @@ export class TudeBot extends Client {
     this.modules = [
       'modlog',
       'quotes',
-      'counting'
+      'counting',
+      'selfroles',
+      'commands',
     ];
+
+    fixReactionEvent(this);
 
     this.modules.forEach(mod => {
       this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`));
@@ -37,6 +41,27 @@ const Core = new TudeBot (
     ]
   }
 );
+
+
+function fixReactionEvent(bot: TudeBot) {
+  const events = {
+      MESSAGE_REACTION_ADD: 'messageReactionAdd',
+      MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+  }
+
+  bot.on('raw', async (event: Event) => {
+      const ev: any = event;
+      if (!events.hasOwnProperty(ev.t)) return
+      const data = ev.d;
+      const user: User = bot.users.get(data.user_id);
+      const channel: any = bot.channels.get(data.channel_id) || await user.createDM();
+      if (channel.messages.has(data.message_id)) return;
+      const message = await channel.fetchMessage(data.message_id);
+      const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
+      const reaction = message.reactions.get(emojiKey);
+      bot.emit(events[ev.t], reaction, user);
+  });
+}
 
 
 /* */
