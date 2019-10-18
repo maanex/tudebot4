@@ -2,7 +2,7 @@ import { modlogType } from '../types';
 import { TudeBot } from "index";
 import { GuildMember } from "discord.js";
 
-module.exports = (bot: TudeBot, conf: any, data: any) => {
+module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     bot.modlog = {
         log: function(guild: any, type: modlogType, text: string): void {
             let id: number = guild.id;

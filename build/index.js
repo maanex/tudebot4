@@ -21,10 +21,19 @@ class TudeBot extends discord_js_1.Client {
             'counting',
             'selfroles',
             'commands',
+            'happybirthday',
         ];
         fixReactionEvent(this);
+        let lang = key => {
+            let res = require(`../config/lang.json`)[key];
+            if (!res)
+                return '';
+            if (res.length !== undefined)
+                return res[Math.floor(Math.random() * res.length)];
+            return res;
+        };
         this.modules.forEach(mod => {
-            this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`));
+            this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
         });
         this.on('ready', () => console.log('Bot ready!'));
         this.login(settings.bot.token);

@@ -1,7 +1,7 @@
 import { TudeBot } from "index";
 import { Message } from "discord.js";
 
-module.exports = (bot: TudeBot, conf: any, data: any) => {
+module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     bot.on('message', mes => {
         if (mes.author.bot) return;
         if (!conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;

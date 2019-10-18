@@ -5,7 +5,7 @@ const util = require('../util');
 let lastUser: string = '';
 let lastNum: number = 0;
 
-module.exports = (bot: TudeBot, conf: any, data: any) => {
+module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     bot.on('message', (mes: Message) => {
         if (mes.author.bot) return;

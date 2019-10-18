@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-module.exports = (bot, conf, data) => {
+module.exports = (bot, conf, data, lang) => {
     bot.on('message', mes => {
         if (mes.author.bot)
             return;

@@ -13,7 +13,7 @@ for (let c of [
     'wubbalubba',
 ]) commands.push(require(`../commands/${c}`));
 
-module.exports = (bot: TudeBot, conf: any, data: any) => {
+module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     bot.on('message', (mes: Message) => {
         if (mes.author.bot) return;

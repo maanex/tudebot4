@@ -1,15 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const util = require('../util');
-module.exports = (bot, conf, data) => {
+module.exports = (bot, conf, data, lang) => {
     bot.on('messageReactionAdd', (reaction, user) => {
         if (user.bot)
             return;
-        if (!conf.channels.includes(`${reaction.message.guild.id}/${reaction.message.channel.id}`))
+        if (!conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`])
             return;
         let role = findRole(reaction);
         if (!role)
             return;
+        let extraRoles = conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`].extraRoles || [];
         let member = reaction.message.guild.member(user);
         if (member.roles.find(r => r.id == role.id)) {
             member.removeRole(role);
@@ -17,13 +18,16 @@ module.exports = (bot, conf, data) => {
             const us = user;
             setTimeout(() => re.remove(us), 200);
         }
-        else
+        else {
             member.addRole(role);
+            for (let rid of extraRoles)
+                member.addRole(member.guild.roles.find(r => r.id == rid));
+        }
     });
     bot.on('messageReactionRemove', (reaction, user) => {
         if (user.bot)
             return;
-        if (!conf.channels.includes(`${reaction.message.guild.id}/${reaction.message.channel.id}`))
+        if (!conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`])
             return;
         let role = findRole(reaction);
         if (!role)

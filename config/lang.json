@@ -1,0 +1,15 @@
+{
+    "birthday_message": [
+        "Happy Birthday {}! :tada:",
+        "Happy Cakeday {}! :tada:",
+        "Alles Gute zum Geburtstag {}!",
+        "{} ist heute älter als gestern! Herzlichen Glückwunsch!",
+        "{} hat heute Geburtstag, alles Gute! :tada:"
+    ],
+    "birthday_message_mult": [
+        "Happy Birthday {}! :tada:",
+        "{} haben Geburtstag! Alles Gute! :tada:",
+        "Happy Cakeday {}! :tada:",
+        "Alles Gute zum Geburtstag {}!"
+    ]
+}

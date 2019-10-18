@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = {
     name: 'wubbalubbadubdub',
     aliases: [],
-    desc: 'Bot info',
-    sudoonly: true,
+    desc: 'JEEZ RICK',
+    sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
         let role = mes.guild.roles.find(r => r.id == '496377983494258689');
         if (!role)

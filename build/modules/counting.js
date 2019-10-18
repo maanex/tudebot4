@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util = require('../util');
 let lastUser = '';
 let lastNum = 0;
-module.exports = (bot, conf, data) => {
+module.exports = (bot, conf, data, lang) => {
     bot.on('message', (mes) => {
         if (mes.author.bot)
             return;
