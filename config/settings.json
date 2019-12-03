@@ -1,6 +1,7 @@
 {
     "bot": {
-        "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.Dm8rIg.pmUM94dgHxnbKUFh0IaH2KAE1kE"
+        "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.Dm8rIg.pmUM94dgHxnbKUFh0IaH2KAE1kE",
+        "token-p": "NTkxOTgyMTQ2MTY0MzU5MTc1.XcRbNg.c6PyqA2b1tTxS50p-7CmYs-F0Gs"
     },
     "modules": {
         "quotes": {
@@ -35,7 +36,8 @@
         },
         "commands": {
             "channels": [
-                "342620626592464897/543150321686413313"
+                "342620626592464897/543150321686413313",
+                "432899162150010901/470323390230822912"
             ]
         },
         "happybirthday": {

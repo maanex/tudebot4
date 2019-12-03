@@ -12,6 +12,7 @@ for (let c of [
     'eval',
     'wubbalubba',
     'freestuff',
+    'inspiration',
 ]) commands.push(require(`../commands/${c}`));
 
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {

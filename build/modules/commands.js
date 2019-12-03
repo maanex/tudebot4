@@ -10,6 +10,7 @@ for (let c of [
     'eval',
     'wubbalubba',
     'freestuff',
+    'inspiration',
 ])
     commands.push(require(`../commands/${c}`));
 module.exports = (bot, conf, data, lang) => {

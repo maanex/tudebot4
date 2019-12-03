@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
+const chalk = require('chalk');
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
     constructor(props) {
@@ -22,6 +23,7 @@ class TudeBot extends discord_js_1.Client {
             'selfroles',
             'commands',
             'happybirthday',
+            'thebrain',
         ];
         fixReactionEvent(this);
         let lang = key => {
@@ -35,7 +37,7 @@ class TudeBot extends discord_js_1.Client {
         this.modules.forEach(mod => {
             this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
         });
-        this.on('ready', () => console.log('Bot ready!'));
+        this.on('ready', () => console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag)));
         this.login(settings.bot.token);
     }
 }

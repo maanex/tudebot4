@@ -1,8 +1,10 @@
 import { modlogType } from 'types';
 
 import { Client, Guild, User } from "discord.js";
+const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
+
 
 export class TudeBot extends Client {
 
@@ -20,6 +22,7 @@ export class TudeBot extends Client {
       'selfroles',
       'commands',
       'happybirthday',
+      'thebrain',
     ];
 
     fixReactionEvent(this);
@@ -35,7 +38,7 @@ export class TudeBot extends Client {
       this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
     });
 
-    this.on('ready', () => console.log('Bot ready!')); 
+    this.on('ready', () => console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag))); 
 
     this.login(settings.bot.token);
   }
