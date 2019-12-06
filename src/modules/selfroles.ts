@@ -6,6 +6,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
     bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
         if (user.bot) return;
+        if (!reaction.message.guild) return;
         if (!conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`]) return;
 
         let role = findRole(reaction);
@@ -28,6 +29,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
     bot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
         if (user.bot) return;
+        if (!reaction.message.guild) return;
         if (!conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`]) return;
 
         let role = findRole(reaction);

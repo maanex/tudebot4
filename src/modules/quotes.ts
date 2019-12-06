@@ -4,6 +4,7 @@ import { Message } from "discord.js";
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     bot.on('message', mes => {
         if (mes.author.bot) return;
+        if (!mes.guild) return;
         if (!conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
         if (!mes.mentions.users.array().length) {
             mes.reply('Bidde `@User [text]` machen. Dange.').then((m: Message) => m.delete(20000));

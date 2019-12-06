@@ -19,6 +19,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     bot.on('message', (mes: Message) => {
         if (mes.author.bot) return;
+        if (!mes.guild) return;
         if (!conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
         
         let txt = mes.content;

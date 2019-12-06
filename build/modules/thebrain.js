@@ -11,7 +11,8 @@ module.exports = (bot, conf, data, lang) => {
         setTimeout(setPlaytext, 1000);
         setTimeout(setNewIcon, 1000);
         // downloadAllImages();
-        convertAllImages();
+        // convertAllImages();
+        // FOOKIN TTS API -> https://translate.google.com/translate_tts?q=Moin%20Jungs%20klenet%20r%C3%A4tsel%20f%C3%BCr%20euch%2C%20wo%20kommt%20das%20ger%C3%A4usch%20her%3F&textlen=211&tk=164713.315041&client=tw-ob&idx=0&total=2&tl=cy&ie=UTF-8
     });
     function downloadAllImages() {
         let all = data.icons.random;
@@ -49,8 +50,8 @@ module.exports = (bot, conf, data, lang) => {
                     return;
                 if (!body)
                     return;
-                bot.user.setAvatar(body);
-                bot.guilds.get('342620626592464897').channels.get('487263535064154113').sendFile(body);
+                // bot.user.setAvatar(body);
+                // (bot.guilds.get('342620626592464897').channels.get('487263535064154113') as TextChannel).sendFile(body);
             });
         }
         let sixH = 6 * 60 * 60 * 1000;

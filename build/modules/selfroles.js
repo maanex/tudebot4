@@ -5,6 +5,8 @@ module.exports = (bot, conf, data, lang) => {
     bot.on('messageReactionAdd', (reaction, user) => {
         if (user.bot)
             return;
+        if (!reaction.message.guild)
+            return;
         if (!conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`])
             return;
         let role = findRole(reaction);
@@ -26,6 +28,8 @@ module.exports = (bot, conf, data, lang) => {
     });
     bot.on('messageReactionRemove', (reaction, user) => {
         if (user.bot)
+            return;
+        if (!reaction.message.guild)
             return;
         if (!conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`])
             return;

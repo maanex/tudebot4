@@ -23,6 +23,7 @@ export class TudeBot extends Client {
       'commands',
       'happybirthday',
       'thebrain',
+      'memes',
     ];
 
     fixReactionEvent(this);

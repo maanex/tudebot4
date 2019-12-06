@@ -56,8 +56,8 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
                 if (err) return;
                 if (!body) return;
                 
-                bot.user.setAvatar(body);
-                (bot.guilds.get('342620626592464897').channels.get('487263535064154113') as TextChannel).sendFile(body);
+                // bot.user.setAvatar(body);
+                // (bot.guilds.get('342620626592464897').channels.get('487263535064154113') as TextChannel).sendFile(body);
             });
         }
         let sixH = 6 * 60 * 60 * 1000;

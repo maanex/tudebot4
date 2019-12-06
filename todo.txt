@@ -3,13 +3,7 @@
 
 	{
 		"name": "Memes",
-		"description": "",
-		"id": "memes",
-		"classpath": "de.maanex.tb3.modules.Memes",
-		"properties": {
-			"channel": -1,
-			"dbOptOut": false
-		}
+		"description": "", TODO datenbank und meme of the month
 	},
 	{
 		"name": "Level Up",

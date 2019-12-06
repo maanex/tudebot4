@@ -24,6 +24,7 @@ class TudeBot extends discord_js_1.Client {
             'commands',
             'happybirthday',
             'thebrain',
+            'memes',
         ];
         fixReactionEvent(this);
         let lang = key => {

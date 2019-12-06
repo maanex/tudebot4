@@ -4,6 +4,8 @@ module.exports = (bot, conf, data, lang) => {
     bot.on('message', mes => {
         if (mes.author.bot)
             return;
+        if (!mes.guild)
+            return;
         if (!conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
             return;
         if (!mes.mentions.users.array().length) {
