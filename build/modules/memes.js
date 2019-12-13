@@ -17,8 +17,6 @@ module.exports = (bot, conf, data, lang) => {
             emojis.push(':doot:496770649562415115');
         if (mes.content.match(/dank/i))
             emojis.push('🇩', '🇦', '🇳', '🇰');
-        if (mes.content.match(/oo+f/i))
-            emojis.push(':hidethepain:537014970072956968');
         for (let me of ['meirl', 'me irl', 'me_irl', 'ichiel', 'ich_iel', 'ich iel'])
             if (mes.content.toLowerCase().includes(me)) {
                 emojis.push(':meirl:496357154199044097');

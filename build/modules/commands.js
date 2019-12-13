@@ -11,6 +11,7 @@ for (let c of [
     'wubbalubba',
     'freestuff',
     'inspiration',
+    'stats',
 ])
     commands.push(require(`../commands/${c}`));
 module.exports = (bot, conf, data, lang) => {
@@ -56,20 +57,18 @@ module.exports = (bot, conf, data, lang) => {
             cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
     });
 };
-function cmes(channel, author, text, type) {
+function cmes(channel, author, text, type, description) {
     if (type == 'error')
         text = ':x: ' + text;
     if (type == 'bad')
         text = ':frowning: ' + text;
-    let title = type == 'title';
     channel.send({
         embed: {
             color: 0x36393f,
-            title: title ? `${text}` : '',
-            description: title ? '' : `${text}`,
+            title: description ? `${text}` : '',
+            description: description ? `${description || ''}` : `${text}`,
             footer: {
-                text: author.username,
-                icon_url: author.avatarURL
+                text: '@' + author.username,
             }
         }
     });

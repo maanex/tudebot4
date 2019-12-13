@@ -1,14 +1,14 @@
 import { modlogType } from '../types';
 import { TudeBot } from "index";
-import { GuildMember } from "discord.js";
+import { GuildMember, Guild, TextChannel } from "discord.js";
 
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     bot.modlog = {
-        log: function(guild: any, type: modlogType, text: string): void {
-            let id: number = guild.id;
+        log: function(guild: Guild, type: modlogType, text: string): void {
+            let id: string = guild.id;
             if (!conf.channels[id]) return;
-            console.log(conf.channels[id])
-            guild.channels.get(conf.channels[id]).send({
+            console.log(conf.channels[id]);
+            (guild.channels.get(conf.channels[id]) as TextChannel).send({
                 embed: {
                     color: 0x36393f,
                     description: `${data[type]} ${text}`

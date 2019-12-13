@@ -8,7 +8,14 @@ module.exports = {
     desc: 'Jokes on you',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
-        repl(mes.channel, mes.author, jokes[Math.floor(Math.random() * jokes.length)], 'title');
+        let joke = jokes[Math.floor(Math.random() * jokes.length)];
+        let line1 = joke;
+        let line2 = '';
+        if (joke.includes('?')) {
+            line1 = joke.split('?')[0] + '?';
+            line2 = joke.substring(line1.length + 1);
+        }
+        repl(mes.channel, mes.author, line1, 'message', line2);
     }
 };
 const jokes = [

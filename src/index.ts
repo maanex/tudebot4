@@ -1,6 +1,7 @@
 import { modlogType } from 'types';
 
 import { Client, Guild, User } from "discord.js";
+import TudeApi from './thirdparty/tudeapi/tudeapi';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -24,9 +25,12 @@ export class TudeBot extends Client {
       'happybirthday',
       'thebrain',
       'memes',
+      'autoleaderboard',
     ];
 
     fixReactionEvent(this);
+
+    TudeApi.init();
 
     let lang = key => {
       let res = require(`../config/lang.json`)[key];

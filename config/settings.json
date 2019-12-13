@@ -3,6 +3,12 @@
         "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.Dm8rIg.pmUM94dgHxnbKUFh0IaH2KAE1kE",
         "token-p": "NTkxOTgyMTQ2MTY0MzU5MTc1.XcRbNg.c6PyqA2b1tTxS50p-7CmYs-F0Gs"
     },
+    "thirdparty": {
+        "tudeapi": {
+            "key": "NHjdi2kma882jHdmk488jHd92m4jfJda",
+            "baseurl": "http://localhost:8080/"
+        }
+    },
     "modules": {
         "quotes": {
             "channels": [
@@ -48,6 +54,11 @@
         "memes": {
             "channels": [
                 "342620626592464897/490588282368032769"
+            ]
+        },
+        "autoleaderboard": {
+            "channels": [
+                "342620626592464897/655083512227037216"
             ]
         }
     }

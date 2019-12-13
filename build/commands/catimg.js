@@ -4,7 +4,9 @@ const fetch = require('node-fetch');
 module.exports = {
     name: 'cat',
     aliases: [
-        'kitten'
+        'kitten',
+        'catimage',
+        'catimg'
     ],
     desc: 'Random cat image',
     sudoonly: false,

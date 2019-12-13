@@ -13,6 +13,7 @@ for (let c of [
     'wubbalubba',
     'freestuff',
     'inspiration',
+    'stats',
 ]) commands.push(require(`../commands/${c}`));
 
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
@@ -61,18 +62,17 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
 }
 
-function cmes(channel: Channel, author: User, text: string, type?: cmesType) {
+function cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string) {
     if (type == 'error') text = ':x: ' + text;
     if (type == 'bad') text = ':frowning: ' + text;
-    let title = type == 'title';
     (channel as TextChannel).send({
         embed: {
             color: 0x36393f,
-            title: title?`${text}`:'',
-            description: title?'':`${text}`,
+            title: description?`${text}`:'',
+            description: description?`${description||''}`:`${text}`,
             footer: {
-                text: author.username,
-                icon_url: author.avatarURL
+                text: '@' + author.username,
+                // icon_url: author.avatarURL
             }
         }
     });

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
+const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const chalk = require('chalk');
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
@@ -25,8 +26,10 @@ class TudeBot extends discord_js_1.Client {
             'happybirthday',
             'thebrain',
             'memes',
+            'autoleaderboard',
         ];
         fixReactionEvent(this);
+        tudeapi_1.default.init();
         let lang = key => {
             let res = require(`../config/lang.json`)[key];
             if (!res)
