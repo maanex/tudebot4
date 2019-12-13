@@ -53,7 +53,7 @@ module.exports = (bot, conf, data, lang) => {
             return;
         // TODO update database values on up/downvote
         if (reaction.emoji.name == '⭐') {
-            user.createDM().then(c => c.send({
+            user.send({
                 embed: {
                     color: 0x36393f,
                     image: { url: mes.attachments.first().url },
@@ -61,7 +61,7 @@ module.exports = (bot, conf, data, lang) => {
                     footer: { text: `Uploaded by ${mes.author.username}` },
                     timestamp: mes.createdTimestamp
                 }
-            })).catch();
+            });
         }
     });
 };

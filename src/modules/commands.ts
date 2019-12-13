@@ -14,6 +14,8 @@ for (let c of [
     'freestuff',
     'inspiration',
     'stats',
+    'uinfo',
+    'roulette',
 ]) commands.push(require(`../commands/${c}`));
 
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
@@ -62,7 +64,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
 }
 
-function cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string) {
+function cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
     if (type == 'error') text = ':x: ' + text;
     if (type == 'bad') text = ':frowning: ' + text;
     (channel as TextChannel).send({
@@ -73,7 +75,9 @@ function cmes(channel: Channel, author: User, text: string, type?: cmesType, des
             footer: {
                 text: '@' + author.username,
                 // icon_url: author.avatarURL
-            }
+            },
+            thumbnail: { url: settings && settings.image },
+            image: { url: settings && settings.banner }
         }
     });
 }

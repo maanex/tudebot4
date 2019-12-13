@@ -45,6 +45,13 @@ export interface Badge {
     }[];
 }
 
+export interface Leaderboard {
+    alltime: ClubUser[];
+    month: ClubUser[];
+    season: number;
+    updated: number;
+}
+
 export default class TudeApi {
 
     public static get baseurl() {
@@ -138,6 +145,18 @@ export default class TudeApi {
 
     public static badgeByKeyword(keyword: string):Badge {
         return this.badges.find(b => b.keyword == keyword.toLowerCase());
+    }
+
+    public static clubLeaderboard():Promise<Leaderboard> {
+        return new Promise((resolve, reject) => {
+            fetch(this.baseurl + this.endpoints.club.leaderboard, {
+                method: 'get',
+                headers: { 'auth': this.key },
+            })
+                .then(o => o.json())
+                .then(o => resolve(o))
+                .catch(err => reject(err));
+        });
     }
 
 }

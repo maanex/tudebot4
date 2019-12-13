@@ -26,7 +26,7 @@ module.exports = {
     aliases: [
         's'
     ],
-    desc: 'Random cat image',
+    desc: 'See them stats',
     sudoonly: false,
 
     

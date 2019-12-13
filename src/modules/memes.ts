@@ -58,7 +58,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         // TODO update database values on up/downvote
 
         if (reaction.emoji.name == '⭐') {
-            user.createDM().then(c => c.send({
+            user.send({
                 embed: {
                     color: 0x36393f,
                     image: { url: mes.attachments.first().url },
@@ -66,7 +66,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
                     footer: { text: `Uploaded by ${mes.author.username}` },
                     timestamp: mes.createdTimestamp
                 }
-            })).catch();
+            });
         }
     });
 }

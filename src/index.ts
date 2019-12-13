@@ -50,6 +50,7 @@ export class TudeBot extends Client {
 
 }
 
+
 const Core = new TudeBot (
   {
     disabledEvents: [

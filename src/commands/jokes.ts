@@ -213,5 +213,7 @@ const jokes = [
     "Where do pencils go on vacation? Pencil-vania.",
     "Where do cows go for entertainment? The mooooo-vies!",
     "How much does a Mustang cost? More than you can af-Ford.",
-    "How do snails fight? They slug it out."
+    "How do snails fight? They slug it out.",
+
+    "Joe"
 ];

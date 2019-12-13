@@ -82,6 +82,17 @@ class TudeApi {
     static badgeByKeyword(keyword) {
         return this.badges.find(b => b.keyword == keyword.toLowerCase());
     }
+    static clubLeaderboard() {
+        return new Promise((resolve, reject) => {
+            fetch(this.baseurl + this.endpoints.club.leaderboard, {
+                method: 'get',
+                headers: { 'auth': this.key },
+            })
+                .then(o => o.json())
+                .then(o => resolve(o))
+                .catch(err => reject(err));
+        });
+    }
 }
 exports.default = TudeApi;
 TudeApi.badges = [];

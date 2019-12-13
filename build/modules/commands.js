@@ -12,6 +12,8 @@ for (let c of [
     'freestuff',
     'inspiration',
     'stats',
+    'uinfo',
+    'roulette',
 ])
     commands.push(require(`../commands/${c}`));
 module.exports = (bot, conf, data, lang) => {
@@ -57,7 +59,7 @@ module.exports = (bot, conf, data, lang) => {
             cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
     });
 };
-function cmes(channel, author, text, type, description) {
+function cmes(channel, author, text, type, description, settings) {
     if (type == 'error')
         text = ':x: ' + text;
     if (type == 'bad')
@@ -69,7 +71,9 @@ function cmes(channel, author, text, type, description) {
             description: description ? `${description || ''}` : `${text}`,
             footer: {
                 text: '@' + author.username,
-            }
+            },
+            thumbnail: { url: settings && settings.image },
+            image: { url: settings && settings.banner }
         }
     });
 }

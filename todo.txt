@@ -4,6 +4,7 @@
 	{
 		"name": "Memes",
 		"description": "", TODO datenbank und meme of the month
+		TODO upvote own meme
 	},
 	{
 		"name": "Level Up",
@@ -24,16 +25,6 @@
 		"classpath": "de.maanex.tb3.modules.totm.TurtleOfTheMonth",
 		"properties": {
 			"channel": -1
-		}
-	},
-	{
-		"name": "Auto Leaderboard",
-		"description": "",
-		"id": "autoleaderboard",
-		"classpath": "de.maanex.tb3.modules.AutoLeaderboard",
-		"properties": {
-			"channel": -1,
-			"useModLog": true
 		}
 	},
 

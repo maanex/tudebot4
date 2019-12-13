@@ -20,7 +20,7 @@ module.exports = {
     aliases: [
         's'
     ],
-    desc: 'Random cat image',
+    desc: 'See them stats',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
         let user = mes.author;
