@@ -1,6 +1,10 @@
 [
 
 
+	TODO
+	Leaderboard monthly die punkte statt den leveln anzeigen
+
+
 	{
 		"name": "Memes",
 		"description": "", TODO datenbank und meme of the month

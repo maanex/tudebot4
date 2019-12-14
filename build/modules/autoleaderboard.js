@@ -26,13 +26,15 @@ module.exports = (bot, conf, data, lang) => {
             }).catch(err => {
                 bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
             });
+        }).catch(err => {
+            bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
         });
     }
     function generateLeaderboard(guild) {
         return new Promise((resolve, reject) => {
             tudeapi_1.default.clubLeaderboard().then(leaderboard => {
                 let out = `   | All Time           | This Month\n---+--------------------+-------------------`;
-                let at, tm, ats, tms, u;
+                let at, tm, ats, tms, u, pm;
                 for (let i = 0; i < 10; i++) {
                     at = leaderboard.alltime[i];
                     u = at ? guild.members.get(at.user['accounts'].discord) : null;
@@ -42,8 +44,21 @@ module.exports = (bot, conf, data, lang) => {
                         ats = '                  ';
                     tm = leaderboard.month[i];
                     u = tm ? guild.members.get(tm.user['accounts'].discord) : null;
-                    if (tm)
-                        tms = `${u ? u.user.username : tm.user.name}..............`.slice(0, 13) + `..lv${tm.level}`.slice(-5);
+                    if (tm) {
+                        if (tm.points_month > 1000) {
+                            let smol = Math.floor(tm.points_month / 100);
+                            if (smol > 99) {
+                                smol = Math.floor(tm.points_month / 10);
+                                pm = smol + 'k';
+                            }
+                            else {
+                                pm = `${smol}`.charAt(0) + '.' + `${smol}`.charAt(1) + 'k';
+                            }
+                        }
+                        else
+                            pm = tm.points_month + '';
+                        tms = `${u ? u.user.username : tm.user.name}..............`.slice(0, 13) + `......${pm}`.slice(-5);
+                    }
                     else
                         tms = '                  ';
                     out += `\n${((i + 1) + '. ').slice(0, 3)}| ${ats} | ${tms}`;

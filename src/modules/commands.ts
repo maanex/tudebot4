@@ -18,12 +18,18 @@ for (let c of [
     'roulette',
 ]) commands.push(require(`../commands/${c}`));
 
+export let activeInCommandsChannel: string[] = [];
+let activeInCommandsChannelRemoveTimer = {};
+const ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60_000;
+
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     bot.on('message', (mes: Message) => {
         if (mes.author.bot) return;
         if (!mes.guild) return;
         if (!conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
+
+        updateActiveInCommandsChannel(mes.author.id);
         
         let txt = mes.content;
         let args = txt.split(' ');
@@ -80,6 +86,22 @@ function cmes(channel: Channel, author: User, text: string, type?: cmesType, des
             image: { url: settings && settings.banner }
         }
     });
+}
+
+function updateActiveInCommandsChannel(id: string) {
+    if (!activeInCommandsChannel.includes(id)) {
+        activeInCommandsChannel.push(id);
+        activeInCommandsChannelRemoveTimer[id] = setTimeout(() => {
+            activeInCommandsChannel.splice(activeInCommandsChannel.indexOf(id));
+            delete activeInCommandsChannelRemoveTimer[id];
+        }, ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
+    } else {
+        clearTimeout(activeInCommandsChannelRemoveTimer[id]);
+        activeInCommandsChannelRemoveTimer[id] = setTimeout(() => {
+            activeInCommandsChannel.splice(activeInCommandsChannel.indexOf(id));
+            delete activeInCommandsChannelRemoveTimer[id];
+        }, ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
+    }
 }
 
 interface Command {
