@@ -12,7 +12,7 @@ module.exports = {
             repl(mes.channel, mes.author, eval(args.join(' ')));
         }
         catch (ex) {
-            repl(mes.channel, mes.author, 'An error occured whilst processing your query', 'bad');
+            repl(mes.channel, mes.author, 'Error:', 'message', '```' + ex + '```');
         }
     }
 };

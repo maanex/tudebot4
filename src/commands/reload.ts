@@ -1,24 +1,20 @@
 import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
+import TudeApi from "../thirdparty/tudeapi/tudeapi";
 
 
 module.exports = {
 
-    name: 'eval',
+    name: 'reload',
     aliases: [ ],
-    desc: 'Eval',
+    desc: 'Reload',
     sudoonly: true,
 
     
     execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void) {
-        if (mes.author.id !== '137258778092503042') return;
-
-        try {
-            repl(mes.channel, mes.author, eval(args.join(' ')));
-        } catch (ex) {
-            repl(mes.channel, mes.author, 'Error:', 'message', '```' + ex + '```');
-        }
+        TudeApi.reload();
+        mes.react('✅');
     }
 
 }

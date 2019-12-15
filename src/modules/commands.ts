@@ -16,6 +16,7 @@ for (let c of [
     'stats',
     'uinfo',
     'roulette',
+    'reload',
 ]) commands.push(require(`../commands/${c}`));
 
 export let activeInCommandsChannel: string[] = [];

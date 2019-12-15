@@ -158,6 +158,8 @@ module.exports = {
                         return;
                     }
                 }
+                u.cookies -= cookies;
+                tudeapi_1.default.updateClubUser(u);
                 currentGame.bets.push({
                     by: mes.author,
                     clubuser: u,
@@ -172,6 +174,8 @@ module.exports = {
             }
             else {
                 currentGame.started = true;
+                u.cookies -= cookies;
+                tudeapi_1.default.updateClubUser(u);
                 currentGame.bets.push({
                     by: mes.author,
                     clubuser: u,
@@ -235,9 +239,12 @@ function resolveGame() {
         for (let b of currentGame.bets) {
             let won = gnome || b.on({ number: landedOn, color: getColor(landedOn) });
             let prize = b.amount;
-            if (won)
+            if (won) {
+                b.clubuser.cookies += prize + prize * b.prizefactor;
+                tudeapi_1.default.updateClubUser(b.clubuser);
                 prize *= b.prizefactor;
-            desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies + (won ? 1 : -1) * prize}c total\n`;
+            }
+            desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies}c total\n`;
         }
         desc += '```';
         let color = getColor(landedOn) == 'red' ? 0xFE1B40 : 0x181A1C;

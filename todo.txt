@@ -2,7 +2,15 @@
 
 
 	TODO
-	Leaderboard monthly die punkte statt den leveln anzeigen
+	Wenn noch kein tude user besteht einen erstellen
+
+	Auf serverseite jeweils mitloggen durch welche app man wie viele punkte, cookies, etc bekommen hat
+	dazu einfach halt in der datenbank auf appid die dinge packen
+	so sachen wie daily (serverseitig) jeweils einzeln behandeln
+	evtl dafür einfach ne app erstellen damit man keine extra wurst hat
+	naja und dann jede app halt den anzeigenamen nehmen oder für z.b. beim tudebot noch n extra feld hinzufügen
+	und dann noch nen api endpoint erstellen um die statistiken abrufen zu können
+
 
 
 	{

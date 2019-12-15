@@ -14,6 +14,7 @@ for (let c of [
     'stats',
     'uinfo',
     'roulette',
+    'reload',
 ])
     commands.push(require(`../commands/${c}`));
 exports.activeInCommandsChannel = [];

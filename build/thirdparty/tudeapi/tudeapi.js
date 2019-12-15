@@ -31,6 +31,9 @@ class TudeApi {
             .then(o => this.badges = o)
             .catch(console.error);
     }
+    static reload() {
+        this.init();
+    }
     //
     static userById(id) {
         return new Promise((resolve, reject) => {
@@ -61,7 +64,12 @@ class TudeApi {
                 headers: { 'auth': this.key },
             })
                 .then(o => o.json())
-                .then(o => resolve(o))
+                .then(o => {
+                o['_org_points'] = o['points'];
+                o['_org_cookies'] = o['cookies'];
+                o['_org_gems'] = o['gems'];
+                resolve(o);
+            })
                 .catch(err => reject(err));
         });
     }
@@ -72,7 +80,12 @@ class TudeApi {
                 headers: { 'auth': this.key },
             })
                 .then(o => o.json())
-                .then(o => resolve(o))
+                .then(o => {
+                o['_org_points'] = o['points'];
+                o['_org_cookies'] = o['cookies'];
+                o['_org_gems'] = o['gems'];
+                resolve(o);
+            })
                 .catch(err => reject(err));
         });
     }
@@ -93,12 +106,32 @@ class TudeApi {
                 .catch(err => reject(err));
         });
     }
+    static updateUser(user) {
+        fetch(this.baseurl + this.endpoints.users + user.id, {
+            method: 'post',
+            body: JSON.stringify(user),
+            headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+        });
+    }
+    static updateClubUser(user) {
+        let u = {};
+        u.points = { add: user.points - user['_org_points'] };
+        u.cookies = { add: user.cookies - user['_org_cookies'] };
+        u.gems = { add: user.gems - user['_org_gems'] };
+        fetch(this.baseurl + this.endpoints.club.users + user.id, {
+            method: 'post',
+            body: JSON.stringify(u),
+            headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+        })
+            .then(o => o.json())
+            .then(o => {
+            user['_org_points'] += u.points.add;
+            user['_org_cookies'] += u.cookies.add;
+            user['_org_gems'] += u.gems.add;
+        })
+            .catch(err => { });
+    }
 }
 exports.default = TudeApi;
 TudeApi.badges = [];
-// fetch(this.baseurl + this.endpoints.club.users + id, {
-//     method: 'post',
-//     body:    JSON.stringify(body),
-//     headers: { 'Content-Type': 'application/json' },
-// })
 //# sourceMappingURL=tudeapi.js.map

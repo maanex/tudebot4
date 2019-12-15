@@ -89,6 +89,10 @@ export default class TudeApi {
             .catch(console.error);
     }
 
+    public static reload() {
+        this.init();   
+    }
+
     //
 
     public static userById(id: string):Promise<User> {
@@ -122,7 +126,12 @@ export default class TudeApi {
                 headers: { 'auth': this.key },
             })
                 .then(o => o.json())
-                .then(o => resolve(o))
+                .then(o => {
+                    o['_org_points'] = o['points'];
+                    o['_org_cookies'] = o['cookies'];
+                    o['_org_gems'] = o['gems'];
+                    resolve(o);
+                })
                 .catch(err => reject(err));
         });
     }
@@ -134,7 +143,12 @@ export default class TudeApi {
                 headers: { 'auth': this.key },
             })
                 .then(o => o.json())
-                .then(o => resolve(o))
+                .then(o => {
+                    o['_org_points'] = o['points'];
+                    o['_org_cookies'] = o['cookies'];
+                    o['_org_gems'] = o['gems'];
+                    resolve(o);
+                })
                 .catch(err => reject(err));
         });
     }
@@ -159,10 +173,31 @@ export default class TudeApi {
         });
     }
 
-}
+    public static updateUser(user: User):void {
+        fetch(this.baseurl + this.endpoints.users + user.id, {
+            method: 'put',
+            body:    JSON.stringify(user),
+            headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+        });
+    }
 
-// fetch(this.baseurl + this.endpoints.club.users + id, {
-//     method: 'post',
-//     body:    JSON.stringify(body),
-//     headers: { 'Content-Type': 'application/json' },
-// })
+    public static updateClubUser(user: ClubUser):void {
+        let u: any = { };
+        u.points = { add: user.points - user['_org_points'] };
+        u.cookies = { add: user.cookies - user['_org_cookies'] };
+        u.gems = { add: user.gems - user['_org_gems'] };
+        fetch(this.baseurl + this.endpoints.club.users + user.id, {
+            method: 'put',
+            body:    JSON.stringify(u),
+            headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+        })
+            .then(o => o.json())
+            .then(o => {
+                user['_org_points'] += u.points.add;
+                user['_org_cookies'] += u.cookies.add;
+                user['_org_gems'] += u.gems.add;
+            })
+            .catch(err => {});
+    }
+
+}
