@@ -120,7 +120,7 @@ module.exports = {
             repl(mes.channel, mes.author, args[1] + ' cookies is over the casino\'s maximum bet of 5000!');
             return;
         }
-        tudeapi_1.default.clubUserByDiscordId(mes.author.id).then(u => {
+        tudeapi_1.default.clubUserByDiscordId(mes.author.id, mes.author).then(u => {
             if (!u || u.error) {
                 repl(mes.channel, mes.author, 'An error occured!', 'error');
                 return;

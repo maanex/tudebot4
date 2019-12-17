@@ -16,11 +16,11 @@ const _xpbar = {
     right_full: '<:xpbarrightfull:654353598204870656>'
 };
 module.exports = {
-    name: 'stats',
+    name: 'profile',
     aliases: [
-        's'
+        'p'
     ],
-    desc: 'See them stats',
+    desc: 'See your profile (or someone elses)',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
         let user = mes.author;
@@ -98,4 +98,4 @@ module.exports = {
         });
     }
 };
-//# sourceMappingURL=stats.js.map
+//# sourceMappingURL=profile.js.map

@@ -22,11 +22,11 @@ const _xpbar = {
 
 module.exports = {
 
-    name: 'stats',
+    name: 'profile',
     aliases: [
-        's'
+        'p'
     ],
-    desc: 'See them stats',
+    desc: 'See your profile (or someone elses)',
     sudoonly: false,
 
     
@@ -34,7 +34,7 @@ module.exports = {
         let user = mes.author;
         if (mes.mentions.users.size)
             user = mes.mentions.users.first();
-        TudeApi.clubUserByDiscordId(user.id)
+        TudeApi.clubUserByDiscordId(user.id, user)
             .then(u => {
                 if (!u || u.error) {
                     repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');

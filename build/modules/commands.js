@@ -11,10 +11,12 @@ for (let c of [
     'wubbalubba',
     'freestuff',
     'inspiration',
-    'stats',
+    'profile',
     'uinfo',
     'roulette',
     'reload',
+    'daily',
+    'badges',
 ])
     commands.push(require(`../commands/${c}`));
 exports.activeInCommandsChannel = [];

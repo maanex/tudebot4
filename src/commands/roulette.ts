@@ -145,7 +145,7 @@ module.exports = {
             return;
         }
 
-        TudeApi.clubUserByDiscordId(mes.author.id).then(u => {
+        TudeApi.clubUserByDiscordId(mes.author.id, mes.author).then(u => {
             if (!u || u.error) {
                 repl(mes.channel, mes.author, 'An error occured!', 'error')
                 return;

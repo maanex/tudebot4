@@ -1,4 +1,8 @@
 
+import { User as DiscordUser } from "discord.js";
+import { resolve } from "dns";
+import { rejects } from "assert";
+
 const fetch = require('node-fetch');
 
 
@@ -51,6 +55,8 @@ export interface Leaderboard {
     season: number;
     updated: number;
 }
+
+export type ClubAction = { id: 'claim_daily_reward' }/* | { id: 'test', a: number }*/;
 
 export default class TudeApi {
 
@@ -107,15 +113,49 @@ export default class TudeApi {
         });
     }
 
-    public static userByDiscordId(id: string):Promise<User> {
+    public static userByDiscordId(id: string, orCreate?: DiscordUser):Promise<User> {
+        let status: number;
         return new Promise((resolve, reject) => {
             fetch(this.baseurl + this.endpoints.users + 'find?discord=' + id, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
-                .then(o => o.json())
-                .then(o => resolve(o))
+                .then(res => {
+                    status = res.status;
+                    return res.json();
+                })
+                .then(o => {
+                    if (status == 404 && orCreate) { // No user present
+                        TudeApi.createNewUser({
+                            type: 2,
+                            name: orCreate.username,
+                            accounts: { discord: orCreate.id }
+                        }).then(() => {
+                            resolve(this.userByDiscordId(id));
+                        }).catch(err => resolve(o));
+                    } else resolve(o);
+                })
                 .catch(err => reject(err));
+        });
+    }
+
+    public static createNewUser(options: { type: number, name: string, email?: string, accounts?: { discord: string } }):Promise<void> {
+        let status;
+        return new Promise((resolve, reject) => {
+            fetch(this.baseurl + this.endpoints.users, {
+                method: 'post',
+                body:    JSON.stringify(options),
+                headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+            })
+                .then(res => {
+                    status = res.status;
+                    return res.json();
+                })
+                .then(o => {
+                    if (status == 200) resolve()
+                    else reject();
+                })
+                .catch(err => reject());
         });
     }
 
@@ -130,24 +170,39 @@ export default class TudeApi {
                     o['_org_points'] = o['points'];
                     o['_org_cookies'] = o['cookies'];
                     o['_org_gems'] = o['gems'];
-                    resolve(o);
                 })
                 .catch(err => reject(err));
         });
     }
 
-    public static clubUserByDiscordId(id: string):Promise<ClubUser> {
+    public static clubUserByDiscordId(id: string, orCreate?: DiscordUser):Promise<ClubUser> {
+        let status: number;
         return new Promise((resolve, reject) => {
             fetch(this.baseurl + this.endpoints.club.users + 'find?discord=' + id, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
-                .then(o => o.json())
+                .then(res => {
+                    status = res.status;
+                    return res.json();
+                })
                 .then(o => {
-                    o['_org_points'] = o['points'];
-                    o['_org_cookies'] = o['cookies'];
-                    o['_org_gems'] = o['gems'];
-                    resolve(o);
+                    if (status == 404 && orCreate) { // No user present
+                        TudeApi.createNewUser({
+                            type: 2,
+                            name: orCreate.username,
+                            accounts: { discord: orCreate.id }
+                        }).then(() => {
+                            resolve(this.clubUserByDiscordId(id));
+                        }).catch(err => resolve(o));
+                    } else {
+                        if (o) {
+                            o['_org_points'] = o['points'];
+                            o['_org_cookies'] = o['cookies'];
+                            o['_org_gems'] = o['gems'];
+                        }
+                        resolve(o);
+                    }
                 })
                 .catch(err => reject(err));
         });
@@ -198,6 +253,26 @@ export default class TudeApi {
                 user['_org_gems'] += u.gems.add;
             })
             .catch(err => {});
+    }
+
+    public static performClubUserAction(user: ClubUser, action: ClubAction):Promise<void> {
+        let status: number;
+        return new Promise((resolve, reject) => {
+            fetch(this.baseurl + this.endpoints.club.users + user.id, {
+                method: 'post',
+                body:    JSON.stringify(action),
+                headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+            })
+                .then(res => {
+                    status = res.status;
+                    return res.json();
+                })
+                .then(o => {
+                    if (status == 200) resolve(o);
+                    else reject(o);
+                })
+                .catch(err => reject());
+        });
     }
 
 }

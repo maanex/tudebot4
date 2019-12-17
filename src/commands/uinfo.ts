@@ -19,7 +19,7 @@ module.exports = {
         let user = mes.author;
         if (mes.mentions.users.size)
             user = mes.mentions.users.first();
-        TudeApi.clubUserByDiscordId(user.id)
+        TudeApi.clubUserByDiscordId(user.id/*, mes.author*/) // Don't create a new profile on loopup
             .then(u => {
                 if (!u || u.error) {
                     repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
