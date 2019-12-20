@@ -3,10 +3,11 @@ import { User as DiscordUser } from "discord.js";
 import { resolve } from "dns";
 import { rejects } from "assert";
 
+import WCP from "../../thirdparty/wcp/wcp.js";
+
 const fetch = require('node-fetch');
 
-
-const settings = require('../../../config/settings.json');
+const settings = require('../../../config/settings.json').thirdparty;
 
 
 export interface User {
@@ -61,11 +62,11 @@ export type ClubAction = { id: 'claim_daily_reward' }/* | { id: 'test', a: numbe
 export default class TudeApi {
 
     public static get baseurl() {
-        return settings.thirdparty.tudeapi.baseurl;
+        return settings.tudeapi.baseurl;
     }
     
     public static get key() {
-        return settings.thirdparty.tudeapi.key;
+        return settings.tudeapi.key;
     }
 
     public static get endpoints() {
@@ -91,8 +92,14 @@ export default class TudeApi {
             headers: { 'auth': this.key },
         })
             .then(o => o.json())
-            .then(o => this.badges = o)
-            .catch(console.error);
+            .then(o => {
+                this.badges = o;
+                WCP.send({ status_tudeapi: '+Connected' });
+            })
+            .catch(err => {
+                console.error(err);
+                WCP.send({ status_tudeapi: '-Connection failed' });
+            });
     }
 
     public static reload() {

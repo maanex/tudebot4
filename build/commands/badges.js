@@ -70,6 +70,7 @@ module.exports = {
                     });
                 }
             }
+            let banana = Math.random() < .1;
             mes.channel.send({
                 embed: {
                     author: {
@@ -77,7 +78,10 @@ module.exports = {
                         icon_url: user.avatarURL
                     },
                     color: 0x36393f,
-                    fields: badges
+                    fields: badges,
+                    image: { url: (badges.length || !banana) ? '' : 'https://cdn.discordapp.com/attachments/655354019631333397/656567439391326228/banana.png' },
+                    footer: { text: (badges.length || banana) ? '' : `${user.username}'s got no badges, pal!` },
+                    description: !badges.length && banana ? 'Empathy banana is here for you.' : '',
                 }
             });
         })

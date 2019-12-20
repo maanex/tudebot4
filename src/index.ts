@@ -2,6 +2,7 @@ import { modlogType } from 'types';
 
 import { Client, Guild, User } from "discord.js";
 import TudeApi from './thirdparty/tudeapi/tudeapi';
+import WCP from './thirdparty/wcp/wcp';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -31,6 +32,7 @@ export class TudeBot extends Client {
     fixReactionEvent(this);
 
     TudeApi.init();
+    WCP.init();
 
     let lang = key => {
       let res = require(`../config/lang.json`)[key];
@@ -43,7 +45,10 @@ export class TudeBot extends Client {
       this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
     });
 
-    this.on('ready', () => console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag))); 
+    this.on('ready', () => {
+      console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
+      WCP.send({ status_discord: '+Connected' });
+    }); 
 
     this.login(settings.bot.token);
   }

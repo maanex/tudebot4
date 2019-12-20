@@ -7,6 +7,10 @@
         "tudeapi": {
             "key": "NHjdi2kma882jHdmk488jHd92m4jfJda",
             "baseurl": "http://localhost:8080/"
+        },
+        "wcp": {
+            "secret": "6UT-3DzBojvFeUyc",
+            "endpoint": "http://localhost:9009/api/tudebot"
         }
     },
     "modules": {

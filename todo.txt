@@ -2,6 +2,7 @@
 
 
 	TODO
+	
 	Auf serverseite jeweils mitloggen durch welche app man wie viele punkte, cookies, etc bekommen hat
 	dazu einfach halt in der datenbank auf appid die dinge packen
 	so sachen wie daily (serverseitig) jeweils einzeln behandeln

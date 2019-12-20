@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
+const wcp_1 = require("./thirdparty/wcp/wcp");
 const chalk = require('chalk');
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
@@ -30,6 +31,7 @@ class TudeBot extends discord_js_1.Client {
         ];
         fixReactionEvent(this);
         tudeapi_1.default.init();
+        wcp_1.default.init();
         let lang = key => {
             let res = require(`../config/lang.json`)[key];
             if (!res)
@@ -41,7 +43,10 @@ class TudeBot extends discord_js_1.Client {
         this.modules.forEach(mod => {
             this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
         });
-        this.on('ready', () => console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag)));
+        this.on('ready', () => {
+            console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
+            wcp_1.default.send({ status_discord: '+Connected' });
+        });
         this.login(settings.bot.token);
     }
 }

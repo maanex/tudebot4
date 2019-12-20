@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const wcp_js_1 = require("../../thirdparty/wcp/wcp.js");
 const fetch = require('node-fetch');
-const settings = require('../../../config/settings.json');
+const settings = require('../../../config/settings.json').thirdparty;
 class TudeApi {
     static get baseurl() {
-        return settings.thirdparty.tudeapi.baseurl;
+        return settings.tudeapi.baseurl;
     }
     static get key() {
-        return settings.thirdparty.tudeapi.key;
+        return settings.tudeapi.key;
     }
     static get endpoints() {
         return {
@@ -28,8 +29,14 @@ class TudeApi {
             headers: { 'auth': this.key },
         })
             .then(o => o.json())
-            .then(o => this.badges = o)
-            .catch(console.error);
+            .then(o => {
+            this.badges = o;
+            wcp_js_1.default.send({ status_tudeapi: '+Connected' });
+        })
+            .catch(err => {
+            console.error(err);
+            wcp_js_1.default.send({ status_tudeapi: '-Connection failed' });
+        });
     }
     static reload() {
         this.init();
