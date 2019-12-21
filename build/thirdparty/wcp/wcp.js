@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const stdutils_1 = require("./stdutils");
 const fetch = require('node-fetch');
+const chalk = require('chalk');
 const settings = require('../../../config/settings.json').thirdparty;
 class WCP {
     static get endpoint() {
@@ -13,7 +14,8 @@ class WCP {
     static init() {
         console.log("yeetus deletus");
         WCP.send({
-            status_mode: '+Online',
+            running: true,
+            status_mode: '+Productive',
             status_discord: '*Connecting...',
             status_tudeapi: '*Connecting...',
             status_current_version: '4.0',
@@ -23,18 +25,16 @@ class WCP {
         });
         let c = 0;
         setInterval(() => {
-            let update = WCP.sysout.length || WCP.syserr.length;
             if (c++ >= 5)
                 c = 0;
-            if (update) {
-                WCP.send({ sysout: this.sysout.join('<br>'), syserr: this.syserr.join('<br>') });
-                this.sysout = [];
-                this.syserr = [];
-            }
+            if (this.sysout.length)
+                WCP.send({ sysout: this.sysout.join('\n') });
             else if (c == 0)
                 WCP.send({ ping: true });
+            this.sysout = [];
         }, 1000);
-        stdutils_1.hook_stdout((o) => WCP.sysout.push(o));
+        stdutils_1.hook_std((o) => WCP.sysout.push(o), process.stdout);
+        stdutils_1.hook_std((o) => WCP.sysout.push(chalk.bold.redBright(o)), process.stderr);
     }
     static reload() {
         this.init();
@@ -54,5 +54,4 @@ class WCP {
 exports.default = WCP;
 //
 WCP.sysout = [];
-WCP.syserr = [];
 //# sourceMappingURL=wcp.js.map

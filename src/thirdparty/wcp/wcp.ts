@@ -2,9 +2,10 @@
 import { User as DiscordUser } from "discord.js";
 import { resolve } from "dns";
 import { rejects } from "assert";
-import { hook_stdout } from "./stdutils";
+import { hook_std } from "./stdutils";
 
 const fetch = require('node-fetch');
+const chalk = require('chalk');
 
 const settings = require('../../../config/settings.json').thirdparty;
 
@@ -35,12 +36,12 @@ export default class WCP {
     //
 
     private static sysout = [];
-    private static syserr = [];
 
     public static init() {
         console.log("yeetus deletus")
         WCP.send({
-            status_mode: '+Online',
+            running: true,
+            status_mode: '+Productive',
             status_discord: '*Connecting...',
             status_tudeapi: '*Connecting...',
             status_current_version: '4.0',
@@ -51,16 +52,14 @@ export default class WCP {
 
         let c = 0;
         setInterval(() => {
-            let update = WCP.sysout.length || WCP.syserr.length;
             if (c++ >= 5) c = 0;
-            if (update) {
-                WCP.send({ sysout: this.sysout.join('<br>'), syserr: this.syserr.join('<br>') });
-                this.sysout = [];
-                this.syserr = [];
-            } else if (c == 0) WCP.send({ ping: true });
+            if (this.sysout.length) WCP.send({ sysout: this.sysout.join('\n') });
+            else if (c == 0) WCP.send({ ping:true });
+            this.sysout = [];
         }, 1000);
 
-        hook_stdout((o,) => WCP.sysout.push(o));
+        hook_std((o) => WCP.sysout.push(o), process.stdout);
+        hook_std((o) => WCP.sysout.push(chalk.bold.redBright(o)), process.stderr);
     }
 
     public static reload() {
