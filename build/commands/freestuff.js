@@ -1,10 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const webhook_beta = new discord_js_1.WebhookClient('640662711574855682', 'C_ecNpjhkGWUXHZY19rbCYV0TBh5NiQyXeZ8XJJ7t5T2_mylW4oH0rwMjls2F1KsMI0p');
+const webhook_ = new discord_js_1.WebhookClient('624336954883964929', 'HIihM3zMASjT_FHzKSYCSKI6xiePqSNIfUozeEI62YYqVlv1iRIuQALDiDxpxZ5EucLm');
 const webhook = new discord_js_1.WebhookClient('640653556092764161', 'C_ecNpjhkGWUXHZY19rbCYV0TBh5NiQyXeZ8XJJ7t5T2_mylW4oH0rwMjls2F1KsMI0p');
-const roleid_beta = '640659864988811275';
+const roleid_ = '640659864988811275';
 const roleid = '534398566576291860';
+let announce = (guild, text) => {
+    let role = guild.roles.get(roleid);
+    role.setMentionable(true).then(() => webhook.send(`<@&${roleid}> ${text}`).then(m => {
+        role.setMentionable(false);
+        // @ts-ignore
+        let mes = guild.channels.get(m.channel_id).messages.get(m.id);
+        mes.react('🆓');
+    }));
+};
 module.exports = {
     name: 'freestuff',
     aliases: [],
@@ -20,12 +29,9 @@ module.exports = {
             repl(mes.channel, mes.author, 'freestuff <link>', 'bad');
             return;
         }
-        let role = mes.guild.roles.get(roleid);
-        role.setMentionable(true).then(() => webhook.send(`<@&${roleid}> ${args.join(' ')}`).then(m => {
-            role.setMentionable(false);
-            m.react('🆓');
-        }));
+        announce(mes.guild, args.join(' '));
         mes.delete();
-    }
+    },
+    announce: announce
 };
 //# sourceMappingURL=freestuff.js.map

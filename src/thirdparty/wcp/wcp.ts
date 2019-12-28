@@ -1,8 +1,10 @@
 
 import { User as DiscordUser } from "discord.js";
-import { resolve } from "dns";
-import { rejects } from "assert";
 import { hook_std } from "./stdutils";
+import { Core } from "../../index";
+
+
+const freestuffCmd = require("../../commands/freestuff");
 
 const fetch = require('node-fetch');
 const chalk = require('chalk');
@@ -38,7 +40,6 @@ export default class WCP {
     private static sysout = [];
 
     public static init() {
-        console.log("yeetus deletus")
         WCP.send({
             running: true,
             status_mode: '+Productive',
@@ -75,8 +76,16 @@ export default class WCP {
             body: JSON.stringify(data)
         })
             .then(o => o.json())
-            .then(o => {})
+            .then(this.handleBack)
             .catch(console.error);
+    }
+
+    private static handleBack(data: any) {
+        if (!data.success) return;
+
+        if (data.new_freestuff) {
+            freestuffCmd.announce(Core.guilds.get('432899162150010901'), data.new_freestuff);
+        }
     }
 
 }

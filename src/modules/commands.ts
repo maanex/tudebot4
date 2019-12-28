@@ -3,7 +3,7 @@ import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord
 import { modlogType, cmesType } from "types";
 const util = require('../util');
 
-let commands: Command[] = [];
+export let commands: Command[] = [];
 for (let c of [
     'botinfo',
     'catimg',
@@ -19,6 +19,7 @@ for (let c of [
     'reload',
     'daily',
     'badges',
+    'slotmachine',
 ]) commands.push(require(`../commands/${c}`));
 
 export let activeInCommandsChannel: string[] = [];

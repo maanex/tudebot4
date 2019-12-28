@@ -12,33 +12,51 @@
 
 
 
-	{
-		"name": "Memes",
-		"description": "", TODO datenbank und meme of the month
-		TODO upvote own meme
-	},
-	{
-		"name": "Level Up",
-		"description": "",
-		"id": "levelup",
-		"classpath": "de.maanex.tb3.modules.club.Leveling",
-		"properties": {
-			"announcementChannel": -1,
-			"excludedChannels": [],
-			"roleReward": {}
-		}
-	},
+	MEMES:
+	- don't upvote own memes
+	- add memes to the db
+	- update meme score in db
+	- end of the month pick the most voted meme as meme of the month
+	  • award "author" with some cookies or smth
+	
 
-	{
-		"name": "Turtle Of The Month",
-		"description": "",
-		"id": "totm",
-		"classpath": "de.maanex.tb3.modules.totm.TurtleOfTheMonth",
-		"properties": {
-			"channel": -1
-		}
-	},
+	LEVELING:
+	- DM when they've leveled up -> Add to api callback when adding xp: json with levelup rewards etc
+	- give xp for trivial things:
+	  • messages
+	  • voting on memes
+	  • voice channel time
+	- levelup rewards:
+	  • roles
+	  • cookies
+	- turtle of the month:
+	  • reset leaderboard once a month
+	  • tudebot on leaderboard update: check if season incremented
+	  • on api side add a top three of last month section with id and points -> use that
+	  • DM user
+	  • award badge (api side)
 
+
+	CASINO:
+	- slotmachine
+	- poker:
+	  • just as roulette alone or with others
+	  • if alone, show cards in commands channel
+	  • if not alone, HMMMM
+	- cookiepot
+	  • regular old cookiepot
+	  • add cookiepot max volume
+	  • distibute cookies once a day (6pm CET)
+	- stock market
+	  • with realistic curves
+	  • with procedural companies
+	  • established ones and newcomers, companies can fail at any time
+	  • stock holders get daily holding reward for only ones that they helt for over 24h -> to prevent buy, claim, sell
+	  • optional: public api for trading -> ppl could make market bots, epic
+	- give command:
+	  • give cookies to other players
+	  • have taxes on payments over lets say 100 cookies -> make confirm dialogue & cooldown
+	- 
 
 
 	uh

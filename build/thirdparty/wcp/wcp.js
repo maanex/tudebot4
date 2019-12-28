@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const stdutils_1 = require("./stdutils");
+const index_1 = require("../../index");
+const freestuffCmd = require("../../commands/freestuff");
 const fetch = require('node-fetch');
 const chalk = require('chalk');
 const settings = require('../../../config/settings.json').thirdparty;
@@ -12,7 +14,6 @@ class WCP {
         return settings.wcp.secret;
     }
     static init() {
-        console.log("yeetus deletus");
         WCP.send({
             running: true,
             status_mode: '+Productive',
@@ -47,8 +48,15 @@ class WCP {
             body: JSON.stringify(data)
         })
             .then(o => o.json())
-            .then(o => { })
+            .then(this.handleBack)
             .catch(console.error);
+    }
+    static handleBack(data) {
+        if (!data.success)
+            return;
+        if (data.new_freestuff) {
+            freestuffCmd.announce(index_1.Core.guilds.get('432899162150010901'), data.new_freestuff);
+        }
     }
 }
 exports.default = WCP;

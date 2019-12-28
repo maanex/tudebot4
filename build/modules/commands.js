@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const util = require('../util');
-let commands = [];
+exports.commands = [];
 for (let c of [
     'botinfo',
     'catimg',
@@ -17,8 +17,9 @@ for (let c of [
     'reload',
     'daily',
     'badges',
+    'slotmachine',
 ])
-    commands.push(require(`../commands/${c}`));
+    exports.commands.push(require(`../commands/${c}`));
 exports.activeInCommandsChannel = [];
 let activeInCommandsChannelRemoveTimer = {};
 const ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60000;
@@ -43,7 +44,7 @@ module.exports = (bot, conf, data, lang) => {
                 return;
             }
         }
-        for (let c of commands) {
+        for (let c of exports.commands) {
             if (c.name === cmd) {
                 if (c.sudoonly && !sudo) {
                     cmes(mes.channel, mes.author, ':x: Not allowed!');

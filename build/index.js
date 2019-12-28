@@ -28,6 +28,7 @@ class TudeBot extends discord_js_1.Client {
             'thebrain',
             'memes',
             'autoleaderboard',
+            'getpoints',
         ];
         fixReactionEvent(this);
         tudeapi_1.default.init();
@@ -41,7 +42,12 @@ class TudeBot extends discord_js_1.Client {
             return res;
         };
         this.modules.forEach(mod => {
-            this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
+            let moddata = {};
+            try {
+                moddata = require(`../config/moduledata/${mod}.json`);
+            }
+            catch (ex) { }
+            this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
         });
         this.on('ready', () => {
             console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
@@ -51,7 +57,7 @@ class TudeBot extends discord_js_1.Client {
     }
 }
 exports.TudeBot = TudeBot;
-const Core = new TudeBot({
+exports.Core = new TudeBot({
     disabledEvents: [
         'TYPING_START',
     ]

@@ -1,1 +1,2 @@
-exports.rand = max => Math.floor(Math.random() * max);
+
+export let rand = max => Math.floor(Math.random() * max);

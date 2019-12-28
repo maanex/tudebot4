@@ -3,6 +3,7 @@ import { modlogType } from 'types';
 import { Client, Guild, User } from "discord.js";
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
+import * as fs from 'fs';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -10,9 +11,9 @@ const settings = require('../config/settings.json');
 
 export class TudeBot extends Client {
 
-  modules: string[];
-  modlog: ModLog;
-  m: any = {};
+  public modules: string[];
+  public modlog: ModLog;
+  public m: any = {};
 
   constructor(props) {
     super(props);
@@ -27,6 +28,7 @@ export class TudeBot extends Client {
       'thebrain',
       'memes',
       'autoleaderboard',
+      'getpoints',
     ];
 
     fixReactionEvent(this);
@@ -42,7 +44,10 @@ export class TudeBot extends Client {
     }
 
     this.modules.forEach(mod => {
-      this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], require(`../config/moduledata/${mod}.json`), lang);
+      let moddata = {};
+      try { moddata = require(`../config/moduledata/${mod}.json`); }
+      catch (ex) { }
+      this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
     });
 
     this.on('ready', () => {
@@ -56,7 +61,7 @@ export class TudeBot extends Client {
 }
 
 
-const Core = new TudeBot (
+export const Core = new TudeBot (
   {
     disabledEvents: [
       'TYPING_START',
