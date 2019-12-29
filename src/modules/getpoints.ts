@@ -94,7 +94,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     //       ms s m h d m dw
     cron.job('* 0 * * * * *', regenBags).start();
     cron.job('* 0 0 * * * *', fillBags).start();
-    cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start();
+    // cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start(); TODO error here
 }
 
 export type RewardReason = 'MessageSent' | 'MessageReaction' | 'MessageEngagement';

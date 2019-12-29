@@ -11,6 +11,13 @@
 	und dann noch nen api endpoint erstellen um die statistiken abrufen zu können
 
 
+	TudeBot interne stats:
+	- welcher command wie oft
+	  • wie oft davon war er erfolgreich (siehe daily oder no permission)
+	  • auch im detail: z.b. welche slotmachine am häufigsten
+	- wie viel gewinn / verlust hat die bank durch welche casino games gemacht
+	
+
 
 	MEMES:
 	- don't upvote own memes
@@ -38,7 +45,7 @@
 
 
 	CASINO:
-	- slotmachine
+	- slotmachine cooldown
 	- poker:
 	  • just as roulette alone or with others
 	  • if alone, show cards in commands channel
