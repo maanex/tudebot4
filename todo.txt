@@ -12,9 +12,6 @@
 
 
 	TudeBot interne stats:
-	- welcher command wie oft
-	  • wie oft davon war er erfolgreich (siehe daily oder no permission)
-	  • auch im detail: z.b. welche slotmachine am häufigsten
 	- wie viel gewinn / verlust hat die bank durch welche casino games gemacht
 	
 
@@ -26,16 +23,12 @@
 	- end of the month pick the most voted meme as meme of the month
 	  • award "author" with some cookies or smth
 	
+	BADGES COMMAND:
+	- badge display
 
 	LEVELING:
-	- DM when they've leveled up -> Add to api callback when adding xp: json with levelup rewards etc
-	- give xp for trivial things:
-	  • messages
-	  • voting on memes
-	  • voice channel time
 	- levelup rewards:
 	  • roles
-	  • cookies
 	- turtle of the month:
 	  • reset leaderboard once a month
 	  • tudebot on leaderboard update: check if season incremented

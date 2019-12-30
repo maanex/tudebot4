@@ -8,6 +8,7 @@ module.exports = {
     desc: 'Bot info',
     sudoonly: true,
     execute(bot, mes, sudo, args, repl) {
+        return true;
     }
 };
 //# sourceMappingURL=botinfo.js.map

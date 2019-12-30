@@ -16,6 +16,7 @@ module.exports = {
             line2 = joke.substring(line1.length + 1);
         }
         repl(mes.channel, mes.author, line1, 'message', line2);
+        return true;
     }
 };
 const jokes = [

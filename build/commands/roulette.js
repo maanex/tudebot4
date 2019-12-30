@@ -63,154 +63,169 @@ module.exports = {
     desc: 'Sweet game of Roulette',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
-        if (args.length < 2) {
-            repl(mes.channel, mes.author, 'roulette <bet> <amount>', 'bad', 'bet on: red, black, green, odd, even, 0 - 36');
-            return;
-        }
-        let wincondition = null;
-        let wintext = '';
-        let winfactor = 1;
-        switch (args[0].toLowerCase()) {
-            case 'red':
-            case 'r':
-                wincondition = d => d.color == 'red';
-                wintext = 'red';
-                break;
-            case 'black':
-            case 'b':
-                wincondition = d => d.color == 'black';
-                wintext = 'black';
-                break;
-            case 'even':
-            case 'e':
-                wincondition = d => d.number % 2 == 0 && d.number > 0;
-                wintext = 'even';
-                break;
-            case 'odd':
-            case 'o':
-                wincondition = d => d.number % 2 == 1;
-                wintext = 'odd';
-                break;
-            case 'green':
-            case 'g':
-                args[0] = '0';
-            default:
-                if (isNaN(parseInt(args[0])))
-                    break;
-                if (parseInt(args[0]) < 0 || parseInt(args[0]) > 36)
-                    break;
-                wincondition = d => d.number == parseInt(args[0]);
-                wintext = args[0];
-                winfactor = 36;
-        }
-        if (!wincondition) {
-            repl(mes.channel, mes.author, args[0] + ' is not a valid bet!');
-            return;
-        }
-        let cookies = args[1] == 'a' ? -42 : parseInt(args[1]);
-        if (isNaN(cookies)) {
-            repl(mes.channel, mes.author, args[1] + ' is not a valid amount of cookies!');
-            return;
-        }
-        if (cookies > Math.random() * 1000000 + 100000) {
-            repl(mes.channel, mes.author, 'Come on, don\'t be redicolous!', 'message', `${cookies} cookies is a bit too much for someone in your league!`);
-            return;
-        }
-        if (cookies > 5000) {
-            repl(mes.channel, mes.author, args[1] + ' cookies is over the casino\'s maximum bet of 5000!');
-            return;
-        }
-        tudeapi_1.default.clubUserByDiscordId(mes.author.id, mes.author).then(u => {
-            if (!u || u.error) {
-                repl(mes.channel, mes.author, 'An error occured!', 'error');
+        return new Promise((resolve, reject) => {
+            if (args.length < 2) {
+                repl(mes.channel, mes.author, 'roulette <bet> <amount>', 'bad', 'bet on: red, black, green, odd, even, 0 - 36');
+                resolve(false);
                 return;
             }
-            if (cookies > u.cookies) {
-                if (Math.random() < .05) {
-                    // @ts-ignore
-                    repl(mes.channel, mes.author, `${hidethepain} ${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
-                }
-                else {
-                    // @ts-ignore
-                    repl(mes.channel, mes.author, `${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
-                }
+            let wincondition = null;
+            let wintext = '';
+            let winfactor = 1;
+            switch (args[0].toLowerCase()) {
+                case 'red':
+                case 'r':
+                    wincondition = d => d.color == 'red';
+                    wintext = 'red';
+                    break;
+                case 'black':
+                case 'b':
+                    wincondition = d => d.color == 'black';
+                    wintext = 'black';
+                    break;
+                case 'even':
+                case 'e':
+                    wincondition = d => d.number % 2 == 0 && d.number > 0;
+                    wintext = 'even';
+                    break;
+                case 'odd':
+                case 'o':
+                    wincondition = d => d.number % 2 == 1;
+                    wintext = 'odd';
+                    break;
+                case 'green':
+                case 'g':
+                    args[0] = '0';
+                default:
+                    if (isNaN(parseInt(args[0])))
+                        break;
+                    if (parseInt(args[0]) < 0 || parseInt(args[0]) > 36)
+                        break;
+                    wincondition = d => d.number == parseInt(args[0]);
+                    wintext = args[0];
+                    winfactor = 36;
+            }
+            if (!wincondition) {
+                repl(mes.channel, mes.author, args[0] + ' is not a valid bet!');
+                resolve(false);
                 return;
             }
-            if (cookies == -42) {
-                if (u.cookies == 0) {
-                    repl(mes.channel, mes.author, 'You don\'t have any money to play with!');
+            let cookies = args[1] == 'a' ? -42 : parseInt(args[1]);
+            if (isNaN(cookies)) {
+                repl(mes.channel, mes.author, args[1] + ' is not a valid amount of cookies!');
+                resolve(false);
+                return;
+            }
+            if (cookies > Math.random() * 1000000 + 100000) {
+                repl(mes.channel, mes.author, 'Come on, don\'t be redicolous!', 'message', `${cookies} cookies is a bit too much for someone in your league!`);
+                resolve(false);
+                return;
+            }
+            if (cookies > 5000) {
+                repl(mes.channel, mes.author, args[1] + ' cookies is over the casino\'s maximum bet of 5000!');
+                resolve(false);
+                return;
+            }
+            tudeapi_1.default.clubUserByDiscordId(mes.author.id, mes.author).then(u => {
+                if (!u || u.error) {
+                    repl(mes.channel, mes.author, 'An error occured!', 'error');
+                    resolve(false);
                     return;
                 }
-                cookies = Math.min(5000, u.cookies);
-            }
-            if (cookies <= 0) {
-                repl(mes.channel, mes.author, 'You cannot bet on 0 or less cookies!');
-                return;
-            }
-            if (currentGame.started) {
-                if (!currentGame.allowNewBets) {
-                    repl(mes.channel, mes.author, 'Please wait a moment, a game is still in progress!');
+                if (cookies > u.cookies) {
+                    if (Math.random() < .05) {
+                        // @ts-ignore
+                        repl(mes.channel, mes.author, `${hidethepain} ${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
+                    }
+                    else {
+                        // @ts-ignore
+                        repl(mes.channel, mes.author, `${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
+                    }
+                    resolve(false);
                     return;
                 }
-                for (let bet of currentGame.bets) {
-                    if (bet.by.id == mes.author.id) {
-                        repl(mes.channel, mes.author, 'You have already placed your bet on this game!');
+                if (cookies == -42) {
+                    if (u.cookies == 0) {
+                        repl(mes.channel, mes.author, 'You don\'t have any money to play with!');
+                        resolve(false);
                         return;
                     }
+                    cookies = Math.min(5000, u.cookies);
                 }
-                u.cookies -= cookies;
-                tudeapi_1.default.updateClubUser(u);
-                currentGame.bets.push({
-                    by: mes.author,
-                    clubuser: u,
-                    on: wincondition,
-                    ontext: wintext,
-                    prizefactor: winfactor,
-                    amount: cookies
-                });
-                currentGame.resolveIn = 5;
-                if (commands_1.activeInCommandsChannel.length > currentGame.bets.length)
-                    currentGame.resolveIn = 10;
-            }
-            else {
-                currentGame.started = true;
-                u.cookies -= cookies;
-                tudeapi_1.default.updateClubUser(u);
-                currentGame.bets.push({
-                    by: mes.author,
-                    clubuser: u,
-                    on: wincondition,
-                    ontext: wintext,
-                    prizefactor: winfactor,
-                    amount: cookies
-                });
-                currentGame.resolveIn = 2;
-                if (commands_1.activeInCommandsChannel.length > currentGame.bets.length)
-                    currentGame.resolveIn = 10;
-                mes.channel.send({ embed: {
-                        color: 0x36393f,
-                        title: 'Roulette',
-                        description: 'Preparing...',
-                    } }).then(mes => currentGame.chatMessage = mes).catch();
-                currentGameTimer = setInterval(() => {
-                    if (currentGame.resolveIn == 10 || currentGame.resolveIn == 5 || currentGame.resolveIn <= 2) {
-                        if (currentGame.chatMessage)
-                            currentGame.chatMessage.edit('', { embed: {
-                                    color: 0x36393f,
-                                    title: 'Roulette',
-                                    description: 'Starting in ' + currentGame.resolveIn + '```js\n'
-                                        + currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
-                                        + '```',
-                                } });
+                if (cookies <= 0) {
+                    repl(mes.channel, mes.author, 'You cannot bet on 0 or less cookies!');
+                    resolve(false);
+                    return;
+                }
+                if (currentGame.started) {
+                    if (!currentGame.allowNewBets) {
+                        repl(mes.channel, mes.author, 'Please wait a moment, a game is still in progress!');
+                        resolve(false);
+                        return;
                     }
-                    if (currentGame.resolveIn-- <= 0) {
-                        currentGame.allowNewBets = false;
-                        clearInterval(currentGameTimer);
-                        resolveGame();
+                    for (let bet of currentGame.bets) {
+                        if (bet.by.id == mes.author.id) {
+                            repl(mes.channel, mes.author, 'You have already placed your bet on this game!');
+                            resolve(false);
+                            return;
+                        }
                     }
-                }, 1000);
-            }
-        }).catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+                    u.cookies -= cookies;
+                    tudeapi_1.default.updateClubUser(u);
+                    currentGame.bets.push({
+                        by: mes.author,
+                        clubuser: u,
+                        on: wincondition,
+                        ontext: wintext,
+                        prizefactor: winfactor,
+                        amount: cookies
+                    });
+                    currentGame.resolveIn = 5;
+                    if (commands_1.activeInCommandsChannel.length > currentGame.bets.length)
+                        currentGame.resolveIn = 10;
+                    resolve(true);
+                }
+                else {
+                    currentGame.started = true;
+                    u.cookies -= cookies;
+                    tudeapi_1.default.updateClubUser(u);
+                    currentGame.bets.push({
+                        by: mes.author,
+                        clubuser: u,
+                        on: wincondition,
+                        ontext: wintext,
+                        prizefactor: winfactor,
+                        amount: cookies
+                    });
+                    currentGame.resolveIn = 2;
+                    if (commands_1.activeInCommandsChannel.length > currentGame.bets.length)
+                        currentGame.resolveIn = 10;
+                    resolve(true);
+                    mes.channel.send({ embed: {
+                            color: 0x36393f,
+                            title: 'Roulette',
+                            description: 'Preparing...',
+                        } }).then(mes => currentGame.chatMessage = mes).catch();
+                    currentGameTimer = setInterval(() => {
+                        if (currentGame.resolveIn == 10 || currentGame.resolveIn == 5 || currentGame.resolveIn <= 2) {
+                            if (currentGame.chatMessage)
+                                currentGame.chatMessage.edit('', { embed: {
+                                        color: 0x36393f,
+                                        title: 'Roulette',
+                                        description: 'Starting in ' + currentGame.resolveIn + '```js\n'
+                                            + currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
+                                            + '```',
+                                    } });
+                        }
+                        if (currentGame.resolveIn-- <= 0) {
+                            currentGame.allowNewBets = false;
+                            clearInterval(currentGameTimer);
+                            resolveGame();
+                        }
+                    }, 1000);
+                }
+            }).catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+        });
     }
 };
 function resolveGame() {

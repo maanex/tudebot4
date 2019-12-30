@@ -28,22 +28,23 @@ module.exports = {
     sudoonly: false,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void) {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): boolean {
         let perms = mes.member.hasPermission('MANAGE_CHANNELS') || !!mes.member.roles.find(r => r.name.split(' ').join('').toLowerCase() == 'freestuff');
         
         if (!perms) {
             repl(mes.channel, mes.author, ':x: Not allowed!');
-            return;
+            return false;
         }
         if (!args.length) {
             repl(mes.channel, mes.author, 'freestuff <link>', 'bad');
-            return;
+            return false;
         }
 
         announce(mes.guild, args.join(' '));
         mes.delete();
+        return true;
     },
 
-    announce: announce    
+    announce: announce
 
 }

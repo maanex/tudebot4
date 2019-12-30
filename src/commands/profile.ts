@@ -30,7 +30,8 @@ module.exports = {
     sudoonly: false,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void) {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void): Promise<boolean> {
+    return new Promise((resolve, reject) => {
         let user = mes.author;
         if (mes.mentions.users.size)
             user = mes.mentions.users.first();
@@ -38,6 +39,7 @@ module.exports = {
             .then(u => {
                 if (!u || u.error) {
                     repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
+                    resolve(false);
                     return;
                 }
 
@@ -93,13 +95,15 @@ module.exports = {
                             }
                         ]
                     }
-                })
+                });
+                resolve(true);
             })
             .catch(err => {
                 repl(mes.channel, mes.author, 'An error occured!', 'bad');
                 console.error(err);
+                resolve(false);
             })
-        
+    });
     }
 
 }

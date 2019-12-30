@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const dbstats_1 = require("../database/dbstats");
 const util = require('../util');
 exports.commands = [];
 for (let c of [
@@ -44,26 +45,37 @@ module.exports = (bot, conf, data, lang) => {
                 return;
             }
         }
-        for (let c of exports.commands) {
+        let command;
+        out: for (let c of exports.commands) {
             if (c.name === cmd) {
-                if (c.sudoonly && !sudo) {
-                    cmes(mes.channel, mes.author, ':x: Not allowed!');
-                    return;
-                }
-                c.execute(bot, mes, sudo, args, cmes);
-                return;
+                command = c;
+                break out;
             }
             for (let a of c.aliases)
                 if (a === cmd) {
-                    if (c.sudoonly && !sudo) {
-                        cmes(mes.channel, mes.author, ':x: Not allowed!');
-                        return;
-                    }
-                    c.execute(bot, mes, sudo, args, cmes);
-                    return;
+                    command = c;
+                    break out;
                 }
         }
-        if (sudo)
+        if (command) {
+            if (command.sudoonly && !sudo) {
+                cmes(mes.channel, mes.author, ':x: Not allowed!');
+                return;
+            }
+            let success = command.execute(bot, mes, sudo, args, cmes);
+            dbstats_1.DbStats.getCommand(command.name).then(c => {
+                c.calls.updateToday(1);
+                if (success['then']) {
+                    success.then(bool => {
+                        if (bool)
+                            c.executions.updateToday(1);
+                    }).catch();
+                }
+                else if (success)
+                    c.executions.updateToday(1);
+            });
+        }
+        else if (sudo)
             cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
     });
 };

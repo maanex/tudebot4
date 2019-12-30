@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const wcp_js_1 = require("../../thirdparty/wcp/wcp.js");
+const index_1 = require("../../index");
 const fetch = require('node-fetch');
 const settings = require('../../../config/settings.json').thirdparty;
 class TudeApi {
@@ -188,6 +189,8 @@ class TudeApi {
             user['_org_points'] += u.points.add;
             user['_org_cookies'] += u.cookies.add;
             user['_org_gems'] += u.gems.add;
+            if (o['levelup'] != undefined)
+                onUserLevelup(user, o['levelup']['level'], o['levelup']);
         })
             .catch(err => { });
     }
@@ -215,4 +218,30 @@ class TudeApi {
 }
 exports.default = TudeApi;
 TudeApi.badges = [];
+/*
+ * TODO move this function somewhere else
+ */
+function onUserLevelup(user, newLevel, rewards) {
+    if (!user.user)
+        return;
+    if (!user.user['accounts'])
+        return;
+    if (!user.user['accounts']['discord'])
+        return;
+    let duser = index_1.Core.users.get(user.user['accounts']['discord']);
+    if (!duser)
+        return;
+    let desc = `You are now **Level ${newLevel}**\n`;
+    if (rewards.cookies)
+        desc += `\n+${rewards.cookies} Cookies`;
+    if (rewards.gems)
+        desc += `\n+${rewards.cookies} Gems`;
+    duser.sendMessage({
+        embed: {
+            color: 0x36393f,
+            title: "Ayyy, you've leveld up!",
+            description: desc
+        }
+    });
+}
 //# sourceMappingURL=tudeapi.js.map

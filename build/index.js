@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const wcp_1 = require("./thirdparty/wcp/wcp");
+const database_1 = require("./database/database");
+const mongo_adapter_1 = require("./database/mongo.adapter");
 const chalk = require('chalk');
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
@@ -31,29 +33,39 @@ class TudeBot extends discord_js_1.Client {
             'getpoints',
         ];
         fixReactionEvent(this);
-        tudeapi_1.default.init();
         wcp_1.default.init();
-        let lang = key => {
-            let res = require(`../config/lang.json`)[key];
-            if (!res)
-                return '';
-            if (res.length !== undefined)
-                return res[Math.floor(Math.random() * res.length)];
-            return res;
-        };
-        this.modules.forEach(mod => {
-            let moddata = {};
-            try {
-                moddata = require(`../config/moduledata/${mod}.json`);
-            }
-            catch (ex) { }
-            this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
+        mongo_adapter_1.default.connect(settings.mongodb.url)
+            .catch(err => {
+            console.error(err);
+            wcp_1.default.send({ status_mongodb: '-Connection failed' });
+        })
+            .then(() => {
+            console.log('Connected to Mongo');
+            wcp_1.default.send({ status_mongodb: '+Connected' });
+            tudeapi_1.default.init();
+            database_1.default.init();
+            let lang = key => {
+                let res = require(`../config/lang.json`)[key];
+                if (!res)
+                    return '';
+                if (res.length !== undefined)
+                    return res[Math.floor(Math.random() * res.length)];
+                return res;
+            };
+            this.modules.forEach(mod => {
+                let moddata = {};
+                try {
+                    moddata = require(`../config/moduledata/${mod}.json`);
+                }
+                catch (ex) { }
+                this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
+            });
+            this.on('ready', () => {
+                console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
+                wcp_1.default.send({ status_discord: '+Connected' });
+            });
+            this.login(settings.bot.token);
         });
-        this.on('ready', () => {
-            console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
-            wcp_1.default.send({ status_discord: '+Connected' });
-        });
-        this.login(settings.bot.token);
     }
 }
 exports.TudeBot = TudeBot;

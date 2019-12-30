@@ -16,6 +16,7 @@ export interface WcpData {
     status_mode?: string;
     status_discord?: string;
     status_tudeapi?: string;
+    status_mongodb?: string;
     status_current_version?: string;
     status_current_latest_build?: string;
     status_current_last_sync?: string;
@@ -45,6 +46,7 @@ export default class WCP {
             status_mode: '+Productive',
             status_discord: '*Connecting...',
             status_tudeapi: '*Connecting...',
+            status_mongodb: '*Connecting...',
             status_current_version: '4.0',
             status_current_latest_build: '4.0',
             status_current_last_sync: new Date().toString(),

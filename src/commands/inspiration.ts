@@ -18,7 +18,8 @@ module.exports = {
     sudoonly: false,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void) {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): Promise<boolean> {
+    return new Promise((resolve, reject) => {
         fetch('http://inspirobot.me/api?generate=true')
             .then(o => o.text())
             .then(o => mes.channel.send({
@@ -32,8 +33,9 @@ module.exports = {
                         icon_url: mes.author.avatarURL
                     }
                 }
-            }))
-            .catch(err => repl(mes.channel, mes.author, 'An error occured!', 'bad'));
+            }) && resolve(true))
+            .catch(err => { repl(mes.channel, mes.author, 'An error occured!', 'bad'); resolve(false) });
+    });
     }
 
 }

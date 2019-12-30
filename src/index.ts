@@ -4,6 +4,9 @@ import { Client, Guild, User } from "discord.js";
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
 import * as fs from 'fs';
+import Database from './database/database';
+import MongoAdapter from './database/mongo.adapter';
+import { DbStats } from './database/dbstats';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -32,30 +35,42 @@ export class TudeBot extends Client {
     ];
 
     fixReactionEvent(this);
-
-    TudeApi.init();
+    
     WCP.init();
 
-    let lang = key => {
-      let res = require(`../config/lang.json`)[key];
-      if (!res) return '';
-      if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
-      return res;
-    }
+    MongoAdapter.connect(settings.mongodb.url)
+      .catch(err => {
+        console.error(err);
+        WCP.send({ status_mongodb: '-Connection failed' });
+      })
+      .then(() => {
+        console.log('Connected to Mongo');
+        WCP.send({ status_mongodb: '+Connected' });
 
-    this.modules.forEach(mod => {
-      let moddata = {};
-      try { moddata = require(`../config/moduledata/${mod}.json`); }
-      catch (ex) { }
-      this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
-    });
-
-    this.on('ready', () => {
-      console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
-      WCP.send({ status_discord: '+Connected' });
-    }); 
-
-    this.login(settings.bot.token);
+        TudeApi.init();
+        Database.init();
+    
+        let lang = key => {
+          let res = require(`../config/lang.json`)[key];
+          if (!res) return '';
+          if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
+          return res;
+        }
+    
+        this.modules.forEach(mod => {
+          let moddata = {};
+          try { moddata = require(`../config/moduledata/${mod}.json`); }
+          catch (ex) { }
+          this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
+        });
+    
+        this.on('ready', () => {
+          console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
+          WCP.send({ status_discord: '+Connected' });
+        });
+    
+        this.login(settings.bot.token);
+      });
   }
 
 }

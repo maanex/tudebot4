@@ -40,54 +40,59 @@ module.exports = {
     desc: 'See your badges (or someone elses)',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
-        let user = mes.author;
-        if (mes.mentions.users.size)
-            user = mes.mentions.users.first();
-        tudeapi_1.default.clubUserByDiscordId(user.id, user)
-            .then(u => {
-            if (!u || u.error) {
-                repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
-                return;
-            }
-            let badges = [];
-            if (u.badges) {
-                for (let b in u.badges) {
-                    let badge = tudeapi_1.default.badgeById(parseInt(b));
-                    if (!badge)
-                        continue;
-                    let appearance = badge.appearance[0];
-                    let appid = -1;
-                    for (let a of badge.appearance) {
-                        if (a.from <= u.badges[b])
-                            appearance = a;
-                        else
-                            break;
-                        appid++;
+        return new Promise((resolve, reject) => {
+            let user = mes.author;
+            if (mes.mentions.users.size)
+                user = mes.mentions.users.first();
+            tudeapi_1.default.clubUserByDiscordId(user.id, user)
+                .then(u => {
+                if (!u || u.error) {
+                    repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
+                    resolve(false);
+                    return;
+                }
+                let badges = [];
+                if (u.badges) {
+                    for (let b in u.badges) {
+                        let badge = tudeapi_1.default.badgeById(parseInt(b));
+                        if (!badge)
+                            continue;
+                        let appearance = badge.appearance[0];
+                        let appid = -1;
+                        for (let a of badge.appearance) {
+                            if (a.from <= u.badges[b])
+                                appearance = a;
+                            else
+                                break;
+                            appid++;
+                        }
+                        badges.push({
+                            name: _badge_icons[b][appid] + ' `' + appearance.name + '` (' + badge.keyword + ')',
+                            value: badge.description.replace('%s', u.badges[b])
+                        });
                     }
-                    badges.push({
-                        name: _badge_icons[b][appid] + ' `' + appearance.name + '` (' + badge.keyword + ')',
-                        value: badge.description.replace('%s', u.badges[b])
-                    });
                 }
-            }
-            let banana = Math.random() < .1;
-            mes.channel.send({
-                embed: {
-                    author: {
-                        name: `${user.username}'s badges:`,
-                        icon_url: user.avatarURL
-                    },
-                    color: 0x36393f,
-                    fields: badges,
-                    image: { url: (badges.length || !banana) ? '' : 'https://cdn.discordapp.com/attachments/655354019631333397/656567439391326228/banana.png' },
-                    footer: { text: (badges.length || banana) ? '' : `${user.username}'s got no badges, pal!` },
-                    description: !badges.length && banana ? 'Empathy banana is here for you.' : '',
-                }
+                let banana = Math.random() < .1;
+                mes.channel.send({
+                    embed: {
+                        author: {
+                            name: `${user.username}'s badges:`,
+                            icon_url: user.avatarURL
+                        },
+                        color: 0x36393f,
+                        fields: badges,
+                        image: { url: (badges.length || !banana) ? '' : 'https://cdn.discordapp.com/attachments/655354019631333397/656567439391326228/banana.png' },
+                        footer: { text: (badges.length || banana) ? '' : `${user.username}'s got no badges, pal!` },
+                        description: !badges.length && banana ? 'Empathy banana is here for you.' : '',
+                    }
+                });
+                resolve(true);
+            })
+                .catch(err => {
+                repl(mes.channel, mes.author, 'An error occured!', 'bad');
+                console.error(err);
+                resolve(false);
             });
-        })
-            .catch(err => {
-            repl(mes.channel, mes.author, 'An error occured!', 'bad');
-            console.error(err);
         });
     }
 };

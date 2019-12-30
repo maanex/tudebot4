@@ -9,6 +9,7 @@ module.exports = {
     execute(bot, mes, sudo, args, repl) {
         tudeapi_1.default.reload();
         mes.react('✅');
+        return true;
     }
 };
 //# sourceMappingURL=reload.js.map

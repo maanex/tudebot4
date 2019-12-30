@@ -13,7 +13,7 @@ module.exports = {
     sudoonly: false,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void) {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void): boolean {
         let joke = jokes[Math.floor(Math.random() * jokes.length)];
         let line1 = joke;
         let line2 = '';
@@ -22,6 +22,7 @@ module.exports = {
             line2 = joke.substring(line1.length + 1);
         }
         repl(mes.channel, mes.author, line1, 'message', line2);
+        return true;
     }
 
 }

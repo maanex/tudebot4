@@ -113,15 +113,8 @@ const machines = [
         description: 'Full screen one color: CHECKPOT, 100.000\nOnly two colors on screen: win, 300\nThree in a line: consolation prize, 5 each line',
         run: runSm3
     },
-    {
-        name: 'Turbocharger',
-        ids: ['4', 'tc', 'turbocharger', 'turbo', 'charger'],
-        entry: 90,
-        checkpot: 6000,
-        description: 'Each lamp has a 50% chance to turn on. If one stays off, you loose. Winner if all turn on: 6.000',
-        run: runSm4
-    }
 ];
+let cooldown = [];
 module.exports = {
     name: 'slotmachine',
     aliases: [
@@ -130,39 +123,53 @@ module.exports = {
     desc: 'Sweet game of Slotmachine',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
-        if (args.length < 1) {
-            repl(mes.channel, mes.author, 'slotmachine <machine>', 'bad', 'Available machines:\n1: Cookiewheel\n 2: Nicer Dicer\n 3: Dancemaster\n 4: Turbocharger\n`slotmachine info <machine>` for more info');
-            return;
-        }
-        let infoOnly = false;
-        if (args[0].toLowerCase() == 'i' || args[0].toLowerCase() == 'info' || args[0].toLowerCase() == 'information')
-            infoOnly = true;
-        let machine = undefined;
-        out: for (let sm of machines) {
-            for (let id of sm.ids)
-                if (args[infoOnly ? 1 : 0].toLowerCase() == id) {
-                    machine = sm;
-                    break out;
-                }
-        }
-        if (!machine) {
-            repl(mes.channel, mes.author, `Machine ${args[infoOnly ? 1 : 0]} not found!`, 'bad', 'Available machines:\n1: Cookiewheel\n 2: Nicer Dicer\n 3: Dancemaster\n 4: Turbocharger\n`slotmachine info <machine>` for more info');
-            return;
-        }
-        if (infoOnly) {
-            repl(mes.channel, mes.author, machine.name, 'message', machine.description + '\n\n**Cost:** ' + machine.entry);
-            return;
-        }
-        let price = machine.entry;
-        tudeapi_1.default.clubUserByDiscordId(mes.author.id).then(u => {
-            if (u.cookies < price) {
-                repl(mes.channel, mes.author, `${machine.name} costs ${machine.entry} to play!`, 'bad', `You only got ${u.cookies} cookies!`);
+        return new Promise((resolve, reject) => {
+            if (args.length < 1) {
+                repl(mes.channel, mes.author, 'slotmachine <machine>', 'bad', 'Available machines:\n1: Cookiewheel\n 2: Nicer Dicer\n 3: Dancemaster\n 4: Turbocharger (currently not available)\n`slotmachine info <machine>` for more info');
+                resolve(false);
                 return;
             }
-            u.cookies -= price;
-            tudeapi_1.default.updateClubUser(u);
-            machine.run(mes, u);
-        }).catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+            let infoOnly = false;
+            if (args[0].toLowerCase() == 'i' || args[0].toLowerCase() == 'info' || args[0].toLowerCase() == 'information')
+                infoOnly = true;
+            let machine = undefined;
+            out: for (let sm of machines) {
+                for (let id of sm.ids)
+                    if (args[infoOnly ? 1 : 0].toLowerCase() == id) {
+                        machine = sm;
+                        break out;
+                    }
+            }
+            if (!machine) {
+                repl(mes.channel, mes.author, `Machine ${args[infoOnly ? 1 : 0]} not found!`, 'bad', 'Available machines:\n1: Cookiewheel\n 2: Nicer Dicer\n 3: Dancemaster\n 4: Turbocharger\n`slotmachine info <machine>` for more info');
+                resolve(false);
+                return;
+            }
+            if (infoOnly) {
+                repl(mes.channel, mes.author, machine.name, 'message', machine.description + '\n\n**Cost:** ' + machine.entry);
+                resolve(false);
+                return;
+            }
+            if (cooldown.indexOf(mes.author.id) >= 0) {
+                repl(mes.channel, mes.author, `Oh noes! You goin too quick!`, 'bad', `Please wait a bit before using a slotmachine again!`);
+                resolve(false);
+                return;
+            }
+            let price = machine.entry;
+            tudeapi_1.default.clubUserByDiscordId(mes.author.id).then(u => {
+                if (u.cookies < price) {
+                    repl(mes.channel, mes.author, `${machine.name} costs ${machine.entry} to play!`, 'bad', `You only got ${u.cookies} cookies!`);
+                    resolve(false);
+                    return;
+                }
+                u.cookies -= price;
+                tudeapi_1.default.updateClubUser(u);
+                machine.run(mes, u);
+                cooldown.push(mes.author.id);
+                setTimeout(id => cooldown.splice(cooldown.indexOf(id), 1), 7000, mes.author.id);
+                resolve(true);
+            }).catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+        });
     }
 };
 function runSm1(mes, u) {
@@ -345,11 +352,12 @@ function runSm2(mes, u) {
         }, 5000, m, u);
     });
 }
-let sm3blue = false;
+let sm3blue = [];
 function runSm3(mes, u) {
+    let goBlue = sm3blue.indexOf(mes.author.id) >= 0;
     let text = sm3template;
     while (text.indexOf('%s') >= 0)
-        text = text.replace('%s', sm3emoji.loading[sm3blue ? 'blue' : 'orange'][Math.floor(Math.random() * 6)]);
+        text = text.replace('%s', sm3emoji.loading[goBlue ? 'blue' : 'orange'][Math.floor(Math.random() * 6)]);
     mes.channel.send({ embed: {
             title: 'Slotmachine',
             color: 0x36393f,
@@ -403,9 +411,9 @@ function runSm3(mes, u) {
                 prize = 5 * lines;
             }
             for (let s of slots)
-                text = text.replace('%s', sm3emoji.static[sm3blue ? 'blue' : 'orange'][s]);
+                text = text.replace('%s', sm3emoji.static[goBlue ? 'blue' : 'orange'][s]);
             text += `\n${wintext}\n${nothingEmoji} ${nothingEmoji} +${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g');
-            if (sm3blue && prize > 0) {
+            if (goBlue && prize > 0) {
                 if (win) {
                     text += '\n:blue_square: **Bonus: +100 Cookies!**';
                     prize += 100;
@@ -425,7 +433,10 @@ function runSm3(mes, u) {
                     color: 0x36393f,
                     description: text
                 } });
-            sm3blue = win;
+            if (goBlue && !win)
+                sm3blue.splice(sm3blue.indexOf(mes.author.id), 1);
+            else if (!goBlue && win)
+                sm3blue.push(mes.author.id);
         }, 4000 + Math.floor(Math.random() * 3000), m, u);
     });
 }

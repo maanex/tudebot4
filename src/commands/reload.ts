@@ -12,9 +12,10 @@ module.exports = {
     sudoonly: true,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void) {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void): boolean {
         TudeApi.reload();
         mes.react('✅');
+        return true;
     }
 
 }

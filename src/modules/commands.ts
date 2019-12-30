@@ -1,6 +1,7 @@
 import { TudeBot } from "index";
 import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord.js";
 import { modlogType, cmesType } from "types";
+import { DbStats } from "../database/dbstats";
 const util = require('../util');
 
 export let commands: Command[] = [];
@@ -49,27 +50,35 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
             }
         }
 
-        for (let c of commands) {
+        let command: Command;
+        out: for (let c of commands) {
             if (c.name === cmd) {
-                if (c.sudoonly && !sudo) {
-                    cmes(mes.channel, mes.author, ':x: Not allowed!');
-                    return;
-                }
-                c.execute(bot, mes, sudo, args, cmes);
-                return;
+                command = c;
+                break out;
             }
             for (let a of c.aliases)
                 if (a === cmd) {
-                    if (c.sudoonly && !sudo) {
-                        cmes(mes.channel, mes.author, ':x: Not allowed!');
-                        return;
-                    }
-                    c.execute(bot, mes, sudo, args, cmes);
-                    return;
+                    command = c;
+                    break out;
                 }
         }
 
-        if (sudo) cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
+        if (command) {
+            if (command.sudoonly && !sudo) {
+                cmes(mes.channel, mes.author, ':x: Not allowed!');
+                return;
+            }
+            let success = command.execute(bot, mes, sudo, args, cmes);
+            DbStats.getCommand(command.name).then(c => {
+                c.calls.updateToday(1);
+                if (success['then']) {
+                    success.then(bool => {
+                        if (bool)
+                            c.executions.updateToday(1);
+                    }).catch();
+                } else if (success) c.executions.updateToday(1);
+            });
+        } else if (sudo) cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
     });
 
 }

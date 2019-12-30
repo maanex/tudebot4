@@ -19,6 +19,7 @@ class WCP {
             status_mode: '+Productive',
             status_discord: '*Connecting...',
             status_tudeapi: '*Connecting...',
+            status_mongodb: '*Connecting...',
             status_current_version: '4.0',
             status_current_latest_build: '4.0',
             status_current_last_sync: new Date().toString(),

@@ -3,6 +3,9 @@
         "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.Dm8rIg.pmUM94dgHxnbKUFh0IaH2KAE1kE",
         "tokenp": "NTkxOTgyMTQ2MTY0MzU5MTc1.XcRbNg.c6PyqA2b1tTxS50p-7CmYs-F0Gs"
     },
+    "mongodb": {
+        "url": "mongodb://127.0.0.1:27017/admin"
+    },
     "thirdparty": {
         "tudeapi": {
             "key": "NHjdi2kma882jHdmk488jHd92m4jfJda",

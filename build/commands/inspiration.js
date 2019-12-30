@@ -12,21 +12,23 @@ module.exports = {
     desc: 'Random quote from inspirobot.me',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
-        fetch('http://inspirobot.me/api?generate=true')
-            .then(o => o.text())
-            .then(o => mes.channel.send({
-            embed: {
-                color: 0x36393f,
-                image: {
-                    url: o
-                },
-                footer: {
-                    text: `${mes.author.username} • inspirobot.me`,
-                    icon_url: mes.author.avatarURL
+        return new Promise((resolve, reject) => {
+            fetch('http://inspirobot.me/api?generate=true')
+                .then(o => o.text())
+                .then(o => mes.channel.send({
+                embed: {
+                    color: 0x36393f,
+                    image: {
+                        url: o
+                    },
+                    footer: {
+                        text: `${mes.author.username} • inspirobot.me`,
+                        icon_url: mes.author.avatarURL
+                    }
                 }
-            }
-        }))
-            .catch(err => repl(mes.channel, mes.author, 'An error occured!', 'bad'));
+            }) && resolve(true))
+                .catch(err => { repl(mes.channel, mes.author, 'An error occured!', 'bad'); resolve(false); });
+        });
     }
 };
 //# sourceMappingURL=inspiration.js.map

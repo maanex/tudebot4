@@ -77,10 +77,12 @@ module.exports = {
     sudoonly: false,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void) {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void): Promise<boolean> {
+    return new Promise((resolve, reject) => {
         
         if (args.length < 2) {
             repl(mes.channel, mes.author, 'roulette <bet> <amount>', 'bad', 'bet on: red, black, green, odd, even, 0 - 36');
+            resolve(false);
             return;
         }
 
@@ -125,29 +127,34 @@ module.exports = {
         }
 
         if (!wincondition) {
-            repl(mes.channel, mes.author, args[0] + ' is not a valid bet!')
+            repl(mes.channel, mes.author, args[0] + ' is not a valid bet!');
+            resolve(false);
             return;
         }
 
         let cookies = args[1] == 'a' ? -42 : parseInt(args[1]);
         if (isNaN(cookies)) {
-            repl(mes.channel, mes.author, args[1] + ' is not a valid amount of cookies!')
+            repl(mes.channel, mes.author, args[1] + ' is not a valid amount of cookies!');
+            resolve(false);
             return;
         }
 
         if (cookies > Math.random() * 1_000_000 + 100_000) {
             repl(mes.channel, mes.author, 'Come on, don\'t be redicolous!', 'message', `${cookies} cookies is a bit too much for someone in your league!`);
+            resolve(false);
             return;
         }
 
         if (cookies > 5000) {
             repl(mes.channel, mes.author, args[1] + ' cookies is over the casino\'s maximum bet of 5000!');
+            resolve(false);
             return;
         }
 
         TudeApi.clubUserByDiscordId(mes.author.id, mes.author).then(u => {
             if (!u || u.error) {
-                repl(mes.channel, mes.author, 'An error occured!', 'error')
+                repl(mes.channel, mes.author, 'An error occured!', 'error');
+                resolve(false);
                 return;
             }
             if (cookies > u.cookies) {
@@ -159,28 +166,33 @@ module.exports = {
                     repl(mes.channel, mes.author, `${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
                 }
 
+                resolve(false);
                 return;
             }
             if (cookies == -42) {
                 if (u.cookies == 0) {
                     repl(mes.channel, mes.author, 'You don\'t have any money to play with!');
+                    resolve(false);
                     return;
                 }
                 cookies = Math.min(5000, u.cookies);
             }
             if (cookies <= 0) {
                 repl(mes.channel, mes.author, 'You cannot bet on 0 or less cookies!');
+                resolve(false);
                 return;
             }
 
             if (currentGame.started) {
                 if (!currentGame.allowNewBets) {
                     repl(mes.channel, mes.author, 'Please wait a moment, a game is still in progress!');
+                    resolve(false);
                     return;
                 }
                 for (let bet of currentGame.bets) {
                     if (bet.by.id == mes.author.id) {
                         repl(mes.channel, mes.author, 'You have already placed your bet on this game!');
+                        resolve(false);
                         return;
                     }
                 }
@@ -197,6 +209,7 @@ module.exports = {
                 currentGame.resolveIn = 5;
                 if (activeInCommandsChannel.length > currentGame.bets.length)
                     currentGame.resolveIn = 10;
+                resolve(true);
             } else {
                 currentGame.started = true;
                 u.cookies -= cookies;
@@ -212,6 +225,7 @@ module.exports = {
                 currentGame.resolveIn = 2;
                 if (activeInCommandsChannel.length > currentGame.bets.length)
                     currentGame.resolveIn = 10;
+                resolve(true);
                 mes.channel.send({ embed: {
                     color: 0x36393f,
                     title: 'Roulette',
@@ -237,7 +251,7 @@ module.exports = {
             }
             
         }).catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
-
+    });
     }
 
 }
