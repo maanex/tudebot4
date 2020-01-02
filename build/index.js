@@ -14,6 +14,7 @@ const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const wcp_1 = require("./thirdparty/wcp/wcp");
 const database_1 = require("./database/database");
 const mongo_adapter_1 = require("./database/mongo.adapter");
+const util_1 = require("./util");
 const chalk = require('chalk');
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
@@ -33,6 +34,7 @@ class TudeBot extends discord_js_1.Client {
             'getpoints',
         ];
         fixReactionEvent(this);
+        util_1.Util.init();
         wcp_1.default.init();
         mongo_adapter_1.default.connect(settings.mongodb.url)
             .catch(err => {

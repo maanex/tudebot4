@@ -113,6 +113,7 @@ class TudeApi {
                 o['_org_points'] = o['points'];
                 o['_org_cookies'] = o['cookies'];
                 o['_org_gems'] = o['gems'];
+                o['_org_keys'] = o['keys'];
             })
                 .catch(err => reject(err));
         });
@@ -143,6 +144,8 @@ class TudeApi {
                         o['_org_points'] = o['points'];
                         o['_org_cookies'] = o['cookies'];
                         o['_org_gems'] = o['gems'];
+                        o['_org_keys'] = o['keys'];
+                        o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
                     }
                     resolve(o);
                 }
@@ -179,6 +182,9 @@ class TudeApi {
         u.points = { add: user.points - user['_org_points'] };
         u.cookies = { add: user.cookies - user['_org_cookies'] };
         u.gems = { add: user.gems - user['_org_gems'] };
+        u.keys = { add: user.keys - user['_org_keys'] };
+        if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
+            u['profile'] = { disp_badge: user.profile.disp_badge };
         fetch(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
             body: JSON.stringify(u),
@@ -189,10 +195,12 @@ class TudeApi {
             user['_org_points'] += u.points.add;
             user['_org_cookies'] += u.cookies.add;
             user['_org_gems'] += u.gems.add;
+            user['_org_keys'] += u.keys.add;
+            user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
             if (o['levelup'] != undefined)
-                onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                index_1.Core.m['getpoints'].onUserLevelup(user, o['levelup']['level'], o['levelup']);
         })
-            .catch(err => { });
+            .catch(console.error);
     }
     static performClubUserAction(user, action) {
         let status;
@@ -218,30 +226,4 @@ class TudeApi {
 }
 exports.default = TudeApi;
 TudeApi.badges = [];
-/*
- * TODO move this function somewhere else
- */
-function onUserLevelup(user, newLevel, rewards) {
-    if (!user.user)
-        return;
-    if (!user.user['accounts'])
-        return;
-    if (!user.user['accounts']['discord'])
-        return;
-    let duser = index_1.Core.users.get(user.user['accounts']['discord']);
-    if (!duser)
-        return;
-    let desc = `You are now **Level ${newLevel}**\n`;
-    if (rewards.cookies)
-        desc += `\n+${rewards.cookies} Cookies`;
-    if (rewards.gems)
-        desc += `\n+${rewards.cookies} Gems`;
-    duser.sendMessage({
-        embed: {
-            color: 0x36393f,
-            title: "Ayyy, you've leveld up!",
-            description: desc
-        }
-    });
-}
 //# sourceMappingURL=tudeapi.js.map

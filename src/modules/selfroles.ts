@@ -1,5 +1,5 @@
 import { TudeBot } from "index";
-import { MessageReaction, User } from "discord.js";
+import { MessageReaction, User, Role } from "discord.js";
 const util = require('../util');
 
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
@@ -40,7 +40,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
             member.removeRole(role);
     });
 
-    function findRole(reaction: MessageReaction) {
+    function findRole(reaction: MessageReaction): Role {
         let serverdat = data[reaction.message.guild.id];
         if (!serverdat) return null;
         let role = serverdat[reaction.emoji.name];

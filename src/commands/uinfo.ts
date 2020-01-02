@@ -28,7 +28,7 @@ module.exports = {
                     return;
                 }
 
-                repl(mes.channel, mes.author, '```json\n' + JSON.stringify(u, null, 2) + '```')
+                repl(mes.channel, mes.author, '```json\n' + JSON.stringify(u, null, 2) + '```');
                 resolve(true);
             })
             .catch(err => {

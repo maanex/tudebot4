@@ -42,8 +42,39 @@ module.exports = {
     execute(bot, mes, sudo, args, repl) {
         return new Promise((resolve, reject) => {
             let user = mes.author;
-            if (mes.mentions.users.size)
+            if (mes.mentions.users.size) {
                 user = mes.mentions.users.first();
+            }
+            else if (args.length) {
+                switch (args[0].toLowerCase()) {
+                    case 'setdisplay':
+                    case 'display':
+                    case 'displ':
+                    case 'disp':
+                    case 'd':
+                        if (args.length < 2) {
+                            repl(mes.channel, mes.author, '`badge display <badge>`', 'bad');
+                            return;
+                        }
+                        let badge = tudeapi_1.default.badgeByKeyword(args[1]);
+                        if (!badge) {
+                            repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad');
+                            return;
+                        }
+                        tudeapi_1.default.clubUserByDiscordId(user.id, user)
+                            .then(u => {
+                            if (u.badges[badge.id] <= 0) {
+                                repl(mes.channel, mes.author, 'You do not own this badge!', 'bad');
+                                return;
+                            }
+                            u.profile.disp_badge = badge.id;
+                            tudeapi_1.default.updateClubUser(u);
+                            repl(mes.channel, mes.author, 'Displayed badge updated!', 'success', 'Go have a look at your profile with `profile`');
+                        })
+                            .catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+                }
+                return;
+            }
             tudeapi_1.default.clubUserByDiscordId(user.id, user)
                 .then(u => {
                 if (!u || u.error) {

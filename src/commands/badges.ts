@@ -50,8 +50,38 @@ module.exports = {
     execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void): Promise<boolean> {
     return new Promise((resolve, reject) => {
         let user = mes.author;
-        if (mes.mentions.users.size)
+        if (mes.mentions.users.size) {
             user = mes.mentions.users.first();
+        } else if (args.length) {
+            switch (args[0].toLowerCase()) {
+                case 'setdisplay':
+                case 'display':
+                case 'displ':
+                case 'disp':
+                case 'd':
+                    if (args.length < 2) {
+                        repl(mes.channel, mes.author, '`badge display <badge>`', 'bad');
+                        return;
+                    }
+                    let badge = TudeApi.badgeByKeyword(args[1]);
+                    if (!badge) {
+                        repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad');
+                        return;
+                    }
+                    TudeApi.clubUserByDiscordId(user.id, user)
+                        .then(u => {
+                            if (u.badges[badge.id] <= 0) {
+                                repl(mes.channel, mes.author, 'You do not own this badge!', 'bad');
+                                return;
+                            }
+                            u.profile.disp_badge = badge.id;
+                            TudeApi.updateClubUser(u);  
+                            repl(mes.channel, mes.author, 'Displayed badge updated!', 'success', 'Go have a look at your profile with `profile`');
+                        })
+                        .catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+            }
+            return;
+        }
         TudeApi.clubUserByDiscordId(user.id, user)
             .then(u => {
                 if (!u || u.error) {

@@ -91,10 +91,57 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         TudeApi.clubUserByDiscordId(user.id).then(u => punish(user, 'ReactionRemove')).catch(ex => {});
     });
 
+    bot.on('guildMemberAdd', member => {
+        TudeApi.clubUserByDiscordId(member.id, member.user)
+            .then(u => {
+                for (let i = 1; i <= u.level; i++) {
+                    for (let gid in conf.levelrewards) {
+                        let guild = bot.guilds.get(gid);
+                        if (!guild) continue;
+                        let roleid = conf.levelrewards[gid][i];
+                        if (!roleid) continue;
+                        member.addRole(guild.roles.find(r => r.id == roleid));
+                    }
+                }
+            })
+            .catch();
+    });
+
     //       ms s m h d m dw
     cron.job('* 0 * * * * *', regenBags).start();
     cron.job('* 0 0 * * * *', fillBags).start();
     // cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start(); TODO error here
+
+    return {
+        onUserLevelup(user: ClubUser, newLevel: number, rewards: any) {
+            if (!user.user) return;
+            if (!user.user['accounts']) return;
+            if (!user.user['accounts']['discord']) return;
+            let duser = bot.users.get(user.user['accounts']['discord']);
+            if (!duser) return;
+            let desc = `You are now **Level ${newLevel}**\n`;
+            if (rewards.cookies) desc += `\n+${rewards.cookies} Cookies`;
+            if (rewards.gems) desc += `\n+${rewards.gems} Gems`;
+            if (rewards.keys) desc += `\n+${rewards.keys} Keys`;
+            duser.send({
+                embed: {
+                    color: 0x36393f,
+                    title: "Ayyy, you've leveled up!",
+                    description: desc
+                }
+            });
+
+            for (let gid in conf.levelrewards) {
+                let guild = bot.guilds.get(gid);
+                if (!guild) continue;
+                let mem = guild.members.get(duser.id);
+                if (!mem) continue;
+                let roleid = conf.levelrewards[gid][newLevel];
+                if (!roleid) continue;
+                mem.addRole(guild.roles.find(r => r.id == roleid));
+            }
+        }
+    }
 }
 
 export type RewardReason = 'MessageSent' | 'MessageReaction' | 'MessageEngagement';
@@ -114,7 +161,8 @@ export function reward(user: User | ClubUser, reason: RewardReason, quality: num
 
     let fun = (u: ClubUser) => {
         u.points += points;
-        TudeApi.updateClubUser(u);
+        if (points)
+            TudeApi.updateClubUser(u);
     }
 
     if (user['points']) fun(user as ClubUser); // if user is clubuser, or else:

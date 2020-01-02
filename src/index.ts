@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import Database from './database/database';
 import MongoAdapter from './database/mongo.adapter';
 import { DbStats } from './database/dbstats';
+import { Util } from './util';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -35,6 +36,8 @@ export class TudeBot extends Client {
     ];
 
     fixReactionEvent(this);
+
+    Util.init();
     
     WCP.init();
 

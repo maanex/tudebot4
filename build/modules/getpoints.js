@@ -97,10 +97,64 @@ module.exports = (bot, conf, data, lang) => {
             return;
         tudeapi_1.default.clubUserByDiscordId(user.id).then(u => punish(user, 'ReactionRemove')).catch(ex => { });
     });
+    bot.on('guildMemberAdd', member => {
+        tudeapi_1.default.clubUserByDiscordId(member.id, member.user)
+            .then(u => {
+            for (let i = 1; i <= u.level; i++) {
+                for (let gid in conf.levelrewards) {
+                    let guild = bot.guilds.get(gid);
+                    if (!guild)
+                        continue;
+                    let roleid = conf.levelrewards[gid][i];
+                    if (!roleid)
+                        continue;
+                    member.addRole(guild.roles.find(r => r.id == roleid));
+                }
+            }
+        })
+            .catch();
+    });
     //       ms s m h d m dw
     cron.job('* 0 * * * * *', regenBags).start();
     cron.job('* 0 0 * * * *', fillBags).start();
     // cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start(); TODO error here
+    return {
+        onUserLevelup(user, newLevel, rewards) {
+            if (!user.user)
+                return;
+            if (!user.user['accounts'])
+                return;
+            if (!user.user['accounts']['discord'])
+                return;
+            let duser = bot.users.get(user.user['accounts']['discord']);
+            if (!duser)
+                return;
+            let desc = `You are now **Level ${newLevel}**\n`;
+            if (rewards.cookies)
+                desc += `\n+${rewards.cookies} Cookies`;
+            if (rewards.gems)
+                desc += `\n+${rewards.cookies} Gems`;
+            duser.send({
+                embed: {
+                    color: 0x36393f,
+                    title: "Ayyy, you've leveled up!",
+                    description: desc
+                }
+            });
+            for (let gid in conf.levelrewards) {
+                let guild = bot.guilds.get(gid);
+                if (!guild)
+                    continue;
+                let mem = guild.members.get(duser.id);
+                if (!mem)
+                    continue;
+                let roleid = conf.levelrewards[gid][newLevel];
+                if (!roleid)
+                    continue;
+                mem.addRole(guild.roles.find(r => r.id == roleid));
+            }
+        }
+    };
 };
 function reward(user, reason, quality = 1) {
     let bag = pointBags[user.id];
@@ -115,7 +169,8 @@ function reward(user, reason, quality = 1) {
     pointBags[user.id] -= points;
     let fun = (u) => {
         u.points += points;
-        tudeapi_1.default.updateClubUser(u);
+        if (points)
+            tudeapi_1.default.updateClubUser(u);
     };
     if (user['points'])
         fun(user); // if user is clubuser, or else:

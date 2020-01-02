@@ -250,7 +250,10 @@ module.exports = {
                 }, 1000);
             }
             
-        }).catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
+        }).catch(err => {
+            console.error(err);
+            repl(mes.channel, mes.author, 'An error occured!', 'error');    
+        });
     });
     }
 

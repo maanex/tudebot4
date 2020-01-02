@@ -47,7 +47,7 @@ module.exports = {
                 let icon = undefined;
                 let xpbar ='';
                 let stats = `${_bigspace}\n:cookie: ${u.cookies} ${_bigspace} :gem: ${u.gems}`;
-
+                if (u.keys > 0) stats += ` ${_bigspace} :key: ${u.keys}`;
                 
                 let prog13 = Math.floor(u.level_progress * 13);
                 if (prog13 == 0) xpbar += _xpbar.left_empty;

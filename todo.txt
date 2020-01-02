@@ -15,20 +15,14 @@
 	- wie viel gewinn / verlust hat die bank durch welche casino games gemacht
 	
 
-
 	MEMES:
 	- don't upvote own memes
 	- add memes to the db
 	- update meme score in db
 	- end of the month pick the most voted meme as meme of the month
 	  • award "author" with some cookies or smth
-	
-	BADGES COMMAND:
-	- badge display
 
 	LEVELING:
-	- levelup rewards:
-	  • roles
 	- turtle of the month:
 	  • reset leaderboard once a month
 	  • tudebot on leaderboard update: check if season incremented
@@ -36,9 +30,7 @@
 	  • DM user
 	  • award badge (api side)
 
-
 	CASINO:
-	- slotmachine cooldown
 	- poker:
 	  • just as roulette alone or with others
 	  • if alone, show cards in commands channel

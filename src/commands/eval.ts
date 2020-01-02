@@ -1,6 +1,7 @@
 import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
+import TudeApi from "../thirdparty/tudeapi/tudeapi";
 
 
 module.exports = {
@@ -15,7 +16,11 @@ module.exports = {
         if (mes.author.id !== '137258778092503042') return false;
 
         try {
-            repl(mes.channel, mes.author, eval(args.join(' ')));
+            TudeApi.clubUserByDiscordId(mes.author.id).then(self => {
+                repl(mes.channel, mes.author, eval(args.join(' ')));
+            }).catch(ex => {
+                repl(mes.channel, mes.author, eval(args.join(' ')));
+            });        
             return true;
         } catch (ex) {
             repl(mes.channel, mes.author, 'Error:', 'message', '```' + ex + '```');

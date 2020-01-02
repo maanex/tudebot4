@@ -132,6 +132,11 @@ module.exports = {
             let infoOnly = false;
             if (args[0].toLowerCase() == 'i' || args[0].toLowerCase() == 'info' || args[0].toLowerCase() == 'information')
                 infoOnly = true;
+            if (infoOnly && args.length < 2) {
+                repl(mes.channel, mes.author, 'slotmachine info <machine>', 'bad');
+                resolve(false);
+                return;
+            }
             let machine = undefined;
             out: for (let sm of machines) {
                 for (let id of sm.ids)

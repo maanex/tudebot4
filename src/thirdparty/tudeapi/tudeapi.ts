@@ -28,6 +28,7 @@ export interface ClubUser {
     level_progress: number;
     cookies: number;
     gems: number;
+    keys: number;
     badges: {
         '1': number; '2': number; '3': number;
         '4': number; '5': number; '6': number;
@@ -175,9 +176,11 @@ export default class TudeApi {
             })
                 .then(o => o.json())
                 .then(o => {
-                    o['_org_points'] = o['points'];
-                    o['_org_cookies'] = o['cookies'];
-                    o['_org_gems'] = o['gems'];
+                    o['_org_points'] = o['points'] || 0;
+                    o['_org_cookies'] = o['cookies'] || 0;
+                    o['_org_gems'] = o['gems'] || 0;
+                    o['_org_keys'] = o['keys'] || 0;
+                    o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
                 })
                 .catch(err => reject(err));
         });
@@ -205,9 +208,11 @@ export default class TudeApi {
                         }).catch(err => resolve(o));
                     } else {
                         if (o) {
-                            o['_org_points'] = o['points'];
-                            o['_org_cookies'] = o['cookies'];
-                            o['_org_gems'] = o['gems'];
+                            o['_org_points'] = o['points'] || 0;
+                            o['_org_cookies'] = o['cookies'] || 0;
+                            o['_org_gems'] = o['gems'] || 0;
+                            o['_org_keys'] = o['keys'] || 0;
+                            o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
                         }
                         resolve(o);
                     }
@@ -249,6 +254,9 @@ export default class TudeApi {
         u.points = { add: user.points - user['_org_points'] };
         u.cookies = { add: user.cookies - user['_org_cookies'] };
         u.gems = { add: user.gems - user['_org_gems'] };
+        u.keys = { add: user.keys - user['_org_keys'] };
+        if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
+            u['profile'] = { disp_badge: user.profile.disp_badge };
         fetch(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
             body:    JSON.stringify(u),
@@ -259,10 +267,12 @@ export default class TudeApi {
                 user['_org_points'] += u.points.add;
                 user['_org_cookies'] += u.cookies.add;
                 user['_org_gems'] += u.gems.add;
-                if (o['levelup'] != undefined) 
-                    onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                user['_org_keys'] += u.keys.add;
+                user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
+                if (o['levelup'] != undefined)
+                    Core.m['getpoints'].onUserLevelup(user, o['levelup']['level'], o['levelup']);
             })
-            .catch(err => {});
+            .catch(console.error);
     }
 
     public static performClubUserAction(user: ClubUser, action: ClubAction):Promise<void> {
@@ -285,27 +295,4 @@ export default class TudeApi {
         });
     }
 
-}
-
-
-/*
- * TODO move this function somewhere else
- */
-
-function onUserLevelup(user: ClubUser, newLevel: number, rewards: any) {
-    if (!user.user) return;
-    if (!user.user['accounts']) return;
-    if (!user.user['accounts']['discord']) return;
-    let duser = Core.users.get(user.user['accounts']['discord']);
-    if (!duser) return;
-    let desc = `You are now **Level ${newLevel}**\n`;
-    if (rewards.cookies) desc += `\n+${rewards.cookies} Cookies`;
-    if (rewards.gems) desc += `\n+${rewards.cookies} Gems`;
-    duser.send({
-        embed: {
-            color: 0x36393f,
-            title: "Ayyy, you've leveled up!",
-            description: desc
-        }
-    });
 }

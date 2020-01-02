@@ -21,6 +21,7 @@ for (let c of [
     'daily',
     'badges',
     'slotmachine',
+    'blackjack',
 ]) commands.push(require(`../commands/${c}`));
 
 export let activeInCommandsChannel: string[] = [];
@@ -38,12 +39,12 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         
         let txt = mes.content;
         let args = txt.split(' ');
-        let cmd = args.splice(0, 1)[0];
+        let cmd = args.splice(0, 1)[0].toLowerCase();
 
         let sudo = false;
         if (cmd === 'sudo') {
             sudo = true;
-            cmd = args.splice(0, 1)[0];
+            cmd = args.splice(0, 1)[0].toLowerCase();
             if (!cmd) {
                 cmes(mes.channel, mes.author, '`sudo <command> [args..]`')
                 return;
@@ -86,6 +87,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 function cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
     if (type == 'error') text = ':x: ' + text;
     if (type == 'bad') text = ':frowning: ' + text;
+    if (type == 'success') text = ':white_check_mark: ' + text;
     (channel as TextChannel).send({
         embed: {
             color: 0x36393f,

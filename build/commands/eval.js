@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 module.exports = {
     name: 'eval',
     aliases: [],
@@ -9,7 +10,11 @@ module.exports = {
         if (mes.author.id !== '137258778092503042')
             return false;
         try {
-            repl(mes.channel, mes.author, eval(args.join(' ')));
+            tudeapi_1.default.clubUserByDiscordId(mes.author.id).then(self => {
+                repl(mes.channel, mes.author, eval(args.join(' ')));
+            }).catch(ex => {
+                repl(mes.channel, mes.author, eval(args.join(' ')));
+            });
             return true;
         }
         catch (ex) {
