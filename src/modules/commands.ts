@@ -22,6 +22,7 @@ for (let c of [
     'badges',
     'slotmachine',
     'blackjack',
+    'help',
 ]) commands.push(require(`../commands/${c}`));
 
 export let activeInCommandsChannel: string[] = [];
@@ -119,10 +120,11 @@ function updateActiveInCommandsChannel(id: string) {
     }
 }
 
-interface Command {
+export interface Command {
     name: string;
     aliases: string[];
     desc: string[];
     sudoonly: boolean;
+    hideonhelp: boolean;
     execute: Function;
 }

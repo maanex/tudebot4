@@ -7,6 +7,7 @@ module.exports = {
     aliases: [],
     desc: 'Userinfo',
     sudoonly: false,
+    hideonhelp: true,
     execute(bot, mes, sudo, args, repl) {
         return new Promise((resolve, reject) => {
             let user = mes.author;

@@ -13,6 +13,7 @@ module.exports = {
     ],
     desc: 'Userinfo',
     sudoonly: false,
+    hideonhelp: true,
 
     
     execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void): Promise<boolean> {

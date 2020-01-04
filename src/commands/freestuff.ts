@@ -26,6 +26,7 @@ module.exports = {
     aliases: [],
     desc: 'Free stuff announcement tool',
     sudoonly: false,
+    hideonhelp: true,
 
     
     execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): boolean {

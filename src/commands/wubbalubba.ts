@@ -9,6 +9,7 @@ module.exports = {
     aliases: [ ],
     desc: 'JEEZ RICK',
     sudoonly: false,
+    hideonhelp: true,
 
     
     execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): boolean {

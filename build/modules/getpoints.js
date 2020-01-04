@@ -133,7 +133,9 @@ module.exports = (bot, conf, data, lang) => {
             if (rewards.cookies)
                 desc += `\n+${rewards.cookies} Cookies`;
             if (rewards.gems)
-                desc += `\n+${rewards.cookies} Gems`;
+                desc += `\n+${rewards.gems} Gems`;
+            if (rewards.keys)
+                desc += `\n+${rewards.keys} Keys`;
             duser.send({
                 embed: {
                     color: 0x36393f,

@@ -20,6 +20,7 @@ for (let c of [
     'badges',
     'slotmachine',
     'blackjack',
+    'help',
 ])
     exports.commands.push(require(`../commands/${c}`));
 exports.activeInCommandsChannel = [];

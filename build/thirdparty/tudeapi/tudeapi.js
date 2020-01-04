@@ -110,10 +110,11 @@ class TudeApi {
             })
                 .then(o => o.json())
                 .then(o => {
-                o['_org_points'] = o['points'];
-                o['_org_cookies'] = o['cookies'];
-                o['_org_gems'] = o['gems'];
-                o['_org_keys'] = o['keys'];
+                o['_org_points'] = o['points'] || 0;
+                o['_org_cookies'] = o['cookies'] || 0;
+                o['_org_gems'] = o['gems'] || 0;
+                o['_org_keys'] = o['keys'] || 0;
+                o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
             })
                 .catch(err => reject(err));
         });
@@ -141,10 +142,10 @@ class TudeApi {
                 }
                 else {
                     if (o) {
-                        o['_org_points'] = o['points'];
-                        o['_org_cookies'] = o['cookies'];
-                        o['_org_gems'] = o['gems'];
-                        o['_org_keys'] = o['keys'];
+                        o['_org_points'] = o['points'] || 0;
+                        o['_org_cookies'] = o['cookies'] || 0;
+                        o['_org_gems'] = o['gems'] || 0;
+                        o['_org_keys'] = o['keys'] || 0;
                         o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
                     }
                     resolve(o);

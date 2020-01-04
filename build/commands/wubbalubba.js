@@ -5,6 +5,7 @@ module.exports = {
     aliases: [],
     desc: 'JEEZ RICK',
     sudoonly: false,
+    hideonhelp: true,
     execute(bot, mes, sudo, args, repl) {
         let role = mes.guild.roles.find(r => r.id == '496377983494258689');
         if (!role)

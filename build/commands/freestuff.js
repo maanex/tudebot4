@@ -19,6 +19,7 @@ module.exports = {
     aliases: [],
     desc: 'Free stuff announcement tool',
     sudoonly: false,
+    hideonhelp: true,
     execute(bot, mes, sudo, args, repl) {
         let perms = mes.member.hasPermission('MANAGE_CHANNELS') || !!mes.member.roles.find(r => r.name.split(' ').join('').toLowerCase() == 'freestuff');
         if (!perms) {
