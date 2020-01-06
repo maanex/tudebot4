@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const commands_1 = require("../modules/commands");
 const _bigspace = '<:nothing:409254826938204171>';
 const _nopes = [
     'nope',
@@ -25,7 +24,7 @@ module.exports = {
     execute(bot, mes, sudo, args, repl) {
         if (args.length < 1) {
             let text = '';
-            let cmds = commands_1.commands.sort();
+            let cmds = bot.m.commands.getCommands().sort();
             if (!sudo)
                 cmds = cmds.filter(c => !c.sudoonly && !c.hideonhelp);
             let longest = 0;
@@ -39,7 +38,7 @@ module.exports = {
         else {
             let cmd = args[0];
             let command;
-            out: for (let c of commands_1.commands) {
+            out: for (let c of bot.m.commands.getCommands()) {
                 if (c.name === cmd) {
                     command = c;
                     break out;
@@ -70,7 +69,7 @@ module.exports = {
                             fields: [
                                 {
                                     name: 'Aliases',
-                                    value: command.aliases.length ? (command.aliases.join(', ') + _bigspace) : _bigspace,
+                                    value: command.aliases.length ? (command.aliases.join(', ') + _bigspace) : `[${_bigspace}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
                                     inline: true
                                 },
                                 {

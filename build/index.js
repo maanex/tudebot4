@@ -54,19 +54,29 @@ class TudeBot extends discord_js_1.Client {
                     return res[Math.floor(Math.random() * res.length)];
                 return res;
             };
-            this.modules.forEach(mod => {
-                let moddata = {};
-                try {
-                    moddata = require(`../config/moduledata/${mod}.json`);
-                }
-                catch (ex) { }
-                this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
-            });
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
             });
-            this.login(settings.bot.token);
+            database_1.default
+                .collection('settings')
+                .findOne({ _id: 'modules' })
+                .then(data => {
+                data = data.data;
+                this.modules.forEach(mod => {
+                    let moddata = {};
+                    try {
+                        moddata = require(`../config/moduledata/${mod}.json`);
+                    }
+                    catch (ex) { }
+                    this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, lang);
+                });
+                this.login(settings.bot.token);
+            })
+                .catch(err => {
+                console.error('An error occured while fetching module configuration data');
+                console.error(err);
+            });
         });
     }
 }

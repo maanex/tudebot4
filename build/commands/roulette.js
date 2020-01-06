@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const commands_1 = require("../modules/commands");
 const fetch = require('node-fetch');
 const hidethepain = '<:hidethepain:655169782806609921>';
 const images = [
@@ -181,7 +180,7 @@ module.exports = {
                         amount: cookies
                     });
                     currentGame.resolveIn = 5;
-                    if (commands_1.activeInCommandsChannel.length > currentGame.bets.length)
+                    if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.bets.length)
                         currentGame.resolveIn = 10;
                     resolve(true);
                 }
@@ -198,7 +197,7 @@ module.exports = {
                         amount: cookies
                     });
                     currentGame.resolveIn = 2;
-                    if (commands_1.activeInCommandsChannel.length > currentGame.bets.length)
+                    if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.bets.length)
                         currentGame.resolveIn = 10;
                     resolve(true);
                     mes.channel.send({ embed: {

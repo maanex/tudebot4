@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const commands_1 = require("../modules/commands");
 const fetch = require('node-fetch');
 const hit = '✅';
 const stand = '⏸️';
@@ -134,7 +133,7 @@ module.exports = {
                         canDraw: true
                     });
                     currentGame.startIn = 5;
-                    if (commands_1.activeInCommandsChannel.length > currentGame.entries.length)
+                    if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
                         currentGame.startIn = 10;
                     resolve(true);
                 }
@@ -151,7 +150,7 @@ module.exports = {
                         canDraw: true
                     });
                     currentGame.startIn = 2;
-                    if (commands_1.activeInCommandsChannel.length > currentGame.entries.length)
+                    if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
                         currentGame.startIn = 10;
                     resolve(true);
                     mes.channel.send({ embed: {

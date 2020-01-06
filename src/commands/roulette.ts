@@ -2,7 +2,6 @@ import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
-import { activeInCommandsChannel } from "../modules/commands";
 
 const fetch = require('node-fetch');
 
@@ -207,7 +206,7 @@ module.exports = {
                     amount: cookies
                 });
                 currentGame.resolveIn = 5;
-                if (activeInCommandsChannel.length > currentGame.bets.length)
+                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.bets.length)
                     currentGame.resolveIn = 10;
                 resolve(true);
             } else {
@@ -223,7 +222,7 @@ module.exports = {
                     amount: cookies
                 });
                 currentGame.resolveIn = 2;
-                if (activeInCommandsChannel.length > currentGame.bets.length)
+                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.bets.length)
                     currentGame.resolveIn = 10;
                 resolve(true);
                 mes.channel.send({ embed: {

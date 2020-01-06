@@ -113,7 +113,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     // cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start(); TODO error here
 
     return {
-        onUserLevelup(user: ClubUser, newLevel: number, rewards: any) {
+        onUserLevelup(user: ClubUser, newLevel: number, rewards: any): void {
             if (!user.user) return;
             if (!user.user['accounts']) return;
             if (!user.user['accounts']['discord']) return;

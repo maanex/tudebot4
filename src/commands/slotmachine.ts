@@ -2,7 +2,6 @@ import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi, { Badge, ClubUser } from "../thirdparty/tudeapi/tudeapi";
-import { activeInCommandsChannel } from "../modules/commands";
 import { WSAEISCONN } from "constants";
 
 const fetch = require('node-fetch');

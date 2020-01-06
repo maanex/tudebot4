@@ -2,34 +2,29 @@ import { TudeBot } from "index";
 import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord.js";
 import { modlogType, cmesType } from "types";
 import { DbStats } from "../database/dbstats";
+import Database from "../database/database";
 const util = require('../util');
 
-export let commands: Command[] = [];
-for (let c of [
-    'botinfo',
-    'catimg',
-    'dogimg',
-    'jokes',
-    'eval',
-    'wubbalubba',
-    'freestuff',
-    'inspiration',
-    'profile',
-    'uinfo',
-    'roulette',
-    'reload',
-    'daily',
-    'badges',
-    'slotmachine',
-    'blackjack',
-    'help',
-]) commands.push(require(`../commands/${c}`));
+let commands: Command[] = [];
 
-export let activeInCommandsChannel: string[] = [];
+let activeInCommandsChannel: string[] = [];
 let activeInCommandsChannelRemoveTimer = {};
 const ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60_000;
 
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
+
+    function loadCommands() {
+        Database
+            .collection('settings')
+            .findOne({ _id: 'commands' })
+            .then(obj => {
+                for (let c in obj.data)
+                    if (obj.data[c])
+                        commands.push(require(`../commands/${c}`));
+            })
+            .catch(console.error)
+    }
+    loadCommands();
     
     bot.on('message', (mes: Message) => {
         if (mes.author.bot) return;
@@ -83,6 +78,14 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         } else if (sudo) cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
     });
 
+    return {
+        getCommands() {
+            return commands;
+        },
+        getActiveInCommandsChannel() {
+            return activeInCommandsChannel;
+        }
+    }
 }
 
 function cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string, settings?: any) {

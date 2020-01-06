@@ -2,7 +2,6 @@ import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi, { Badge, ClubUser } from "../thirdparty/tudeapi/tudeapi";
-import { activeInCommandsChannel } from "../modules/commands";
 
 const fetch = require('node-fetch');
 
@@ -165,7 +164,7 @@ module.exports = {
                     canDraw: true
                 });
                 currentGame.startIn = 5;
-                if (activeInCommandsChannel.length > currentGame.entries.length)
+                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
                     currentGame.startIn = 10;
                 resolve(true);
             } else {
@@ -181,7 +180,7 @@ module.exports = {
                     canDraw: true
                 });
                 currentGame.startIn = 2;
-                if (activeInCommandsChannel.length > currentGame.entries.length)
+                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
                     currentGame.startIn = 10;
                 resolve(true);
                 mes.channel.send({ embed: {

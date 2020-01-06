@@ -1,32 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const dbstats_1 = require("../database/dbstats");
+const database_1 = require("../database/database");
 const util = require('../util');
-exports.commands = [];
-for (let c of [
-    'botinfo',
-    'catimg',
-    'dogimg',
-    'jokes',
-    'eval',
-    'wubbalubba',
-    'freestuff',
-    'inspiration',
-    'profile',
-    'uinfo',
-    'roulette',
-    'reload',
-    'daily',
-    'badges',
-    'slotmachine',
-    'blackjack',
-    'help',
-])
-    exports.commands.push(require(`../commands/${c}`));
-exports.activeInCommandsChannel = [];
+let commands = [];
+let activeInCommandsChannel = [];
 let activeInCommandsChannelRemoveTimer = {};
 const ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60000;
 module.exports = (bot, conf, data, lang) => {
+    function loadCommands() {
+        database_1.default
+            .collection('settings')
+            .findOne({ _id: 'commands' })
+            .then(obj => {
+            for (let c in obj.data)
+                if (obj.data[c])
+                    commands.push(require(`../commands/${c}`));
+        })
+            .catch(console.error);
+    }
+    loadCommands();
     bot.on('message', (mes) => {
         if (mes.author.bot)
             return;
@@ -48,7 +41,7 @@ module.exports = (bot, conf, data, lang) => {
             }
         }
         let command;
-        out: for (let c of exports.commands) {
+        out: for (let c of commands) {
             if (c.name === cmd) {
                 command = c;
                 break out;
@@ -80,6 +73,14 @@ module.exports = (bot, conf, data, lang) => {
         else if (sudo)
             cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
     });
+    return {
+        getCommands() {
+            return commands;
+        },
+        getActiveInCommandsChannel() {
+            return activeInCommandsChannel;
+        }
+    };
 };
 function cmes(channel, author, text, type, description, settings) {
     if (type == 'error')
@@ -102,17 +103,17 @@ function cmes(channel, author, text, type, description, settings) {
     });
 }
 function updateActiveInCommandsChannel(id) {
-    if (!exports.activeInCommandsChannel.includes(id)) {
-        exports.activeInCommandsChannel.push(id);
+    if (!activeInCommandsChannel.includes(id)) {
+        activeInCommandsChannel.push(id);
         activeInCommandsChannelRemoveTimer[id] = setTimeout(() => {
-            exports.activeInCommandsChannel.splice(exports.activeInCommandsChannel.indexOf(id));
+            activeInCommandsChannel.splice(activeInCommandsChannel.indexOf(id));
             delete activeInCommandsChannelRemoveTimer[id];
         }, ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
     }
     else {
         clearTimeout(activeInCommandsChannelRemoveTimer[id]);
         activeInCommandsChannelRemoveTimer[id] = setTimeout(() => {
-            exports.activeInCommandsChannel.splice(exports.activeInCommandsChannel.indexOf(id));
+            activeInCommandsChannel.splice(activeInCommandsChannel.indexOf(id));
             delete activeInCommandsChannelRemoveTimer[id];
         }, ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
     }

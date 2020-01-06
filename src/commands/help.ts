@@ -2,7 +2,7 @@ import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
-import { commands, Command } from "../modules/commands";
+import { Command } from "../modules/commands";
 
 
 
@@ -37,7 +37,7 @@ module.exports = {
 
         if (args.length < 1) {
             let text = '';
-            let cmds = commands.sort();
+            let cmds = bot.m.commands.getCommands().sort();
             if (!sudo)
                 cmds = cmds.filter(c => !c.sudoonly && !c.hideonhelp);
             let longest = 0;
@@ -50,7 +50,7 @@ module.exports = {
         } else {
             let cmd = args[0];
             let command: Command;
-            out: for (let c of commands) {
+            out: for (let c of bot.m.commands.getCommands()) {
                 if (c.name === cmd) {
                     command = c;
                     break out;
@@ -80,7 +80,7 @@ module.exports = {
                         fields: [
                             {
                                 name: 'Aliases',
-                                value: command.aliases.length ? (command.aliases.join(', ') + _bigspace) : _bigspace,
+                                value: command.aliases.length ? (command.aliases.join(', ') + _bigspace) : `[${_bigspace}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
                                 inline: true
                             },
                             {

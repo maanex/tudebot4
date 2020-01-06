@@ -1,13 +1,14 @@
 import { modlogType } from 'types';
 
 import { Client, Guild, User } from "discord.js";
-import TudeApi from './thirdparty/tudeapi/tudeapi';
+import TudeApi, { ClubUser } from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
 import * as fs from 'fs';
 import Database from './database/database';
 import MongoAdapter from './database/mongo.adapter';
 import { DbStats } from './database/dbstats';
 import { Util } from './util';
+import { Command } from './modules/commands';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -17,7 +18,7 @@ export class TudeBot extends Client {
 
   public modules: string[];
   public modlog: ModLog;
-  public m: any = {};
+  public m: moduledata = {};
 
   constructor(props) {
     super(props);
@@ -59,20 +60,30 @@ export class TudeBot extends Client {
           if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
           return res;
         }
-    
-        this.modules.forEach(mod => {
-          let moddata = {};
-          try { moddata = require(`../config/moduledata/${mod}.json`); }
-          catch (ex) { }
-          this.m[mod] = require(`./modules/${mod}`)(this, settings.modules[mod], moddata, lang);
-        });
-    
+
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
           WCP.send({ status_discord: '+Connected' });
         });
     
-        this.login(settings.bot.token);
+        Database
+          .collection('settings')
+          .findOne({ _id: 'modules' })
+          .then(data => {
+            data = data.data;
+            this.modules.forEach(mod => {
+              let moddata = {};
+              try { moddata = require(`../config/moduledata/${mod}.json`); }
+              catch (ex) { }
+              this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, lang);
+            });
+            
+            this.login(settings.bot.token);
+          })
+          .catch(err => {
+            console.error('An error occured while fetching module configuration data');
+            console.error(err);
+          })
       });
   }
 
@@ -110,6 +121,17 @@ function fixReactionEvent(bot: TudeBot) {
 
 
 /* */
+
+interface moduledata {
+  commands?: {
+    getCommands: () => Command[];
+    getActiveInCommandsChannel: () => string[]
+  };
+  getpoints?: {
+    onUserLevelup: (user: ClubUser, newLevel: number, rewards: any) => void
+  };
+  [key: string]: any;
+}
 
 interface ModLog {
   log: (guild: Guild, type: modlogType, text: string) => void
