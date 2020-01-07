@@ -3,6 +3,7 @@ import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord
 import { modlogType, cmesType } from "types";
 import { DbStats } from "../database/dbstats";
 import Database from "../database/database";
+import WCP from "../thirdparty/wcp/wcp";
 const util = require('../util');
 
 let commands: Command[] = [];
@@ -14,10 +15,12 @@ const ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60_000;
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
     function loadCommands() {
+        commands = [];
         Database
             .collection('settings')
             .findOne({ _id: 'commands' })
             .then(obj => {
+                WCP.send({ config_commands: JSON.stringify(obj.data) });
                 for (let c in obj.data)
                     if (obj.data[c])
                         commands.push(require(`../commands/${c}`));

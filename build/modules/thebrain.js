@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const util = require('../util');
 const nreq = require('request');
+let timeouts = [];
 module.exports = (bot, conf, data, lang) => {
     bot.on('message', (mes) => {
         if (mes.author.bot)
@@ -55,11 +56,11 @@ module.exports = (bot, conf, data, lang) => {
             });
         }
         let sixH = 6 * 60 * 60 * 1000;
-        setTimeout(() => setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5));
+        timeouts.push(setTimeout(() => setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5)));
     }
     function setPlaytext() {
         bot.user.setActivity(getText());
-        setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 60 * 60 * 1000));
+        timeouts.push(setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 60 * 60 * 1000)));
     }
     function getText() {
         let all = data.texts;
@@ -81,5 +82,11 @@ module.exports = (bot, conf, data, lang) => {
         let icon = list[Math.floor(Math.random() * list.length)];
         return icon;
     }
+    return {
+        onDisable() {
+            timeouts.forEach(clearTimeout);
+            timeouts = [];
+        }
+    };
 };
 //# sourceMappingURL=thebrain.js.map

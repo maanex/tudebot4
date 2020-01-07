@@ -8,7 +8,7 @@ module.exports = {
     sudoonly: true,
     execute(bot, mes, sudo, args, repl) {
         tudeapi_1.default.reload();
-        mes.react('✅');
+        bot.reload().then(() => mes.react('✅')).catch();
         return true;
     }
 };

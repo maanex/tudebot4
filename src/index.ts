@@ -9,6 +9,8 @@ import MongoAdapter from './database/mongo.adapter';
 import { DbStats } from './database/dbstats';
 import { Util } from './util';
 import { Command } from './modules/commands';
+import { loadavg } from 'os';
+import { Long } from 'mongodb';
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -16,25 +18,11 @@ const settings = require('../config/settings.json');
 
 export class TudeBot extends Client {
 
-  public modules: string[];
   public modlog: ModLog;
   public m: moduledata = {};
 
   constructor(props) {
     super(props);
-
-    this.modules = [
-      'modlog',
-      'quotes',
-      'counting',
-      'selfroles',
-      'commands',
-      'happybirthday',
-      'thebrain',
-      'memes',
-      'autoleaderboard',
-      'getpoints',
-    ];
 
     fixReactionEvent(this);
 
@@ -53,38 +41,66 @@ export class TudeBot extends Client {
 
         TudeApi.init();
         Database.init();
-    
-        let lang = key => {
-          let res = require(`../config/lang.json`)[key];
-          if (!res) return '';
-          if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
-          return res;
-        }
 
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
           WCP.send({ status_discord: '+Connected' });
         });
     
-        Database
-          .collection('settings')
-          .findOne({ _id: 'modules' })
-          .then(data => {
-            data = data.data;
-            this.modules.forEach(mod => {
-              let moddata = {};
-              try { moddata = require(`../config/moduledata/${mod}.json`); }
-              catch (ex) { }
-              this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, lang);
-            });
-            
-            this.login(settings.bot.token);
-          })
-          .catch(err => {
-            console.error('An error occured while fetching module configuration data');
-            console.error(err);
-          })
+        this.loadModules().then(() => this.login(settings.bot.token)).catch();
       });
+  }
+
+  loadModules(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      Database
+        .collection('settings')
+        .findOne({ _id: 'modules' })
+        .then(data => {
+          data = data.data;
+
+          WCP.send({ config_modules: JSON.stringify(data) });
+          
+          for (let mod of Object.values(this.m)) {
+            if (mod && mod['onDisable'])
+              mod.onDisable();
+          }
+          
+          this.m = {};
+          this.modlog = undefined;
+
+          for (let mod in data) {
+            let moddata = {};
+            try { moddata = require(`../config/moduledata/${mod}.json`); }
+            catch (ex) { }
+            this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, this.lang);
+          }
+          
+          resolve();
+        })
+        .catch(err => {
+          console.error('An error occured while fetching module configuration data');
+          console.error(err);
+          reject(err);
+        })
+    });
+  }
+
+  lang(key: string) {
+    let res = require(`../config/lang.json`)[key];
+    if (!res) return '';
+    if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
+    return res;
+  }
+
+  reload(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      this.removeAllListeners();
+      fixReactionEvent(this);
+      await this.loadModules();
+      this.emit('ready');
+      resolve();
+    });
   }
 
 }

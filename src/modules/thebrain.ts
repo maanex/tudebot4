@@ -4,6 +4,8 @@ const util = require('../util');
 const nreq = require('request');
 
 
+let timeouts = [];
+
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     bot.on('message', (mes: Message) => {
@@ -14,12 +16,12 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     bot.on('ready', () => {
         setTimeout(setPlaytext, 1000);
         setTimeout(setNewIcon, 1000);
-
+        
         // downloadAllImages();
         // convertAllImages();
         // FOOKIN TTS API -> https://translate.google.com/translate_tts?q=Moin%20Jungs%20klenet%20r%C3%A4tsel%20f%C3%BCr%20euch%2C%20wo%20kommt%20das%20ger%C3%A4usch%20her%3F&textlen=211&tk=164713.315041&client=tw-ob&idx=0&total=2&tl=cy&ie=UTF-8
     });
-
+    
     function downloadAllImages() {
         let all = data.icons.random;
         let i = 0;
@@ -37,7 +39,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
             });
         }
     }
-
+    
     function convertAllImages() {
         let num = 4611;
         const sharp = require('sharp')
@@ -48,7 +50,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
             num--;
         }
     }
-
+    
     function setNewIcon(timeoutonly: boolean = true) {
         if (!timeoutonly) {
             var request = nreq.defaults({ encoding: null });
@@ -61,14 +63,14 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
             });
         }
         let sixH = 6 * 60 * 60 * 1000;
-        setTimeout(() => setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5));
+        timeouts.push(setTimeout(() => setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5)));
     }
-
+    
     function setPlaytext() {
         bot.user.setActivity(getText());
-        setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 60 * 60 * 1000));
+        timeouts.push(setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 60 * 60 * 1000)));
     }
-
+    
     function getText() {
         let all = data.texts;
         let category = 'info';
@@ -86,6 +88,13 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         let list = all[category];
         let icon = list[Math.floor(Math.random() * list.length)];
         return icon;
+    }
+    
+    return {
+        onDisable() {
+            timeouts.forEach(clearTimeout);
+            timeouts = [];
+        }
     }
 
 }

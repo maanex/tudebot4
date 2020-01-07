@@ -21,15 +21,15 @@ const _badge_icons = {
         "<:badge_bughunter_killingmonster:656545163736252416>",
     ],
     "3": [
-        "<:badge_events_0:656545163933515795>",
-        "<:badge_events_1:656545164046893076>",
-        "<:badge_events_2:656545164013207572>",
-        "<:badge_events_3:656545163472142346>",
-        "<:badge_events_4:656545164155813888>",
-        "<:badge_events_5:656545163388256308>",
-        "<:badge_events_6:656545163824332810>",
-        "<:badge_events_7:656545163719737364>",
-        "<:badge_events_8:656545163467948102>"
+        "<:badge_events_0:664078624437305344>",
+        "<:badge_events_1:664078625238286336>",
+        "<:badge_events_2:664078626018295839>",
+        "<:badge_events_3:664078625259257856>",
+        "<:badge_events_4:664078624458145812>",
+        "<:badge_events_5:664078624986628098>",
+        "<:badge_events_6:664078624500088862>",
+        "<:badge_events_7:664078624638369812>",
+        "<:badge_events_8:664078624550551565>"
     ],
 };
 module.exports = {

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
+let interval;
 module.exports = (bot, conf, data, lang) => {
     const UPDATE_COOLDOWN = 2 * 60000;
     const UPDATE_EMOJI = '🔄';
@@ -99,7 +100,7 @@ module.exports = (bot, conf, data, lang) => {
             _channels.push(channel);
         }
         let lastmin = 0;
-        setInterval(() => {
+        interval = setInterval(() => {
             let currmin = new Date().getMinutes();
             if (currmin == lastmin)
                 return;
@@ -111,5 +112,11 @@ module.exports = (bot, conf, data, lang) => {
         _channels.forEach(update);
     }
     bot.on('ready', init);
+    return {
+        onDisable() {
+            clearInterval(interval);
+            interval = undefined;
+        }
+    };
 };
 //# sourceMappingURL=autoleaderboard.js.map

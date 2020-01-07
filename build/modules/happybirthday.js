@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+let interval;
 module.exports = (bot, conf, data, lang) => {
     let lastDay = '';
     function check() {
@@ -34,8 +35,14 @@ module.exports = (bot, conf, data, lang) => {
         }, Math.floor(Math.random() * maxdelay), dstr, bot, conf, data);
     }
     bot.on('ready', () => {
-        setInterval(check, 1000 * 60 * 60);
+        interval = setInterval(check, 1000 * 60 * 60);
         check();
     });
+    return {
+        onDisable() {
+            clearInterval(interval);
+            interval = undefined;
+        }
+    };
 };
 //# sourceMappingURL=happybirthday.js.map

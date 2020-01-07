@@ -10,7 +10,10 @@ let pointBags: {[id: string]: number} = { };
 let messagesSentLast5Sec: {[id: string]: number} = { };
 let reactionsAddedLast5Sec: {[id: string]: number} = { };
 
+let cronjobs: cron.CronJob[] = [];
+
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
+
     bot.on('message', mes => {
         if (mes.author.bot) return;
         if (!mes.guild) return;
@@ -108,9 +111,10 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     });
 
     //       ms s m h d m dw
-    cron.job('* 0 * * * * *', regenBags).start();
-    cron.job('* 0 0 * * * *', fillBags).start();
-    // cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start(); TODO error here
+    cronjobs.push(cron.job('* 0 * * * * *', regenBags));
+    cronjobs.push(cron.job('* 0 0 * * * *', fillBags));
+    // cronjobs.push(cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start()); TODO error here
+    cronjobs.forEach(j => j.start());
 
     return {
         onUserLevelup(user: ClubUser, newLevel: number, rewards: any): void {
@@ -140,6 +144,10 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
                 if (!roleid) continue;
                 mem.addRole(guild.roles.find(r => r.id == roleid));
             }
+        },
+        onDisable() {
+            cronjobs.forEach(j => j.stop());
+            cronjobs = [];
         }
     }
 }

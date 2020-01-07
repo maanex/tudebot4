@@ -2,6 +2,9 @@ import { TudeBot } from "index";
 import { Message, TextChannel, Guild, GuildMember, User, MessageReaction } from "discord.js";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
 
+
+let interval: NodeJS.Timeout;
+
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
     const UPDATE_COOLDOWN = 2 * 60_000;
@@ -97,7 +100,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         }
 
         let lastmin = 0;
-        setInterval(() => {
+        interval = setInterval(() => {
             let currmin = new Date().getMinutes();
             if (currmin == lastmin) return;
             lastmin = currmin;
@@ -107,5 +110,12 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         _channels.forEach(update);
     }
     bot.on('ready', init);
+
+    return {
+        onDisable() {
+            clearInterval(interval);
+            interval = undefined;
+        }
+    }
 
 }

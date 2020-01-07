@@ -14,7 +14,7 @@ module.exports = {
     
     execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void): boolean {
         TudeApi.reload();
-        mes.react('✅');
+        bot.reload().then(() => mes.react('✅')).catch();
         return true;
     }
 

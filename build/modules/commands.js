@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const dbstats_1 = require("../database/dbstats");
 const database_1 = require("../database/database");
+const wcp_1 = require("../thirdparty/wcp/wcp");
 const util = require('../util');
 let commands = [];
 let activeInCommandsChannel = [];
@@ -9,10 +10,12 @@ let activeInCommandsChannelRemoveTimer = {};
 const ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60000;
 module.exports = (bot, conf, data, lang) => {
     function loadCommands() {
+        commands = [];
         database_1.default
             .collection('settings')
             .findOne({ _id: 'commands' })
             .then(obj => {
+            wcp_1.default.send({ config_commands: JSON.stringify(obj.data) });
             for (let c in obj.data)
                 if (obj.data[c])
                     commands.push(require(`../commands/${c}`));

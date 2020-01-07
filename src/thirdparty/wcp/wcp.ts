@@ -1,7 +1,8 @@
 
 import { User as DiscordUser } from "discord.js";
 import { hook_std } from "./stdutils";
-import { Core } from "../../index";
+import { Core, TudeBot } from "../../index";
+import Database from "../../database/database";
 
 
 const freestuffCmd = require("../../commands/freestuff");
@@ -21,6 +22,8 @@ export interface WcpData {
     status_current_latest_build?: string;
     status_current_last_sync?: string;
     status_current_build_status?: string;
+    config_modules?: string,
+    config_commands?: string,
     running?: boolean;
     sysout?: string;
     syserr?: string;
@@ -51,6 +54,8 @@ export default class WCP {
             status_current_latest_build: '4.0',
             status_current_last_sync: new Date().toString(),
             status_current_build_status: 'Success',
+            config_modules: '',
+            config_commands: '',
         });
 
         let c = 0;
@@ -87,6 +92,27 @@ export default class WCP {
 
         if (data.new_freestuff) {
             freestuffCmd.announce(Core.guilds.get('432899162150010901'), data.new_freestuff);
+        }
+
+        if (data.configure_modules) {
+            let obj = JSON.parse(data.configure_modules);
+            if (obj) {
+                Database
+                    .collection('settings')
+                    .updateOne({ _id: 'modules' }, { '$set': { data: obj }});
+                console.log(chalk.blue('Module settings got updated remotely. Reloading.'))
+                Core.reload();
+            }
+        }
+        if (data.configure_commands) {
+            let obj = JSON.parse(data.configure_commands);
+            if (obj) {
+                Database
+                    .collection('settings')
+                    .updateOne({ _id: 'commands' }, { '$set': { data: obj }});
+                console.log(chalk.blue('Command settings got updated remotely. Reloading.'))
+                Core.reload();
+            }
         }
     }
 

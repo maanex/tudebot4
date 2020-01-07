@@ -3,6 +3,8 @@ import { TudeBot } from "index";
 import { GuildMember, TextChannel } from "discord.js";
 
 
+let interval: NodeJS.Timeout;
+
 module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     let lastDay = '';
@@ -38,9 +40,16 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     }
 
     bot.on('ready', () => {        
-        setInterval(check, 1000 * 60 * 60);
+        interval = setInterval(check, 1000 * 60 * 60);
         check();
     });
+
+    return {
+        onDisable() {
+            clearInterval(interval);
+            interval = undefined;
+        }
+    }
 
     
 }

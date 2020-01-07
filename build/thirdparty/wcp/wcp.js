@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const stdutils_1 = require("./stdutils");
 const index_1 = require("../../index");
+const database_1 = require("../../database/database");
 const freestuffCmd = require("../../commands/freestuff");
 const fetch = require('node-fetch');
 const chalk = require('chalk');
@@ -24,6 +25,8 @@ class WCP {
             status_current_latest_build: '4.0',
             status_current_last_sync: new Date().toString(),
             status_current_build_status: 'Success',
+            config_modules: '',
+            config_commands: '',
         });
         let c = 0;
         setInterval(() => {
@@ -57,6 +60,26 @@ class WCP {
             return;
         if (data.new_freestuff) {
             freestuffCmd.announce(index_1.Core.guilds.get('432899162150010901'), data.new_freestuff);
+        }
+        if (data.configure_modules) {
+            let obj = JSON.parse(data.configure_modules);
+            if (obj) {
+                database_1.default
+                    .collection('settings')
+                    .updateOne({ _id: 'modules' }, { '$set': { data: obj } });
+                console.log(chalk.blue('Module settings got updated remotely. Reloading.'));
+                index_1.Core.reload();
+            }
+        }
+        if (data.configure_commands) {
+            let obj = JSON.parse(data.configure_commands);
+            if (obj) {
+                database_1.default
+                    .collection('settings')
+                    .updateOne({ _id: 'commands' }, { '$set': { data: obj } });
+                console.log(chalk.blue('Command settings got updated remotely. Reloading.'));
+                index_1.Core.reload();
+            }
         }
     }
 }

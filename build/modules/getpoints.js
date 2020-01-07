@@ -7,6 +7,7 @@ const max_totalValue = 30;
 let pointBags = {};
 let messagesSentLast5Sec = {};
 let reactionsAddedLast5Sec = {};
+let cronjobs = [];
 module.exports = (bot, conf, data, lang) => {
     bot.on('message', mes => {
         if (mes.author.bot)
@@ -115,9 +116,10 @@ module.exports = (bot, conf, data, lang) => {
             .catch();
     });
     //       ms s m h d m dw
-    cron.job('* 0 * * * * *', regenBags).start();
-    cron.job('* 0 0 * * * *', fillBags).start();
-    // cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start(); TODO error here
+    cronjobs.push(cron.job('* 0 * * * * *', regenBags));
+    cronjobs.push(cron.job('* 0 0 * * * *', fillBags));
+    // cronjobs.push(cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start()); TODO error here
+    cronjobs.forEach(j => j.start());
     return {
         onUserLevelup(user, newLevel, rewards) {
             if (!user.user)
@@ -155,6 +157,10 @@ module.exports = (bot, conf, data, lang) => {
                     continue;
                 mem.addRole(guild.roles.find(r => r.id == roleid));
             }
+        },
+        onDisable() {
+            cronjobs.forEach(j => j.stop());
+            cronjobs = [];
         }
     };
 };

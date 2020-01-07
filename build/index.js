@@ -21,18 +21,6 @@ class TudeBot extends discord_js_1.Client {
     constructor(props) {
         super(props);
         this.m = {};
-        this.modules = [
-            'modlog',
-            'quotes',
-            'counting',
-            'selfroles',
-            'commands',
-            'happybirthday',
-            'thebrain',
-            'memes',
-            'autoleaderboard',
-            'getpoints',
-        ];
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init();
@@ -46,38 +34,60 @@ class TudeBot extends discord_js_1.Client {
             wcp_1.default.send({ status_mongodb: '+Connected' });
             tudeapi_1.default.init();
             database_1.default.init();
-            let lang = key => {
-                let res = require(`../config/lang.json`)[key];
-                if (!res)
-                    return '';
-                if (res.length !== undefined)
-                    return res[Math.floor(Math.random() * res.length)];
-                return res;
-            };
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
             });
+            this.loadModules().then(() => this.login(settings.bot.token)).catch();
+        });
+    }
+    loadModules() {
+        return new Promise((resolve, reject) => {
             database_1.default
                 .collection('settings')
                 .findOne({ _id: 'modules' })
                 .then(data => {
                 data = data.data;
-                this.modules.forEach(mod => {
+                wcp_1.default.send({ config_modules: JSON.stringify(data) });
+                for (let mod of Object.values(this.m)) {
+                    if (mod && mod['onDisable'])
+                        mod.onDisable();
+                }
+                this.m = {};
+                this.modlog = undefined;
+                for (let mod in data) {
                     let moddata = {};
                     try {
                         moddata = require(`../config/moduledata/${mod}.json`);
                     }
                     catch (ex) { }
-                    this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, lang);
-                });
-                this.login(settings.bot.token);
+                    this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, this.lang);
+                }
+                resolve();
             })
                 .catch(err => {
                 console.error('An error occured while fetching module configuration data');
                 console.error(err);
+                reject(err);
             });
         });
+    }
+    lang(key) {
+        let res = require(`../config/lang.json`)[key];
+        if (!res)
+            return '';
+        if (res.length !== undefined)
+            return res[Math.floor(Math.random() * res.length)];
+        return res;
+    }
+    reload() {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            this.removeAllListeners();
+            fixReactionEvent(this);
+            yield this.loadModules();
+            this.emit('ready');
+            resolve();
+        }));
     }
 }
 exports.TudeBot = TudeBot;
