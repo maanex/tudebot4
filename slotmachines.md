@@ -1,6 +1,6 @@
 
-Cookiewheel
-10 entry
+# Cookiewheel
+> 10 entry
 
 3 gold . . . . . . . . . 0.4% . . . checkpot 1.000
 2 gold . . . . . . . . . 2.7% . . . small checkpot 200
@@ -11,8 +11,8 @@ Cookiewheel
 
 
 
-Nicer Dicer
-200 entry
+# Nicer Dicer
+> 200 entry
 
 straight in order. . . . 0.05%. . . checkpot 1.000.000
 5 same . . . . . . . . . 0.07%. . . bigpot 10.000
@@ -28,8 +28,8 @@ avrg +1 cookie each round
 
 
 
-Dancemaster
-30 entry
+# Dancemaster
+> 30 entry
 
 3 in a line. . . . . . . idk. . . . consolation prize 10
 only 2 colors on screen. 7.8% . . . win 300
@@ -37,14 +37,14 @@ only 1 color on screen . 0.015% . . checkpot 100.000
 
 
 
-Turbocharger
-90 entry
+# Turbocharger
+> 90 entry
 
 each lamp on . . . . . . 1.56%. . . winner 6000
 
 
 
-Tubes
+# Tubes
 
 idee: so
 ---| |---

@@ -19,12 +19,14 @@ class TudeApi {
                 users: 'club/users/',
                 memes: 'club/memes/',
                 badges: 'club/badges/',
-                leaderboard: 'club/leaderboard/'
+                leaderboard: 'club/leaderboard/',
+                lang: 'club/lang/',
+                items: 'club/items/'
             }
         };
     }
     //
-    static init() {
+    static init(language) {
         fetch(this.baseurl + this.endpoints.club.badges, {
             method: 'get',
             headers: { 'auth': this.key },
@@ -38,9 +40,41 @@ class TudeApi {
             console.error(err);
             wcp_js_1.default.send({ status_tudeapi: '-Connection failed' });
         });
+        //
+        fetch(this.baseurl + this.endpoints.club.lang + language, {
+            method: 'get',
+            headers: { 'auth': this.key },
+        })
+            .then(o => o.json())
+            .then(o => this.clubLang = o)
+            .catch(console.error);
+        //
+        fetch(this.baseurl + this.endpoints.club.items, {
+            method: 'get',
+            headers: { 'auth': this.key },
+        })
+            .then(o => o.json())
+            .then(o => {
+            for (let i of o) {
+                let item = {
+                    id: i.id,
+                    name: this.clubLang['item_' + i.id],
+                    category: { id: i.cat, name: this.clubLang['itemcategory_' + i.cat] },
+                    type: { id: i.type, name: this.clubLang['itemtype_' + i.type] },
+                    amount: 0,
+                    meta: {},
+                    expanded: (i.prop & 0b0001) != 0,
+                    tradeable: (i.prop & 0b0010) != 0,
+                    sellable: (i.prop & 0b0100) != 0,
+                    purchaseable: (i.prop & 0b1000) != 0,
+                };
+                this.items.push(item);
+            }
+        })
+            .catch(console.error);
     }
     static reload() {
-        this.init();
+        this.init(this.clubLang._id);
     }
     //
     static userById(id) {
@@ -227,4 +261,6 @@ class TudeApi {
 }
 exports.default = TudeApi;
 TudeApi.badges = [];
+TudeApi.items = [];
+TudeApi.clubLang = {};
 //# sourceMappingURL=tudeapi.js.map

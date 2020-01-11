@@ -39,7 +39,7 @@ export class TudeBot extends Client {
         console.log('Connected to Mongo');
         WCP.send({ status_mongodb: '+Connected' });
 
-        TudeApi.init();
+        TudeApi.init(settings.lang);
         Database.init();
 
         this.on('ready', () => {

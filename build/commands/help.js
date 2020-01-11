@@ -63,6 +63,14 @@ module.exports = {
                     repl(mes.channel, mes.author, 'Help', 'message', helphelp(mes.author));
                 }
                 else {
+                    let easteregg = [];
+                    if (Math.random() < 0.1) {
+                        easteregg.push({
+                            name: 'Hotel',
+                            value: 'Trivago',
+                            inline: true
+                        });
+                    }
                     mes.channel.send({ embed: {
                             title: command.name,
                             description: command.desc,
@@ -76,7 +84,7 @@ module.exports = {
                                     name: 'Allowed',
                                     value: command.sudoonly ? _nopes[Math.floor(Math.random() * _nopes.length)] : _yeses[Math.floor(Math.random() * _yeses.length)],
                                     inline: true
-                                }
+                                }, ...easteregg
                             ]
                         } });
                 }

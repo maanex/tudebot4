@@ -32,7 +32,7 @@ class TudeBot extends discord_js_1.Client {
             .then(() => {
             console.log('Connected to Mongo');
             wcp_1.default.send({ status_mongodb: '+Connected' });
-            tudeapi_1.default.init();
+            tudeapi_1.default.init(settings.lang);
             database_1.default.init();
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));

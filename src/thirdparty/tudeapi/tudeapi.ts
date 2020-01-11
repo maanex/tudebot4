@@ -59,7 +59,22 @@ export interface Leaderboard {
     updated: number;
 }
 
-export type ClubAction = { id: 'claim_daily_reward' }/* | { id: 'test', a: number }*/;
+export interface Item {
+    id: string;
+    name: string;
+    category: { id: string, name: string };
+    type: { id: string, name: string };
+    amount: number;
+    meta: any;
+    expanded: boolean;
+    tradeable: boolean;
+    sellable: boolean;
+    purchaseable: boolean;
+}
+
+export type ClubAction = { id: 'claim_daily_reward' }
+                       | { id: 'transaction', type: 'cookies' | string, amount: number }
+                       ;
 
 export default class TudeApi {
 
@@ -79,16 +94,21 @@ export default class TudeApi {
                 users: 'club/users/',
                 memes: 'club/memes/',
                 badges: 'club/badges/',
-                leaderboard: 'club/leaderboard/'
+                leaderboard: 'club/leaderboard/',
+                lang: 'club/lang/',
+                items: 'club/items/'
             }
         }
     }
 
     public static badges: Badge[] = [];
+    public static items: Item[] = [];
+
+    public static clubLang: any = {};
 
     //
 
-    public static init() {
+    public static init(language: 'en' | 'de') {
         fetch(this.baseurl + this.endpoints.club.badges, {
             method: 'get',
             headers: { 'auth': this.key },
@@ -102,10 +122,45 @@ export default class TudeApi {
                 console.error(err);
                 WCP.send({ status_tudeapi: '-Connection failed' });
             });
+        //
+
+        fetch(this.baseurl + this.endpoints.club.lang + language, {
+            method: 'get',
+            headers: { 'auth': this.key },
+        })
+            .then(o => o.json())
+            .then(o => this.clubLang = o)
+            .catch(console.error);
+
+        //
+
+        fetch(this.baseurl + this.endpoints.club.items, {
+            method: 'get',
+            headers: { 'auth': this.key },
+        })
+            .then(o => o.json())
+            .then(o => {
+                for (let i of o) {
+                    let item: Item = {
+                        id: i.id,
+                        name: this.clubLang['item_' + i.id],
+                        category: { id: i.cat, name: this.clubLang['itemcategory_' + i.cat] },
+                        type: { id: i.type, name: this.clubLang['itemtype_' + i.type] },
+                        amount: 0,
+                        meta: {},
+                        expanded: (i.prop & 0b0001) != 0,
+                        tradeable: (i.prop & 0b0010) != 0,
+                        sellable: (i.prop & 0b0100) != 0,
+                        purchaseable: (i.prop & 0b1000) != 0,
+                    };
+                    this.items.push(item);
+                }
+            })
+            .catch(console.error);
     }
 
     public static reload() {
-        this.init();   
+        this.init(this.clubLang._id);   
     }
 
     //
