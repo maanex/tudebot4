@@ -1,1 +1,0 @@
-{"version":3,"file":"botinfo.js","sourceRoot":"","sources":["../../src/commands/botinfo.ts"],"names":[],"mappings":";;AAKA,MAAM,CAAC,OAAO,GAAG;IAEb,IAAI,EAAE,SAAS;IACf,OAAO,EAAE;QACL,UAAU;KACb;IACD,IAAI,EAAE,UAAU;IAChB,QAAQ,EAAE,IAAI;IAGd,OAAO,CAAC,GAAY,EAAE,GAAY,EAAE,IAAa,EAAE,IAAc,EAAE,IAA6E;QAE5I,OAAO,IAAI,CAAC;IAChB,CAAC;CAEJ,CAAA"}
