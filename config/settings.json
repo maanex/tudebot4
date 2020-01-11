@@ -1,19 +1,19 @@
 {
     "__comment": "Tokens have already been replaced",
     "bot": {
-        "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.Dm8rIg.pmUM94dgHxnbKUFh0IaH2KAE1kE",
-        "tokenp": "NTkxOTgyMTQ2MTY0MzU5MTc1.XcRbNg.c6PyqA2b1tTxS50p-7CmYs-F0Gs"
+        "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.XhpTRg.wwBet20eVpxLB5Szocs3WpoXh9U",
+        "tokenp": "NTkxOTgyMTQ2MTY0MzU5MTc1.XhpTUg.pQqs0_4oUFJKm_JrCH96Sepg67w"
     },
     "mongodb": {
         "url": "mongodb://127.0.0.1:27017/admin"
     },
     "thirdparty": {
         "tudeapi": {
-            "key": "NHjdi2kma882jHdmk488jHd92m4jfJda",
+            "key": "NHjdi3kma882jHdmk488jHd92m4jfJda",
             "baseurl": "http://localhost:8080/"
         },
         "wcp": {
-            "secret": "6UT-3DzBojvFeUyc",
+            "secret": "6UT-3DzBojBFeUyc",
             "endpoint": "http://localhost:9009/api/tudebot"
         }
     },
