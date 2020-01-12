@@ -2,6 +2,7 @@ import { TudeBot } from "index";
 import { Message, Channel, User, WebhookClient, Guild } from "discord.js";
 import { cmesType } from "types";
 
+// DON'T YOU DARE
 const webhook_ = new WebhookClient('624336954883964929', 'HIihM3zMASjT_FHzKSYCSKI6xiePqSNIfUozeEI62YYqVlv1iRIuQALDiDxpxZ5EucLm');
 const webhook = new WebhookClient('640653556092764161', 'C_ecNpjhkGWUXHZY19rbCYV0TBh5NiQyXeZ8XJJ7t5T2_mylW4oH0rwMjls2F1KsMI0p');
 const roleid_ = '640659864988811275';
