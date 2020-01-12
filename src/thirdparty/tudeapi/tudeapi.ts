@@ -108,7 +108,7 @@ export default class TudeApi {
 
     //
 
-    public static init(language: 'en' | 'de') {
+    public static async init(language: 'en' | 'de') {
         fetch(this.baseurl + this.endpoints.club.badges, {
             method: 'get',
             headers: { 'auth': this.key },
@@ -124,39 +124,44 @@ export default class TudeApi {
             });
         //
 
-        fetch(this.baseurl + this.endpoints.club.lang + language, {
-            method: 'get',
-            headers: { 'auth': this.key },
-        })
-            .then(o => o.json())
-            .then(o => this.clubLang = o)
-            .catch(console.error);
-
+        let langLoaded = () => {
+            fetch(this.baseurl + this.endpoints.club.items, {
+                method: 'get',
+                headers: { 'auth': this.key },
+            })
+                .then(o => o.json())
+                .then(o => {
+                    for (let i of o) {
+                        let item: Item = {
+                            id: i.id,
+                            name: this.clubLang['item_' + i.id],
+                            category: { id: i.cat, name: this.clubLang['itemcategory_' + i.cat] },
+                            type: { id: i.type, name: this.clubLang['itemtype_' + i.type] },
+                            amount: 0,
+                            meta: {},
+                            expanded: (i.prop & 0b0001) != 0,
+                            tradeable: (i.prop & 0b0010) != 0,
+                            sellable: (i.prop & 0b0100) != 0,
+                            purchaseable: (i.prop & 0b1000) != 0,
+                        };
+                        this.items.push(item);
+                    }
+                })
+                .catch(console.error);
+        }
         //
 
-        fetch(this.baseurl + this.endpoints.club.items, {
+        await fetch(this.baseurl + this.endpoints.club.lang + language, {
             method: 'get',
             headers: { 'auth': this.key },
         })
             .then(o => o.json())
             .then(o => {
-                for (let i of o) {
-                    let item: Item = {
-                        id: i.id,
-                        name: this.clubLang['item_' + i.id],
-                        category: { id: i.cat, name: this.clubLang['itemcategory_' + i.cat] },
-                        type: { id: i.type, name: this.clubLang['itemtype_' + i.type] },
-                        amount: 0,
-                        meta: {},
-                        expanded: (i.prop & 0b0001) != 0,
-                        tradeable: (i.prop & 0b0010) != 0,
-                        sellable: (i.prop & 0b0100) != 0,
-                        purchaseable: (i.prop & 0b1000) != 0,
-                    };
-                    this.items.push(item);
-                }
+                this.clubLang = o;
+                langLoaded();
             })
             .catch(console.error);
+        //
     }
 
     public static reload() {

@@ -20,7 +20,7 @@ module.exports = {
 
         try {
             if (args.length == 0) {
-                repl(mes.channel, mes.author, 'admin <cmd>', 'message', 'setupchannelgames <channel>');
+                repl(mes.channel, mes.author, 'admin <cmd>', 'message', '• setupchannelgames <channel>\n• itemlist');
                 return false;
             }
 
@@ -52,6 +52,10 @@ module.exports = {
                         }});
                         repl(mes.channel, mes.author, 'Success!', 'message', `Lake:\n"${lakeIds.join('","')}"\n\nMine:\n"${mineIds.join('","')}"`);
                     }; run();
+                    break;
+
+                case 'itemlist':
+                    repl(mes.channel, mes.author, 'Items:', 'message', TudeApi.items.map(i => i.id + ': ' + i.name).join('\n'));
                     break;
             }
             return true;
