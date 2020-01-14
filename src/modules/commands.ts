@@ -41,12 +41,17 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         let cmd = args.splice(0, 1)[0].toLowerCase();
 
         let sudo = false;
-        if (cmd === 'sudo') {
+        if (cmd === 'sudo' || cmd.charAt(0) == '$') {
             sudo = true;
-            cmd = args.splice(0, 1)[0].toLowerCase();
-            if (!cmd) {
-                cmes(mes.channel, mes.author, '`sudo <command> [args..]`')
-                return;
+            if (cmd.charAt(0) == '$') {
+                cmd = cmd.substring(1);
+                if (!cmd) return;
+            } else {
+                cmd = args.splice(0, 1)[0].toLowerCase();
+                if (!cmd) {
+                    cmes(mes.channel, mes.author, '`sudo <command> [args..]`')
+                    return;
+                }
             }
         }
 

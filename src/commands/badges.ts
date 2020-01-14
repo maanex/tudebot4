@@ -120,8 +120,7 @@ module.exports = {
                         color: 0x36393f,
                         fields: badges,
                         image: { url: (badges.length || !banana) ? '' : 'https://cdn.discordapp.com/attachments/655354019631333397/656567439391326228/banana.png' },
-                        footer: { text: (badges.length || banana) ? '' : `${user.username}'s got no badges, pal!` },
-                        description: !badges.length && banana ? 'Empathy banana is here for you.' : '',
+                        description: !badges.length && banana ? 'Empathy banana is here for you.' : '... *none*',
                     }
                 });
                 resolve(true);

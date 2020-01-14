@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import Database from './database/database';
 import MongoAdapter from './database/mongo.adapter';
 import { DbStats } from './database/dbstats';
-import { Util } from './util';
+import { Util } from './util/util';
 import { Command } from './modules/commands';
 import { loadavg } from 'os';
 import { Long } from 'mongodb';
@@ -35,19 +35,22 @@ export class TudeBot extends Client {
         console.error(err);
         WCP.send({ status_mongodb: '-Connection failed' });
       })
-      .then(() => {
+      .then(async () => {
         console.log('Connected to Mongo');
         WCP.send({ status_mongodb: '+Connected' });
 
-        TudeApi.init(settings.lang);
-        Database.init();
+        await TudeApi.init(settings.lang);
+        await Database.init();
 
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
           WCP.send({ status_discord: '+Connected' });
         });
     
-        this.loadModules().then(() => this.login(settings.bot.token)).catch();
+        await this.loadModules();
+        this.login(settings.bot.token);
+        // TODO
+        // TudeApi.clubUserById('42').then(u => console.log(u.inventory))
       });
   }
 

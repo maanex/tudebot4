@@ -46,8 +46,14 @@ module.exports = {
                 let footer = `${u.points}pt`;
                 let icon = undefined;
                 let xpbar ='';
-                let stats = `${_bigspace}\n:cookie: ${u.cookies} ${_bigspace} :gem: ${u.gems}`;
-                if (u.keys > 0) stats += ` ${_bigspace} :key: ${u.keys}`;
+                let stats = `${_bigspace}`;
+                let statItems = [ `:cookie: ${u.cookies}`, `:gem: ${u.gems}` ];
+                if (u.keys > 0) statItems.push(`:key: ${u.keys}`);
+                if (u.inventory.length > 0) statItems.push(`:package: ${u.inventory.length}`);
+                
+                let c = 0;
+                for (let si of statItems)
+                    stats += (c++ % 3 == 0 ? '\n\n' : ` ${_bigspace} `) + si;
                 
                 let prog13 = Math.floor(u.level_progress * 13);
                 if (prog13 == 0) xpbar += _xpbar.left_empty;

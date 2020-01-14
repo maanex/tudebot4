@@ -5,6 +5,7 @@ import { rejects } from "assert";
 
 import WCP from "../../thirdparty/wcp/wcp.js";
 import { Core } from "../../index";
+import { getItemIcon } from "./itemiconlist";
 
 const fetch = require('node-fetch');
 
@@ -34,6 +35,7 @@ export interface ClubUser {
         '4': number; '5': number; '6': number;
         '7': number; '8': number; '9': number;
     };
+    inventory: Item[];
     profile: {
         disp_badge: number;
     };
@@ -61,15 +63,17 @@ export interface Leaderboard {
 
 export interface Item {
     id: string;
+    ref: string;
     name: string;
-    category: { id: string, name: string };
-    type: { id: string, name: string };
+    category: { id: string, name: string, namepl: string };
+    type: { id: string, name: string, namepl: string };
     amount: number;
     meta: any;
     expanded: boolean;
     tradeable: boolean;
     sellable: boolean;
     purchaseable: boolean;
+    icon: string;
 }
 
 export type ClubAction = { id: 'claim_daily_reward' }
@@ -108,60 +112,75 @@ export default class TudeApi {
 
     //
 
-    public static async init(language: 'en' | 'de') {
-        fetch(this.baseurl + this.endpoints.club.badges, {
-            method: 'get',
-            headers: { 'auth': this.key },
-        })
-            .then(o => o.json())
-            .then(o => {
-                this.badges = o;
-                WCP.send({ status_tudeapi: '+Connected' });
-            })
-            .catch(err => {
-                console.error(err);
-                WCP.send({ status_tudeapi: '-Connection failed' });
-            });
-        //
-
-        let langLoaded = () => {
-            fetch(this.baseurl + this.endpoints.club.items, {
+    public static init(language: 'en' | 'de'): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            fetch(this.baseurl + this.endpoints.club.badges, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
                 .then(o => o.json())
                 .then(o => {
-                    for (let i of o) {
-                        let item: Item = {
-                            id: i.id,
-                            name: this.clubLang['item_' + i.id],
-                            category: { id: i.cat, name: this.clubLang['itemcategory_' + i.cat] },
-                            type: { id: i.type, name: this.clubLang['itemtype_' + i.type] },
-                            amount: 0,
-                            meta: {},
-                            expanded: (i.prop & 0b0001) != 0,
-                            tradeable: (i.prop & 0b0010) != 0,
-                            sellable: (i.prop & 0b0100) != 0,
-                            purchaseable: (i.prop & 0b1000) != 0,
-                        };
-                        this.items.push(item);
-                    }
+                    this.badges = o;
+                    WCP.send({ status_tudeapi: '+Connected' });
                 })
-                .catch(console.error);
-        }
-        //
+                .catch(err => {
+                    console.error(err);
+                    WCP.send({ status_tudeapi: '-Connection failed' });
+                });
+            //
+            
+            this.items = [];
 
-        await fetch(this.baseurl + this.endpoints.club.lang + language, {
-            method: 'get',
-            headers: { 'auth': this.key },
-        })
-            .then(o => o.json())
-            .then(o => {
-                this.clubLang = o;
-                langLoaded();
+            let langLoaded = () => {
+                fetch(this.baseurl + this.endpoints.club.items, {
+                    method: 'get',
+                    headers: { 'auth': this.key },
+                })
+                    .then(o => o.json())
+                    .then(o => {
+                        for (let i of o) {
+                            let item: Item = {
+                                id: i.id,
+                                ref: i.id,
+                                name: this.clubLang['item_' + i.id] || i.id,
+                                category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
+                                type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
+                                amount: 0,
+                                meta: {},
+                                expanded: (i.prop & 0b0001) != 0,
+                                tradeable: (i.prop & 0b0010) != 0,
+                                sellable: (i.prop & 0b0100) != 0,
+                                purchaseable: (i.prop & 0b1000) != 0,
+                                icon: getItemIcon(i.id),
+                            };
+                            this.items.push(item);
+                        }
+                        resolve();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        reject();
+                    });
+            }
+            //
+
+            await fetch(this.baseurl + this.endpoints.club.lang + language, {
+                method: 'get',
+                headers: { 'auth': this.key },
             })
-            .catch(console.error);
-        //
+                .then(o => o.json())
+                .then(o => {
+                    this.clubLang = o;
+                    langLoaded();
+                })
+                .catch(err => {
+                    console.error(err);
+                    langLoaded(); // Yes it's not loaded but whatever, they'll have to handle it without a lang file then, I don't care
+                    reject();
+                });
+            //
+
+        });
     }
 
     public static reload() {
@@ -236,11 +255,19 @@ export default class TudeApi {
             })
                 .then(o => o.json())
                 .then(o => {
-                    o['_org_points'] = o['points'] || 0;
-                    o['_org_cookies'] = o['cookies'] || 0;
-                    o['_org_gems'] = o['gems'] || 0;
-                    o['_org_keys'] = o['keys'] || 0;
-                    o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
+                    o['_raw_inventory'] = o.inventory;
+                    o.inventory = [];
+                    for (let ref in o['_raw_inventory'])
+                        o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));
+
+                    if (o) {
+                        o['_org_points'] = o['points'] || 0;
+                        o['_org_cookies'] = o['cookies'] || 0;
+                        o['_org_gems'] = o['gems'] || 0;
+                        o['_org_keys'] = o['keys'] || 0;
+                        o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
+                    }
+                    resolve(o);
                 })
                 .catch(err => reject(err));
         });
@@ -267,6 +294,11 @@ export default class TudeApi {
                             resolve(this.clubUserByDiscordId(id));
                         }).catch(err => resolve(o));
                     } else {
+                        o['_raw_inventory'] = o.inventory;
+                        o.inventory = [];
+                        for (let ref in o['_raw_inventory'])
+                            o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));
+
                         if (o) {
                             o['_org_points'] = o['points'] || 0;
                             o['_org_cookies'] = o['cookies'] || 0;
@@ -353,6 +385,28 @@ export default class TudeApi {
                 })
                 .catch(err => reject());
         });
+    }
+
+    private static parseItem(ref: string, item: any): Item {
+        let id = ref.startsWith('_') ? item.id : ref;
+        let amount = item.amount == undefined ? 1 : item.amount;
+        let meta = item.meta == undefined ? {} : item.meta;
+        let preset = this.items.find(i => i.id == id) || {} as any;
+
+        return {
+            id: id,
+            ref: ref,
+            amount: amount,
+            meta: meta,
+            category: preset.category,
+            name: preset.name,
+            expanded: preset.expanded,
+            sellable: preset.sellable,
+            purchaseable: preset.purchaseable,
+            tradeable: preset.tradeable,
+            type: preset.type,
+            icon: preset.icon,
+        }
     }
 
 }
