@@ -16,6 +16,7 @@ module.exports = {
         if (mes.author.id !== '137258778092503042') return false;
 
         try {
+            let tapi = TudeApi;
             TudeApi.clubUserByDiscordId(mes.author.id).then(self => {
                 repl(mes.channel, mes.author, eval(args.join(' ')));
             }).catch(ex => {

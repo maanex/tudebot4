@@ -35,7 +35,7 @@ export interface ClubUser {
         '4': number; '5': number; '6': number;
         '7': number; '8': number; '9': number;
     };
-    inventory: Item[];
+    inventory: Map<string, Item>;
     profile: {
         disp_badge: number;
     };
@@ -295,9 +295,9 @@ export default class TudeApi {
                         }).catch(err => resolve(o));
                     } else {
                         o['_raw_inventory'] = o.inventory;
-                        o.inventory = [];
+                        o.inventory = new Map<string, Item>();
                         for (let ref in o['_raw_inventory'])
-                            o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));
+                            o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
 
                         if (o) {
                             o['_org_points'] = o['points'] || 0;

@@ -36,7 +36,7 @@ module.exports = {
                     return;
                 }
 
-                if (!u.inventory || !u.inventory.length) {
+                if (!u.inventory || !u.inventory.size) {
                     let wow = Math.random() < .1;
                     mes.channel.send({ embed: {
                         author: {
@@ -54,7 +54,7 @@ module.exports = {
                 
                 let fields: {[cat: string]: Item[]} = { };
 
-                for (let i of u.inventory) {
+                for (let i of u.inventory.values()) {
                     if (fields[i.category.id]) fields[i.category.id].push(i);
                     else fields[i.category.id] = [i];
                 }
@@ -62,9 +62,18 @@ module.exports = {
                 if (cmdl.t || cmdl.table) {
                     var table = new AsciiTable();
                     table.setHeading('id', 'amount', 'category', 'type', 'ref');
-                    for (let i of u.inventory)
-                        table.addRow(i.id, i.amount, i.category.id, i.type.id, i.ref);
-                    mes.channel.send('```md\n' + table.toString() + '```');
+                    let from = 1; // start counting with 1 here, I know it's unconventional but whatever it needs(!) to be done
+                    let to = 10;
+                    if (cmdl.p || cmdl.page) {
+                        from = parseInt(cmdl.p == undefined ? (cmdl.page as string) : (cmdl.p as string)) * 10 - 9;
+                        to = from + 9;
+                    }
+                    let c = 0;
+                    for (let i of u.inventory.values()) {
+                        if (++c >= from && c <= to)
+                            table.addRow(i.id, i.amount, i.category.id, i.type.id, i.ref);
+                    }
+                    mes.channel.send('```\n' + table.toString() + `\nShowing ${from} - ${to} out of ${u.inventory.size}` + '```');
                 } else {
                     mes.channel.send({
                         embed: {
@@ -75,7 +84,7 @@ module.exports = {
                             color: 0x36393f,
                             fields: Object.values(fields).map(v => { return {
                                 // name: v.length == 1 ? v[0].category.name : v[0].category.namepl,
-                                name: v[0].category.namepl,
+                                name: v[0].category.namepl || 'Unknown',
                                 value: v.map(i => `${i.icon} \`${i.amount == 1 ? '' : i.amount + 'x '}${i.name}\` (${i.ref})`).join('\n')
                             }})
                         }

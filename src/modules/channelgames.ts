@@ -42,6 +42,8 @@ let games = {
         interface Player {
             user: User;
             idleremovetimer: NodeJS.Timeout;
+            bait?: BaitType;
+            bait_itemname?: string;
         }
 
         interface Fish {
@@ -54,6 +56,7 @@ let games = {
 
         type FishType = 'angelfish' | 'blowfish' | 'NAMEHERE' | 'crab' | 'squid' | 'shell' | 'frog' | 'shrimp' | 'trout' | 'carp' | 'rainbow_trout' | 'salmon';
         type SpawnArea = 'regular' | 'bait-only' | 'gold-bait-only';
+        type BaitType = 'regular' | 'gold' | 'mystic' | 'treasure';
         
         let emojis = {
             wave: '<:wv:664896117963620395>',
@@ -61,6 +64,12 @@ let games = {
             rbwave: '<:rr:665184935048642570>',
             rod: '🎣',
             zerowidth: '​',
+            bait: {
+                regular: ':use_regular_bait:667784099037052931',
+                gold: ':use_gold_bait:667786302674042901',
+                mystic: ':use_mystic_bait:667786936395759646',
+                treasure: ':use_treasure_bait:667807893290090516',
+            },
             
                 angelfish: [ '<:wf1:664896117690990610>' ],
                  blowfish: [ '<:wf2:664896118089449473>' ],
@@ -139,7 +148,9 @@ let games = {
             return new Promise(async (resolve, reject) => {
                 messages[messages.length - 1].clearReactions();
                 setTimeout(() => {
-                    messages[messages.length - 1].react(emojis.rod);
+                    let c = 0;
+                    for (let emoji of [emojis.rod, ...Object.values(emojis.bait)])
+                        setTimeout(() => messages[messages.length - 1].react(emoji), c++ * 1_000);
                     resolve();
                 }, 2_000);
             });
@@ -157,17 +168,110 @@ let games = {
         bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
             if (user.bot) return;
             if (!messagesIds.includes(reaction.message.id)) return;
-            if (!playing.has(user.id)) {
-                let idleremovetimer = setTimeout(() => forceRemoveUser(user), 5 * 60_000);
-                playing.set(user.id, { user, idleremovetimer });
+            if (reaction.emoji.name == emojis.rod) {
+                if (!playing.has(user.id)) {
+                    let idleremovetimer = setTimeout(() => forceRemoveUser(user), 5 * 60_000);
+                    let player: Player = { user, idleremovetimer };
+                    playing.set(user.id, player);
+    
+                    if (playing.size == 1) // Restart basically
+                        timeSinceLastFish = 0;
 
-                if (playing.size == 1) // Restart basically
-                    timeSinceLastFish = 0;
+                    parseBait(player, reaction.message);
+                }
+            } else if (false) {
+                // TODO collect fish in inventory here
             } else {
-                clearTimeout(playing.get(user.id).idleremovetimer);
-                playing.get(user.id).idleremovetimer = setTimeout(() => forceRemoveUser(user), 5 * 60_000);
+                let player = playing.get(user.id);
+                if (!player) return;
+                parseBaitName(player, reaction.emoji.name).then(remove => {
+                    if (remove) {
+                        reaction.remove(user);
+                    } else {
+                        for (let r of reaction.message.reactions.values()) {
+                            if (r.emoji.name.startsWith('use_')
+                            && r.emoji.id !== reaction.emoji.id
+                            && r.users.get(user.id) !== undefined) {
+                                r.remove(user);
+                            }
+                        }
+                    }
+                });
             }
         });
+        
+        bot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
+            if (user.bot) return;
+            if (!messagesIds.includes(reaction.message.id)) return;
+            if (reaction.emoji.name == emojis.rod) {
+                if (playing.has(user.id)) {
+                    catchFish(user);
+                    clearTimeout(playing.get(user.id).idleremovetimer);
+                    playing.delete(user.id);
+                }
+            } else if (false) {
+                // TODO collect fish in inventory here
+            } else {
+                let reacted = false;
+                for (let r of reaction.message.reactions.values()) {
+                    if (r.emoji.name.startsWith('use_')
+                    && r.users.get(user.id) !== undefined) {
+                        reacted = true;
+                        break;
+                    }
+                }
+                if (!reacted) {
+                    let player = playing.get(user.id);
+                    if (player) {
+                        player.bait = undefined;
+                        player.bait_itemname = '';
+                    }
+                }
+            }
+        });
+
+        async function parseBait(player: Player, message: Message): Promise<void> {
+            let found = false;
+            for (let r of message.reactions.values()) {
+                if (r.emoji.name.startsWith('use_')
+                && r.users.get(player.user.id) !== undefined) {
+                    if (found) {
+                        r.remove(player.user);
+                    } else {
+                        if (await parseBaitName(player, r.emoji.name)) r.remove(player.user);
+                        else found = true;
+                    }
+                }
+            }
+        }
+
+        async function parseBaitName(player: Player, emoji: string): Promise<boolean> {
+            player.bait = undefined;
+            player.bait_itemname = '';
+            switch (emoji) {
+                case 'use_regular_bait':
+                    player.bait = 'regular';
+                    break;
+                case 'use_gold_bait':
+                    player.bait = 'gold';
+                    break;
+                case 'use_mystic_bait':
+                    player.bait = 'mystic';
+                    break;
+                case 'use_treasure_bait':
+                    player.bait = 'treasure';
+                    break;
+            }
+            let u = await TudeApi.clubUserByDiscordId(player.user.id)
+            let itemname = ((player.bait == 'regular') ? ('fish_bait') : ('fish_bait_'+player.bait));
+            if (u.inventory.get(itemname) && u.inventory.get(itemname).amount > 1) {
+                player.bait = player.bait;
+                player.bait_itemname = itemname;
+                return false;
+            } else {
+                return true;
+            }
+        }
 
         function forceRemoveUser(user: User) {
             playing.delete(user.id);
@@ -175,26 +279,23 @@ let games = {
             if (playing.size == 0) 
                 messages[10].edit('`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*');
         }
-        
-        bot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
-            if (user.bot) return;
-            if (!messagesIds.includes(reaction.message.id)) return;
-            if (playing.has(user.id)) {
-                catchFish(user);
-                clearTimeout(playing.get(user.id).idleremovetimer);
-                playing.delete(user.id);
-            }
-        });
 
         function tick(): void {
             if (playing.size == 0) return;
 
             timeSinceLastFish++;
             let spawn = Math.random() * Math.random() * Math.random() * timeSinceLastFish / 10;
-            console.log(spawn);
-            // if (spawn < 1) return; TODO THIS IS THE CORRECT ONE
-            if (spawn < .2) return;
-            spawnFish('regular');
+            if (playing.size) console.log(playing.values().next().value.bait);
+            if (spawn < .1) return;
+            // if (spawn < 1) return; TODO
+            let possibleBaits: BaitType[] = [ ];
+            for (let player of playing.values())
+                if (!possibleBaits.includes(player.bait)) possibleBaits.push(player.bait);
+            let baitType = Math.random() < .5 ? undefined : possibleBaits[Math.floor(Math.random() * possibleBaits.length)];
+            let area: SpawnArea = baitType ? 'gold-bait-only' : 'regular';
+            if (baitType == 'regular') area = 'bait-only';
+            spawnFish(area, baitType);
+            timeSinceLastFish = possibleBaits.length * 4;
         }
 
         function catchFish(u: User) {
@@ -212,9 +313,9 @@ let games = {
             }).catch();
         }
 
-        function spawnFish(area: SpawnArea): void {
+        function spawnFish(area: SpawnArea, baitType: BaitType): void {
             timeSinceLastFish = 0;
-            let fish = generateFish(area);
+            let fish = generateFish(area, baitType);
             let position = Math.floor(Math.random() * 6) + 1;
             let text = emojis.lbwave;
             for (let i = 1; i < 7; i++)
@@ -267,24 +368,41 @@ let games = {
             });
         }
 
-        function generateFish(area: SpawnArea): Fish {
+        function generateFish(area: SpawnArea, baitType: BaitType): Fish {
             let type: FishType, name: string, size: number, worth: number, rarity: string;
 
             const selectType = () => {
-                let rarities = {
-                    angelfish: 40,
-                    blowfish: 20,
-                    NAMEHERE: 0,
-                    crab: 10,
-                    squid: 10,
-                    shell: 10,
-                    frog: 1,
-                    shrimp: 10,
-                    trout: 30,
-                    carp: 40,
-                    rainbow_trout: 5,
-                    salmon: 30,
+                let allRarities = {
+                    no_bait: {
+                        angelfish: 40,
+                        blowfish: 20,
+                        NAMEHERE: 0,
+                        crab: 10,
+                        squid: 10,
+                        shell: 10,
+                        frog: 1,
+                        shrimp: 10,
+                        trout: 30,
+                        carp: 40,
+                        rainbow_trout: 5,
+                        salmon: 30,
+                    },
+                    regular: {
+                        angelfish: 10,
+                        blowfish: 20,
+                        NAMEHERE: 0,
+                        crab: 15,
+                        squid: 15,
+                        shell: 15,
+                        frog: 1,
+                        shrimp: 15,
+                        trout: 15,
+                        carp: 10,
+                        rainbow_trout: 10,
+                        salmon: 15,
+                    }
                 };
+                let rarities: { [fish: string]: number } = allRarities[baitType || 'no_bait'];
                 let total = 0;
                 Object.values(rarities).forEach(v => total += v);
                 let selection = Math.floor(Math.random() * total);

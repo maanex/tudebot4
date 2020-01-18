@@ -49,7 +49,8 @@ module.exports = {
                 let stats = `${_bigspace}`;
                 let statItems = [ `:cookie: ${u.cookies}`, `:gem: ${u.gems}` ];
                 if (u.keys > 0) statItems.push(`:key: ${u.keys}`);
-                if (u.inventory.length > 0) statItems.push(`:package: ${u.inventory.length}`);
+                // @ts-ignore
+                if (u.inventory.length > 0) statItems.push(`:package: ${u.inventory.count(i => i.amount)}`);
                 
                 let c = 0;
                 for (let si of statItems)

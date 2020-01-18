@@ -22,11 +22,13 @@ export default class ParseArgs {
                     currentFlag = token.substring(2);
                     continue;
                 }
-                for (let digit of token.substring(1).split(''))
+                for (let digit of token.substring(1).split('')) {
                     out[digit] = true;
+                    currentFlag = digit;
+                }
                 continue;
             }
-            if (out[currentFlag]) out[currentFlag] += ' ' + token;
+            if (out[currentFlag] && typeof out[currentFlag] == 'string') out[currentFlag] += ' ' + token;
             else out[currentFlag] = token;
         }
         if (!out[currentFlag] && currentFlag != '_')

@@ -12,6 +12,13 @@ export class Util {
                     this.forEach(e => out += e);
                     return out;
                 }
+            },
+            count: {
+                value: function(counter: (index) => number) {
+                    let out = 0;
+                    this.forEach(e => out += counter(e));
+                    return out;
+                }
             }
         });
     }
