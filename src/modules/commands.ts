@@ -5,6 +5,7 @@ import { DbStats } from "../database/dbstats";
 import Database from "../database/database";
 import WCP from "../thirdparty/wcp/wcp";
 const util = require('../util');
+const chalk = require('chalk');
 
 let commands: Command[] = [];
 
@@ -21,9 +22,17 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
             .findOne({ _id: 'commands' })
             .then(obj => {
                 WCP.send({ config_commands: JSON.stringify(obj.data) });
+                let allCmdaliases = [];
                 for (let c in obj.data)
-                    if (obj.data[c])
-                        commands.push(require(`../commands/${c}`));
+                    if (obj.data[c]) {
+                        let cmd = require(`../commands/${c}`);
+                        if (cmd.init) cmd.init(bot);
+                        commands.push(cmd);
+                        for (let a of [ cmd.name, ...cmd.aliases ]) {
+                            if (allCmdaliases.indexOf(a) >= 0) console.log(chalk.red(`Command "${a}" is declared multiple times!`));
+                            else allCmdaliases.push(a);
+                        }
+                    }
             })
             .catch(console.error)
     }
@@ -98,7 +107,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
 
 function cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
     if (type == 'error') text = ':x: ' + text;
-    if (type == 'bad') text = ':frowning: ' + text;
+    // if (type == 'bad') text = ':frowning: ' + text;
     if (type == 'success') text = ':white_check_mark: ' + text;
     (channel as TextChannel).send({
         embed: {
@@ -106,7 +115,7 @@ function cmes(channel: Channel, author: User, text: string, type?: cmesType, des
             title: description?`${text}`:'',
             description: description?`${description||''}`:`${text}`,
             footer: {
-                text: '@' + author.username,
+                text: '@' + author.username + (type == 'bad' ? ' • not successful' : ''),
                 // icon_url: author.avatarURL
             },
             thumbnail: { url: settings && settings.image },

@@ -19,6 +19,13 @@ export class Util {
                     this.forEach(e => out += counter(e));
                     return out;
                 }
+            },
+            iterate: {
+                value: function(counter: (index, current) => number) {
+                    let out = undefined;
+                    this.forEach(e => out = counter(e, out));
+                    return out;
+                }
             }
         });
     }

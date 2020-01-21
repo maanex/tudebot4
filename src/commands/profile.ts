@@ -50,25 +50,30 @@ module.exports = {
                 let statItems = [ `:cookie: ${u.cookies}`, `:gem: ${u.gems}` ];
                 if (u.keys > 0) statItems.push(`:key: ${u.keys}`);
                 // @ts-ignore
-                if (u.inventory.length > 0) statItems.push(`:package: ${u.inventory.count(i => i.amount)}`);
+                if (u.inventory.size > 0) {
+                    let amount = 0;
+                    for (let item of u.inventory.values())
+                        amount += item.amount;
+                    statItems.push(`:package: ${amount}`);
+                }
                 
                 let c = 0;
                 for (let si of statItems)
                     stats += (c++ % 3 == 0 ? '\n\n' : ` ${_bigspace} `) + si;
                 
-                let prog13 = Math.floor(u.level_progress * 13);
-                if (prog13 == 0) xpbar += _xpbar.left_empty;
-                else if (prog13 == 1) xpbar += _xpbar.left_half;
+                let prog12 = Math.floor(u.level_progress * 12);
+                if (prog12 == 0) xpbar += _xpbar.left_empty;
+                else if (prog12 == 1) xpbar += _xpbar.left_half;
                 else xpbar += _xpbar.left_full;
                 for (let i = 1; i <= 4; i++) {
-                    let relative = prog13 - i * 2;
+                    let relative = prog12 - i * 2;
                     if (relative < 0) xpbar += _xpbar.middle_empty;
                     else if (relative == 0) xpbar += _xpbar.middle_1;
                     else if (relative == 1) xpbar += _xpbar.middle_2;
                     else xpbar += _xpbar.middle_3;
                 }
-                if (prog13 >= 11) xpbar += _xpbar.right_full;
-                else if (prog13 == 10) xpbar += _xpbar.right_half;
+                if (prog12 >= 11) xpbar += _xpbar.right_full;
+                else if (prog12 == 10) xpbar += _xpbar.right_half;
                 else xpbar += _xpbar.right_empty;
 
                 xpbar += ` **${Math.floor(u.level_progress * 100)}%**`;

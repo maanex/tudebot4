@@ -33,7 +33,7 @@ module.exports = {
 \`\`\``);
         }
         
-        (cmdl._ ? TudeApi.clubUserById(cmdl._ as string) : TudeApi.clubUserByDiscordId(user.id/*, mes.author*/) ) // Don't create a new profile on loopup
+        ((user == mes.author && cmdl._) ? TudeApi.clubUserById(cmdl._ as string) : TudeApi.clubUserByDiscordId(user.id/*, mes.author*/) ) // Don't create a new profile on loopup
             .then(u => {
                 if (!u || u.error) {
                     repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');

@@ -5,7 +5,7 @@ import { rejects } from "assert";
 
 import WCP from "../../thirdparty/wcp/wcp.js";
 import { Core } from "../../index";
-import { getItemIcon } from "./itemiconlist";
+import { getItemIcon } from "./itemlist";
 
 const fetch = require('node-fetch');
 
@@ -77,7 +77,7 @@ export interface Item {
 }
 
 export type ClubAction = { id: 'claim_daily_reward' }
-                       | { id: 'transaction', type: 'cookies' | string, amount: number }
+                       | { id: 'transaction', type: 'cookie' | string, amount: number, reciever: string }
                        ;
 
 export default class TudeApi {
@@ -388,7 +388,7 @@ export default class TudeApi {
     }
 
     private static parseItem(ref: string, item: any): Item {
-        let id = ref.startsWith('_') ? item.id : ref;
+        let id = item.id || ref;
         let amount = item.amount == undefined ? 1 : item.amount;
         let meta = item.meta == undefined ? {} : item.meta;
         let preset = this.items.find(i => i.id == id) || {} as any;
@@ -406,7 +406,7 @@ export default class TudeApi {
             tradeable: preset.tradeable,
             type: preset.type,
             icon: preset.icon,
-        }
+        };
     }
 
 }

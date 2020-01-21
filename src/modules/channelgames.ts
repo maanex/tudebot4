@@ -246,26 +246,28 @@ let games = {
         }
 
         async function parseBaitName(player: Player, emoji: string): Promise<boolean> {
-            player.bait = undefined;
-            player.bait_itemname = '';
+            // player.bait = undefined;
+            // player.bait_itemname = '';
+            let bait = undefined;
             switch (emoji) {
                 case 'use_regular_bait':
-                    player.bait = 'regular';
+                    bait = 'regular';
                     break;
                 case 'use_gold_bait':
-                    player.bait = 'gold';
+                    bait = 'gold';
                     break;
                 case 'use_mystic_bait':
-                    player.bait = 'mystic';
+                    bait = 'mystic';
                     break;
                 case 'use_treasure_bait':
-                    player.bait = 'treasure';
+                    bait = 'treasure';
                     break;
             }
             let u = await TudeApi.clubUserByDiscordId(player.user.id)
-            let itemname = ((player.bait == 'regular') ? ('fish_bait') : ('fish_bait_'+player.bait));
+            let itemname = ((bait == 'regular') ? ('lure') : (bait+'_lure'));
+            console.log(itemname);
             if (u.inventory.get(itemname) && u.inventory.get(itemname).amount > 1) {
-                player.bait = player.bait;
+                player.bait = bait;
                 player.bait_itemname = itemname;
                 return false;
             } else {
@@ -286,8 +288,7 @@ let games = {
             timeSinceLastFish++;
             let spawn = Math.random() * Math.random() * Math.random() * timeSinceLastFish / 10;
             if (playing.size) console.log(playing.values().next().value.bait);
-            if (spawn < .1) return;
-            // if (spawn < 1) return; TODO
+            if (spawn < 1) return;
             let possibleBaits: BaitType[] = [ ];
             for (let player of playing.values())
                 if (!possibleBaits.includes(player.bait)) possibleBaits.push(player.bait);
@@ -400,6 +401,15 @@ let games = {
                         carp: 10,
                         rainbow_trout: 10,
                         salmon: 15,
+                    },
+                    gold: {
+                        salmon: 1,
+                    },
+                    mystic: {
+                        salmon: 1,
+                    },
+                    treasure: {
+                        salmon: 1,
                     }
                 };
                 let rarities: { [fish: string]: number } = allRarities[baitType || 'no_bait'];

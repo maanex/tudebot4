@@ -1,11 +1,13 @@
 import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
+import { Message, Channel, User, MessageReaction } from "discord.js";
 import { cmesType } from "types";
 import TudeApi, { Badge, ClubUser } from "../thirdparty/tudeapi/tudeapi";
 
 const fetch = require('node-fetch');
 
 
+
+const _bigspace = '<:nothing:409254826938204171>';
 
 const hit = '✅';
 const stand = '⏸️';
@@ -55,12 +57,14 @@ interface Entry {
     clubuser: ClubUser;
     amount: number;
     cards: Card[];
-    dealer: Card[];
     canDraw: boolean;
+    choosenAction?: 'hit' | 'stand' | 'doubledown' | 'split';
+    balance: number;
 }
 
 let currentGame = {
     entries: [] as Entry[],
+    dealer: [] as Card[],
     allowNewEntries: true,
     started: false,
     startIn: 0,
@@ -91,36 +95,36 @@ module.exports = {
 
         let cookies = args[0] == 'a' ? -42 : parseInt(args[0]);
         if (isNaN(cookies)) {
-            repl(mes.channel, mes.author, args[0] + ' is not a valid amount of cookies!');
+            repl(mes.channel, mes.author, args[0] + ' is not a valid amount of cookies!', 'bad');
             resolve(false);
             return;
         }
 
         if (cookies > Math.random() * 1_000_000 + 100_000) {
-            repl(mes.channel, mes.author, 'That is insane!', 'message', `I've never been provoked that much, LEAVE THIS CASINO RIGHT NOW!`);
+            repl(mes.channel, mes.author, 'That is insane!', 'bad', `I've never been provoked that much, LEAVE THIS CASINO RIGHT NOW!`);
             resolve(false);
             return;
         }
 
         if (cookies > 2000) {
-            repl(mes.channel, mes.author, args[0] + ' cookies is over the casino\'s maximum stake of 2000!');
+            repl(mes.channel, mes.author, args[0] + ' cookies is over the casino\'s maximum stake of 2000!', 'bad');
             resolve(false);
             return;
         }
 
         TudeApi.clubUserByDiscordId(mes.author.id, mes.author).then(u => {
             if (!u || u.error) {
-                repl(mes.channel, mes.author, 'An error occured!', 'error');
+                repl(mes.channel, mes.author, 'Couldn\'t fetch your userdata!', 'bad', 'That\'s not cool.');
                 resolve(false);
                 return;
             }
             if (cookies > u.cookies) {
                 if (Math.random() < .05) {
                     // @ts-ignore
-                    repl(mes.channel, mes.author, `${hidethepain} ${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
+                    repl(mes.channel, mes.author, `${hidethepain} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
                 } else {
                     // @ts-ignore
-                    repl(mes.channel, mes.author, `${cookies} is more than you have`, 'message', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
+                    repl(mes.channel, mes.author, `${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
                 }
 
                 resolve(false);
@@ -128,27 +132,27 @@ module.exports = {
             }
             if (cookies == -42) {
                 if (u.cookies == 0) {
-                    repl(mes.channel, mes.author, 'You don\'t have any money to play with!');
+                    repl(mes.channel, mes.author, 'You don\'t have any money to play with!', 'bad');
                     resolve(false);
                     return;
                 }
-                cookies = Math.min(5000, u.cookies);
+                cookies = Math.min(2000, u.cookies);
             }
             if (cookies <= 0) {
-                repl(mes.channel, mes.author, 'You cannot bet on 0 or less cookies!');
+                repl(mes.channel, mes.author, 'You cannot bet on 0 or less cookies!', 'bad');
                 resolve(false);
                 return;
             }
 
             if (currentGame.started) {
                 if (!currentGame.allowNewEntries) {
-                    repl(mes.channel, mes.author, 'Please wait a moment, a game is still in progress!');
+                    repl(mes.channel, mes.author, 'Please wait a moment, a game is still in progress!', 'bad');
                     resolve(false);
                     return;
                 }
                 for (let entry of currentGame.entries) {
                     if (entry.by.id == mes.author.id) {
-                        repl(mes.channel, mes.author, 'You have already placed your bet on this game!');
+                        repl(mes.channel, mes.author, 'You have already placed your bet on this game!', 'bad');
                         resolve(false);
                         return;
                     }
@@ -160,12 +164,13 @@ module.exports = {
                     clubuser: u,
                     amount: cookies,
                     cards: [],
-                    dealer: [],
-                    canDraw: true
+                    canDraw: true,
+                    balance: 0
                 });
+                // currentGame.startIn = 5;
+                // if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
+                    // currentGame.startIn = 10;
                 currentGame.startIn = 5;
-                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
-                    currentGame.startIn = 10;
                 resolve(true);
             } else {
                 currentGame.started = true;
@@ -176,17 +181,17 @@ module.exports = {
                     clubuser: u,
                     amount: cookies,
                     cards: [],
-                    dealer: [],
-                    canDraw: true
+                    canDraw: true,
+                    balance: 0
                 });
-                currentGame.startIn = 2;
-                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
+                // currentGame.startIn = 3;
+                // if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.entries.length)
                     currentGame.startIn = 10;
                 resolve(true);
                 mes.channel.send({ embed: {
                     color: 0x36393f,
                     title: 'Black Jack',
-                    description: 'Preparing...',
+                    description: 'Preparing...'
                 }}).then(mes => currentGame.chatMessage = mes as Message).catch();
                 currentGameTimer = setInterval(() => {
                     if (currentGame.startIn == 10 || currentGame.startIn == 5 || currentGame.startIn <= 2) {
@@ -212,7 +217,35 @@ module.exports = {
             repl(mes.channel, mes.author, 'An error occured!', 'error');    
         });
     });
-    }
+    },
+
+    init(bot: TudeBot) {
+        bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
+            if (!currentGame) return;
+            if (user.bot) return;
+            if (!currentGame || !currentGame.chatMessage) return;
+            if (reaction.message.id !== currentGame.chatMessage.id) return;
+            let playing: Entry = undefined;
+            for (let e of currentGame.entries)
+                if (e.by.id === user.id) {
+                    playing = e
+                    break;
+                }
+            if (!playing) return;
+            switch (reaction.emoji.name) {
+                case hit:
+                    playing.choosenAction = 'hit';
+                    break;
+                case stand:
+                    playing.choosenAction = 'stand';
+                    break;
+
+            }
+            for (let e of currentGame.entries)
+                if (e.canDraw && !e.choosenAction) return;
+            gameloop();
+        });
+    },
 
 }
 
@@ -228,112 +261,139 @@ function startGame() {
                 // @ts-ignore
                 currentGame.deck.push({ color: type, number: value });
 
+    currentGame.dealer.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
+
     for (let entry of currentGame.entries) {
-        entry.dealer.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
         entry.cards.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
         entry.cards.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
+        if (Math.abs(countValue(entry.cards)) == 21)
+            entry.canDraw = false;
     }
 
-    gameloop();
+    gameloop(true);
 }
 
-function gameloop(allowDelay = true) {
-    let phit = currentGame.chatMessage.reactions.get(hit) && currentGame.chatMessage.reactions.get(hit).users;
-    let pstand = currentGame.chatMessage.reactions.get(stand) && currentGame.chatMessage.reactions.get(stand).users;
+let gameloopTimeoutTimer: NodeJS.Timeout = undefined;
+function gameloop(firstRound = false) {
+    if (gameloopTimeoutTimer)
+        clearTimeout(gameloopTimeoutTimer);
+    gameloopTimeoutTimer = setTimeout(gameloop, 15_000);
 
-    if (!phit || !pstand) { // init round
-        updateMessage();
-        setTimeout(gameloop, 10_000);
-    } else {
-        let totalReactions = 0;
-        let hits = [];
-        for (let p of phit.values()) {
-            if (p.bot) continue;
-            hits.push(p.id);
-            totalReactions++;
-        }
-        for (let p of pstand.values()) {
-            if (p.bot) continue;
-            if (hits.indexOf(p.id) < 0)
-                totalReactions++;
-        }
-        if (allowDelay && totalReactions < currentGame.entries.length) {
-            setTimeout(() => gameloop(false), 3_000);
-        } else {
-            if (currentGame.chatMessage.reactions.get(hit).count <= 1) {
-                gameOver();
-            } else {
-                let draws = 0;
-                for (let e of currentGame.entries) {
-                    if (!e.canDraw) continue;
-                    if (hits.indexOf(e.by.id) < 0 || countValue(e) >= 21) {
-                        e.canDraw = false;
-                        continue;
-                    }
-                    e.cards.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
-                    console.log(countValue(e));
-                    if (countValue(e) >= 21) e.canDraw = false;
-                    else draws++;
-                }
-                if (draws == 0) gameOver();
-                else {
-                    updateMessage();
-                    setTimeout(gameloop, 10_000);
-                }
+    if (firstRound) {
+        for (let e of currentGame.entries)
+            if (e.canDraw) {
+                updateMessage();
+                return;
             }
+        gameOver();
+        return;
+    }
+
+    for (let e of currentGame.entries)
+        e.choosenAction = e.choosenAction || 'stand';
+    for (let e of currentGame.entries) {
+        if (!e.canDraw) continue;
+        switch (e.choosenAction) {
+            case 'hit':
+                e.cards.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
+                let value = countValue(e.cards);
+                if (Math.abs(value) >= 21) e.canDraw = false;
+                break;
+
+            case 'stand':
+                e.canDraw = false;
+                break;
         }
     }
+    let done = true;
+    for (let e of currentGame.entries) {
+        e.choosenAction = undefined;
+        if (e.canDraw)
+            done = false;
+    }
+
+    if (!done) updateMessage();
+    else gameOver();
 }
 
-function gameOver() {
-    updateMessage(true, false, true);
+async function gameOver() {
+    if (gameloopTimeoutTimer)
+            clearTimeout(gameloopTimeoutTimer);
+
+    do currentGame.dealer.push(currentGame.deck.splice(Math.floor(Math.random() * currentGame.deck.length), 1)[0]);
+    while (countValue(currentGame.dealer) < 17);
+
+    let dealerVal = Math.abs(countValue(currentGame.dealer));
+    for (let e of currentGame.entries) {
+        let val = Math.abs(countValue(e.cards));
+        if (val > 21) e.balance = -e.amount;
+        else if (val == 21 && e.cards.length == 2) e.balance = e.amount * 3 / 2;
+        else if (dealerVal > 21) e.balance = e.amount
+        else if (val > dealerVal) e.balance = e.amount;
+        else if (val == dealerVal) e.balance = 0;
+        else if (val < dealerVal) e.balance = -e.amount;
+
+        e.clubuser.cookies += Math.ceil(e.amount + e.balance);
+        if ((e.amount + e.balance) != 0) TudeApi.updateClubUser(e.clubuser);
+    }
+
+    await updateMessage(true, false, true);
     resetGame();
 }
 
-function countValue(entry: Entry): number {
+function countValue(cards: Card[]): number {
     // @ts-ignore
     // return entry.cards.map(c => c.number).stack();
     let num = 0;
     let aces = 0;
-    entry.cards.map(c => c.number).forEach(n => {
+    cards.map(c => c.number).forEach(n => {
         if (typeof n == 'string') {
             if (n == 'A') aces++;
             else num += 10;
         } else num += n as number;
     });
+    let soft = false;
     while (aces > 0) {
         if (aces * 11 + num > 21) num += 1;
-        else num += 11;
+        else {
+            num += 11;
+            soft = true;
+        }
         aces--;
     }
-    return num;
+    return soft ? -num : num;
 }
 
-function updateMessage(removeEmojis = true, addEmojis = true, end = false) {
+async function updateMessage(removeEmojis = true, addEmojis = true, end = false) {
+    if (!currentGame.chatMessage) return;
     if (removeEmojis) {
-        if (currentGame.chatMessage.reactions.get(hit)
+        if (addEmojis
+         && currentGame.chatMessage.reactions.get(hit)
          && currentGame.chatMessage.reactions.get(stand)
          && currentGame.chatMessage.reactions.get(hit).count <= 2
          && currentGame.chatMessage.reactions.get(stand).count <= 2) {
             for (let u of currentGame.chatMessage.reactions.get(stand).users.array())
                 if (!u.bot)
-                    currentGame.chatMessage.reactions.get(stand).remove(u.id);
-             currentGame.chatMessage.reactions.get(hit).users.array().filter(u => !u.bot).forEach(currentGame.chatMessage.reactions.get(hit).remove);
+                    await currentGame.chatMessage.reactions.get(stand).remove(u.id);
+            for (let u of currentGame.chatMessage.reactions.get(hit).users.array())
+                if (!u.bot)
+                    await currentGame.chatMessage.reactions.get(hit).remove(u.id);
+            // currentGame.chatMessage.reactions.get(hit).users.array().filter(u => !u.bot).forEach(currentGame.chatMessage.reactions.get(hit).remove);
             //  currentGame.chatMessage.reactions.get(stand).users.filter(u => !u.bot).forEach(currentGame.chatMessage.reactions.get(stand).remove);
         } else {
-            currentGame.chatMessage.clearReactions();
+            await currentGame.chatMessage.clearReactions();
         }
         if (addEmojis) {
-            currentGame.chatMessage.react(hit);
-            setTimeout(() => currentGame.chatMessage.react(stand), 500);
+            let mes = currentGame.chatMessage;
+            currentGame.chatMessage.react(hit).then(() => mes.react(stand)).catch();
         }
     }
 
     currentGame.chatMessage.edit('', { embed: {
         color: 0x36393f,
         title: 'Black Jack',
-        description: end ? 'Game Over' : `${hit} hit • ${stand} stand`,
-        fields: embedFields()
+        description: (end ? 'Game Over' : `${hit} hit • ${stand} stand`) + `\n${_bigspace}`,
+        fields: embedFields(end)
     }});
 }
 
@@ -344,17 +404,47 @@ function resetGame() {
         started: false,
         startIn: 0,
         chatMessage: null as Message,
-        deck: [] as Card[]
+        deck: [] as Card[],
+        dealer: []
     }   
 }
 
-function embedFields() {
+function embedFields(end: boolean) {
+    let dealerVal: string | number = countValue(currentGame.dealer);
+    if (dealerVal == -21 && currentGame.dealer.length == 2) dealerVal = 'BLACK JACK';
+    if (dealerVal > 21) dealerVal = 'BURST ' + dealerVal;
+    if (dealerVal == 21 && currentGame.dealer.length == 2) dealerVal = 'BLACK JACK';
+    if (typeof dealerVal == 'number' && dealerVal < 0) dealerVal *= -1;
+    // @ts-ignore
+    let len = currentGame.entries.map(e => e.by.username.length).iterate((e, curr) => { curr > (e || 0) ? curr : (e || 0) }) + 2;
     let out = currentGame.entries
-        .map(e => { return {
-            name: e.by.username,
-            value: `\`  Dealer:\` ${e.dealer.map(cardToEmoji).join(' ')}\n\`     You:\` ${e.cards.map(cardToEmoji).join(' ') + (e.canDraw ? '' : ' **/**')}`.substring(0, 1024)
-        }});
-    return out;
+        .map(e => {
+            let yourVal: string | number = countValue(e.cards);
+            if (yourVal == -21 && e.cards.length == 2) yourVal = 'BLACK JACK';
+            if (yourVal < 0) yourVal = 'Soft' + -yourVal;
+            if (yourVal > 21) yourVal = 'BURST ' + yourVal;
+            if (typeof yourVal == 'number' && yourVal < 0) yourVal *= -1;
+            // return `\`${(' '.repeat(len) + e.by.username).substring(-len)}:\` **${yourVal}** ${e.cards.map(cardToEmoji).join(' ') + (e.canDraw ? '' : ' **/**')}`;
+            let endtext = '';
+            if (end) {
+                endtext += '\n';
+                if (e.balance == 0) endtext += '**STAND OFF**';
+                else if (e.balance < 0) endtext += '**LOOSE**';
+                else if (e.balance > 0) endtext += '**WIN**';
+                endtext += _bigspace;
+                endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c • ' + e.clubuser.cookies + 'c total';
+            }
+            return {
+                name: e.by.username,
+                value: `**${yourVal}** ${e.cards.map(cardToEmoji).join(' ') + (e.canDraw ? '' : ' **/**') + endtext}`
+            }
+        })
+    return [
+        {
+            name: '`  Dealer  `',
+            value: `**${dealerVal}** ${currentGame.dealer.map(cardToEmoji).join(' ')}`
+        }, ...out
+    ];
 }
 
 function cardToEmoji(card: Card): string {

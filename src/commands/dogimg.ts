@@ -11,7 +11,8 @@ module.exports = {
     aliases: [
         'doggo',
         'dogimage',
-        'dogimg'
+        'dogimg',
+        'pussy'
     ],
     desc: 'Random dog image',
     sudoonly: false,
