@@ -54,6 +54,9 @@ module.exports = {
                     case 'me':
                         mes.channel.send(`I'm here for you ${mes.author} :)`);
                         break;
+                    case 'thisisatest':
+                        mes.channel.send `Ye`;
+                        break;
                     default:
                         repl(mes.channel, mes.author, 'UH...', 'bad', `Command ${cmd} not found!`);
                 }

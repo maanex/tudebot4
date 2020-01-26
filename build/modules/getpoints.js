@@ -115,10 +115,10 @@ module.exports = (bot, conf, data, lang) => {
         })
             .catch();
     });
-    //       ms s m h d m dw
-    cronjobs.push(cron.job('* 0 * * * * *', regenBags));
-    cronjobs.push(cron.job('* 0 0 * * * *', fillBags));
-    // cronjobs.push(cron.job('* 0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start()); TODO error here
+    //                      s m h d m dw
+    cronjobs.push(cron.job('0 * * * * *', regenBags));
+    cronjobs.push(cron.job('0 0 * * * *', fillBags));
+    // cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(conf.guilds.map(bot.guilds.get))).start()); TODO error here
     cronjobs.forEach(j => j.start());
     return {
         onUserLevelup(user, newLevel, rewards) {
