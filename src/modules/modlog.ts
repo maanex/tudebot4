@@ -7,7 +7,6 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
         log: function(guild: Guild, type: modlogType, text: string): void {
             let id: string = guild.id;
             if (!conf.channels[id]) return;
-            console.log(conf.channels[id]);
             (guild.channels.get(conf.channels[id]) as TextChannel).send({
                 embed: {
                     color: 0x36393f,

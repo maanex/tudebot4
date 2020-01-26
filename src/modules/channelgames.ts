@@ -1,4 +1,4 @@
-import { TudeBot } from "../index";
+import { TudeBot } from "..";
 import { MessageReaction, User, Role, Message, TextChannel, ClientUserSettings } from "discord.js";
 import { finished } from "stream";
 import { maxHeaderSize } from "http";

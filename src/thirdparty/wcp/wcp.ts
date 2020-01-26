@@ -1,7 +1,7 @@
 
 import { User as DiscordUser } from "discord.js";
 import { hook_std } from "./stdutils";
-import { Core, TudeBot } from "../../index";
+import { Core, TudeBot } from "../..";
 import Database from "../../database/database";
 
 

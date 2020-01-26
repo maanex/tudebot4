@@ -4,7 +4,7 @@ import { resolve } from "dns";
 import { rejects } from "assert";
 
 import WCP from "../../thirdparty/wcp/wcp.js";
-import { Core } from "../../index";
+import { Core } from "../..";
 import { getItemIcon } from "./itemlist";
 
 const fetch = require('node-fetch');
