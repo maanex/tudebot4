@@ -68,7 +68,7 @@ module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
     
     function setPlaytext() {
         bot.user.setActivity(getText());
-        timeouts.push(setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 60 * 60 * 1000)));
+        timeouts.push(setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
     }
     
     function getText() {

@@ -51,7 +51,7 @@ export class DbStatGraph {
 
     public get today(): number {
         if (!this.raw) return 0;
-        return this.raw[getDayId()];
+        return this.raw[getDayId()] || 0;
     }
 
     public async update(dayId: number, value: number, delta: boolean): Promise<any> {

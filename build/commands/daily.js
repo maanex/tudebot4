@@ -27,6 +27,33 @@ module.exports = {
                         desc += `**+${reward.cookies}** cookie${reward.cookies == 1 ? '' : 's'} *:cookie:*\n`;
                     if (reward.gems)
                         desc += `**+${reward.gems}** gem${reward.gems == 1 ? '' : 's'} *:gem:*\n`;
+                    let streak = o['streak'];
+                    if (streak) {
+                        let prefix = '';
+                        let suffix = '';
+                        let bold = streak > 3;
+                        if (streak >= 7)
+                            suffix = '🔥';
+                        if (streak >= 14)
+                            prefix = '🔥';
+                        if (streak >= 30) {
+                            prefix = '🔥🔥';
+                            suffix = '🔥🔥';
+                        }
+                        if (streak >= 60) {
+                            prefix = '(╯°□°)╯';
+                            suffix = '~(⊙＿⊙\')~';
+                        }
+                        if (streak == 69) {
+                            prefix = '';
+                            suffix = '- nice';
+                        }
+                        if (streak >= 90) {
+                            prefix = '🐢';
+                            suffix = '🐢';
+                        }
+                        desc += `\n${prefix} ${bold ? '**' : ''}Streak: ${streak} ${streak == 1 ? 'day' : 'days'}${bold ? '**' : ''} ${suffix}`;
+                    }
                     mes.channel.send({
                         embed: {
                             color: 0x36393f,

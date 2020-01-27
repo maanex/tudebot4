@@ -30,6 +30,11 @@ export interface ClubUser {
     cookies: number;
     gems: number;
     keys: number;
+    daily: {
+        last: Date;
+        claimable: boolean;
+        streak: number;
+    }
     badges: {
         '1': number; '2': number; '3': number;
         '4': number; '5': number; '6': number;
@@ -255,12 +260,15 @@ export default class TudeApi {
             })
                 .then(o => o.json())
                 .then(o => {
-                    o['_raw_inventory'] = o.inventory;
-                    o.inventory = [];
-                    for (let ref in o['_raw_inventory'])
-                        o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));
-
                     if (o) {
+                        o['_raw_inventory'] = o.inventory;
+                        o.inventory = [];
+                        for (let ref in o['_raw_inventory'])
+                            o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));                        
+    
+                        o['_raw_daily'] = o.daily;
+                        o.daily = this.parseClubUserDailyData(o.daily);
+                        
                         o['_org_points'] = o['points'] || 0;
                         o['_org_cookies'] = o['cookies'] || 0;
                         o['_org_gems'] = o['gems'] || 0;
@@ -294,12 +302,15 @@ export default class TudeApi {
                             resolve(this.clubUserByDiscordId(id));
                         }).catch(err => resolve(o));
                     } else {
-                        o['_raw_inventory'] = o.inventory;
-                        o.inventory = new Map<string, Item>();
-                        for (let ref in o['_raw_inventory'])
-                            o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
-
                         if (o) {
+                            o['_raw_inventory'] = o.inventory;
+                            o.inventory = new Map<string, Item>();
+                            for (let ref in o['_raw_inventory'])
+                                o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
+
+                            o['_raw_daily'] = o.daily;
+                            o.daily = this.parseClubUserDailyData(o.daily);
+
                             o['_org_points'] = o['points'] || 0;
                             o['_org_cookies'] = o['cookies'] || 0;
                             o['_org_gems'] = o['gems'] || 0;
@@ -311,6 +322,19 @@ export default class TudeApi {
                 })
                 .catch(err => reject(err));
         });
+    }
+
+    private static parseClubUserDailyData(rawDaily: any): { last: Date, claimable: boolean, streak: number } {
+        let daynum: number = rawDaily.last;
+        let date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111);
+        let delta = new Date().getTime() - date.getTime();
+        let today = delta <= 86400000;
+        let yesterday = delta >= 86400000 && delta <= 86400000 * 2;
+        return {
+            last: date,
+            claimable: !today,
+            streak: (today || yesterday) ? rawDaily.streak : 0
+        }
     }
 
     public static badgeById(id: number):Badge {

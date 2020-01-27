@@ -211,11 +211,13 @@ class TudeApi {
                     }).catch(err => resolve(o));
                 }
                 else {
-                    o['_raw_inventory'] = o.inventory;
-                    o.inventory = new Map();
-                    for (let ref in o['_raw_inventory'])
-                        o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
                     if (o) {
+                        o['_raw_inventory'] = o.inventory;
+                        o.inventory = new Map();
+                        for (let ref in o['_raw_inventory'])
+                            o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
+                        o['_raw_daily'] = o.daily;
+                        o.daily = this.parseClubUserDailyData(o.daily);
                         o['_org_points'] = o['points'] || 0;
                         o['_org_cookies'] = o['cookies'] || 0;
                         o['_org_gems'] = o['gems'] || 0;
@@ -227,6 +229,18 @@ class TudeApi {
             })
                 .catch(err => reject(err));
         });
+    }
+    static parseClubUserDailyData(rawDaily) {
+        let daynum = rawDaily.last;
+        let date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111);
+        let delta = new Date().getTime() - date.getTime();
+        let today = delta <= 86400000;
+        let yesterday = delta >= 86400000 && delta <= 86400000 * 2;
+        return {
+            last: date,
+            claimable: !today,
+            streak: (today || yesterday) ? rawDaily.streak : 0
+        };
     }
     static badgeById(id) {
         return this.badges.find(b => b.id == id);

@@ -48,9 +48,14 @@ module.exports = {
                         amount += item.amount;
                     statItems.push(`:package: ${amount}`);
                 }
+                if (u.daily.streak >= 7) {
+                    statItems.push(`:flame: ${u.daily.streak}`);
+                }
                 let c = 0;
                 for (let si of statItems)
                     stats += (c++ % 3 == 0 ? '\n\n' : ` ${_bigspace} `) + si;
+                if (u.daily.claimable && !mes.mentions.users.size)
+                    stats += '\n\n**You haven\'t claimed\nyour daily reward yet!**';
                 let prog12 = Math.floor(u.level_progress * 12);
                 if (prog12 == 0)
                     xpbar += _xpbar.left_empty;

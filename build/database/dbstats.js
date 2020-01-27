@@ -51,7 +51,7 @@ class DbStatGraph {
     get today() {
         if (!this.raw)
             return 0;
-        return this.raw[getDayId()];
+        return this.raw[getDayId()] || 0;
     }
     update(dayId, value, delta) {
         return __awaiter(this, void 0, void 0, function* () {
