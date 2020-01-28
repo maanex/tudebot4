@@ -1,7 +1,7 @@
 import * as mongo from 'mongodb';
 import MongoAdapter from './mongo.adapter';
  
-export type dbcollection = 'stats-commands' | 'stats-users' | 'settings';
+export type dbcollection = 'stats-commands' | 'stats-users' | 'settings' | 'clubitemshop';
 
 export default class Database {
   

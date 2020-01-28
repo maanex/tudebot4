@@ -307,8 +307,10 @@ let games = {
 
             let fish = currentFish;
             TudeApi.clubUserByDiscordId(u.id).then(u => {
-                u.cookies += fish.worth;
-                u.points += Math.min(fish.worth / 5, 20);
+                let worth = fish.worth;
+                if (worth < 0) worth = 0;
+                u.cookies += worth;
+                u.points += Math.min(worth / 5, 20);
                 TudeApi.updateClubUser(u);
                 // TODO fisch ins inventar hinzufügen
             }).catch();
@@ -447,8 +449,11 @@ let games = {
 
                     case 'crab':
                         size = 250 + Math.floor(Math.random() * 100);
-                        if (Math.random() < 0.01) size = 1500 + Math.floor(Math.random() * 300);
                         rarity = 'rare';
+                        if (Math.random() < 0.01) {
+                            size = 1500 + Math.floor(Math.random() * 300);
+                            rarity = 'very rare';
+                        }
                         break;
 
                     case 'squid':
@@ -529,12 +534,13 @@ let games = {
             const calculatePrice = () => {
                 switch (type) {
                     case 'angelfish':
-                        if (size < 15) worth = 1;
-                        else worth = 2;
+                        if (size < 13) worth = 1;
+                        if (size < 15) worth = 2;
+                        else worth = 3;
                         break;
 
                     case 'blowfish':
-                        if (size < 110) worth = 1;
+                        if (size < 100) worth = 1;
                         else worth = 2;
                         break;
 
@@ -543,12 +549,14 @@ let games = {
                         break;
 
                     case 'crab':
-                        if (size < 35) worth = 1;
-                        else worth = 3;
+                        if (size < 30) worth = 1;
+                        if (size < 35) worth = 2;
+                        else worth = 25;
                         break;
 
                     case 'squid':
-                        worth = 1;
+                        if (size < 50) worth = 1;
+                        else worth = 2;
                         break;
 
                     case 'shell':
@@ -564,20 +572,28 @@ let games = {
                         break;
 
                     case 'trout':
-                        if (size < 50) worth = 1;
-                        else worth = 2;
+                        if (size < 35) worth = 1;
+                        else if (size <= 50) worth = 2;
+                        else worth = 15;
                         break;
 
                     case 'rainbow_trout':
-                        worth = 10;
+                        if (size <= 50) worth = 30;
+                        else worth = 100;
                         break;
 
                     case 'carp':
-                        worth = 1;
+                        if (size < 60) worth = 1;
+                        if (size < 70) worth = 2;
+                        if (size < 75) worth = 3;
+                        else worth = 4;
                         break;
 
                     case 'salmon':
-                        worth = 1;
+                        if (size < 100) worth = 1;
+                        if (size < 120) worth = 2;
+                        if (size < 130) worth = 3;
+                        else worth = 4;
                         break;
                 }
             }; calculatePrice();

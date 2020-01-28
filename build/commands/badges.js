@@ -74,7 +74,7 @@ module.exports = {
                         let badge = tudeapi_1.default.badgeByKeyword(args[1]);
                         if (!badge) {
                             if (args[1].startsWith('<'))
-                                repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad', 'Don\'t use those `<` you got there! Leave them out!');
+                                repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad', 'Don\'t use those `<` and `>` you got there! Leave them out!');
                             else
                                 repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad');
                             return;

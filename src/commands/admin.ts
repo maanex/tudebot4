@@ -20,13 +20,14 @@ module.exports = {
 
         try {
             if (args.length == 0) {
-                repl(mes.channel, mes.author, 'admin <cmd>', 'message', '• setupchannelgames <channel>\n• itemlist');
+                repl(mes.channel, mes.author, 'admin <cmd>', 'bad', '• setupchannelgames <channel>\n• itemlist\n• setupitemshop <channel>');
                 return false;
             }
 
+            let run: () => {} = undefined;
             switch (args[0]) {
                 case 'setupchannelgames':
-                    let run = async () => {
+                    run = async () => {
                         let channel = mes.guild.channels.get(args[1]) as TextChannel;
                         await channel.send({ embed: { title: "I'm on top of the world!", url: 'https://www.youtube.com/watch?v=w5tWYmIOWGk' }});
                         await channel.send(_bigspace + '\n\n\n\n\n\n\n\n\n\n' + _bigspace);
@@ -50,17 +51,26 @@ module.exports = {
                                 text: 'Click on a game\'s name to jump to it'
                             }
                         }});
-                        repl(mes.channel, mes.author, 'Success!', 'message', `Lake:\n"${lakeIds.join('","')}"\n\nMine:\n"${mineIds.join('","')}"`);
+                        repl(mes.channel, mes.author, 'Success!', 'success', `Lake:\n"${lakeIds.join('","')}"\n\nMine:\n"${mineIds.join('","')}"`);
+                    }; run();
+                    break;
+
+                case 'setupitemshop':
+                    run = async () => {
+                        let channel = mes.guild.channels.get(args[1]) as TextChannel;
+                        for (let i = 0; i < 20; i++)
+                            await channel.send(_bigspace);
+                        repl(mes.channel, mes.author, 'Success!', 'success');
                     }; run();
                     break;
 
                 case 'itemlist':
-                    repl(mes.channel, mes.author, 'Items:', 'message', TudeApi.items.map(i => i.id + ': ' + i.name).join('\n'));
+                    repl(mes.channel, mes.author, 'Items:', 'success', TudeApi.items.map(i => i.id + ': ' + i.name).join('\n'));
                     break;
             }
             return true;
         } catch (ex) {
-            repl(mes.channel, mes.author, 'Error:', 'message', '```' + ex + '```');
+            repl(mes.channel, mes.author, 'Error:', 'bad', '```' + ex + '```');
             return false;
         }
     }
