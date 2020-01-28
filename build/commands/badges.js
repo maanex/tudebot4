@@ -35,9 +35,10 @@ const _badge_icons = {
 module.exports = {
     name: 'badges',
     aliases: [
+        'badge',
         'b'
     ],
-    desc: 'See your badges (or someone elses)',
+    desc: 'See your badges (or someone elses)\nuse `badge display <name>` to display a badge on your profile',
     sudoonly: false,
     execute(bot, mes, sudo, args, repl) {
         return new Promise((resolve, reject) => {
@@ -47,18 +48,35 @@ module.exports = {
             }
             else if (args.length) {
                 switch (args[0].toLowerCase()) {
+                    case 'show':
                     case 'setdisplay':
                     case 'display':
                     case 'displ':
                     case 'disp':
                     case 'd':
                         if (args.length < 2) {
-                            repl(mes.channel, mes.author, '`badge display <badge>`', 'bad');
+                            tudeapi_1.default.clubUserByDiscordId(user.id, user)
+                                .then(u => {
+                                if (!u.profile.disp_badge) {
+                                    if (u.profile.disp_badge == 0)
+                                        repl(mes.channel, mes.author, 'You don\'t show any badge on your profile!', 'bad', 'to change that use `badge display <badge>`');
+                                    else
+                                        repl(mes.channel, mes.author, '`badge display <badge>`', 'bad');
+                                    return;
+                                }
+                                u.profile.disp_badge = 0;
+                                tudeapi_1.default.updateClubUser(u);
+                                repl(mes.channel, mes.author, 'Displayed badge clear!', 'success', 'Your profile looks cleaner now.');
+                            })
+                                .catch(err => repl(mes.channel, mes.author, 'An error occured!', 'error'));
                             return;
                         }
                         let badge = tudeapi_1.default.badgeByKeyword(args[1]);
                         if (!badge) {
-                            repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad');
+                            if (args[1].startsWith('<'))
+                                repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad', 'Don\'t use those `<` you got there! Leave them out!');
+                            else
+                                repl(mes.channel, mes.author, `Badge ${args[1]} not found!`, 'bad');
                             return;
                         }
                         tudeapi_1.default.clubUserByDiscordId(user.id, user)
@@ -83,6 +101,7 @@ module.exports = {
                     return;
                 }
                 let badges = [];
+                let badgeZeroId = '';
                 if (u.badges) {
                     for (let b in u.badges) {
                         let badge = tudeapi_1.default.badgeById(parseInt(b));
@@ -97,12 +116,19 @@ module.exports = {
                                 break;
                             appid++;
                         }
+                        if (!badgeZeroId)
+                            badgeZeroId = badge.keyword;
                         badges.push({
                             name: _badge_icons[b][appid] + ' `' + appearance.name + '` (' + badge.keyword + ')',
                             value: badge.description.replace('%s', u.badges[b])
                         });
                     }
                 }
+                if (!mes.mentions.users.size && badges.length && u.profile.disp_badge == undefined)
+                    badges.push({
+                        name: 'Pro-tip: 👇',
+                        value: `Use the command \`badge display ${badgeZeroId}\`\nto show that badge on your profile!`
+                    });
                 let banana = Math.random() < .1;
                 mes.channel.send({
                     embed: {
@@ -113,7 +139,7 @@ module.exports = {
                         color: 0x36393f,
                         fields: badges,
                         image: { url: (badges.length || !banana) ? '' : 'https://cdn.discordapp.com/attachments/655354019631333397/656567439391326228/banana.png' },
-                        description: !badges.length && banana ? 'Empathy banana is here for you.' : '... *none*',
+                        description: badges.length ? '' : (banana ? 'Empathy banana is here for you.' : '... *none*'),
                     }
                 });
                 resolve(true);

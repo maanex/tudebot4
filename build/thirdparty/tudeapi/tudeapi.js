@@ -173,11 +173,13 @@ class TudeApi {
             })
                 .then(o => o.json())
                 .then(o => {
-                o['_raw_inventory'] = o.inventory;
-                o.inventory = [];
-                for (let ref in o['_raw_inventory'])
-                    o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));
                 if (o) {
+                    o['_raw_inventory'] = o.inventory;
+                    o.inventory = [];
+                    for (let ref in o['_raw_inventory'])
+                        o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));
+                    o['_raw_daily'] = o.daily;
+                    o.daily = this.parseClubUserDailyData(o.daily);
                     o['_org_points'] = o['points'] || 0;
                     o['_org_cookies'] = o['cookies'] || 0;
                     o['_org_gems'] = o['gems'] || 0;
