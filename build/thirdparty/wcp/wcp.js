@@ -68,7 +68,8 @@ class WCP {
                     .collection('settings')
                     .updateOne({ _id: 'modules' }, { '$set': { data: obj } });
                 console.log(chalk.blue('Module settings got updated remotely. Reloading.'));
-                __1.Core.reload();
+                if (!data.reload)
+                    __1.Core.reload();
             }
         }
         if (data.configure_commands) {
@@ -78,8 +79,12 @@ class WCP {
                     .collection('settings')
                     .updateOne({ _id: 'commands' }, { '$set': { data: obj } });
                 console.log(chalk.blue('Command settings got updated remotely. Reloading.'));
-                __1.Core.reload();
+                if (!data.reload)
+                    __1.Core.reload();
             }
+        }
+        if (data.reload) {
+            __1.Core.reload();
         }
     }
 }

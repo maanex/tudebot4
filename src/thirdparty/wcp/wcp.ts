@@ -101,7 +101,8 @@ export default class WCP {
                     .collection('settings')
                     .updateOne({ _id: 'modules' }, { '$set': { data: obj }});
                 console.log(chalk.blue('Module settings got updated remotely. Reloading.'))
-                Core.reload();
+                if (!data.reload)
+                    Core.reload();
             }
         }
         if (data.configure_commands) {
@@ -111,8 +112,13 @@ export default class WCP {
                     .collection('settings')
                     .updateOne({ _id: 'commands' }, { '$set': { data: obj }});
                 console.log(chalk.blue('Command settings got updated remotely. Reloading.'))
-                Core.reload();
+                if (!data.reload)
+                    Core.reload();
             }
+        }
+        
+        if (data.reload) {
+            Core.reload();
         }
     }
 

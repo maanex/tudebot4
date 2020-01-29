@@ -86,7 +86,6 @@ module.exports = (bot, conf, data, lang) => {
             for (let i = 0; i < target.length; i++) {
                 let s = Object.assign({}, target[i]);
                 s.changes = !areShelfsEqual(target[i], current[i]);
-                console.log(s.title + ' ' + s.changes);
                 out.push(s);
             }
             database_1.default.collection('clubitemshop').updateOne({ _id: 'current' }, { '$set': { shelfs: target.reverse() } });
