@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const wcp_js_1 = require("../../thirdparty/wcp/wcp.js");
 const __1 = require("../..");
 const itemlist_1 = require("./itemlist");
+const badgelist_js_1 = require("./badgelist.js");
 const fetch = require('node-fetch');
 const settings = require('../../../config/settings.json').thirdparty;
 class TudeApi {
@@ -45,6 +46,26 @@ class TudeApi {
                 .then(o => o.json())
                 .then(o => {
                 this.badges = o;
+                for (let b of this.badges) {
+                    b.getAppearance = function (level) {
+                        let appearance = b.appearance[0];
+                        let appid = -1;
+                        for (let a of b.appearance) {
+                            if (a.from <= level)
+                                appearance = a;
+                            else
+                                break;
+                            appid++;
+                        }
+                        return {
+                            from: appearance.from,
+                            name: appearance.name,
+                            icon: appearance.icon,
+                            id: appid,
+                            emoji: badgelist_js_1.badgeEmojiList[b.id][appid]
+                        };
+                    };
+                }
                 wcp_js_1.default.send({ status_tudeapi: '+Connected' });
             })
                 .catch(err => {

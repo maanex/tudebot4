@@ -82,16 +82,24 @@ module.exports = {
                     xpbar += _xpbar.right_empty;
                 xpbar += ` **${Math.floor(u.level_progress * 100)}%**`;
                 if (u.profile && u.profile.disp_badge) {
-                    let badge = tudeapi_1.default.badgeById(u.profile.disp_badge);
-                    let appearance = badge.appearance[0];
-                    for (let a of badge.appearance) {
-                        if (a.from <= u.badges[u.profile.disp_badge])
-                            appearance = a;
-                        else
-                            break;
+                    // let badge = TudeApi.badgeById(u.profile.disp_badge);
+                    // let appearance = badge.appearance[0];
+                    // for (let a of badge.appearance) {
+                    //     if (a.from <= u.badges[u.profile.disp_badge])
+                    //         appearance = a;
+                    //     else break;
+                    // }
+                    // footer += ' • ' + appearance.name;
+                    // icon = appearance.icon;
+                    icon = 'https://cdn.discordapp.com/attachments/543150321686413313/675367430641680384/guy.png';
+                }
+                let badges = [];
+                if (u.badges) {
+                    for (let b of Object.keys(u.badges)) {
+                        let badge = tudeapi_1.default.badgeById(parseInt(b));
+                        let appearance = badge.getAppearance(u.badges[b]);
+                        badges.push(appearance.emoji);
                     }
-                    footer += ' • ' + appearance.name;
-                    icon = appearance.icon;
                 }
                 mes.channel.send({
                     embed: {
@@ -102,7 +110,7 @@ module.exports = {
                         color: 0x36393f,
                         footer: { text: footer },
                         thumbnail: { url: icon },
-                        description: '```fix\nLevel ' + u.level + '```',
+                        description: badges.join(' ') + '```fix\nLevel ' + u.level + '```',
                         fields: [
                             {
                                 name: xpbar,

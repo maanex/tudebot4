@@ -6,6 +6,7 @@ import { rejects } from "assert";
 import WCP from "../../thirdparty/wcp/wcp.js";
 import { Core } from "../..";
 import { getItemIcon } from "./itemlist";
+import { badgeEmojiList } from "./badgelist.js";
 
 const fetch = require('node-fetch');
 
@@ -57,6 +58,13 @@ export interface Badge {
       name: string;
       icon: string;      
     }[];
+    getAppearance: (level) => {
+        from: number;
+        name: string;
+        icon: string;
+        id: number;
+        emoji: string;      
+    };
 }
 
 export interface Leaderboard {
@@ -126,6 +134,25 @@ export default class TudeApi {
                 .then(o => o.json())
                 .then(o => {
                     this.badges = o;
+                    for (let b of this.badges) {
+                        b.getAppearance = function(level: number): { from: number; name: string; icon: string; id: number; emoji: string; } {
+                            let appearance = b.appearance[0];
+                            let appid = -1;
+                            for (let a of b.appearance) {
+                                if (a.from <= level)
+                                    appearance = a;
+                                else break;
+                                appid++;
+                            }
+                            return {
+                                from: appearance.from,
+                                name: appearance.name,
+                                icon: appearance.icon,
+                                id: appid,
+                                emoji: badgeEmojiList[b.id][appid]
+                            };
+                        };
+                    }
                     WCP.send({ status_tudeapi: '+Connected' });
                 })
                 .catch(err => {

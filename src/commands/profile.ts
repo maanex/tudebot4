@@ -94,6 +94,15 @@ module.exports = {
                     }
                     footer += ' • ' + appearance.name;
                     icon = appearance.icon;
+                    // icon = 'https://cdn.discordapp.com/attachments/543150321686413313/675367430641680384/guy.png';
+                }
+                let badges: string[] = []
+                if (u.badges) {
+                    for (let b of Object.keys(u.badges)) {
+                        let badge = TudeApi.badgeById(parseInt(b));
+                        let appearance = badge.getAppearance(u.badges[b]);
+                        badges.push(appearance.emoji);
+                    }
                 }
 
                 mes.channel.send({
@@ -105,7 +114,7 @@ module.exports = {
                         color: 0x36393f,
                         footer: { text: footer },
                         thumbnail: { url: icon },
-                        description: '```fix\nLevel ' + u.level + '```',
+                        description: badges.join(' ') + '```fix\nLevel ' + u.level + '```',
                         fields: [
                             {
                                 name: xpbar,

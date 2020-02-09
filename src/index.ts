@@ -11,6 +11,7 @@ import { Util } from './util/util';
 import { Command } from './modules/commands';
 import { loadavg } from 'os';
 import { Long } from 'mongodb';
+import { logVersionDetails } from "./util/gitParser";
 const chalk = require('chalk');
 
 const settings = require('../config/settings.json');
@@ -38,6 +39,8 @@ export class TudeBot extends Client {
       .then(async () => {
         console.log('Connected to Mongo');
         WCP.send({ status_mongodb: '+Connected' });
+
+        logVersionDetails();
 
         await TudeApi.init(settings.lang);
         await Database.init();

@@ -15,6 +15,7 @@ const wcp_1 = require("./thirdparty/wcp/wcp");
 const database_1 = require("./database/database");
 const mongo_adapter_1 = require("./database/mongo.adapter");
 const util_1 = require("./util/util");
+const gitParser_1 = require("./util/gitParser");
 const chalk = require('chalk');
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
@@ -32,6 +33,7 @@ class TudeBot extends discord_js_1.Client {
             .then(() => __awaiter(this, void 0, void 0, function* () {
             console.log('Connected to Mongo');
             wcp_1.default.send({ status_mongodb: '+Connected' });
+            gitParser_1.logVersionDetails();
             yield tudeapi_1.default.init(settings.lang);
             yield database_1.default.init();
             this.on('ready', () => {
