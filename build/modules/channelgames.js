@@ -10,32 +10,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const util = require('../util');
-const _bigspace = '<:nothing:409254826938204171>';
-module.exports = (bot, conf, data, lang) => {
-    bot.on('messageReactionAdd', (reaction, user) => {
-        if (user.bot)
-            return;
-        if (!reaction.message.guild)
-            return;
-    });
-    bot.on('messageReactionRemove', (reaction, user) => {
-        if (user.bot)
-            return;
-        if (!reaction.message.guild)
-            return;
-    });
-    for (let game in games) {
-        games[game](bot, conf[game], data, lang);
+const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
+class QuotesModule extends types_1.Module {
+    constructor(bot, conf, data, lang) {
+        super('Module Name', 'private', bot, conf, data, lang);
     }
-    return {
-        onDisable() {
-            for (let game in games)
-                if (game['onDisable'])
-                    game['onDisable']();
+    onEnable() {
+        this.bot.on('messageReactionAdd', (reaction, user) => {
+            if (user.bot)
+                return;
+            if (!reaction.message.guild)
+                return;
+        });
+        this.bot.on('messageReactionRemove', (reaction, user) => {
+            if (user.bot)
+                return;
+            if (!reaction.message.guild)
+                return;
+        });
+        for (let game in games) {
+            games[game](this.bot, this.conf[game], this.data, this.lang);
         }
-    };
-};
+    }
+    onBotReady() {
+    }
+    onDisable() {
+        for (let game in games)
+            if (game['onDisable'])
+                game['onDisable']();
+    }
+}
+exports.default = QuotesModule;
 let games = {
     'fishing': (bot, conf, data, lang) => {
         let emojis = {
@@ -98,12 +104,12 @@ let games = {
                 let raw = emojis.lbwave;
                 for (let i = 0; i < 6; i++)
                     raw += emojis.wave;
-                raw += emojis.rbwave + _bigspace;
+                raw += emojis.rbwave + emojis_1.default.bigSpace;
                 emptyWaveText = raw;
                 let c = 0;
-                let title = emojis.inlineBounds.title.join('') + _bigspace;
-                let border1 = emojis.inlineBounds.goldBait.join('') + _bigspace;
-                let border2 = emojis.inlineBounds.normalBait.join('') + _bigspace;
+                let title = emojis.inlineBounds.title.join('') + emojis_1.default.bigSpace;
+                let border1 = emojis.inlineBounds.goldBait.join('') + emojis_1.default.bigSpace;
+                let border2 = emojis.inlineBounds.normalBait.join('') + emojis_1.default.bigSpace;
                 for (let m of messages) {
                     let text = '';
                     if (++c == 1)
@@ -113,7 +119,7 @@ let games = {
                     else if (c == 7)
                         text = border2;
                     else if (c == 11)
-                        text = '`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*';
+                        text = '`                                                   `\n`                                                   `*' + emojis_1.default.bigSpace + emojis_1.default.bigSpace + '*';
                     else
                         text = raw;
                     if (m.content !== text)
@@ -268,7 +274,7 @@ let games = {
             playing.delete(user.id);
             messages[messages.length - 1].reactions.get(emojis.rod).remove(user);
             if (playing.size == 0)
-                messages[10].edit('`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*');
+                messages[10].edit('`                                                   `\n`                                                   `*' + emojis_1.default.bigSpace + emojis_1.default.bigSpace + '*');
         }
         function tick() {
             if (playing.size == 0)
@@ -315,7 +321,7 @@ let games = {
             let text = emojis.lbwave;
             for (let i = 1; i < 7; i++)
                 text += (position == i ? getEmojiForFish(fish) : emojis.wave);
-            text += emojis.rbwave + _bigspace;
+            text += emojis.rbwave + emojis_1.default.bigSpace;
             let validLines = [];
             switch (area) {
                 case 'regular':
@@ -365,12 +371,12 @@ let games = {
                             space += ' ';
                         total += space + '`\n`';
                     }
-                    messages[10].edit('`' + total.substring(0, total.length - 4) + ' `' + _bigspace + _bigspace);
+                    messages[10].edit('`' + total.substring(0, total.length - 4) + ' `' + emojis_1.default.bigSpace + emojis_1.default.bigSpace);
                     caughtBy = [];
                     caughtByNames = [];
                     clearTimeout(resetDisplayTimer);
                     resetDisplayTimer = setTimeout(() => {
-                        messages[10].edit('`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*');
+                        messages[10].edit('`                                                   `\n`                                                   `*' + emojis_1.default.bigSpace + emojis_1.default.bigSpace + '*');
                     }, 20000);
                 }, 2000 + Math.floor(Math.random() * Math.random() * 4000), fish);
             });

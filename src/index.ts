@@ -1,18 +1,12 @@
-import { modlogType } from 'types';
-
-import { Client, Guild, User } from "discord.js";
-import TudeApi, { ClubUser } from './thirdparty/tudeapi/tudeapi';
+import { Module, ModLog } from './types';
+import { Client, User } from "discord.js";
+import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
-import * as fs from 'fs';
 import Database from './database/database';
 import MongoAdapter from './database/mongo.adapter';
-import { DbStats } from './database/dbstats';
 import { Util } from './util/util';
-import { Command } from './modules/commands';
-import { loadavg } from 'os';
-import { Long } from 'mongodb';
 import { logVersionDetails } from "./util/gitParser";
-const chalk = require('chalk');
+import * as chalk from "chalk";
 
 const settings = require('../config/settings.json');
 
@@ -20,15 +14,17 @@ const settings = require('../config/settings.json');
 export class TudeBot extends Client {
 
   public modlog: ModLog;
-  public m: moduledata = {};
+  public modules: Map<string, Module> = null;
 
-  constructor(props) {
-    super(props);
+  constructor(props: any) {
+    super(props)
+    
+    this.modlog = null;
+    this.modules = new Map();
 
     fixReactionEvent(this);
 
     Util.init();
-    
     WCP.init();
 
     MongoAdapter.connect(settings.mongodb.url)
@@ -48,16 +44,18 @@ export class TudeBot extends Client {
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
           WCP.send({ status_discord: '+Connected' });
+          
+          for (let mod of this.modules.values()) {
+            mod.onBotReady();
+          }
         });
     
-        await this.loadModules();
+        await this.loadModules(false);
         this.login(settings.bot.token);
-        // TODO
-        // TudeApi.clubUserById('42').then(u => console.log(u.inventory))
       });
   }
 
-  loadModules(): Promise<void> {
+  loadModules(isReload: boolean): Promise<void> {
     return new Promise((resolve, reject) => {
       Database
         .collection('settings')
@@ -67,19 +65,26 @@ export class TudeBot extends Client {
 
           WCP.send({ config_modules: JSON.stringify(data) });
           
-          for (let mod of Object.values(this.m)) {
-            if (mod && mod['onDisable'])
-              mod.onDisable();
+          for (let mod of this.modules.values()) {
+            mod.onDisable();
           }
           
-          this.m = {};
+          this.modules = new Map();
           this.modlog = undefined;
 
           for (let mod in data) {
-            let moddata = {};
-            try { moddata = require(`../config/moduledata/${mod}.json`); }
+            let modData = {};
+            try { modData = require(`../config/moduledata/${mod}.json`); }
             catch (ex) { }
-            this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, this.lang);
+            try {
+              const ModClass = require(`./modules/${mod}`).default;
+              let module: Module = new ModClass(this, data[mod], modData, this.lang);
+              this.modules.set(mod, module);
+              module.onEnable();
+              if (isReload) module.onBotReady();
+            } catch (ex) {
+              console.error(ex);
+            }
           }
           
           resolve();
@@ -92,7 +97,7 @@ export class TudeBot extends Client {
     });
   }
 
-  lang(key: string) {
+  lang(key: string): string {
     let res = require(`../config/lang.json`)[key];
     if (!res) return '';
     if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
@@ -103,22 +108,20 @@ export class TudeBot extends Client {
     return new Promise(async (resolve, reject) => {
       this.removeAllListeners();
       fixReactionEvent(this);
-      await this.loadModules();
+      await this.loadModules(true);
       this.emit('ready');
       resolve();
     });
   }
 
+  getModule<T extends Module>(name: string): T {
+    return this.modules.get(name) as T;
+  }
+
 }
 
 
-export const Core = new TudeBot (
-  {
-    disabledEvents: [
-      'TYPING_START',
-    ]
-  }
-);
+export const Core = new TudeBot ({ });
 
 
 function fixReactionEvent(bot: TudeBot) {
@@ -139,22 +142,4 @@ function fixReactionEvent(bot: TudeBot) {
       const reaction = message.reactions.get(emojiKey);
       bot.emit(events[ev.t], reaction, user);
   });
-}
-
-
-/* */
-
-interface moduledata {
-  commands?: {
-    getCommands: () => Command[];
-    getActiveInCommandsChannel: () => string[]
-  };
-  getpoints?: {
-    onUserLevelup: (user: ClubUser, newLevel: number, rewards: any) => void
-  };
-  [key: string]: any;
-}
-
-interface ModLog {
-  log: (guild: Guild, type: modlogType, text: string) => void
 }

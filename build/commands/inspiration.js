@@ -17,7 +17,7 @@ module.exports = {
                 .then(o => o.text())
                 .then(o => mes.channel.send({
                 embed: {
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     image: {
                         url: o
                     },

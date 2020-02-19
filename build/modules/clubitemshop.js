@@ -11,57 +11,96 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const database_1 = require("../database/database");
-const _bigspace = '<:nothing:409254826938204171>';
-module.exports = (bot, conf, data, lang) => {
-    let _channels = [];
-    function update(channel, shelfs) {
+const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
+const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
+class ClubItemShopModule extends types_1.Module {
+    constructor(bot, conf, data, lang) {
+        super('Tude Club Item Shop', 'private', bot, conf, data, lang);
+        this.channels = [];
+    }
+    onEnable() {
+    }
+    onBotReady() {
+        for (let path of this.conf.channels) {
+            let guildid = path.split('/')[0];
+            let channelid = path.split('/')[1];
+            if (!guildid || !channelid)
+                return;
+            let guild = this.bot.guilds.get(guildid);
+            if (!guild)
+                return;
+            let channel = guild.channels.get(channelid);
+            if (!channel)
+                return;
+            this.channels.push(channel);
+        }
+        this.getShopdata().then(d => {
+            this.channels.forEach(c => this.update(c, d));
+        }).catch(err => console.error);
+    }
+    onDisable() {
+    }
+    update(channel, shelfs) {
         channel.fetchMessages().then(mes => {
             if (mes.size) {
                 let c = 0;
                 for (let m of mes.array()) {
-                    if (m.author.id != bot.user.id)
+                    if (m.author.id != this.bot.user.id)
                         continue;
                     if (c == 0) {
                         if (!m.embeds.length)
-                            m.edit('​\n\n\n​' /* contains two zero with dividers at start and end of the string */, { embed: {
+                            m.edit('​\n\n\n​' /* contains two zero with dividers at start and end of the string */, {
+                                embed: {
                                     title: 'Welcome to the shop!',
-                                    color: 0x36393f,
+                                    color: 0x2f3136,
                                     description: '*Scroll up to browse the shelfs!*\n> To purchase an item, just type it\'s name into this channel.\n> To buy multiple of a kind, let\'s say 5 fishing lure, just add\n> the amount like so: `lure 5`.',
                                     footer: { text: 'Purchasing an item cannot be undone.' }
-                                } });
+                                }
+                            });
                     }
                     else if (c < shelfs.length + 1) {
                         let s = shelfs[shelfs.length - c];
                         if (s.changes)
-                            m.edit('', { embed: shelfToEmbed(s) });
+                            m.edit('', { embed: this.shelfToEmbed(s) });
                     }
                     else {
                         if (m.embeds.length)
-                            m.edit(_bigspace, { embed: null });
+                            m.edit(emojis_1.default.bigSpace, { embed: null });
                     }
                     c++;
                 }
             }
             else {
-                bot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupitemshop ' + channel.id + '`');
+                this.bot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupitemshop ' + channel.id + '`');
             }
         }).catch(err => {
-            bot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated! Error: ```' + err + '```');
+            this.bot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated! Error: ```' + err + '```');
         });
     }
-    function shelfToEmbed(shelf) {
+    shelfToEmbed(shelf) {
         return {
             title: shelf.title,
-            color: getShelfColor(shelf.category),
+            color: this.getShelfColor(shelf.category),
             description: shelf.items.map(i => {
-                let itemdata = tudeapi_1.default.items.find(item => item.id == i.item);
+                let itemdata = this.getItem(i);
                 if (!itemdata)
                     return 'error, item not found: ' + i.item;
-                return `${itemdata.icon} ${itemdata.name}\n${_bigspace} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${getCurrencyIcon(i.currency)}`;
+                return `${itemdata.icon} ${itemdata.name}\n${emojis_1.default.bigSpace} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
             }).join('\n\n')
         };
     }
-    function getShelfColor(category) {
+    getItem(i) {
+        switch (i.item) {
+            case 'cookie':
+                return itemlist_1.DEFAULT_ITEMS.cookie;
+            case 'key':
+                return itemlist_1.DEFAULT_ITEMS.key;
+            default:
+                return tudeapi_1.default.items.find(item => item.id == i.item);
+        }
+    }
+    getShelfColor(category) {
         switch (category) {
             case 'regular': return 0xD99E82;
             case 'gem': return 0x8CCAF7;
@@ -69,14 +108,14 @@ module.exports = (bot, conf, data, lang) => {
             case 'event': return 0xFFFFFF; // EVENT-UPDATE
         }
     }
-    function getCurrencyIcon(currency) {
+    getCurrencyIcon(currency) {
         switch (currency) {
             case 'cookies': return '🍪';
             case 'gems': return '💎';
             case 'event-tokens': return '[]'; // EVENT-UPDATE
         }
     }
-    function getShopdata() {
+    getShopdata() {
         return __awaiter(this, void 0, void 0, function* () {
             let target = (yield database_1.default.collection('clubitemshop').findOne({ _id: 'target' }))['shelfs'];
             let current = (yield database_1.default.collection('clubitemshop').findOne({ _id: 'current' }))['shelfs'];
@@ -85,14 +124,14 @@ module.exports = (bot, conf, data, lang) => {
             let out = [];
             for (let i = 0; i < target.length; i++) {
                 let s = Object.assign({}, target[i]);
-                s.changes = !areShelfsEqual(target[i], current[i]);
+                s.changes = !this.areShelfsEqual(target[i], current[i]);
                 out.push(s);
             }
             database_1.default.collection('clubitemshop').updateOne({ _id: 'current' }, { '$set': { shelfs: target.reverse() } });
             return out.reverse();
         });
     }
-    function areShelfsEqual(shelf1, shelf2) {
+    areShelfsEqual(shelf1, shelf2) {
         if (shelf1 == undefined)
             return shelf2 == undefined;
         if (shelf2 == undefined)
@@ -115,28 +154,6 @@ module.exports = (bot, conf, data, lang) => {
         }
         return true;
     }
-    function init() {
-        for (let path of conf.channels) {
-            let guildid = path.split('/')[0];
-            let channelid = path.split('/')[1];
-            if (!guildid || !channelid)
-                return;
-            let guild = bot.guilds.get(guildid);
-            if (!guild)
-                return;
-            let channel = guild.channels.get(channelid);
-            if (!channel)
-                return;
-            _channels.push(channel);
-        }
-        getShopdata().then(d => {
-            _channels.forEach(c => update(c, d));
-        }).catch(err => console.error);
-    }
-    bot.on('ready', init);
-    return {
-        onDisable() {
-        }
-    };
-};
+}
+exports.default = ClubItemShopModule;
 //# sourceMappingURL=clubitemshop.js.map

@@ -7,6 +7,7 @@ import WCP from "../../thirdparty/wcp/wcp.js";
 import { Core } from "../..";
 import { getItemIcon } from "./itemlist";
 import { badgeEmojiList } from "./badgelist.js";
+import GetPointsModule from "../../modules/getpoints.js";
 
 const fetch = require('node-fetch');
 
@@ -18,7 +19,7 @@ export interface User {
     id: string;
     type: number;
     name: string;
-    tag: string;
+    tag: number;
 }
 
 export interface ClubUser {
@@ -413,7 +414,7 @@ export default class TudeApi {
                 user['_org_keys'] += u.keys.add;
                 user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
                 if (o['levelup'] != undefined)
-                    Core.m['getpoints'].onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                    Core.getModule<GetPointsModule>('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
             })
             .catch(console.error);
     }

@@ -16,12 +16,14 @@ const database_1 = require("./database/database");
 const mongo_adapter_1 = require("./database/mongo.adapter");
 const util_1 = require("./util/util");
 const gitParser_1 = require("./util/gitParser");
-const chalk = require('chalk');
+const chalk = require("chalk");
 const settings = require('../config/settings.json');
 class TudeBot extends discord_js_1.Client {
     constructor(props) {
         super(props);
-        this.m = {};
+        this.modules = null;
+        this.modlog = null;
+        this.modules = new Map();
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init();
@@ -39,14 +41,15 @@ class TudeBot extends discord_js_1.Client {
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
+                for (let mod of this.modules.values()) {
+                    mod.onBotReady();
+                }
             });
-            yield this.loadModules();
+            yield this.loadModules(false);
             this.login(settings.bot.token);
-            // TODO
-            // TudeApi.clubUserById('42').then(u => console.log(u.inventory))
         }));
     }
-    loadModules() {
+    loadModules(isReload) {
         return new Promise((resolve, reject) => {
             database_1.default
                 .collection('settings')
@@ -54,19 +57,28 @@ class TudeBot extends discord_js_1.Client {
                 .then(data => {
                 data = data.data;
                 wcp_1.default.send({ config_modules: JSON.stringify(data) });
-                for (let mod of Object.values(this.m)) {
-                    if (mod && mod['onDisable'])
-                        mod.onDisable();
+                for (let mod of this.modules.values()) {
+                    mod.onDisable();
                 }
-                this.m = {};
+                this.modules = new Map();
                 this.modlog = undefined;
                 for (let mod in data) {
-                    let moddata = {};
+                    let modData = {};
                     try {
-                        moddata = require(`../config/moduledata/${mod}.json`);
+                        modData = require(`../config/moduledata/${mod}.json`);
                     }
                     catch (ex) { }
-                    this.m[mod] = require(`./modules/${mod}`)(this, data[mod], moddata, this.lang);
+                    try {
+                        const ModClass = require(`./modules/${mod}`).default;
+                        let module = new ModClass(this, data[mod], modData, this.lang);
+                        this.modules.set(mod, module);
+                        module.onEnable();
+                        if (isReload)
+                            module.onBotReady();
+                    }
+                    catch (ex) {
+                        console.error(ex);
+                    }
                 }
                 resolve();
             })
@@ -89,18 +101,17 @@ class TudeBot extends discord_js_1.Client {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             this.removeAllListeners();
             fixReactionEvent(this);
-            yield this.loadModules();
+            yield this.loadModules(true);
             this.emit('ready');
             resolve();
         }));
     }
+    getModule(name) {
+        return this.modules.get(name);
+    }
 }
 exports.TudeBot = TudeBot;
-exports.Core = new TudeBot({
-    disabledEvents: [
-        'TYPING_START',
-    ]
-});
+exports.Core = new TudeBot({});
 function fixReactionEvent(bot) {
     const events = {
         MESSAGE_REACTION_ADD: 'messageReactionAdd',

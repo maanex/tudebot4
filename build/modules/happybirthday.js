@@ -1,14 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-let interval;
-module.exports = (bot, conf, data, lang) => {
-    let lastDay = '';
-    function check() {
+const types_1 = require("../types");
+class HappyBirthdayModule extends types_1.Module {
+    constructor(bot, conf, data, lang) {
+        super('Happy Birthday', 'private', bot, conf, data, lang);
+        this.lastDay = '';
+    }
+    onEnable() {
+        this.interval = setInterval(this.check, 1000 * 60 * 60);
+        this.check();
+    }
+    onBotReady() {
+    }
+    onDisable() {
+        clearInterval(this.interval);
+        this.interval = undefined;
+    }
+    check() {
         let date = new Date();
         let dstr = date.getDate() + '-' + (date.getMonth() + 1);
-        if (lastDay == dstr)
+        if (this.lastDay == dstr)
             return;
-        lastDay = dstr;
+        this.lastDay = dstr;
         let maxdelay = 1000 * 60 * 60 * 5; // 5h
         setTimeout((daystr, bot, conf, data) => {
             let users = [];
@@ -18,7 +31,7 @@ module.exports = (bot, conf, data, lang) => {
             }
             if (!users.length)
                 return;
-            let msg = lang(users.length > 1 ? 'birthday_message_mult' : 'birthday_message');
+            let msg = this.lang(users.length > 1 ? 'birthday_message_mult' : 'birthday_message');
             let usrstr = users.map(u => `<@${u}>`).join(' & ');
             msg = msg.split('{}').join(usrstr);
             for (let c of conf.channels) {
@@ -32,17 +45,8 @@ module.exports = (bot, conf, data, lang) => {
                     continue;
                 channel.send(`@everyone ${msg}`);
             }
-        }, Math.floor(Math.random() * maxdelay), dstr, bot, conf, data);
+        }, Math.floor(Math.random() * maxdelay), dstr, this.bot, this.conf, this.data);
     }
-    bot.on('ready', () => {
-        interval = setInterval(check, 1000 * 60 * 60);
-        check();
-    });
-    return {
-        onDisable() {
-            clearInterval(interval);
-            interval = undefined;
-        }
-    };
-};
+}
+exports.default = HappyBirthdayModule;
 //# sourceMappingURL=happybirthday.js.map

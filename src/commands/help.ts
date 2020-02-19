@@ -2,7 +2,7 @@ import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
-import { Command } from "../modules/commands";
+import CommandsModule, { Command } from "../modules/commands";
 
 
 
@@ -27,7 +27,9 @@ const _yeses = [
 module.exports = {
 
     name: 'help',
-    aliases: [ ],
+    aliases: [
+        ...('.?!/%-+=~&,:'.split('').map(p=>p+'help'))
+    ],
     desc: 'Help!',
     sudoonly: false,
     hideonhelp: true,
@@ -37,7 +39,7 @@ module.exports = {
 
         if (args.length < 1) {
             let text = '';
-            let cmds = bot.m.commands.getCommands().sort();
+            let cmds = bot.getModule<CommandsModule>('commands').getCommands().sort();
             if (!sudo)
                 cmds = cmds.filter(c => !c.sudoonly && !c.hideonhelp);
             let longest = 0;
@@ -45,12 +47,12 @@ module.exports = {
                 if (cmd.name.length > longest)
                     longest = cmd.name.length;
             for (let cmd of cmds)
-                text += `\`${('                   ' + cmd.name).substr(-longest-1)}\` ${cmd.sudoonly ? ('*' + cmd.desc + '*') : cmd.desc}\n`
+                text += `\`${((cmd.hideonhelp ? '•' : '') + cmd.name).padStart(longest+1)}\` ${cmd.sudoonly ? ('**' + cmd.desc + '**') : cmd.desc.split('\n')[0]}\n`
             repl(mes.channel, mes.author, 'Help', 'message', text);
         } else {
             let cmd = args[0];
             let command: Command;
-            out: for (let c of bot.m.commands.getCommands()) {
+            out: for (let c of bot.getModule<CommandsModule>('commands').getCommands()) {
                 if (c.name === cmd) {
                     command = c;
                     break out;
@@ -71,7 +73,7 @@ module.exports = {
                         repl(mes.channel, mes.author, 'UH...', 'bad', `Command ${cmd} not found!`);
                 }
             } else {
-                if (command.name == 'help') {
+                if (command.name == 'help' && !sudo) {
                     repl(mes.channel, mes.author, 'Help', 'message', helphelp(mes.author));
                 } else {
                     let easteregg = [];

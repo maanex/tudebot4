@@ -189,7 +189,7 @@ module.exports = {
                     currentGame.startIn = 10;
                 resolve(true);
                 mes.channel.send({ embed: {
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     title: 'Black Jack',
                     description: 'Preparing...'
                 }}).then(mes => currentGame.chatMessage = mes as Message).catch();
@@ -197,7 +197,7 @@ module.exports = {
                     if (currentGame.startIn == 10 || currentGame.startIn == 5 || currentGame.startIn <= 2) {
                         if (currentGame.chatMessage)
                             currentGame.chatMessage.edit('', { embed: {
-                                color: 0x36393f,
+                                color: 0x2f3136,
                                 title: 'Black Jack',
                                 description: 'Starting in ' + currentGame.startIn + '```js\n'
                                     + currentGame.entries.map(b => `${b.by.username}: ${b.amount}c`).join('\n')
@@ -390,7 +390,7 @@ async function updateMessage(removeEmojis = true, addEmojis = true, end = false)
     }
 
     currentGame.chatMessage.edit('', { embed: {
-        color: 0x36393f,
+        color: 0x2f3136,
         title: 'Black Jack',
         description: (end ? 'Game Over' : `${hit} hit • ${stand} stand`) + `\n${_bigspace}`,
         fields: embedFields(end)

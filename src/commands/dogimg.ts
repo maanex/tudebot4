@@ -11,10 +11,9 @@ module.exports = {
     aliases: [
         'doggo',
         'dogimage',
-        'dogimg',
-        'pussy'
+        'dogimg'
     ],
-    desc: 'Random dog image',
+    desc: 'A random dog image',
     sudoonly: false,
 
     
@@ -24,7 +23,7 @@ module.exports = {
             .then(o => o.json())
             .then(o => mes.channel.send({
                 embed: {
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     image: {
                         url: o[0].url
                     },

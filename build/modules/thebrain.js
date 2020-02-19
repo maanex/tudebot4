@@ -1,22 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const util = require('../util');
-const nreq = require('request');
-let timeouts = [];
-module.exports = (bot, conf, data, lang) => {
-    bot.on('message', (mes) => {
-        if (mes.author.bot)
-            return;
-    });
-    bot.on('ready', () => {
-        setTimeout(setPlaytext, 1000);
-        setTimeout(setNewIcon, 1000);
-        // downloadAllImages();
-        // convertAllImages();
-        // FOOKIN TTS API -> https://translate.google.com/translate_tts?q=Moin%20Jungs%20klenet%20r%C3%A4tsel%20f%C3%BCr%20euch%2C%20wo%20kommt%20das%20ger%C3%A4usch%20her%3F&textlen=211&tk=164713.315041&client=tw-ob&idx=0&total=2&tl=cy&ie=UTF-8
-    });
-    function downloadAllImages() {
-        let all = data.icons.random;
+const nreq = require("request");
+const types_1 = require("../types");
+class TheBrainModule extends types_1.Module {
+    constructor(bot, conf, data, lang) {
+        super('The Brain', 'private', bot, conf, data, lang);
+        this.timeouts = [];
+    }
+    onEnable() {
+        this.bot.on('message', (mes) => {
+            if (mes.author.bot)
+                return;
+        });
+    }
+    onBotReady() {
+        setTimeout(() => this.setPlaytext(), 1000);
+        setTimeout(() => this.setNewIcon(), 1000);
+    }
+    onDisable() {
+        this.timeouts.forEach(clearTimeout);
+        this.timeouts = [];
+    }
+    downloadAllImages() {
+        let all = this.data.icons.random;
         let i = 0;
         for (let url of all) {
             var request = nreq.defaults({ encoding: null });
@@ -33,7 +39,7 @@ module.exports = (bot, conf, data, lang) => {
             });
         }
     }
-    function convertAllImages() {
+    convertAllImages() {
         let num = 4611;
         const sharp = require('sharp');
         while (num >= 0) {
@@ -43,10 +49,10 @@ module.exports = (bot, conf, data, lang) => {
             num--;
         }
     }
-    function setNewIcon(timeoutonly = true) {
+    setNewIcon(timeoutonly = true) {
         if (!timeoutonly) {
             var request = nreq.defaults({ encoding: null });
-            request.get(getIconUrl(), function (err, res, body) {
+            request.get(this.getIconUrl(), function (err, res, body) {
                 if (err)
                     return;
                 if (!body)
@@ -56,14 +62,14 @@ module.exports = (bot, conf, data, lang) => {
             });
         }
         let sixH = 6 * 60 * 60 * 1000;
-        timeouts.push(setTimeout(() => setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5)));
+        this.timeouts.push(setTimeout(() => this.setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5)));
     }
-    function setPlaytext() {
-        bot.user.setActivity(getText());
-        timeouts.push(setTimeout(setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
+    setPlaytext() {
+        this.bot.user.setActivity(this.getText());
+        this.timeouts.push(setTimeout(this.setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
     }
-    function getText() {
-        let all = data.texts;
+    getText() {
+        let all = this.data.texts;
         let category = 'info';
         if (Math.random() < .5)
             category = 'stuff';
@@ -73,8 +79,8 @@ module.exports = (bot, conf, data, lang) => {
         let text = list[Math.floor(Math.random() * list.length)];
         return text;
     }
-    function getIconUrl() {
-        let all = data.icons;
+    getIconUrl() {
+        let all = this.data.icons;
         let category = 'random';
         if (Math.random() < .7)
             category = 'random';
@@ -82,11 +88,6 @@ module.exports = (bot, conf, data, lang) => {
         let icon = list[Math.floor(Math.random() * list.length)];
         return icon;
     }
-    return {
-        onDisable() {
-            timeouts.forEach(clearTimeout);
-            timeouts = [];
-        }
-    };
-};
+}
+exports.default = TheBrainModule;
 //# sourceMappingURL=thebrain.js.map

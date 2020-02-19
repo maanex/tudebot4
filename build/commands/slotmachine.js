@@ -183,7 +183,7 @@ function runSm1(mes, u) {
         text = text.replace('%s', sm1emoji.loading[Math.floor(Math.random() * 6)]);
     mes.channel.send({ embed: {
             title: 'Slotmachine',
-            color: 0x36393f,
+            color: 0x2f3136,
             description: text
         } }).then(m => {
         setTimeout((m, u) => {
@@ -235,7 +235,7 @@ function runSm1(mes, u) {
             tudeapi_1.default.updateClubUser(u);
             m.edit({ embed: {
                     title: 'Slotmachine',
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     description: text
                 } });
         }, 4000, m, u);
@@ -248,7 +248,7 @@ function runSm2(mes, u) {
         text = text.replace('%s', sm2emoji.loading[c++]);
     mes.channel.send({ embed: {
             title: 'Slotmachine',
-            color: 0x36393f,
+            color: 0x2f3136,
             description: text
         } }).then(m => {
         setTimeout((m, u) => {
@@ -351,7 +351,7 @@ function runSm2(mes, u) {
             tudeapi_1.default.updateClubUser(u);
             m.edit({ embed: {
                     title: sendNudesEasteregg ? 'Slutmachine' : 'Slotmachine',
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     description: text
                 } });
         }, 5000, m, u);
@@ -365,7 +365,7 @@ function runSm3(mes, u) {
         text = text.replace('%s', sm3emoji.loading[goBlue ? 'blue' : 'orange'][Math.floor(Math.random() * 6)]);
     mes.channel.send({ embed: {
             title: 'Slotmachine',
-            color: 0x36393f,
+            color: 0x2f3136,
             description: text
         } }).then(m => {
         setTimeout((m, u) => {
@@ -435,7 +435,7 @@ function runSm3(mes, u) {
             tudeapi_1.default.updateClubUser(u);
             m.edit({ embed: {
                     title: 'Slotmachine',
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     description: text
                 } });
             if (goBlue && !win)

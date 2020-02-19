@@ -60,7 +60,7 @@ module.exports = {
                     }
                     mes.channel.send({
                         embed: {
-                            color: 0x36393f,
+                            color: 0x2f3136,
                             title: `${mes.member.displayName}'s daily reward:`,
                             description: desc
                         }

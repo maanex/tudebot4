@@ -1,37 +1,83 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-let interval;
-module.exports = (bot, conf, data, lang) => {
-    const UPDATE_COOLDOWN = 2 * 60000;
-    const UPDATE_EMOJI = '🔄';
-    let _channels = [];
-    function update(channel) {
-        generateLeaderboard(channel.guild).then(content => {
+const types_1 = require("../types");
+class QuotesModule extends types_1.Module {
+    constructor(bot, conf, data, lang) {
+        super('Module Name', 'private', bot, conf, data, lang);
+        this.UPDATE_COOLDOWN = 2 * 60000;
+        this.UPDATE_EMOJI = '🔄';
+        this.channels = [];
+    }
+    onEnable() {
+        this.bot.on('messageReactionAdd', (reaction, user) => {
+            let mes = reaction.message;
+            if (user.bot)
+                return;
+            if (!mes.guild)
+                return;
+            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
+                return;
+            if (reaction.emoji.name == this.UPDATE_EMOJI)
+                this.update(mes.channel);
+        });
+    }
+    onBotReady() {
+        for (let path of this.conf.channels) {
+            let guildid = path.split('/')[0];
+            let channelid = path.split('/')[1];
+            if (!guildid || !channelid)
+                return;
+            let guild = this.bot.guilds.get(guildid);
+            if (!guild)
+                return;
+            let channel = guild.channels.get(channelid);
+            if (!channel)
+                return;
+            this.channels.push(channel);
+        }
+        let lastmin = 0;
+        this.interval = setInterval(() => {
+            let currmin = new Date().getMinutes();
+            if (currmin == lastmin)
+                return;
+            lastmin = currmin;
+            if (currmin != 0)
+                return;
+            this.channels.forEach(this.update);
+        }, 30000);
+        this.channels.forEach(this.update);
+    }
+    onDisable() {
+        clearInterval(this.interval);
+        this.interval = undefined;
+    }
+    update(channel) {
+        this.generateLeaderboard(channel.guild).then(content => {
             channel.fetchMessages().then(m => {
                 if (m.size) {
                     let mes = m.first();
                     mes.edit(content);
                     mes.clearReactions();
                     setTimeout(() => {
-                        mes.react(UPDATE_EMOJI);
-                    }, UPDATE_COOLDOWN);
+                        mes.react(this.UPDATE_EMOJI);
+                    }, this.UPDATE_COOLDOWN);
                 }
                 else {
                     channel.send(content).then(mes => {
-                        mes.react(UPDATE_EMOJI);
+                        mes.react(this.UPDATE_EMOJI);
                     }).catch(err => {
-                        bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+                        this.bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
                     });
                 }
             }).catch(err => {
-                bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+                this.bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
             });
         }).catch(err => {
-            bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+            this.bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
         });
     }
-    function generateLeaderboard(guild) {
+    generateLeaderboard(guild) {
         return new Promise((resolve, reject) => {
             tudeapi_1.default.clubLeaderboard().then(leaderboard => {
                 let out = `   | All Time           | This Month\n---+--------------------+-------------------`;
@@ -67,56 +113,13 @@ module.exports = (bot, conf, data, lang) => {
                 out += `\nLast Update: ${new Date(leaderboard.updated)}`;
                 if (new Date().getHours() == 0) { // Whale fact time
                     out += '``` ```fix\nWhale fact of the day: ';
-                    let facts = data.whalefacts;
+                    let facts = this.data.whalefacts;
                     out += facts[new Date().getDate() % facts.length];
                 }
                 resolve('```cs\n' + out + '```');
             }).catch(reject);
         });
     }
-    bot.on('messageReactionAdd', (reaction, user) => {
-        let mes = reaction.message;
-        if (user.bot)
-            return;
-        if (!mes.guild)
-            return;
-        if (!conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
-            return;
-        if (reaction.emoji.name == UPDATE_EMOJI)
-            update(mes.channel);
-    });
-    function init() {
-        for (let path of conf.channels) {
-            let guildid = path.split('/')[0];
-            let channelid = path.split('/')[1];
-            if (!guildid || !channelid)
-                return;
-            let guild = bot.guilds.get(guildid);
-            if (!guild)
-                return;
-            let channel = guild.channels.get(channelid);
-            if (!channel)
-                return;
-            _channels.push(channel);
-        }
-        let lastmin = 0;
-        interval = setInterval(() => {
-            let currmin = new Date().getMinutes();
-            if (currmin == lastmin)
-                return;
-            lastmin = currmin;
-            if (currmin != 0)
-                return;
-            _channels.forEach(update);
-        }, 30000);
-        _channels.forEach(update);
-    }
-    bot.on('ready', init);
-    return {
-        onDisable() {
-            clearInterval(interval);
-            interval = undefined;
-        }
-    };
-};
+}
+exports.default = QuotesModule;
 //# sourceMappingURL=autoleaderboard.js.map

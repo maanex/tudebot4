@@ -3,37 +3,43 @@ import { MessageReaction, User, Role, Message, TextChannel, ClientUserSettings }
 import { finished } from "stream";
 import { maxHeaderSize } from "http";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
-const util = require('../util');
+import { Module } from "../types";
+import Emojis from "../int/emojis";
 
 
+export default class QuotesModule extends Module {
 
-const _bigspace = '<:nothing:409254826938204171>';
+  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
+    super('Module Name', 'private', bot, conf, data, lang);
+  }
 
-module.exports = (bot: TudeBot, conf: any, data: any, lang: Function) => {
-
-    bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
+  public onEnable(): void {
+    this.bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
         if (user.bot) return;
         if (!reaction.message.guild) return;
 
     });
 
-    bot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
+    this.bot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
         if (user.bot) return;
         if (!reaction.message.guild) return;
 
     });
 
     for (let game in games) {
-        games[game](bot, conf[game], data, lang);
+        games[game](this.bot, this.conf[game], this.data, this.lang);
     }
-    
-    return {
-        onDisable() {
-            for (let game in games)
-                if (game['onDisable'])
-                    game['onDisable']();
-        }
-    }
+  }
+
+  public onBotReady(): void {
+  }
+
+  public onDisable(): void {
+    for (let game in games)
+    if (game['onDisable'])
+        game['onDisable']();
+  }
+
 }
 
 let games = {
@@ -124,18 +130,18 @@ let games = {
                 let raw = emojis.lbwave;
                 for (let i = 0; i < 6; i++)
                     raw += emojis.wave;
-                raw += emojis.rbwave + _bigspace;
+                raw += emojis.rbwave + Emojis.bigSpace;
                 emptyWaveText = raw;
                 let c = 0;
-                let title = emojis.inlineBounds.title.join('') + _bigspace;
-                let border1 = emojis.inlineBounds.goldBait.join('') + _bigspace;
-                let border2 = emojis.inlineBounds.normalBait.join('') + _bigspace;
+                let title = emojis.inlineBounds.title.join('') + Emojis.bigSpace;
+                let border1 = emojis.inlineBounds.goldBait.join('') + Emojis.bigSpace;
+                let border2 = emojis.inlineBounds.normalBait.join('') + Emojis.bigSpace;
                 for (let m of messages) {
                     let text = '';
                     if (++c == 1) text = title;
                     else if (c == 4) text = border1;
                     else if (c == 7) text = border2;
-                    else if (c == 11) text = '`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*';
+                    else if (c == 11) text = '`                                                   `\n`                                                   `*' + Emojis.bigSpace + Emojis.bigSpace + '*';
                     else text = raw;
                     if (m.content !== text)
                         await m.edit(text);
@@ -279,7 +285,7 @@ let games = {
             playing.delete(user.id);
             messages[messages.length - 1].reactions.get(emojis.rod).remove(user);
             if (playing.size == 0) 
-                messages[10].edit('`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*');
+                messages[10].edit('`                                                   `\n`                                                   `*' + Emojis.bigSpace + Emojis.bigSpace + '*');
         }
 
         function tick(): void {
@@ -323,7 +329,7 @@ let games = {
             let text = emojis.lbwave;
             for (let i = 1; i < 7; i++)
                 text += (position == i ? getEmojiForFish(fish) : emojis.wave);
-            text += emojis.rbwave + _bigspace;
+            text += emojis.rbwave + Emojis.bigSpace;
             let validLines = [];
             switch (area) {
                 case 'regular': validLines = [7,8,9]; break;
@@ -360,12 +366,12 @@ let games = {
                         for (let i = 0; i < linewidth.length - currlength; i++) space += ' ';
                         total += space + '`\n`';
                     }
-                    messages[10].edit('`' + total.substring(0, total.length - 4) + ' `' + _bigspace + _bigspace);
+                    messages[10].edit('`' + total.substring(0, total.length - 4) + ' `' + Emojis.bigSpace + Emojis.bigSpace);
                     caughtBy = [];
                     caughtByNames = [];
                     clearTimeout(resetDisplayTimer);
                     resetDisplayTimer = setTimeout(() => {
-                        messages[10].edit('`                                                   `\n`                                                   `*' + _bigspace + _bigspace + '*');
+                        messages[10].edit('`                                                   `\n`                                                   `*' + Emojis.bigSpace + Emojis.bigSpace + '*');
                     }, 20_000);
                 }, 2_000 + Math.floor(Math.random() * Math.random() * 4_000), fish);
             });

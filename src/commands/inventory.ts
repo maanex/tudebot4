@@ -43,7 +43,7 @@ module.exports = {
                             name: `${user.username}'s inventory:`,
                             icon_url: user.avatarURL
                         },
-                        color: 0x36393f,
+                        color: 0x2f3136,
                         description: wow ? 'Wow, such empty' : '... *Empty*',
                         image: wow ? { url: 'https://cdn.discordapp.com/attachments/655354019631333397/666720051784581155/unknown.png' } : undefined,
                         footer: wow ? { text: 'This inventory is empty' } : undefined
@@ -81,7 +81,7 @@ module.exports = {
                                 name: `${user.username}'s inventory:`,
                                 icon_url: user.avatarURL
                             },
-                            color: 0x36393f,
+                            color: 0x2f3136,
                             fields: Object.values(fields).map(v => { return {
                                 // name: v.length == 1 ? v[0].category.name : v[0].category.namepl,
                                 name: v[0].category.namepl || 'Unknown',

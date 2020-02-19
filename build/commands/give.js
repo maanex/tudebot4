@@ -45,7 +45,7 @@ module.exports = {
                 }
                 if (otherPerson.id === mes.author.id) {
                     mes.channel.send({ embed: {
-                            color: 0x36393f,
+                            color: 0x2f3136,
                             image: { url: 'https://cdn.discordapp.com/attachments/655354019631333397/669183258679967744/34yx3j.png' },
                             footer: { text: `@${mes.author.username}` }
                         } });
@@ -127,7 +127,7 @@ module.exports = {
                                 footer: { text: `@${mes.author.username}` }
                             }
                         });
-                        if (!bot.m.commands.getActiveInCommandsChannel().includes(otherPerson.id)) {
+                        if (!bot.getModule('commands').getActiveInCommandsChannel().includes(otherPerson.id)) {
                             otherPerson.send({ embed: {
                                     color: 0x4DC88A,
                                     title: `UwU a gift`,

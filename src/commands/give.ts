@@ -3,6 +3,7 @@ import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
 import ParseArgs from "../util/parseArgs";
+import CommandsModule from "../modules/commands";
 
 const fetch = require('node-fetch');
 
@@ -55,7 +56,7 @@ module.exports = {
                 }
                 if (otherPerson.id === mes.author.id) {
                     mes.channel.send({ embed: {
-                        color: 0x36393f,
+                        color: 0x2f3136,
                         image: { url: 'https://cdn.discordapp.com/attachments/655354019631333397/669183258679967744/34yx3j.png' },
                         footer: { text: `@${mes.author.username}` }
                     }});
@@ -132,7 +133,7 @@ module.exports = {
                                 footer: { text: `@${mes.author.username}` }
                             }
                         });
-                        if (!bot.m.commands.getActiveInCommandsChannel().includes(otherPerson.id)) {
+                        if (!bot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().includes(otherPerson.id)) {
                             otherPerson.send({ embed: {
                                 color: 0x4DC88A,
                                 title: `UwU a gift`,

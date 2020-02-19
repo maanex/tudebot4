@@ -227,7 +227,7 @@ function runSm1(mes: Message, u: ClubUser) {
         text = text.replace('%s', sm1emoji.loading[Math.floor(Math.random() * 6)]);
     mes.channel.send({ embed: {
         title: 'Slotmachine',
-        color: 0x36393f,
+        color: 0x2f3136,
         description: text
     }}).then(m => {
         setTimeout((m: Message, u: ClubUser) => {
@@ -276,7 +276,7 @@ function runSm1(mes: Message, u: ClubUser) {
     
             m.edit({ embed: {
                 title: 'Slotmachine',
-                color: 0x36393f,
+                color: 0x2f3136,
                 description: text
             }});
         }, 4000, m, u);
@@ -290,7 +290,7 @@ function runSm2(mes: Message, u: ClubUser) {
         text = text.replace('%s', sm2emoji.loading[c++]);
     mes.channel.send({ embed: {
         title: 'Slotmachine',
-        color: 0x36393f,
+        color: 0x2f3136,
         description: text
     }}).then(m => {
         setTimeout((m: Message, u: ClubUser) => {
@@ -385,7 +385,7 @@ function runSm2(mes: Message, u: ClubUser) {
     
             m.edit({ embed: {
                 title: sendNudesEasteregg ? 'Slutmachine' : 'Slotmachine',
-                color: 0x36393f,
+                color: 0x2f3136,
                 description: text
             }});
         }, 5000, m, u);
@@ -400,7 +400,7 @@ function runSm3(mes: Message, u: ClubUser) {
         text = text.replace('%s', sm3emoji.loading[goBlue ? 'blue' : 'orange'][Math.floor(Math.random() * 6)]);
     mes.channel.send({ embed: {
         title: 'Slotmachine',
-        color: 0x36393f,
+        color: 0x2f3136,
         description: text
     }}).then(m => {
         setTimeout((m: Message, u: ClubUser) => {
@@ -469,7 +469,7 @@ function runSm3(mes: Message, u: ClubUser) {
     
             m.edit({ embed: {
                 title: 'Slotmachine',
-                color: 0x36393f,
+                color: 0x2f3136,
                 description: text
             }});
             if (goBlue && !win) sm3blue.splice(sm3blue.indexOf(mes.author.id), 1);

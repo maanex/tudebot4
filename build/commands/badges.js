@@ -99,7 +99,7 @@ module.exports = {
                             name: `${user.username}'s badges:`,
                             icon_url: user.avatarURL
                         },
-                        color: 0x36393f,
+                        color: 0x2f3136,
                         fields: badges,
                         image: { url: (badges.length || !banana) ? '' : 'https://cdn.discordapp.com/attachments/655354019631333397/656567439391326228/banana.png' },
                         description: badges.length ? '' : (banana ? 'Empathy banana is here for you.' : '... *none*'),

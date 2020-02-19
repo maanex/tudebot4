@@ -82,16 +82,17 @@ module.exports = {
                     xpbar += _xpbar.right_empty;
                 xpbar += ` **${Math.floor(u.level_progress * 100)}%**`;
                 if (u.profile && u.profile.disp_badge) {
-                    // let badge = TudeApi.badgeById(u.profile.disp_badge);
-                    // let appearance = badge.appearance[0];
-                    // for (let a of badge.appearance) {
-                    //     if (a.from <= u.badges[u.profile.disp_badge])
-                    //         appearance = a;
-                    //     else break;
-                    // }
-                    // footer += ' • ' + appearance.name;
-                    // icon = appearance.icon;
-                    icon = 'https://cdn.discordapp.com/attachments/543150321686413313/675367430641680384/guy.png';
+                    let badge = tudeapi_1.default.badgeById(u.profile.disp_badge);
+                    let appearance = badge.appearance[0];
+                    for (let a of badge.appearance) {
+                        if (a.from <= u.badges[u.profile.disp_badge])
+                            appearance = a;
+                        else
+                            break;
+                    }
+                    footer += ' • ' + appearance.name;
+                    icon = appearance.icon;
+                    // icon = 'https://cdn.discordapp.com/attachments/543150321686413313/675367430641680384/guy.png';
                 }
                 let badges = [];
                 if (u.badges) {
@@ -101,13 +102,22 @@ module.exports = {
                         badges.push(appearance.emoji);
                     }
                 }
+                let uname = user.username;
+                let uicon = user.avatarURL;
+                if (u.user.type == 1) {
+                    uname = u.user.name;
+                    // uicon = '';
+                    if (u.user.tag == 0) {
+                        uname += ' ✔️';
+                    }
+                }
                 mes.channel.send({
                     embed: {
                         author: {
-                            name: user.username,
-                            icon_url: user.avatarURL
+                            name: uname,
+                            icon_url: uicon
                         },
-                        color: 0x36393f,
+                        color: 0x2f3136,
                         footer: { text: footer },
                         thumbnail: { url: icon },
                         description: badges.join(' ') + '```fix\nLevel ' + u.level + '```',

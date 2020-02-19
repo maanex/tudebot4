@@ -2,6 +2,7 @@ import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
 import { cmesType } from "types";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
+import CommandsModule from "modules/commands";
 
 const fetch = require('node-fetch');
 
@@ -206,7 +207,7 @@ module.exports = {
                     amount: cookies
                 });
                 currentGame.resolveIn = 5;
-                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.bets.length)
+                if (bot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > currentGame.bets.length)
                     currentGame.resolveIn = 10;
                 resolve(true);
             } else {
@@ -222,11 +223,11 @@ module.exports = {
                     amount: cookies
                 });
                 currentGame.resolveIn = 2;
-                if (bot.m.commands.getActiveInCommandsChannel().length > currentGame.bets.length)
+                if (bot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > currentGame.bets.length)
                     currentGame.resolveIn = 10;
                 resolve(true);
                 mes.channel.send({ embed: {
-                    color: 0x36393f,
+                    color: 0x2f3136,
                     title: 'Roulette',
                     description: 'Preparing...',
                 }}).then(mes => currentGame.chatMessage = mes as Message).catch();
@@ -234,7 +235,7 @@ module.exports = {
                     if (currentGame.resolveIn == 10 || currentGame.resolveIn == 5 || currentGame.resolveIn <= 2) {
                         if (currentGame.chatMessage)
                             currentGame.chatMessage.edit('', { embed: {
-                                color: 0x36393f,
+                                color: 0x2f3136,
                                 title: 'Roulette',
                                 description: 'Starting in ' + currentGame.resolveIn + '```js\n'
                                     + currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
@@ -265,7 +266,7 @@ function resolveGame() {
     }
 
     currentGame.chatMessage.edit('', { embed: {
-        color: 0x36393f,
+        color: 0x2f3136,
         title: 'Roulette',
         description: 'Rolling...',
         thumbnail: {

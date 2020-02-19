@@ -1,6 +1,6 @@
 import { TudeBot } from "index";
 import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { cmesType, ReplyFunction } from "types";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
 
 const fetch = require('node-fetch');
@@ -30,7 +30,7 @@ module.exports = {
     sudoonly: false,
 
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void): Promise<boolean> {
+    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: ReplyFunction): Promise<boolean> {
     return new Promise((resolve, reject) => {
         let user = mes.author;
         if (mes.mentions.users.size)
@@ -105,13 +105,23 @@ module.exports = {
                     }
                 }
 
+                let uname = user.username;
+                let uicon = user.avatarURL;
+                if (u.user.type == 1) {
+                    uname = u.user.name;
+                    // uicon = '';
+                    if (u.user.tag == 0) {
+                        uname += ' ✔️';
+                    }
+                }
+
                 mes.channel.send({
                     embed: {
                         author: {
-                            name: user.username,
-                            icon_url: user.avatarURL
+                            name: uname,
+                            icon_url: uicon
                         },
-                        color: 0x36393f,
+                        color: 0x2f3136,
                         footer: { text: footer },
                         thumbnail: { url: icon },
                         description: badges.join(' ') + '```fix\nLevel ' + u.level + '```',

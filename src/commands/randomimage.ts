@@ -23,7 +23,8 @@ module.exports = {
             .then(o => o.json())
             .then(o => mes.channel.send({
                 embed: {
-                    color: 0x36393f,
+                    color: 0x2f3136,
+                    description: args.length&&'You cannot search for an image. This command shows a random image the bot has found somewhere on the world wide web!',
                     image: {
                         url: o[Math.floor(Math.random() * o.length)]
                     },

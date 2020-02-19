@@ -17,14 +17,16 @@ const _yeses = [
 ];
 module.exports = {
     name: 'help',
-    aliases: [],
+    aliases: [
+        ...('.?!/%-+=~&,:'.split('').map(p => p + 'help'))
+    ],
     desc: 'Help!',
     sudoonly: false,
     hideonhelp: true,
     execute(bot, mes, sudo, args, repl) {
         if (args.length < 1) {
             let text = '';
-            let cmds = bot.m.commands.getCommands().sort();
+            let cmds = bot.getModule('commands').getCommands().sort();
             if (!sudo)
                 cmds = cmds.filter(c => !c.sudoonly && !c.hideonhelp);
             let longest = 0;
@@ -32,13 +34,13 @@ module.exports = {
                 if (cmd.name.length > longest)
                     longest = cmd.name.length;
             for (let cmd of cmds)
-                text += `\`${('                   ' + cmd.name).substr(-longest - 1)}\` ${cmd.sudoonly ? ('*' + cmd.desc + '*') : cmd.desc}\n`;
+                text += `\`${((cmd.hideonhelp ? '•' : '') + cmd.name).padStart(longest + 1)}\` ${cmd.sudoonly ? ('**' + cmd.desc + '**') : cmd.desc.split('\n')[0]}\n`;
             repl(mes.channel, mes.author, 'Help', 'message', text);
         }
         else {
             let cmd = args[0];
             let command;
-            out: for (let c of bot.m.commands.getCommands()) {
+            out: for (let c of bot.getModule('commands').getCommands()) {
                 if (c.name === cmd) {
                     command = c;
                     break out;
@@ -59,7 +61,7 @@ module.exports = {
                 }
             }
             else {
-                if (command.name == 'help') {
+                if (command.name == 'help' && !sudo) {
                     repl(mes.channel, mes.author, 'Help', 'message', helphelp(mes.author));
                 }
                 else {
