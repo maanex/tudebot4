@@ -310,7 +310,7 @@ class TudeApi {
             user['_org_keys'] += u.keys.add;
             user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
             if (o['levelup'] != undefined)
-                __1.Core.getModule('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                __1.TudeBot.getModule('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
         })
             .catch(console.error);
     }

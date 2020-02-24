@@ -1,4 +1,4 @@
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, TextChannel } from "discord.js";
 import * as nreq from "request";
 import { Module } from "../types";
@@ -7,13 +7,14 @@ import { Module } from "../types";
 export default class TheBrainModule extends Module {
 
   private timeouts = [];
+  
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('The Brain', 'private', bot, conf, data, lang);
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('The Brain', 'private', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.on('message', (mes: Message) => {
+    TudeBot.on('message', (mes: Message) => {
       if (mes.author.bot) return;
 
     });
@@ -74,7 +75,7 @@ export default class TheBrainModule extends Module {
   }
 
   private setPlaytext(): void {
-    this.bot.user.setActivity(this.getText());
+    TudeBot.user.setActivity(this.getText());
     this.timeouts.push(setTimeout(this.setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
   }
 

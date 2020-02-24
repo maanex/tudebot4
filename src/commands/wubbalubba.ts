@@ -1,24 +1,28 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class WubbaLubbaDubDubCommand extends Command {
 
-    name: 'wubbalubbadubdub',
-    aliases: [ ],
-    desc: 'JEEZ RICK',
-    sudoonly: false,
-    hideonhelp: true,
+  constructor(lang: (string) => string) {
+    super(
+      'wubbalubbadubdub',
+      [ ],
+      'JEEZ RICK',
+      false,
+      true,
+      lang
+    );
+  }
 
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    const role = channel.guild.roles.find(r => r.id == '496377983494258689');
+    if (!role) return false;
     
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): boolean {
-        let role = mes.guild.roles.find(r => r.id == '496377983494258689');
-        if (!role) return false;
-
-        if (mes.member.roles.find(r => r.id == role.id)) mes.member.removeRole(role);
-        else mes.member.addRole(role);
-        return true;
-    }
+    if (event.message.member.roles.find(r => r.id == role.id)) event.message.member.removeRole(role);
+    else event.message.member.addRole(role);
+    return true;
+  }
 
 }

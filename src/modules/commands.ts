@@ -1,6 +1,6 @@
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord.js";
-import { modlogType, cmesType, cmes } from "types";
+import { modlogType, cmesType, cmes, Command, ReplyFunction } from "types";
 import { DbStats } from "../database/dbstats";
 import Database from "../database/database";
 import WCP from "../thirdparty/wcp/wcp";
@@ -12,27 +12,29 @@ export default class CommandsModule extends Module {
 
   private readonly ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60_000;
 
-  private commands: Command[] = [];
-
   private activeInCommandsChannel: string[] = [];
   private activeInCommandsChannelRemoveTimer = {};
+  
+  private commands: Command[] = [];
+  private identifierMap: Map<string, Command> = new Map();
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Commands', 'private', bot, conf, data, lang);
+
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Commands', 'public', conf, data, lang);
   }
 
   public onEnable(): void {
     this.loadCommands();
 
-    this.bot.on('message', (mes: Message) => {
+    TudeBot.on('message', (mes: Message) => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
       if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
 
       this.updateActiveInCommandsChannel(mes.author.id);
 
-      let txt = mes.content;
-      let args = txt.split(' ');
+      const txt = mes.content;
+      const args = txt.split(' ');
       let cmd = args.splice(0, 1)[0].toLowerCase();
 
       let sudo = false;
@@ -50,35 +52,33 @@ export default class CommandsModule extends Module {
         }
       }
 
-      let command: Command;
-      out: for (let c of this.commands) {
-        if (c.name === cmd) {
-          command = c;
-          break out;
-        }
-        for (let a of c.aliases)
-          if (a === cmd) {
-            command = c;
-            break out;
-          }
-      }
+      const command = this.identifierMap.get(cmd);
 
       if (command) {
-        if (command.sudoonly && !sudo) {
+        if (command.sudoOnly && !sudo) {
           this.cmes(mes.channel, mes.author, ':x: Not allowed!');
           return;
         }
-        let success = command.execute(this.bot, mes, sudo, args, this.cmes);
-        DbStats.getCommand(command.name).then(c => {
-          c.calls.updateToday(1);
-          if (success['then']) {
-            success.then(bool => {
-              if (bool)
-                c.executions.updateToday(1);
-            }).catch();
-          } else if (success) c.executions.updateToday(1);
-        });
-      } else if (sudo) this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
+
+        function update(success: boolean) {
+          DbStats.getCommand(command.name).then(c => {
+            c.calls.updateToday(1);
+            if (success) c.executions.updateToday(1);
+          });
+        }
+
+        const cmes: ReplyFunction = (text: string, type?: cmesType, desc?: string, settings?: any) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
+        const event = { message: mes, sudo: sudo, label: cmd };
+        const res = command.execute(mes.channel as TextChannel, mes.author, args, event, cmes);
+
+        if (res['then']) {
+          (res as Promise<boolean>).then(update).catch(() => {});
+        } else {
+          update(res as boolean);
+        }
+      } else if (sudo) {
+        this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
+      }
     });
   }
 
@@ -90,20 +90,23 @@ export default class CommandsModule extends Module {
 
   private loadCommands() {
     this.commands = [];
+    this.identifierMap = new Map();
     Database
       .collection('settings')
       .findOne({ _id: 'commands' })
       .then(obj => {
         WCP.send({ config_commands: JSON.stringify(obj.data) });
-        let allCmdaliases = [];
-        for (let c in obj.data)
-          if (obj.data[c]) {
-            let cmd = require(`../commands/${c}`);
-            if (cmd.init) cmd.init(this.bot);
+
+        for (const commandName in obj.data)
+          if (obj.data[commandName]) {
+            const CmdClass = require(`../commands/${commandName}`).default;
+            const cmd: Command = new CmdClass(this.lang);
+            cmd.init();
             this.commands.push(cmd);
-            for (let a of [cmd.name, ...cmd.aliases]) {
-              if (allCmdaliases.indexOf(a) >= 0) console.log(chalk.red(`Command "${a}" is declared multiple times!`));
-              else allCmdaliases.push(a);
+
+            for (const identifier of [cmd.name, ...cmd.aliases]) {
+              if (this.identifierMap.has(identifier)) console.log(chalk.red(`Command "${identifier}" is declared multiple times!`));
+              else this.identifierMap.set(identifier, cmd);
             }
           }
       })
@@ -120,8 +123,8 @@ export default class CommandsModule extends Module {
 
   private cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
     if (type == 'error') text = ':x: ' + text;
-    // if (type == 'bad') text = ':frowning: ' + text;
     if (type == 'success') text = ':white_check_mark: ' + text;
+
     (channel as TextChannel).send({
       embed: {
         color: 0x2f3136,
@@ -151,13 +154,4 @@ export default class CommandsModule extends Module {
       }, this.ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
     }
   }
-}
-
-export interface Command {
-  name: string;
-  aliases: string[];
-  desc: string;
-  sudoonly: boolean;
-  hideonhelp: boolean;
-  execute: Function;
 }

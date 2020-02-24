@@ -4,7 +4,7 @@ import { resolve } from "dns";
 import { rejects } from "assert";
 
 import WCP from "../../thirdparty/wcp/wcp.js";
-import { Core } from "../..";
+import { TudeBot } from "../..";
 import { getItemIcon } from "./itemlist";
 import { badgeEmojiList } from "./badgelist.js";
 import GetPointsModule from "../../modules/getpoints.js";
@@ -414,7 +414,7 @@ export default class TudeApi {
                 user['_org_keys'] += u.keys.add;
                 user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
                 if (o['levelup'] != undefined)
-                    Core.getModule<GetPointsModule>('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                    TudeBot.getModule<GetPointsModule>('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
             })
             .catch(console.error);
     }

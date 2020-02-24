@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const types_1 = require("../types");
 class MemesModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Memes', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Memes', 'private', conf, data, lang);
     }
     onEnable() {
-        this.bot.on('message', mes => {
+        index_1.TudeBot.on('message', mes => {
             if (mes.author.bot)
                 return;
             if (!mes.guild)
@@ -45,7 +46,7 @@ class MemesModule extends types_1.Module {
             // TODO upload to the tude memes database
             // TODO meme of the month
         });
-        this.bot.on('messageReactionAdd', (reaction, user) => {
+        index_1.TudeBot.on('messageReactionAdd', (reaction, user) => {
             let mes = reaction.message;
             if (user.bot)
                 return;

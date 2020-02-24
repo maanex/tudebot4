@@ -1,34 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("../types");
 const fetch = require('node-fetch');
-module.exports = {
-    name: 'cat',
-    aliases: [
-        'kitten',
-        'catimage',
-        'catimg',
-        'pussy'
-    ],
-    desc: 'A random cat image',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
+class CatCommand extends types_1.Command {
+    constructor(lang) {
+        super('cat', ['kitten',
+            'catimage',
+            'catimg',
+            'pussy'], 'A random cat image', false, false, lang);
+    }
+    execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {
             fetch('https://api.thecatapi.com/v1/images/search?format=json')
                 .then(o => o.json())
-                .then(o => mes.channel.send({
+                .then(o => channel.send({
                 embed: {
                     color: 0x2f3136,
                     image: {
                         url: o[0].url
                     },
                     footer: {
-                        text: mes.author.username,
-                        icon_url: mes.author.avatarURL
+                        text: user.username,
+                        icon_url: user.avatarURL
                     }
                 }
             }) && resolve(true))
-                .catch(err => { repl(mes.channel, mes.author, 'An error occured!', 'bad'); resolve(false); });
+                .catch(err => { repl('An error occured!', 'bad'); resolve(false); });
         });
     }
-};
+}
+exports.default = CatCommand;
 //# sourceMappingURL=catimg.js.map

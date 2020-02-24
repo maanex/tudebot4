@@ -1,22 +1,24 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
-
-const fetch = require('node-fetch');
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class SourcecodeCommand extends Command {
 
-    name: 'sourcecode',
-    aliases: [
-    ],
-    desc: 'A link to the Bot\'s source code.',
-    sudoonly: false,
+  constructor(lang: (string) => string) {
+    super(
+      'sourcecode',
+      [ ],
+      "A link to the Bot's source code.",
+      false,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, content?: string) => void): boolean {
-        repl(mes.channel, mes.author, 'The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4');
-        return true;
-    }
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    repl('The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4');
+    return true;    
+  }
 
 }

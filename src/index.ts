@@ -11,7 +11,7 @@ import * as chalk from "chalk";
 const settings = require('../config/settings.json');
 
 
-export class TudeBot extends Client {
+export class TudeBotClient extends Client {
 
   public modlog: ModLog;
   public modules: Map<string, Module> = null;
@@ -78,7 +78,7 @@ export class TudeBot extends Client {
             catch (ex) { }
             try {
               const ModClass = require(`./modules/${mod}`).default;
-              let module: Module = new ModClass(this, data[mod], modData, this.lang);
+              let module: Module = new ModClass(data[mod], modData, this.lang);
               this.modules.set(mod, module);
               module.onEnable();
               if (isReload) module.onBotReady();
@@ -121,10 +121,10 @@ export class TudeBot extends Client {
 }
 
 
-export const Core = new TudeBot ({ });
+export const TudeBot = new TudeBotClient ({ });
 
 
-function fixReactionEvent(bot: TudeBot) {
+function fixReactionEvent(bot: TudeBotClient) {
   const events = {
       MESSAGE_REACTION_ADD: 'messageReactionAdd',
       MESSAGE_REACTION_REMOVE: 'messageReactionRemove',

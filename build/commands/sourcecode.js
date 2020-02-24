@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fetch = require('node-fetch');
-module.exports = {
-    name: 'sourcecode',
-    aliases: [],
-    desc: 'A link to the Bot\'s source code.',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
-        repl(mes.channel, mes.author, 'The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4');
+const types_1 = require("../types");
+class SourcecodeCommand extends types_1.Command {
+    constructor(lang) {
+        super('sourcecode', [], "A link to the Bot's source code.", false, false, lang);
+    }
+    execute(channel, user, args, event, repl) {
+        repl('The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4');
         return true;
     }
-};
+}
+exports.default = SourcecodeCommand;
 //# sourceMappingURL=sourcecode.js.map

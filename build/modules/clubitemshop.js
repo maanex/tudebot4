@@ -9,14 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const database_1 = require("../database/database");
 const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class ClubItemShopModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Tude Club Item Shop', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Tude Club Item Shop', 'private', conf, data, lang);
         this.channels = [];
     }
     onEnable() {
@@ -27,7 +28,7 @@ class ClubItemShopModule extends types_1.Module {
             let channelid = path.split('/')[1];
             if (!guildid || !channelid)
                 return;
-            let guild = this.bot.guilds.get(guildid);
+            let guild = index_1.TudeBot.guilds.get(guildid);
             if (!guild)
                 return;
             let channel = guild.channels.get(channelid);
@@ -46,7 +47,7 @@ class ClubItemShopModule extends types_1.Module {
             if (mes.size) {
                 let c = 0;
                 for (let m of mes.array()) {
-                    if (m.author.id != this.bot.user.id)
+                    if (m.author.id != index_1.TudeBot.user.id)
                         continue;
                     if (c == 0) {
                         if (!m.embeds.length)
@@ -66,16 +67,16 @@ class ClubItemShopModule extends types_1.Module {
                     }
                     else {
                         if (m.embeds.length)
-                            m.edit(emojis_1.default.bigSpace, { embed: null });
+                            m.edit(emojis_1.default.BIG_SPACE, { embed: null });
                     }
                     c++;
                 }
             }
             else {
-                this.bot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupitemshop ' + channel.id + '`');
+                index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupitemshop ' + channel.id + '`');
             }
         }).catch(err => {
-            this.bot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated! Error: ```' + err + '```');
+            index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Itemshop could not get updated! Error: ```' + err + '```');
         });
     }
     shelfToEmbed(shelf) {
@@ -86,7 +87,7 @@ class ClubItemShopModule extends types_1.Module {
                 let itemdata = this.getItem(i);
                 if (!itemdata)
                     return 'error, item not found: ' + i.item;
-                return `${itemdata.icon} ${itemdata.name}\n${emojis_1.default.bigSpace} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
+                return `${itemdata.icon} ${itemdata.name}\n${emojis_1.default.BIG_SPACE} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
             }).join('\n\n')
         };
     }

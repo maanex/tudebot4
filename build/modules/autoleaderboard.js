@@ -1,16 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 class QuotesModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Module Name', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Module Name', 'private', conf, data, lang);
         this.UPDATE_COOLDOWN = 2 * 60000;
         this.UPDATE_EMOJI = '🔄';
         this.channels = [];
     }
     onEnable() {
-        this.bot.on('messageReactionAdd', (reaction, user) => {
+        index_1.TudeBot.on('messageReactionAdd', (reaction, user) => {
             let mes = reaction.message;
             if (user.bot)
                 return;
@@ -28,7 +29,7 @@ class QuotesModule extends types_1.Module {
             let channelid = path.split('/')[1];
             if (!guildid || !channelid)
                 return;
-            let guild = this.bot.guilds.get(guildid);
+            let guild = index_1.TudeBot.guilds.get(guildid);
             if (!guild)
                 return;
             let channel = guild.channels.get(channelid);
@@ -67,14 +68,14 @@ class QuotesModule extends types_1.Module {
                     channel.send(content).then(mes => {
                         mes.react(this.UPDATE_EMOJI);
                     }).catch(err => {
-                        this.bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+                        index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
                     });
                 }
             }).catch(err => {
-                this.bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+                index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
             });
         }).catch(err => {
-            this.bot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+            index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
         });
     }
     generateLeaderboard(guild) {

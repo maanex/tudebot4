@@ -1,21 +1,23 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class BotInfoCommand extends Command {
 
-    name: 'botinfo',
-    aliases: [
-        'test1234'
-    ],
-    desc: 'Bot info',
-    sudoonly: true,
+  constructor(lang: (string) => string) {
+    super(
+      'botinfo',
+      [ 'test1234' ],
+      'Bot info',
+      true,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): boolean {
-        
-        return true;
-    }
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    return true;
+  }
 
 }

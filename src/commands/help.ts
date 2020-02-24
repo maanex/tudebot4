@@ -1,114 +1,123 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
-import CommandsModule, { Command } from "../modules/commands";
+import Emojis from "../int/emojis";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import CommandsModule from "modules/commands";
 
 
+export default class HelpCommand extends Command {
 
-
-const _bigspace = '<:nothing:409254826938204171>';
-
-const _nopes = [
+  private readonly _nopes = [
     'nope',
     'no',
     'not for you',
     'big no'
-]
-const _yeses = [
+  ];
+
+  private readonly _yeses = [
     'yes',
     'perhaps',
     'most likely',
     'I think so',
     'probably',
     'possibly'
-]
+  ];
 
-module.exports = {
 
-    name: 'help',
-    aliases: [
-        ...('.?!/%-+=~&,:'.split('').map(p=>p+'help'))
-    ],
-    desc: 'Help!',
-    sudoonly: false,
-    hideonhelp: true,
+  constructor(lang: (string) => string) {
+    super(
+      'help',
+      ('.?!/%-+=~&,:'.split('').map(p => p + 'help')),
+      'Help!',
+      false,
+      true,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void): boolean {
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    if (args.length < 1) {
+      let text = '';
+      let cmds = TudeBot.getModule<CommandsModule>('commands').getCommands().sort();
 
-        if (args.length < 1) {
-            let text = '';
-            let cmds = bot.getModule<CommandsModule>('commands').getCommands().sort();
-            if (!sudo)
-                cmds = cmds.filter(c => !c.sudoonly && !c.hideonhelp);
-            let longest = 0;
-            for (let cmd of cmds)
-                if (cmd.name.length > longest)
-                    longest = cmd.name.length;
-            for (let cmd of cmds)
-                text += `\`${((cmd.hideonhelp ? '•' : '') + cmd.name).padStart(longest+1)}\` ${cmd.sudoonly ? ('**' + cmd.desc + '**') : cmd.desc.split('\n')[0]}\n`
-            repl(mes.channel, mes.author, 'Help', 'message', text);
-        } else {
-            let cmd = args[0];
-            let command: Command;
-            out: for (let c of bot.getModule<CommandsModule>('commands').getCommands()) {
-                if (c.name === cmd) {
-                    command = c;
-                    break out;
-                }
-                for (let a of c.aliases)
-                    if (a === cmd) {
-                        command = c;
-                        break out;
-                    }
-            }
-            if (!command) {
-                switch (cmd.toLowerCase()) {
-                    case 'me':
-                        mes.channel.send(`I'm here for you ${mes.author} :)`);
-                        break;
+      if (!event.sudo) {
+        cmds = cmds.filter(c => !c.sudoOnly && !c.hideOnHelp);
+      }
 
-                    default:
-                        repl(mes.channel, mes.author, 'UH...', 'bad', `Command ${cmd} not found!`);
-                }
-            } else {
-                if (command.name == 'help' && !sudo) {
-                    repl(mes.channel, mes.author, 'Help', 'message', helphelp(mes.author));
-                } else {
-                    let easteregg = [];
-                    if (Math.random() < 0.1) {
-                        easteregg.push({
-                            name: 'Hotel',
-                            value: 'Trivago',
-                            inline: true
-                        })
-                    }
-                    mes.channel.send({ embed: {
-                        title: command.name,
-                        description: command.desc,
-                        fields: [
-                            {
-                                name: 'Aliases',
-                                value: command.aliases.length ? (command.aliases.join(', ') + _bigspace) : `[${_bigspace}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
-                                inline: true
-                            },
-                            {
-                                name: 'Allowed',
-                                value: command.sudoonly ? _nopes[Math.floor(Math.random() * _nopes.length)] : _yeses[Math.floor(Math.random() * _yeses.length)],
-                                inline: true
-                            }, ...easteregg
-                        ]
-                    }});
-                }
-            }
+      let longest = 0;
+      for (let cmd of cmds) {
+        if (cmd.name.length > longest)
+          longest = cmd.name.length;
+      }
+
+      for (let cmd of cmds) {
+        text += `\`${((cmd.hideOnHelp ? '•' : '') + cmd.name).padStart(longest + 1)}\` ${cmd.sudoOnly ? ('**' + cmd.description + '**') : cmd.description.split('\n')[0]}\n`; // wtf?
+      }
+
+      repl('Help', 'message', text);
+    } else {
+      let cmd = args[0];
+      let command: Command;
+      out: for (let c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
+        if (c.name === cmd) {
+          command = c;
+          break out;
         }
-        return true;
+        for (let a of c.aliases)
+          if (a === cmd) {
+            command = c;
+            break out;
+          }
+      }
+      if (!command) {
+        switch (cmd.toLowerCase()) {
+          case 'me':
+            channel.send(`I'm here for you ${user} :)`);
+            break;
+
+          default:
+            repl('UH...', 'bad', `Command ${cmd} not found!`);
+        }
+      } else {
+        if (command.name == 'help' && !event.sudo) {
+          repl('Help', 'message', this.helphelp(user));
+        } else {
+          let easteregg = [];
+          if (Math.random() < 0.1) {
+            easteregg.push({
+              name: 'Hotel',
+              value: 'Trivago',
+              inline: true
+            })
+          }
+          channel.send({
+            embed: {
+              title: command.name,
+              description: command.description,
+              fields: [
+                {
+                  name: 'Aliases',
+                  value: command.aliases.length ? (command.aliases.join(', ') + Emojis.BIG_SPACE) : `[${Emojis.BIG_SPACE}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
+                  inline: true
+                },
+                {
+                  name: 'Allowed',
+                  value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
+                  inline: true
+                }, ...easteregg
+              ]
+            }
+          });
+        }
+      }
     }
+    return true;
+  }
 
-}
+  //
 
-let helphelpTexts = [
+  private helphelpTexts = [
     'The requested page is not available',
 
     'Th̸e requeste̷d päge ̷is nót avaiIab̵le',
@@ -127,28 +136,30 @@ let helphelpTexts = [
 
     '[◉](https://omega.maanex.tk/)',
 
-];
+  ];
 
-let userQueries = {};
-let userQueryReset = {};
+  private userQueries = {};
+  private userQueryReset = {};
 
-function helphelp(user: User): string {
-    if (!userQueries[user.id])
-        userQueries[user.id] = 0;
-    if (userQueryReset[user.id])
-        clearTimeout(userQueryReset[user.id]);
-    userQueryReset[user.id] = setTimeout(() => {
-        delete userQueries[user.id];
+  private helphelp(user: User): string {
+    if (!this.userQueries[user.id])
+      this.userQueries[user.id] = 0;
+    if (this.userQueryReset[user.id])
+      clearTimeout(this.userQueryReset[user.id]);
+    this.userQueryReset[user.id] = setTimeout(() => {
+      delete this.userQueries[user.id];
     }, 10 * 60_000);
-    let txt = helphelpTexts[userQueries[user.id]];
-    userQueries[user.id]++;
+    let txt = this.helphelpTexts[this.userQueries[user.id]];
+    this.userQueries[user.id]++;
     if (txt == undefined) {
-        let dashes = '⚊⚊';
-        while (Math.random() < userQueries[user.id] / 20 && dashes.length < 200)
-            dashes += '⚊';
-        txt = `**[${dashes}]**`;
+      let dashes = '⚊⚊';
+      while (Math.random() < this.userQueries[user.id] / 20 && dashes.length < 200)
+        dashes += '⚊';
+      txt = `**[${dashes}]**`;
     }
-    if (userQueries[user.id] > 40)
-        txt = 'Ω';
+    if (this.userQueries[user.id] > 40)
+      txt = 'Ω';
     return txt;
+  }
+
 }

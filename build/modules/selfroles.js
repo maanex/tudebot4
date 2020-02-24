@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const types_1 = require("../types");
 class SelfrolesModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Selfroles', 'public', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Selfroles', 'public', conf, data, lang);
     }
     onEnable() {
-        this.bot.on('messageReactionAdd', (reaction, user) => {
+        index_1.TudeBot.on('messageReactionAdd', (reaction, user) => {
             if (user.bot)
                 return;
             if (!reaction.message.guild)
@@ -30,7 +31,7 @@ class SelfrolesModule extends types_1.Module {
                     member.addRole(member.guild.roles.find(r => r.id == rid));
             }
         });
-        this.bot.on('messageReactionRemove', (reaction, user) => {
+        index_1.TudeBot.on('messageReactionRemove', (reaction, user) => {
             if (user.bot)
                 return;
             if (!reaction.message.guild)

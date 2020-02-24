@@ -1,5 +1,5 @@
 import { modlogType } from '../types';
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { GuildMember, TextChannel } from "discord.js";
 import { Module } from "../types";
 
@@ -8,9 +8,10 @@ export default class HappyBirthdayModule extends Module {
 
   private interval: NodeJS.Timeout;
   private lastDay = '';
+  
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Happy Birthday', 'private', bot, conf, data, lang);
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Happy Birthday', 'private', conf, data, lang);
   }
 
   public onEnable(): void {
@@ -53,7 +54,7 @@ export default class HappyBirthdayModule extends Module {
         if (!channel || channel.type !== 'text') continue;
         (channel as TextChannel).send(`@everyone ${msg}`);
       }
-    }, Math.floor(Math.random() * maxdelay), dstr, this.bot, this.conf, this.data);
+    }, Math.floor(Math.random() * maxdelay), dstr, TudeBot, this.conf, this.data);
   }
 
 }

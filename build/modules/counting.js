@@ -1,15 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const util = require("../util/util");
 const types_1 = require("../types");
 class CountingModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Counting', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Counting', 'private', conf, data, lang);
         this.lastUser = '';
         this.lastNum = 0;
     }
     onEnable() {
-        this.bot.on('message', (mes) => {
+        index_1.TudeBot.on('message', (mes) => {
             if (mes.author.bot)
                 return;
             if (!mes.guild)

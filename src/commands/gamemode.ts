@@ -1,52 +1,52 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
-
-const fetch = require('node-fetch');
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class GamemodeCommand extends Command {
 
-    name: 'gamemode',
-    aliases: [
-        '/gamemode'
-    ],
-    desc: 'Gamemode',
-    sudoonly: false,
-    hideonhelp: true,
+  constructor(lang: (string) => string) {
+    super(
+      'gamemode',
+      [ '/gamemode' ],
+      'by Mojang',
+      false,
+      true,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, content?: string) => void): boolean {
-        if (args.length == 0) {
-            mes.reply('/gamemode <gamemode>');
-            return false;
-        }
-        switch (args[0]) {
-            case '0':
-            case 'survival':
-                mes.reply('Gamemode set to Survival');
-                break;
-                
-            case '1':
-            case 'creative':
-                mes.reply('Gamemode set to Creative');
-                break;
-                    
-            case '2':
-            case 'adventure':
-                mes.reply('Gamemode set to Adventure');
-                break;
-                    
-            case '3':
-            case 'spectator':
-                mes.reply('Gamemode set to Spectator');
-                break;
-
-            default:
-                mes.reply('Gamemode ' + args[0] + ' not found!');
-                return false;
-        }
-        return true;
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    if (args.length == 0) {
+      event.message.reply('/gamemode <gamemode>');
+      return false;
     }
+    switch (args[0]) {
+      case '0':
+      case 'survival':
+        event.message.reply('Gamemode set to Survival');
+        break;
+
+      case '1':
+      case 'creative':
+        event.message.reply('Gamemode set to Creative');
+        break;
+
+      case '2':
+      case 'adventure':
+        event.message.reply('Gamemode set to Adventure');
+        break;
+
+      case '3':
+      case 'spectator':
+        event.message.reply('Gamemode set to Spectator');
+        break;
+
+      default:
+        event.message.reply('Gamemode ' + args[0] + ' not found!');
+        return false;
+    }
+    return true;
+  }
 
 }

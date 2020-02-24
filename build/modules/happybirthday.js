@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const types_1 = require("../types");
 class HappyBirthdayModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Happy Birthday', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Happy Birthday', 'private', conf, data, lang);
         this.lastDay = '';
     }
     onEnable() {
@@ -45,7 +46,7 @@ class HappyBirthdayModule extends types_1.Module {
                     continue;
                 channel.send(`@everyone ${msg}`);
             }
-        }, Math.floor(Math.random() * maxdelay), dstr, this.bot, this.conf, this.data);
+        }, Math.floor(Math.random() * maxdelay), dstr, index_1.TudeBot, this.conf, this.data);
     }
 }
 exports.default = HappyBirthdayModule;

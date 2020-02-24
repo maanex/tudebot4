@@ -1,17 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fetch = require('node-fetch');
-module.exports = {
-    name: 'open',
-    aliases: [
-        'o',
-        'unbox'
-    ],
-    desc: 'Open a lootbox',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
-        repl(mes.channel, mes.author, 'This command is not yet available!', 'message', '~~We\'re~~ **I am** working on it');
+const types_1 = require("../types");
+class OpenCommand extends types_1.Command {
+    constructor(lang) {
+        super('open', ['o',
+            'unbox'], 'Open a lootbox', false, false, lang);
+    }
+    execute(channel, user, args, event, repl) {
+        repl('This command is not yet available!', 'message', '~~We\'re~~ **I am** working on it');
         return true;
     }
-};
+}
+exports.default = OpenCommand;
 //# sourceMappingURL=open.js.map

@@ -1,16 +1,16 @@
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { Message } from "discord.js";
 import { Module } from "../types";
 
 
 export default class QuotesModule extends Module {
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Quotes', 'public', bot, conf, data, lang);
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Quotes', 'public', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.on('message', mes => {
+    TudeBot.on('message', mes => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
       if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;

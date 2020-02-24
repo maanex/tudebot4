@@ -59,7 +59,7 @@ class WCP {
         if (!data.success)
             return;
         if (data.new_freestuff) {
-            freestuffCmd.announce(__1.Core.guilds.get('432899162150010901'), data.new_freestuff);
+            freestuffCmd.announce(__1.TudeBot.guilds.get('432899162150010901'), data.new_freestuff);
         }
         if (data.configure_modules) {
             let obj = JSON.parse(data.configure_modules);
@@ -69,7 +69,7 @@ class WCP {
                     .updateOne({ _id: 'modules' }, { '$set': { data: obj } });
                 console.log(chalk.blue('Module settings got updated remotely. Reloading.'));
                 if (!data.reload)
-                    __1.Core.reload();
+                    __1.TudeBot.reload();
             }
         }
         if (data.configure_commands) {
@@ -80,11 +80,11 @@ class WCP {
                     .updateOne({ _id: 'commands' }, { '$set': { data: obj } });
                 console.log(chalk.blue('Command settings got updated remotely. Reloading.'));
                 if (!data.reload)
-                    __1.Core.reload();
+                    __1.TudeBot.reload();
             }
         }
         if (data.reload) {
-            __1.Core.reload();
+            __1.TudeBot.reload();
         }
     }
 }

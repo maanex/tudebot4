@@ -1,20 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const fetch = require('node-fetch');
-module.exports = {
-    name: 'daily',
-    aliases: [
-        'd'
-    ],
-    desc: 'Get your daily stuff',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
+const types_1 = require("../types");
+class DailyCommand extends types_1.Command {
+    constructor(lang) {
+        super('daily', ['d'], 'Get your daily reward', false, false, lang);
+    }
+    execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {
-            tudeapi_1.default.clubUserByDiscordId(mes.author.id, mes.author)
+            tudeapi_1.default.clubUserByDiscordId(user.id, user)
                 .then(u => {
                 if (!u || u.error) {
-                    repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
+                    repl('User not found!', 'message', 'Or internal error, idk');
                     resolve(false);
                     return;
                 }
@@ -54,25 +51,26 @@ module.exports = {
                         }
                         desc += `\n${prefix} ${bold ? '**' : ''}Streak: ${streak} ${streak == 1 ? 'day' : 'days'}${bold ? '**' : ''} ${suffix}`;
                     }
-                    mes.channel.send({
+                    channel.send({
                         embed: {
                             color: 0x2f3136,
-                            title: `${mes.member.displayName}'s daily reward:`,
+                            title: `${event.message.member.displayName}'s daily reward:`,
                             description: desc
                         }
                     });
                     resolve(true);
                 }).catch(o => {
-                    repl(mes.channel, mes.author, o.message || 'An error occured!');
+                    repl(o.message || 'An error occured!');
                     resolve(false);
                 });
             })
                 .catch(err => {
-                repl(mes.channel, mes.author, 'An error occured!', 'bad');
+                repl('An error occured!', 'bad');
                 console.error(err);
                 resolve(false);
             });
         });
     }
-};
+}
+exports.default = DailyCommand;
 //# sourceMappingURL=daily.js.map

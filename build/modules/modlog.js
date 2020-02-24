@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const types_1 = require("../types");
 class ModlogModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Modlog', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Modlog', 'private', conf, data, lang);
     }
     onEnable() {
-        this.bot.modlog = {
+        index_1.TudeBot.modlog = {
             log: function (guild, type, text) {
                 let id = guild.id;
                 if (!this.conf.channels[id])
@@ -19,11 +20,11 @@ class ModlogModule extends types_1.Module {
                 });
             }
         };
-        this.bot.on('guildMemberAdd', (mem) => {
-            this.bot.modlog.log(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
+        index_1.TudeBot.on('guildMemberAdd', (mem) => {
+            index_1.TudeBot.modlog.log(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
         });
-        this.bot.on('guildMemberRemove', (mem) => {
-            this.bot.modlog.log(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
+        index_1.TudeBot.on('guildMemberRemove', (mem) => {
+            index_1.TudeBot.modlog.log(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
         });
     }
     onBotReady() {

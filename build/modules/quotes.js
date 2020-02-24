@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const types_1 = require("../types");
 class QuotesModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Quotes', 'public', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Quotes', 'public', conf, data, lang);
     }
     onEnable() {
-        this.bot.on('message', mes => {
+        index_1.TudeBot.on('message', mes => {
             if (mes.author.bot)
                 return;
             if (!mes.guild)

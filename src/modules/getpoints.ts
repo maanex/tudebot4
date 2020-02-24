@@ -19,12 +19,13 @@ export default class GetPointsModule extends Module {
 
   private cronjobs: cron.CronJob[] = [];
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Module Name', 'private', bot, conf, data, lang);
+  
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Module Name', 'private', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.on('message', mes => {
+    TudeBot.on('message', mes => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
       if (!this.conf.guilds.includes(mes.guild.id)) return;
@@ -61,7 +62,7 @@ export default class GetPointsModule extends Module {
       TudeApi.clubUserByDiscordId(mes.author.id).then(u => this.reward(u, 'MessageEngagement', .5)).catch(ex => { });
     });
 
-    this.bot.on('messageDelete', mes => {
+    TudeBot.on('messageDelete', mes => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
       if (!this.conf.guilds.includes(mes.guild.id)) return;
@@ -69,7 +70,7 @@ export default class GetPointsModule extends Module {
       if (this.reactionsAddedLast5Sec[mes.author.id] > 6) this.punish(mes.author, 'MessageDelete');
     });
 
-    this.bot.on('messageReactionAdd', (reaction: MessageReaction, user: DiscordUser) => {
+    TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: DiscordUser) => {
       let mes = reaction.message;
       if (user.bot) return;
       if (!mes.guild) return;
@@ -95,7 +96,7 @@ export default class GetPointsModule extends Module {
       TudeApi.clubUserByDiscordId(mes.author.id).then(u => this.reward(u, 'MessageEngagement')).catch(ex => { });
     });
 
-    this.bot.on('messageReactionRemove', (reaction: MessageReaction, user: DiscordUser) => {
+    TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: DiscordUser) => {
       let mes = reaction.message;
       if (user.bot) return;
       if (!mes.guild) return;
@@ -104,12 +105,12 @@ export default class GetPointsModule extends Module {
       TudeApi.clubUserByDiscordId(user.id).then(u => this.punish(user, 'ReactionRemove')).catch(ex => { });
     });
 
-    this.bot.on('guildMemberAdd', member => {
+    TudeBot.on('guildMemberAdd', member => {
       TudeApi.clubUserByDiscordId(member.id, member.user)
         .then(u => {
           for (let i = 1; i <= u.level; i++) {
             for (let gid in this.conf.levelthis.rewards) {
-              let guild = this.bot.guilds.get(gid);
+              let guild = TudeBot.guilds.get(gid);
               if (!guild) continue;
               let roleid = this.conf.levelthis.rewards[gid][i];
               if (!roleid) continue;
@@ -123,7 +124,7 @@ export default class GetPointsModule extends Module {
     //                      s m h d m dw
     this.cronjobs.push(cron.job('0 * * * * *', this.regenBags));
     this.cronjobs.push(cron.job('0 0 * * * *', this.fillBags));
-    // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf.guilds.map(this.bot.guilds.get))).start()); TODO error here
+    // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf.guilds.map(TudeBot.guilds.get))).start()); TODO error here
     this.cronjobs.forEach(j => j.start());
   }
 
@@ -139,7 +140,7 @@ export default class GetPointsModule extends Module {
     if (!user.user) return;
     if (!user.user['accounts']) return;
     if (!user.user['accounts']['discord']) return;
-    let duser = this.bot.users.get(user.user['accounts']['discord']);
+    let duser = TudeBot.users.get(user.user['accounts']['discord']);
     if (!duser) return;
     let desc = `You are now **Level ${newLevel}**\n`;
     if (rewards.cookies) desc += `\n+${rewards.cookies} Cookies`;
@@ -154,7 +155,7 @@ export default class GetPointsModule extends Module {
     });
 
     for (let gid in this.conf.levelthis.rewards) {
-      let guild = this.bot.guilds.get(gid);
+      let guild = TudeBot.guilds.get(gid);
       if (!guild) continue;
       let mem = guild.members.get(duser.id);
       if (!mem) continue;

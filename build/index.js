@@ -18,7 +18,7 @@ const util_1 = require("./util/util");
 const gitParser_1 = require("./util/gitParser");
 const chalk = require("chalk");
 const settings = require('../config/settings.json');
-class TudeBot extends discord_js_1.Client {
+class TudeBotClient extends discord_js_1.Client {
     constructor(props) {
         super(props);
         this.modules = null;
@@ -70,7 +70,7 @@ class TudeBot extends discord_js_1.Client {
                     catch (ex) { }
                     try {
                         const ModClass = require(`./modules/${mod}`).default;
-                        let module = new ModClass(this, data[mod], modData, this.lang);
+                        let module = new ModClass(data[mod], modData, this.lang);
                         this.modules.set(mod, module);
                         module.onEnable();
                         if (isReload)
@@ -110,8 +110,8 @@ class TudeBot extends discord_js_1.Client {
         return this.modules.get(name);
     }
 }
-exports.TudeBot = TudeBot;
-exports.Core = new TudeBot({});
+exports.TudeBotClient = TudeBotClient;
+exports.TudeBot = new TudeBotClient({});
 function fixReactionEvent(bot) {
     const events = {
         MESSAGE_REACTION_ADD: 'messageReactionAdd',

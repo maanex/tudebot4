@@ -2,37 +2,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const parseArgs_1 = require("../util/parseArgs");
-const fetch = require('node-fetch');
-module.exports = {
-    name: 'uinfo',
-    aliases: [],
-    desc: 'Userinfo',
-    sudoonly: false,
-    hideonhelp: true,
-    execute(bot, mes, sudo, args, repl) {
+const types_1 = require("../types");
+class UInfoCommand extends types_1.Command {
+    constructor(lang) {
+        super('uinfo', [], 'Userinfo', false, true, lang);
+    }
+    execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {
             let cmdl = parseArgs_1.default.parse(args);
-            let user = mes.author;
-            if (mes.mentions.users.size)
-                user = mes.mentions.users.first();
+            let user = orgUser;
+            if (event.message.mentions.users.size)
+                user = event.message.mentions.users.first();
             if (cmdl['?'] || cmdl.help || cmdl._ == '?' || cmdl._ == 'help') {
-                mes.channel.send(`\`\`\`Options:
-              --help  -?    shows this help page
-   --inventory --inv  -i    renders out the inventory
-            --hidden  -h    shows hidden fields (like _org_ or _raw_)
-               --all  -a    shows all fields (-i and -h combined)
+                channel.send(`\`\`\`Options:
+           --help  -?    shows this help page
+--inventory --inv  -i    renders out the inventory
+         --hidden  -h    shows hidden fields (like _org_ or _raw_)
+            --all  -a    shows all fields (-i and -h combined)
 \`\`\``);
             }
-            ((user == mes.author && cmdl._) ? tudeapi_1.default.clubUserById(cmdl._) : tudeapi_1.default.clubUserByDiscordId(user.id /*, mes.author*/)) // Don't create a new profile on loopup
+            ((user == orgUser && cmdl._) ? tudeapi_1.default.clubUserById(cmdl._) : tudeapi_1.default.clubUserByDiscordId(user.id /*, orgUser*/)) // Don't create a new profile on loopup
                 .then(u => {
                 if (!u || u.error) {
-                    repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
+                    repl('User not found!', 'message', 'Or internal error, idk');
                     resolve(false);
                     return;
                 }
-                let out = JSON.parse(JSON.stringify(u));
+                const out = JSON.parse(JSON.stringify(u));
                 if (!cmdl.h && !cmdl.hidden && !cmdl.all && !cmdl.a) {
-                    for (let index in out) {
+                    for (const index in out) {
                         if (index.charAt(0) == '_')
                             delete out[index];
                     }
@@ -45,17 +43,18 @@ module.exports = {
                 let str = '```json\n' + JSON.stringify(out, null, 2) + '```';
                 str = str.split('".array."').join('[ ... ]').split('".object."').join('{ ... }');
                 if (str.length > 2000)
-                    repl(mes.channel, mes.author, 'The built message is too long. Consider not showing parts like the inventory or hidden atributes');
+                    repl('The built message is too long. Consider not showing parts like the inventory or hidden atributes');
                 else
-                    repl(mes.channel, mes.author, str);
+                    repl(str);
                 resolve(true);
             })
                 .catch(err => {
-                repl(mes.channel, mes.author, 'An error occured!', 'bad');
+                repl('An error occured!', 'bad');
                 console.error(err);
                 resolve(false);
             });
         });
     }
-};
+}
+exports.default = UInfoCommand;
 //# sourceMappingURL=uinfo.js.map

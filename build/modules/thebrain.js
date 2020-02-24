@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const nreq = require("request");
 const types_1 = require("../types");
 class TheBrainModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('The Brain', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('The Brain', 'private', conf, data, lang);
         this.timeouts = [];
     }
     onEnable() {
-        this.bot.on('message', (mes) => {
+        index_1.TudeBot.on('message', (mes) => {
             if (mes.author.bot)
                 return;
         });
@@ -65,7 +66,7 @@ class TheBrainModule extends types_1.Module {
         this.timeouts.push(setTimeout(() => this.setNewIcon(false), sixH + Math.floor(Math.random() * sixH * 5)));
     }
     setPlaytext() {
-        this.bot.user.setActivity(this.getText());
+        index_1.TudeBot.user.setActivity(this.getText());
         this.timeouts.push(setTimeout(this.setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
     }
     getText() {

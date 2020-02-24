@@ -1,16 +1,16 @@
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { MessageReaction, User, Role } from "discord.js";
 import { Module } from "../types";
 
 
 export default class SelfrolesModule extends Module {
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Selfroles', 'public', bot, conf, data, lang);
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Selfroles', 'public', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
+    TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       if (user.bot) return;
       if (!reaction.message.guild) return;
       if (!this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`]) return;
@@ -33,7 +33,7 @@ export default class SelfrolesModule extends Module {
       }
     });
   
-    this.bot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
+    TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
       if (user.bot) return;
       if (!reaction.message.guild) return;
       if (!this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`]) return;

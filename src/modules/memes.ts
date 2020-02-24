@@ -1,16 +1,16 @@
-import { TudeBot } from 'index';
+import { TudeBot } from '../index';
 import { Message, MessageReaction, User } from 'discord.js';
 import { Module } from "../types";
 
 
 export default class MemesModule extends Module {
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Memes', 'private', bot, conf, data, lang);
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Memes', 'private', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.on('message', mes => {
+    TudeBot.on('message', mes => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
       if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
@@ -56,7 +56,7 @@ export default class MemesModule extends Module {
       // TODO meme of the month
     });
 
-    this.bot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
+    TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       let mes = reaction.message;
       if (user.bot) return;
       if (mes.author.bot) return;

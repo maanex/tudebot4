@@ -1,24 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-module.exports = {
-    name: 'joke',
-    aliases: [
-        'jokes'
-    ],
-    desc: 'Jokes on you',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
-        let joke = jokes[Math.floor(Math.random() * jokes.length)];
+const types_1 = require("../types");
+class JokesCommand extends types_1.Command {
+    constructor(lang) {
+        super('joke', ['jokes'], 'Jokes on you', false, false, lang);
+    }
+    execute(channel, user, args, event, repl) {
+        const joke = jokes[Math.floor(Math.random() * jokes.length)];
         let line1 = joke;
         let line2 = '';
         if (joke.includes('?')) {
             line1 = joke.split('?')[0] + '?';
             line2 = joke.substring(line1.length + 1);
         }
-        repl(mes.channel, mes.author, line1, 'message', line2);
+        repl(line1, 'message', line2);
         return true;
     }
-};
+}
+exports.default = JokesCommand;
 const jokes = [
     "Why did the opera singer go sailing? She wanted to hit the high Cs.",
     "What washes up on very small beaches? Micro-waves.",
@@ -206,6 +205,7 @@ const jokes = [
     "Where do cows go for entertainment? The mooooo-vies!",
     "How much does a Mustang cost? More than you can af-Ford.",
     "How do snails fight? They slug it out.",
-    "Joe"
+    "Joe",
+    "Game of Thrones Season 8"
 ];
 //# sourceMappingURL=jokes.js.map

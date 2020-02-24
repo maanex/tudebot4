@@ -1,27 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const parseArgs_1 = require("../util/parseArgs");
+const types_1 = require("../types");
 const fetch = require('node-fetch');
-module.exports = {
-    name: 'cocktail',
-    aliases: [
-        'cocktails',
-        'drink',
-        'makemeadrink',
-        'schwanzschwanz',
-        'mix'
-    ],
-    desc: 'A random cocktail recipe',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
-        let cmdl = parseArgs_1.default.parse(args);
+class CocktailCommand extends types_1.Command {
+    constructor(lang) {
+        super('cocktail', ['cocktails',
+            'drink',
+            'makemeadrink',
+            'schwanzschwanz',
+            'mix'], 'A random cocktail recipe', false, false, lang);
+    }
+    execute(channel, user, args, event, repl) {
+        const cmdl = parseArgs_1.default.parse(args);
+        let url = 'https://www.thecocktaildb.com/api/json/v1/1/random.php';
+        let search = '';
+        if (cmdl._) {
+            search = cmdl._ + '';
+            url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=' + encodeURIComponent(search);
+        }
         return new Promise((resolve, reject) => {
-            fetch('https://www.thecocktaildb.com/api/json/v1/1/random.php')
+            fetch(url)
                 .then(o => o.json())
                 .then(o => {
-                let drink = o.drinks[0];
+                if (!o || !o.drinks || !o.drinks.length) {
+                    console.log(url);
+                    if (search)
+                        repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad');
+                    else
+                        repl('Couldn\'t load the cocktail list!', 'bad', 'Maybe just get yourself a glass of water or something.');
+                    reject();
+                    return;
+                }
+                const drink = o.drinks[0];
                 if (cmdl.r || cmdl.raw) {
-                    repl(mes.channel, mes.author, '```json\n' + JSON.stringify(drink, null, 2) + '```');
+                    repl('```json\n' + JSON.stringify(drink, null, 2) + '```');
+                    reject();
                     return;
                 }
                 let ingredients = [];
@@ -30,7 +44,7 @@ module.exports = {
                     ingredients.push(`${drink['strMeasure' + i]} **${drink['strIngredient' + i]}**`);
                     i++;
                 }
-                mes.channel.send({
+                channel.send({
                     embed: {
                         color: 0x2f3136,
                         title: drink.strDrink,
@@ -63,14 +77,16 @@ module.exports = {
                             }
                         ],
                         footer: {
-                            text: mes.author.username + ' • powered by thecocktaildb.com',
-                            icon_url: mes.author.avatarURL
+                            text: user.username + ' • powered by thecocktaildb.com',
+                            icon_url: user.avatarURL
                         }
                     }
-                }) && resolve(true);
+                });
+                resolve(true);
             })
-                .catch(err => { repl(mes.channel, mes.author, 'An error occured!', 'bad'); resolve(false); });
+                .catch(err => { console.error(err); repl('An error occured!', 'bad'); resolve(false); });
         });
     }
-};
+}
+exports.default = CocktailCommand;
 //# sourceMappingURL=cocktail.js.map

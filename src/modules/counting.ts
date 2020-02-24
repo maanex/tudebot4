@@ -1,4 +1,4 @@
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji } from "discord.js";
 import * as util from "../util/util";
 import { Module } from "../types";
@@ -9,12 +9,13 @@ export default class CountingModule extends Module {
   private lastUser: string = '';
   private lastNum: number = 0;
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Counting', 'private', bot, conf, data, lang);
+  
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Counting', 'private', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.on('message', (mes: Message) => {
+    TudeBot.on('message', (mes: Message) => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
       if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;

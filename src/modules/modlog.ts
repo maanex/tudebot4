@@ -1,17 +1,17 @@
 import { modlogType } from '../types';
-import { TudeBot } from "index";
+import { TudeBot } from "../index";
 import { GuildMember, Guild, TextChannel } from "discord.js";
 import { Module } from "../types";
 
 
 export default class ModlogModule extends Module {
 
-  constructor(bot: TudeBot, conf: any, data: any, lang: (string) => string) {
-    super('Modlog', 'private', bot, conf, data, lang);
+  constructor(conf: any, data: any, lang: (string) => string) {
+    super('Modlog', 'private', conf, data, lang);
   }
 
   public onEnable(): void {
-    this.bot.modlog = {
+    TudeBot.modlog = {
       log: function (guild: Guild, type: modlogType, text: string): void {
         let id: string = guild.id;
         if (!this.conf.channels[id]) return;
@@ -24,12 +24,12 @@ export default class ModlogModule extends Module {
       }
     }
 
-    this.bot.on('guildMemberAdd', (mem: GuildMember) => {
-      this.bot.modlog.log(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
+    TudeBot.on('guildMemberAdd', (mem: GuildMember) => {
+      TudeBot.modlog.log(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
     });
 
-    this.bot.on('guildMemberRemove', (mem: GuildMember) => {
-      this.bot.modlog.log(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
+    TudeBot.on('guildMemberRemove', (mem: GuildMember) => {
+      TudeBot.modlog.log(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
     });
   }
 

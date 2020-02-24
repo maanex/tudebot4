@@ -2,34 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const parseArgs_1 = require("../util/parseArgs");
+const types_1 = require("../types");
 const AsciiTable = require('ascii-table');
-const fetch = require('node-fetch');
-const _bigspace = '<:nothing:409254826938204171>';
-module.exports = {
-    name: 'inventory',
-    aliases: [
-        'inv',
-        'items',
-        'i'
-    ],
-    desc: 'See your inventory (or someone elses)',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
+class InventoryCommand extends types_1.Command {
+    constructor(lang) {
+        super('inventory', ['inv',
+            'items',
+            'i'], 'See your inventory (or someone elses)', false, false, lang);
+    }
+    execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {
             let cmdl = parseArgs_1.default.parse(args);
-            let user = mes.author;
-            if (mes.mentions.users.size)
-                user = mes.mentions.users.first();
+            let user = orgUser;
+            if (event.message.mentions.users.size)
+                user = event.message.mentions.users.first();
             tudeapi_1.default.clubUserByDiscordId(user.id, user)
                 .then(u => {
                 if (!u || u.error) {
-                    repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
+                    repl('User not found!', 'message', 'Or internal error, idk');
                     resolve(false);
                     return;
                 }
                 if (!u.inventory || !u.inventory.size) {
                     let wow = Math.random() < .1;
-                    mes.channel.send({ embed: {
+                    channel.send({
+                        embed: {
                             author: {
                                 name: `${user.username}'s inventory:`,
                                 icon_url: user.avatarURL
@@ -38,11 +35,12 @@ module.exports = {
                             description: wow ? 'Wow, such empty' : '... *Empty*',
                             image: wow ? { url: 'https://cdn.discordapp.com/attachments/655354019631333397/666720051784581155/unknown.png' } : undefined,
                             footer: wow ? { text: 'This inventory is empty' } : undefined
-                        } });
+                        }
+                    });
                     resolve(false);
                     return;
                 }
-                let fields = {};
+                const fields = {};
                 for (let i of u.inventory.values()) {
                     if (fields[i.category.id])
                         fields[i.category.id].push(i);
@@ -63,10 +61,10 @@ module.exports = {
                         if (++c >= from && c <= to)
                             table.addRow(i.id, i.amount, i.category.id, i.type.id, i.ref);
                     }
-                    mes.channel.send('```\n' + table.toString() + `\nShowing ${from} - ${to} out of ${u.inventory.size}` + '```');
+                    channel.send('```\n' + table.toString() + `\nShowing ${from} - ${to} out of ${u.inventory.size}` + '```');
                 }
                 else {
-                    mes.channel.send({
+                    channel.send({
                         embed: {
                             author: {
                                 name: `${user.username}'s inventory:`,
@@ -86,11 +84,12 @@ module.exports = {
                 resolve(true);
             })
                 .catch(err => {
-                repl(mes.channel, mes.author, 'An error occured!', 'bad');
+                repl('An error occured!', 'bad');
                 console.error(err);
                 resolve(false);
             });
         });
     }
-};
+}
+exports.default = InventoryCommand;
 //# sourceMappingURL=inventory.js.map

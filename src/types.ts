@@ -1,7 +1,4 @@
-import { Channel, User, Guild } from "discord.js";
-import { Command } from "./modules/commands";
-import { ClubUser } from "./thirdparty/tudeapi/tudeapi";
-import { TudeBot } from "index";
+import { Channel, User, Guild, TextChannel, Message } from "discord.js";
 
 //
 
@@ -14,18 +11,7 @@ export type cmes = (channel: Channel, author: User, text: string, type?: cmesTyp
 
 //
 
-export type ReplyFunction = (channel: Channel, author: User, text: string, type?: cmesType, description?: string) => void;
-
-export type ModuleData = {
-  commands?: {
-    getCommands: () => Command[];
-    getActiveInCommandsChannel: () => string[]
-  };
-  getpoints?: {
-    onUserLevelup: (user: ClubUser, newLevel: number, rewards: any) => void
-  };
-  [key: string]: any;
-};
+export type ReplyFunction = (text: string, type?: cmesType, description?: string, settings?: any) => void;
 
 export type ModuleUsageScope = 'private' | 'public';
 
@@ -35,7 +21,6 @@ export abstract class Module {
     public readonly dispName: string,
     public readonly usageScope: ModuleUsageScope,
 
-    protected readonly bot: TudeBot,
     protected readonly conf: any,
     protected readonly data: any,
     protected readonly lang: (string) => string
@@ -46,6 +31,28 @@ export abstract class Module {
   public abstract onBotReady(): void;
 
   public abstract onDisable(): void;
+
+}
+
+//
+
+export type CommandExecEvent = { message: Message, sudo: boolean, label: string };
+
+export abstract class Command {
+
+  constructor (
+    public readonly name: string,
+    public readonly aliases: string[],
+    public readonly description: string,
+    public readonly sudoOnly: boolean,
+    public readonly hideOnHelp: boolean,
+
+    protected readonly lang: (string) => string
+  ) { }
+
+  public abstract execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean | Promise<boolean>;
+
+  public init(): void { }
 
 }
 

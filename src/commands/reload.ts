@@ -1,21 +1,26 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class ReloadCommand extends Command {
 
-    name: 'reload',
-    aliases: [ ],
-    desc: 'Reload',
-    sudoonly: true,
+  constructor(lang: (string) => string) {
+    super(
+      'reload',
+      [ ],
+      'Reload',
+      true,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void): boolean {
-        TudeApi.reload();
-        bot.reload().then(() => mes.react('✅')).catch();
-        return true;
-    }
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    TudeApi.reload();
+    TudeBot.reload().then(() => event.message.react('✅')).catch();
+    return true;
+  }
 
 }

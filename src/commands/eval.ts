@@ -1,32 +1,37 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class EvalCommand extends Command {
 
-    name: 'eval',
-    aliases: [ ],
-    desc: 'Eval',
-    sudoonly: true,
+  constructor(lang: (string) => string) {
+    super(
+      'eval',
+      [ ],
+      'Eval',
+      true,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, desc?: string) => void): boolean {
-        if (mes.author.id !== '137258778092503042') return false;
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    if (user.id !== '137258778092503042') return false;
 
-        try {
-            let tapi = TudeApi;
-            TudeApi.clubUserByDiscordId(mes.author.id).then(self => {
-                repl(mes.channel, mes.author, eval(args.join(' ')));
-            }).catch(ex => {
-                repl(mes.channel, mes.author, eval(args.join(' ')));
-            });        
-            return true;
-        } catch (ex) {
-            repl(mes.channel, mes.author, 'Error:', 'message', '```' + ex + '```');
-            return false;
-        }
+    try {
+      let tapi = TudeApi;
+      TudeApi.clubUserByDiscordId(user.id).then(self => {
+        repl(eval(args.join(' ')));
+      }).catch(ex => {
+        repl(eval(args.join(' ')));
+      });
+      return true;
+    } catch (ex) {
+      repl('Error:', 'message', '```' + ex + '```');
+      return false;
     }
+  }
 
 }

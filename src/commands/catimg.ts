@@ -1,41 +1,44 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 const fetch = require('node-fetch');
 
 
-module.exports = {
+export default class CatCommand extends Command {
 
-    name: 'cat',
-    aliases: [
-        'kitten',
+  constructor(lang: (string) => string) {
+    super(
+      'cat',
+      [ 'kitten',
         'catimage',
         'catimg',
-        'pussy'
-    ],
-    desc: 'A random cat image',
-    sudoonly: false,
+        'pussy' ],
+      'A random cat image',
+      false,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): Promise<boolean> {
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        fetch('https://api.thecatapi.com/v1/images/search?format=json')
-            .then(o => o.json())
-            .then(o => mes.channel.send({
-                embed: {
-                    color: 0x2f3136,
-                    image: {
-                        url: o[0].url
-                    },
-                    footer: {
-                        text: mes.author.username,
-                        icon_url: mes.author.avatarURL
-                    }
-                }
-            }) && resolve(true))
-            .catch(err => { repl(mes.channel, mes.author, 'An error occured!', 'bad'); resolve(false) });
+      fetch('https://api.thecatapi.com/v1/images/search?format=json')
+        .then(o => o.json())
+        .then(o => channel.send({
+          embed: {
+            color: 0x2f3136,
+            image: {
+              url: o[0].url
+            },
+            footer: {
+              text: user.username,
+              icon_url: user.avatarURL
+            }
+          }
+        }) && resolve(true))
+        .catch(err => { repl('An error occured!', 'bad'); resolve(false) });
     });
-    }
+  }
 
 }

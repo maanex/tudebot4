@@ -1,7 +1,7 @@
 
 import { User as DiscordUser } from "discord.js";
 import { hook_std } from "./stdutils";
-import { Core, TudeBot } from "../..";
+import { TudeBot } from "../..";
 import Database from "../../database/database";
 
 
@@ -91,7 +91,7 @@ export default class WCP {
         if (!data.success) return;
 
         if (data.new_freestuff) {
-            freestuffCmd.announce(Core.guilds.get('432899162150010901'), data.new_freestuff);
+            freestuffCmd.announce(TudeBot.guilds.get('432899162150010901'), data.new_freestuff);
         }
 
         if (data.configure_modules) {
@@ -102,7 +102,7 @@ export default class WCP {
                     .updateOne({ _id: 'modules' }, { '$set': { data: obj }});
                 console.log(chalk.blue('Module settings got updated remotely. Reloading.'))
                 if (!data.reload)
-                    Core.reload();
+                    TudeBot.reload();
             }
         }
         if (data.configure_commands) {
@@ -113,12 +113,12 @@ export default class WCP {
                     .updateOne({ _id: 'commands' }, { '$set': { data: obj }});
                 console.log(chalk.blue('Command settings got updated remotely. Reloading.'))
                 if (!data.reload)
-                    Core.reload();
+                    TudeBot.reload();
             }
         }
         
         if (data.reload) {
-            Core.reload();
+            TudeBot.reload();
         }
     }
 

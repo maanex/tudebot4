@@ -1,41 +1,44 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
+import { TudeBot } from "../index";
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 const fetch = require('node-fetch');
 
 
-module.exports = {
+export default class RandomImageCommand extends Command {
 
-    name: 'image',
-    aliases: [
-        'randomimage',
+  constructor(lang: (string) => string) {
+    super(
+      'image',
+      [ 'randomimage',
         'random',
-        'rndimg'
-    ],
-    desc: 'Random image',
-    sudoonly: false,
+        'rndimg' ],
+      'A completely random image',
+      false,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType) => void): Promise<boolean> {
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        fetch('http://pd.tude.ga/imgdb.json')
-            .then(o => o.json())
-            .then(o => mes.channel.send({
-                embed: {
-                    color: 0x2f3136,
-                    description: args.length&&'You cannot search for an image. This command shows a random image the bot has found somewhere on the world wide web!',
-                    image: {
-                        url: o[Math.floor(Math.random() * o.length)]
-                    },
-                    footer: {
-                        text: mes.author.username,
-                        icon_url: mes.author.avatarURL
-                    }
-                }
-            }) && resolve(true))
-            .catch(err => { repl(mes.channel, mes.author, 'An error occured!', 'bad'); resolve(false) });
+      fetch('http://pd.tude.ga/imgdb.json')
+        .then(o => o.json())
+        .then(o => channel.send({
+          embed: {
+            color: 0x2f3136,
+            description: args.length ? 'You cannot search for an image. This command shows a random image the bot has found somewhere on the world wide web!' : '',
+            image: {
+              url: o[Math.floor(Math.random() * o.length)]
+            },
+            footer: {
+              text: user.username,
+              icon_url: user.avatarURL
+            }
+          }
+        }) && resolve(true))
+        .catch(err => { console.error(err); repl('An error occured!', 'bad'); resolve(false) });
     });
-    }
+  }
 
 }

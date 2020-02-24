@@ -9,28 +9,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const __1 = require("..");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class QuotesModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Module Name', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Module Name', 'private', conf, data, lang);
     }
     onEnable() {
-        this.bot.on('messageReactionAdd', (reaction, user) => {
+        __1.TudeBot.on('messageReactionAdd', (reaction, user) => {
             if (user.bot)
                 return;
             if (!reaction.message.guild)
                 return;
         });
-        this.bot.on('messageReactionRemove', (reaction, user) => {
+        __1.TudeBot.on('messageReactionRemove', (reaction, user) => {
             if (user.bot)
                 return;
             if (!reaction.message.guild)
                 return;
         });
         for (let game in games) {
-            games[game](this.bot, this.conf[game], this.data, this.lang);
+            games[game](this.conf[game], this.data, this.lang);
         }
     }
     onBotReady() {
@@ -43,7 +44,7 @@ class QuotesModule extends types_1.Module {
 }
 exports.default = QuotesModule;
 let games = {
-    'fishing': (bot, conf, data, lang) => {
+    'fishing': (conf, data, lang) => {
         let emojis = {
             wave: '<:wv:664896117963620395>',
             lbwave: '<:rl:665184934947848202>',
@@ -87,7 +88,7 @@ let games = {
         function findMessages() {
             return new Promise((resolve, reject) => {
                 let path = conf['channel'].split('/');
-                bot.guilds.get(path[0]).channels.get(path[1]).fetchMessages().then(mes => {
+                __1.TudeBot.guilds.get(path[0]).channels.get(path[1]).fetchMessages().then(mes => {
                     mes.forEach(m => {
                         if (conf['messages'].includes(m.id)) {
                             messages.push(m);
@@ -104,12 +105,12 @@ let games = {
                 let raw = emojis.lbwave;
                 for (let i = 0; i < 6; i++)
                     raw += emojis.wave;
-                raw += emojis.rbwave + emojis_1.default.bigSpace;
+                raw += emojis.rbwave + emojis_1.default.BIG_SPACE;
                 emptyWaveText = raw;
                 let c = 0;
-                let title = emojis.inlineBounds.title.join('') + emojis_1.default.bigSpace;
-                let border1 = emojis.inlineBounds.goldBait.join('') + emojis_1.default.bigSpace;
-                let border2 = emojis.inlineBounds.normalBait.join('') + emojis_1.default.bigSpace;
+                let title = emojis.inlineBounds.title.join('') + emojis_1.default.BIG_SPACE;
+                let border1 = emojis.inlineBounds.goldBait.join('') + emojis_1.default.BIG_SPACE;
+                let border2 = emojis.inlineBounds.normalBait.join('') + emojis_1.default.BIG_SPACE;
                 for (let m of messages) {
                     let text = '';
                     if (++c == 1)
@@ -119,7 +120,7 @@ let games = {
                     else if (c == 7)
                         text = border2;
                     else if (c == 11)
-                        text = '`                                                   `\n`                                                   `*' + emojis_1.default.bigSpace + emojis_1.default.bigSpace + '*';
+                        text = '`                                                   `\n`                                                   `*' + emojis_1.default.BIG_SPACE + emojis_1.default.BIG_SPACE + '*';
                     else
                         text = raw;
                     if (m.content !== text)
@@ -147,8 +148,8 @@ let games = {
                 ticktimer = setInterval(tick, 1000);
             });
         }
-        bot.on('ready', init);
-        bot.on('messageReactionAdd', (reaction, user) => {
+        __1.TudeBot.on('ready', init);
+        __1.TudeBot.on('messageReactionAdd', (reaction, user) => {
             if (user.bot)
                 return;
             if (!messagesIds.includes(reaction.message.id))
@@ -186,7 +187,7 @@ let games = {
                 });
             }
         });
-        bot.on('messageReactionRemove', (reaction, user) => {
+        __1.TudeBot.on('messageReactionRemove', (reaction, user) => {
             if (user.bot)
                 return;
             if (!messagesIds.includes(reaction.message.id))
@@ -274,7 +275,7 @@ let games = {
             playing.delete(user.id);
             messages[messages.length - 1].reactions.get(emojis.rod).remove(user);
             if (playing.size == 0)
-                messages[10].edit('`                                                   `\n`                                                   `*' + emojis_1.default.bigSpace + emojis_1.default.bigSpace + '*');
+                messages[10].edit('`                                                   `\n`                                                   `*' + emojis_1.default.BIG_SPACE + emojis_1.default.BIG_SPACE + '*');
         }
         function tick() {
             if (playing.size == 0)
@@ -321,7 +322,7 @@ let games = {
             let text = emojis.lbwave;
             for (let i = 1; i < 7; i++)
                 text += (position == i ? getEmojiForFish(fish) : emojis.wave);
-            text += emojis.rbwave + emojis_1.default.bigSpace;
+            text += emojis.rbwave + emojis_1.default.BIG_SPACE;
             let validLines = [];
             switch (area) {
                 case 'regular':
@@ -371,12 +372,12 @@ let games = {
                             space += ' ';
                         total += space + '`\n`';
                     }
-                    messages[10].edit('`' + total.substring(0, total.length - 4) + ' `' + emojis_1.default.bigSpace + emojis_1.default.bigSpace);
+                    messages[10].edit('`' + total.substring(0, total.length - 4) + ' `' + emojis_1.default.BIG_SPACE + emojis_1.default.BIG_SPACE);
                     caughtBy = [];
                     caughtByNames = [];
                     clearTimeout(resetDisplayTimer);
                     resetDisplayTimer = setTimeout(() => {
-                        messages[10].edit('`                                                   `\n`                                                   `*' + emojis_1.default.bigSpace + emojis_1.default.bigSpace + '*');
+                        messages[10].edit('`                                                   `\n`                                                   `*' + emojis_1.default.BIG_SPACE + emojis_1.default.BIG_SPACE + '*');
                     }, 20000);
                 }, 2000 + Math.floor(Math.random() * Math.random() * 4000), fish);
             });
@@ -633,7 +634,7 @@ let games = {
             }
         };
     },
-    'mine': (bot, conf, data, lang) => {
+    'mine': (conf, data, lang) => {
     }
 };
 //# sourceMappingURL=channelgames.js.map

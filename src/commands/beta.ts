@@ -1,22 +1,23 @@
-import { TudeBot } from "index";
-import { Message, Channel, User } from "discord.js";
-import { cmesType } from "types";
-
-const fetch = require('node-fetch');
+import { Message, Channel, User, TextChannel } from "discord.js";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 
-module.exports = {
+export default class BetaCommand extends Command {
 
-    name: 'beta',
-    aliases: [
-    ],
-    desc: 'Join the TudeBot Beta program',
-    sudoonly: false,
+  constructor(lang: (string) => string) {
+    super(
+      'beta',
+      [ ],
+      'Join the TudeBot Beta program',
+      false,
+      false,
+      lang
+    );
+  }
 
-    
-    execute(bot: TudeBot, mes: Message, sudo: boolean, args: string[], repl: (channel: Channel, author: User, text: string, type?: cmesType, content?: string) => void): boolean {
-        repl(mes.channel, mes.author, 'Click here to join the TudeBot Beta program', 'message', 'https://discord.gg/UPXM3Yu/');
-        return true;
-    }
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
+    repl('Click here to join the TudeBot Beta program', 'message', 'https://discord.gg/UPXM3Yu/');
+    return true;
+  }
 
 }

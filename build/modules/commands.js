@@ -1,21 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const dbstats_1 = require("../database/dbstats");
 const database_1 = require("../database/database");
 const wcp_1 = require("../thirdparty/wcp/wcp");
 const chalk = require("chalk");
 const types_1 = require("../types");
 class CommandsModule extends types_1.Module {
-    constructor(bot, conf, data, lang) {
-        super('Commands', 'private', bot, conf, data, lang);
+    constructor(conf, data, lang) {
+        super('Commands', 'public', conf, data, lang);
         this.ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60000;
-        this.commands = [];
         this.activeInCommandsChannel = [];
         this.activeInCommandsChannelRemoveTimer = {};
+        this.commands = [];
+        this.identifierMap = new Map();
     }
     onEnable() {
         this.loadCommands();
-        this.bot.on('message', (mes) => {
+        index_1.TudeBot.on('message', (mes) => {
             if (mes.author.bot)
                 return;
             if (!mes.guild)
@@ -23,8 +25,8 @@ class CommandsModule extends types_1.Module {
             if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
                 return;
             this.updateActiveInCommandsChannel(mes.author.id);
-            let txt = mes.content;
-            let args = txt.split(' ');
+            const txt = mes.content;
+            const args = txt.split(' ');
             let cmd = args.splice(0, 1)[0].toLowerCase();
             let sudo = false;
             if (cmd === 'sudo' || cmd.charAt(0) == '$') {
@@ -42,38 +44,32 @@ class CommandsModule extends types_1.Module {
                     }
                 }
             }
-            let command;
-            out: for (let c of this.commands) {
-                if (c.name === cmd) {
-                    command = c;
-                    break out;
-                }
-                for (let a of c.aliases)
-                    if (a === cmd) {
-                        command = c;
-                        break out;
-                    }
-            }
+            const command = this.identifierMap.get(cmd);
             if (command) {
-                if (command.sudoonly && !sudo) {
+                if (command.sudoOnly && !sudo) {
                     this.cmes(mes.channel, mes.author, ':x: Not allowed!');
                     return;
                 }
-                let success = command.execute(this.bot, mes, sudo, args, this.cmes);
-                dbstats_1.DbStats.getCommand(command.name).then(c => {
-                    c.calls.updateToday(1);
-                    if (success['then']) {
-                        success.then(bool => {
-                            if (bool)
-                                c.executions.updateToday(1);
-                        }).catch();
-                    }
-                    else if (success)
-                        c.executions.updateToday(1);
-                });
+                function update(success) {
+                    dbstats_1.DbStats.getCommand(command.name).then(c => {
+                        c.calls.updateToday(1);
+                        if (success)
+                            c.executions.updateToday(1);
+                    });
+                }
+                const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
+                const event = { message: mes, sudo: sudo, label: cmd };
+                const res = command.execute(mes.channel, mes.author, args, event, cmes);
+                if (res['then']) {
+                    res.then(update).catch(() => { });
+                }
+                else {
+                    update(res);
+                }
             }
-            else if (sudo)
+            else if (sudo) {
                 this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
+            }
         });
     }
     onBotReady() {
@@ -82,23 +78,23 @@ class CommandsModule extends types_1.Module {
     }
     loadCommands() {
         this.commands = [];
+        this.identifierMap = new Map();
         database_1.default
             .collection('settings')
             .findOne({ _id: 'commands' })
             .then(obj => {
             wcp_1.default.send({ config_commands: JSON.stringify(obj.data) });
-            let allCmdaliases = [];
-            for (let c in obj.data)
-                if (obj.data[c]) {
-                    let cmd = require(`../commands/${c}`);
-                    if (cmd.init)
-                        cmd.init(this.bot);
+            for (const commandName in obj.data)
+                if (obj.data[commandName]) {
+                    const CmdClass = require(`../commands/${commandName}`).default;
+                    const cmd = new CmdClass(this.lang);
+                    cmd.init();
                     this.commands.push(cmd);
-                    for (let a of [cmd.name, ...cmd.aliases]) {
-                        if (allCmdaliases.indexOf(a) >= 0)
-                            console.log(chalk.red(`Command "${a}" is declared multiple times!`));
+                    for (const identifier of [cmd.name, ...cmd.aliases]) {
+                        if (this.identifierMap.has(identifier))
+                            console.log(chalk.red(`Command "${identifier}" is declared multiple times!`));
                         else
-                            allCmdaliases.push(a);
+                            this.identifierMap.set(identifier, cmd);
                     }
                 }
         })
@@ -113,7 +109,6 @@ class CommandsModule extends types_1.Module {
     cmes(channel, author, text, type, description, settings) {
         if (type == 'error')
             text = ':x: ' + text;
-        // if (type == 'bad') text = ':frowning: ' + text;
         if (type == 'success')
             text = ':white_check_mark: ' + text;
         channel.send({

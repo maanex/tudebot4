@@ -1,85 +1,70 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const emojis_1 = require("../int/emojis");
+const types_1 = require("../types");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const fetch = require('node-fetch');
-const _bigspace = '<:nothing:409254826938204171>';
-const _xpbar = {
-    left_empty: '<:xpbarleftempty:654357985845575716>',
-    left_half: '<:xpbarlefthalf:654353598301339668>',
-    left_full: '<:xpbarleftfull:654353598603460609>',
-    middle_empty: '<:xpbarmiddleempty:654353598087430174>',
-    middle_1: '<:xpbarmiddle1:654353598288887840>',
-    middle_2: '<:xpbarmiddle2:654353598230167574>',
-    middle_3: '<:xpbarmiddle3:654353597819256843>',
-    right_empty: '<:xpbarrightempty:654353598263853066>',
-    right_half: '<:xpbarrighthalf:654353597999611908>',
-    right_full: '<:xpbarrightfull:654353598204870656>'
-};
-module.exports = {
-    name: 'profile',
-    aliases: [
-        'p'
-    ],
-    desc: 'See your profile (or someone elses)',
-    sudoonly: false,
-    execute(bot, mes, sudo, args, repl) {
+class ProfileCommand extends types_1.Command {
+    constructor(lang) {
+        super('profile', ['p'], 'See your profile (or someone elses)', false, false, lang);
+    }
+    execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {
-            let user = mes.author;
-            if (mes.mentions.users.size)
-                user = mes.mentions.users.first();
+            let user = orgUser;
+            if (event.message.mentions.users.size)
+                user = event.message.mentions.users.first();
             tudeapi_1.default.clubUserByDiscordId(user.id, user)
                 .then(u => {
                 if (!u || u.error) {
-                    repl(mes.channel, mes.author, 'User not found!', 'message', 'Or internal error, idk');
+                    repl('User not found!', 'message', 'Or internal error, idk');
                     resolve(false);
                     return;
                 }
                 let footer = `${u.points}pt`;
                 let icon = undefined;
                 let xpbar = '';
-                let stats = `${_bigspace}`;
-                let statItems = [`:cookie: ${u.cookies}`, `:gem: ${u.gems}`];
+                let stats = `${emojis_1.default.BIG_SPACE}`;
+                let statItems = [`${emojis_1.default.COOKIES}  ${u.cookies}`, `${emojis_1.default.GEMS} ${u.gems}`];
                 if (u.keys > 0)
-                    statItems.push(`:key: ${u.keys}`);
+                    statItems.push(`${emojis_1.default.KEYS} ${u.keys}`);
                 // @ts-ignore
                 if (u.inventory.size > 0) {
                     let amount = 0;
                     for (let item of u.inventory.values())
                         amount += item.amount;
-                    statItems.push(`:package: ${amount}`);
+                    statItems.push(`${emojis_1.default.ITEMS} ${amount}`);
                 }
                 if (u.daily.streak >= 7) {
                     statItems.push(`:flame: ${u.daily.streak}`);
                 }
                 let c = 0;
                 for (let si of statItems)
-                    stats += (c++ % 3 == 0 ? '\n\n' : ` ${_bigspace} `) + si;
-                if (u.daily.claimable && !mes.mentions.users.size)
+                    stats += (c++ % 3 == 0 ? '\n\n' : ` ${emojis_1.default.BIG_SPACE} `) + si;
+                if (u.daily.claimable && !event.message.mentions.users.size)
                     stats += '\n\n**You haven\'t claimed\nyour daily reward yet!**';
                 let prog12 = Math.floor(u.level_progress * 12);
                 if (prog12 == 0)
-                    xpbar += _xpbar.left_empty;
+                    xpbar += emojis_1.default.XPBAR.left_empty;
                 else if (prog12 == 1)
-                    xpbar += _xpbar.left_half;
+                    xpbar += emojis_1.default.XPBAR.left_half;
                 else
-                    xpbar += _xpbar.left_full;
+                    xpbar += emojis_1.default.XPBAR.left_full;
                 for (let i = 1; i <= 4; i++) {
                     let relative = prog12 - i * 2;
                     if (relative < 0)
-                        xpbar += _xpbar.middle_empty;
+                        xpbar += emojis_1.default.XPBAR.middle_empty;
                     else if (relative == 0)
-                        xpbar += _xpbar.middle_1;
+                        xpbar += emojis_1.default.XPBAR.middle_1;
                     else if (relative == 1)
-                        xpbar += _xpbar.middle_2;
+                        xpbar += emojis_1.default.XPBAR.middle_2;
                     else
-                        xpbar += _xpbar.middle_3;
+                        xpbar += emojis_1.default.XPBAR.middle_3;
                 }
                 if (prog12 >= 11)
-                    xpbar += _xpbar.right_full;
+                    xpbar += emojis_1.default.XPBAR.right_full;
                 else if (prog12 == 10)
-                    xpbar += _xpbar.right_half;
+                    xpbar += emojis_1.default.XPBAR.right_half;
                 else
-                    xpbar += _xpbar.right_empty;
+                    xpbar += emojis_1.default.XPBAR.right_empty;
                 xpbar += ` **${Math.floor(u.level_progress * 100)}%**`;
                 if (u.profile && u.profile.disp_badge) {
                     let badge = tudeapi_1.default.badgeById(u.profile.disp_badge);
@@ -106,12 +91,12 @@ module.exports = {
                 let uicon = user.avatarURL;
                 if (u.user.type == 1) {
                     uname = u.user.name;
-                    // uicon = '';
+                    // uicon = `https://www.gravatar.com/avatar/${md5.hash(u.user.email)}?s=60&d=identicon`;
                     if (u.user.tag == 0) {
                         uname += ' ✔️';
                     }
                 }
-                mes.channel.send({
+                channel.send({
                     embed: {
                         author: {
                             name: uname,
@@ -132,11 +117,12 @@ module.exports = {
                 resolve(true);
             })
                 .catch(err => {
-                repl(mes.channel, mes.author, 'An error occured!', 'bad');
+                repl('An error occured!', 'bad');
                 console.error(err);
                 resolve(false);
             });
         });
     }
-};
+}
+exports.default = ProfileCommand;
 //# sourceMappingURL=profile.js.map
