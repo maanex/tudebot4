@@ -64,7 +64,7 @@ export default class InventoryCommand extends Command {
           }
 
           if (cmdl.t || cmdl.table) {
-            var table = new AsciiTable();
+            let table = new AsciiTable();
             table.setHeading('type', 'amount', 'category', 'type', 'id');
             let from = 1; // start counting with 1 here, I know it's unconventional but whatever it needs(!) to be done
             let to = 10;
