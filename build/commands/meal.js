@@ -71,8 +71,7 @@ class MealCommand extends types_1.Command {
                             }
                         ],
                         footer: {
-                            text: user.username + ' • powered by thecocktaildb.com',
-                            icon_url: user.avatarURL
+                            text: '@' + user.username + ' • powered by thecocktaildb.com'
                         }
                     }
                 });

@@ -84,8 +84,7 @@ export default class MealCommand extends Command {
                 }
               ],
               footer: {
-                text: user.username + ' • powered by thecocktaildb.com',
-                icon_url: user.avatarURL
+                text: '@' + user.username + ' • powered by thecocktaildb.com'
               }
             }
           });
