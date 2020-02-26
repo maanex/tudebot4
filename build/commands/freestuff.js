@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 class FreestuffCommand extends types_1.Command {
     constructor(lang) {
-        super('freestuff', [], 'Free stuff announcement tool', false, true, lang);
+        super('freestuff', [], 'Free stuff announcement tool', 0, false, true, lang);
         this.announce = (guild, text) => {
             // let role = guild.roles.get(roleid);
             // role.setMentionable(true).then(() =>

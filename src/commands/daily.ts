@@ -2,6 +2,7 @@ import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import Emojis from "../int/emojis";
 
 
 export default class DailyCommand extends Command {
@@ -11,6 +12,7 @@ export default class DailyCommand extends Command {
       'daily',
       [ 'd' ],
       'Get your daily reward',
+      0,
       false,
       false,
       lang
@@ -31,9 +33,9 @@ export default class DailyCommand extends Command {
             let desc = '';
 
             let reward = o['reward'];
-            if (reward.points) desc += `**+${reward.points}** point${reward.points == 1 ? '' : 's'}\n`;
-            if (reward.cookies) desc += `**+${reward.cookies}** cookie${reward.cookies == 1 ? '' : 's'} *:cookie:*\n`;
-            if (reward.gems) desc += `**+${reward.gems}** gem${reward.gems == 1 ? '' : 's'} *:gem:*\n`;
+            if (reward.points) desc += `**+${reward.points}** point${reward.points == 1 ? '' : 's'} *${Emojis.POINTS}*\n`;
+            if (reward.cookies) desc += `**+${reward.cookies}** cookie${reward.cookies == 1 ? '' : 's'} *${Emojis.COOKIES}*\n`;
+            if (reward.gems) desc += `**+${reward.gems}** gem${reward.gems == 1 ? '' : 's'} *${Emojis.GEMS}*\n`;
 
             let streak = o['streak'];
             if (streak) {

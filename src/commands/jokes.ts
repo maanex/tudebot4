@@ -10,6 +10,7 @@ export default class JokesCommand extends Command {
       'joke',
       [ 'jokes' ],
       'Jokes on you',
+      0,
       false,
       false,
       lang

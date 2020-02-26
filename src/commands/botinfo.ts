@@ -10,6 +10,7 @@ export default class BotInfoCommand extends Command {
       'botinfo',
       [ 'test1234' ],
       'Bot info',
+      0,
       true,
       false,
       lang

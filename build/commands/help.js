@@ -5,7 +5,7 @@ const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
 class HelpCommand extends types_1.Command {
     constructor(lang) {
-        super('help', ('.?!/%-+=~&,:'.split('').map(p => p + 'help')), 'Help!', false, true, lang);
+        super('help', ('.?!/%-+=~&,:'.split('').map(p => p + 'help')), 'Help!', 0, false, true, lang);
         this._nopes = [
             'nope',
             'no',

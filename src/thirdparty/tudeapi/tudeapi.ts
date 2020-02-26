@@ -1,13 +1,13 @@
 
 import { User as DiscordUser } from "discord.js";
-import { resolve } from "dns";
-import { rejects } from "assert";
 
-import WCP from "../../thirdparty/wcp/wcp.js";
+import WCP from "../../thirdparty/wcp/wcp";
 import { TudeBot } from "../..";
-import { getItemIcon } from "./itemlist";
-import { badgeEmojiList } from "./badgelist.js";
-import GetPointsModule from "../../modules/getpoints.js";
+import { badgeEmojiList } from "./badgelist";
+import GetPointsModule from "../../modules/getpoints";
+import { Item, StackableItem, ItemCategory, ItemGroup, ExpandedItem } from "./item";
+import { ItemList } from "./itemlist";
+
 
 const fetch = require('node-fetch');
 
@@ -75,7 +75,7 @@ export interface Leaderboard {
     updated: number;
 }
 
-export interface Item {
+export interface DeprItem {
     id: string;
     ref: string;
     name: string;
@@ -120,7 +120,6 @@ export default class TudeApi {
     }
 
     public static badges: Badge[] = [];
-    public static items: Item[] = [];
 
     public static clubLang: any = {};
 
@@ -130,8 +129,7 @@ export default class TudeApi {
         return new Promise(async (resolve, reject) => {
             fetch(this.baseurl + this.endpoints.club.badges, {
                 method: 'get',
-                headers: { 'auth': this.key },
-            })
+                headers: { 'auth': this.key } })
                 .then(o => o.json())
                 .then(o => {
                     this.badges = o;
@@ -161,46 +159,43 @@ export default class TudeApi {
                     WCP.send({ status_tudeapi: '-Connection failed' });
                 });
             //
-            
-            this.items = [];
 
-            let langLoaded = () => {
-                fetch(this.baseurl + this.endpoints.club.items, {
-                    method: 'get',
-                    headers: { 'auth': this.key },
-                })
-                    .then(o => o.json())
-                    .then(o => {
-                        for (let i of o) {
-                            let item: Item = {
-                                id: i.id,
-                                ref: i.id,
-                                name: this.clubLang['item_' + i.id] || i.id,
-                                category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
-                                type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
-                                amount: 0,
-                                meta: {},
-                                expanded: (i.prop & 0b0001) != 0,
-                                tradeable: (i.prop & 0b0010) != 0,
-                                sellable: (i.prop & 0b0100) != 0,
-                                purchaseable: (i.prop & 0b1000) != 0,
-                                icon: getItemIcon(i.id),
-                            };
-                            this.items.push(item);
-                        }
-                        resolve();
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        reject();
-                    });
+            const langLoaded = () => {
+                // fetch(this.baseurl + this.endpoints.club.items, {
+                //     method: 'get',
+                //     headers: { 'auth': this.key } })
+                //     .then(o => o.json())
+                //     .then(o => {
+                //         for (const i of o) {
+                //             // const item: Item = {
+                //             //     id: i.id,
+                //             //     ref: i.id,
+                //             //     name: this.clubLang['item_' + i.id] || i.id,
+                //             //     category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
+                //             //     type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
+                //             //     amount: 0,
+                //             //     meta: {},
+                //             //     expanded: (i.prop & 0b0001) != 0,
+                //             //     tradeable: (i.prop & 0b0010) != 0,
+                //             //     sellable: (i.prop & 0b0100) != 0,
+                //             //     purchaseable: (i.prop & 0b1000) != 0,
+                //             //     icon: 'TODO'
+                //             // };
+                //             // this.items.push(item);
+                //         }
+                //         resolve();
+                //     })
+                //     .catch(err => {
+                //         console.error(err);
+                //         reject();
+                //     });
+                resolve();
             }
             //
 
             await fetch(this.baseurl + this.endpoints.club.lang + language, {
                 method: 'get',
-                headers: { 'auth': this.key },
-            })
+                headers: { 'auth': this.key } })
                 .then(o => o.json())
                 .then(o => {
                     this.clubLang = o;
@@ -439,26 +434,33 @@ export default class TudeApi {
         });
     }
 
-    private static parseItem(ref: string, item: any): Item {
+    public static parseItem(ref: string, item: any): Item {
         let id = item.id || ref;
         let amount = item.amount == undefined ? 1 : item.amount;
         let meta = item.meta == undefined ? {} : item.meta;
-        let preset = this.items.find(i => i.id == id) || {} as any;
 
-        return {
-            id: id,
-            ref: ref,
-            amount: amount,
-            meta: meta,
-            category: preset.category,
-            name: preset.name,
-            expanded: preset.expanded,
-            sellable: preset.sellable,
-            purchaseable: preset.purchaseable,
-            tradeable: preset.tradeable,
-            type: preset.type,
-            icon: preset.icon,
-        };
+        const prefab = ItemList.find(i => i.id == id);
+
+        if (!prefab) {
+            console.error(`No item prefab found for ${id}!`);
+            return undefined;
+        }
+
+        let instance: Item = null;
+        if (prefab.parse) {
+            const nitem = JSON.parse(JSON.stringify(item));
+            nitem['type'] = nitem['id'];
+            nitem['id'] = ref;
+            instance = prefab.parse(nitem);
+        } else if (prefab.class.prototype instanceof StackableItem) {
+            instance = new prefab.class(prefab, amount);
+        } else if (prefab.class.prototype instanceof ExpandedItem) {
+            instance = new prefab.class(prefab, ref, meta);
+        } else {
+            instance = new prefab.class(prefab, ref, amount, meta);
+        }
+
+        return instance;
     }
 
 }

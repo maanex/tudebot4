@@ -10,6 +10,7 @@ export default class SourcecodeCommand extends Command {
       'sourcecode',
       [ ],
       "A link to the Bot's source code.",
+      0,
       false,
       false,
       lang

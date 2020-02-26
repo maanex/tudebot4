@@ -11,5 +11,21 @@
         "{} haben Geburtstag! Alles Gute! :tada:",
         "Happy Cakeday {}! :tada:",
         "Alles Gute zum Geburtstag {}!"
+    ],
+    "give_dm_title": [
+        "UwU a gift",
+        "Sweet,",
+        "Presents!",
+        "Oh look!",
+        "One new message in your absense",
+        "Awww, that's cool!"
+    ],
+    "give_dm_catchline": [
+        "Time to party.",
+        "Epic.",
+        "Very cool!",
+        "Go thank them!",
+        "It's all going according to plan.",
+        "Just as expected."
     ]
 }

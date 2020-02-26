@@ -78,6 +78,7 @@ export default class BlackJackCommand extends Command {
       'blackjack',
       [ 'bj' ],
       'A sweet game of Black Jack',
+      5,
       false,
       false,
       lang

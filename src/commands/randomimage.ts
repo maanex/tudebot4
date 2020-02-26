@@ -14,6 +14,7 @@ export default class RandomImageCommand extends Command {
         'random',
         'rndimg' ],
       'A completely random image',
+      0,
       false,
       false,
       lang

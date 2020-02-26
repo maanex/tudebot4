@@ -7,7 +7,7 @@ class InspirationCommand extends types_1.Command {
         super('inspiration', ['inspirational',
             'inspirobot',
             'randomquote',
-            'thinkaboutit'], 'Random quote from inspirobot.me', false, false, lang);
+            'thinkaboutit'], 'Random quote from inspirobot.me', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

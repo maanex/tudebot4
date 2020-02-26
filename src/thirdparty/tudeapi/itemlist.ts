@@ -1,203 +1,134 @@
-import { Item as DeprecatedItem } from "./tudeapi";
-import { Item, ItemCategory, ItemGroup, StackableItem } from "./item";
+import { Item, ItemCategory, ItemGroup, StackableItem, ItemPrefab, ExpandedItem } from "./item";
+import Emojis from "../../int/emojis";
 
-export const getItemIcon = id => itemIconList[id] || itemIconDefault;
+export const defaultItemIcon = '❔';
 
-export const itemIconDefault = '❔';
+//
 
-export const itemIconList = {
-    'turtle': '🐢',
-    'lure': '<:use_regular_bait:667784099037052931>',
-    'gold_lure': '<:use_gold_bait:667786302674042901>',
-    'mystic_lure': '<:use_mystic_bait:667786936395759646>',
-    'treasure_lure': '<:use_treasure_bait:667807893290090516>',
+export const Items = {
+  Test: {
+    id: 'test',
+    category: ItemCategory.UNDEFINED,
+    group: ItemGroup.UNDEFINED,
+    expanded: true,
+    tradeable: false,
+    sellable: false,
+    purchaseable: false,
+    icon: defaultItemIcon,
+    class: class Test extends ExpandedItem { },
+    create: (id: string, meta: any) => new Items.Test.class(Items.Test, id, meta)
+  },
+  Cookie: {
+    id: 'cookies',
+    category: ItemCategory.SYSTEM,
+    group: ItemGroup.CURRENCY,
+    expanded: false,
+    tradeable: true,
+    sellable: false,
+    purchaseable: false,
+    icon: Emojis.COOKIES,
+    class: class Cookie extends StackableItem { },
+    create: (amount: number) => new Items.Cookie.class(Items.Cookie, amount),
+    _isDef: true
+  },
+  Gem: {
+    id: 'gems',
+    category: ItemCategory.SYSTEM,
+    group: ItemGroup.CURRENCY,
+    expanded: false,
+    tradeable: false,
+    sellable: false,
+    purchaseable: false,
+    icon: Emojis.GEMS,
+    class: class Gem extends StackableItem { },
+    create: (amount: number) => new Items.Gem.class(Items.Gem, amount),
+    _isDef: true
+  },
+  Key: {
+    id: 'keys',
+    category: ItemCategory.SYSTEM,
+    group: ItemGroup.CURRENCY,
+    expanded: false,
+    tradeable: false,
+    sellable: false,
+    purchaseable: false,
+    icon: Emojis.KEYS,
+    class: class Key extends StackableItem { },
+    create: (amount: number) => new Items.Key.class(Items.Key, amount),
+    _isDef: true
+  },
+  Turtle: {
+    id: 'turtle',
+    category: ItemCategory.COLLECTABLE,
+    group: ItemGroup.COLLECTABLE,
+    expanded: false,
+    tradeable: true,
+    sellable: false,
+    purchaseable: false,
+    icon: '🐢',
+    class: class Turtle extends StackableItem { },
+    create: (amount: number) => new Items.Turtle.class(Items.Turtle, amount)
+  },
+  FishingLure: {
+    id: 'lure',
+    category: ItemCategory.FISHING_EQUIPMENT,
+    group: ItemGroup.GAME_ASSET,
+    expanded: false,
+    tradeable: true,
+    sellable: true,
+    purchaseable: true,
+    icon: '<:use_regular_bait:667784099037052931>',
+    class: class FishingLure extends StackableItem { },
+    create: (amount: number) => new Items.FishingLure.class(Items.FishingLure, amount)
+  },
+  GoldFishingLure: {
+    id: 'gold_lure',
+    category: ItemCategory.FISHING_EQUIPMENT,
+    group: ItemGroup.GAME_ASSET,
+    expanded: false,
+    tradeable: true,
+    sellable: true,
+    purchaseable: true,
+    icon: '<:use_gold_bait:667786302674042901>',
+    class: class GoldFishingLure extends StackableItem { },
+    create: (amount: number) => new Items.GoldFishingLure.class(Items.GoldFishingLure, amount)
+  },
+  MysticFishingLure: {
+    id: 'mystic_lure',
+    category: ItemCategory.FISHING_EQUIPMENT,
+    group: ItemGroup.GAME_ASSET,
+    expanded: false,
+    tradeable: true,
+    sellable: true,
+    purchaseable: true,
+    icon: '<:use_mystic_bait:667786936395759646>',
+    class: class MysticFishingLure extends StackableItem { },
+    create: (amount: number) => new Items.MysticFishingLure.class(Items.MysticFishingLure, amount)
+  },
+  TreasureFishingLure: {
+    id: 'treasure_lure',
+    category: ItemCategory.FISHING_EQUIPMENT,
+    group: ItemGroup.GAME_ASSET,
+    expanded: false,
+    tradeable: true,
+    sellable: true,
+    purchaseable: true,
+    icon: '<:use_treasure_bait:667807893290090516>',
+    class: class TreasureFishingLure extends StackableItem { },
+    create: (amount: number) => new Items.TreasureFishingLure.class(Items.TreasureFishingLure, amount)
+  },
+  WelcomeGiftLootbox: {
+    id: 'welcome_gift',
+    category: ItemCategory.SYSTEM,
+    group: ItemGroup.LOOTBOX,
+    expanded: false,
+    tradeable: false,
+    sellable: false,
+    purchaseable: false,
+    icon: 'TODO',
+    class: class WelcomeGiftLootbox extends StackableItem { },
+    create: (amount: number) => new Items.WelcomeGiftLootbox.class(Items.WelcomeGiftLootbox, amount)
+  },
 };
 
-export const DEFAULT_ITEMS = {
-    cookie: {   
-        id: 'cookie',
-        ref: 'cookie',
-        name: 'Cookie',
-        category: { id: 'system', name: 'System', namepl: 'System' },
-        type: { id: 'currency', name: 'Currency', namepl: 'Currency' },
-        amount: 1,
-        meta: { },
-        expanded: false,
-        tradeable: true,
-        sellable: false,
-        purchaseable: false,
-        icon: '🍪',
-        _isDef: true
-    } as DeprecatedItem,
-    key: {   
-        id: 'key',
-        ref: 'key',
-        name: 'Key',
-        category: { id: 'system', name: 'System', namepl: 'System' },
-        type: { id: 'currency', name: 'Currency', namepl: 'Currency' },
-        amount: 1,
-        meta: { },
-        expanded: false,
-        tradeable: false,
-        sellable: false,
-        purchaseable: false,
-        icon: '🔑',
-        _isDef: true
-    } as DeprecatedItem,
-}
-
-/*
- *
- */
-
-export class Cookie extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'cookie',
-            amount,
-            ItemCategory.SYSTEM,
-            ItemGroup.CURRENCY,
-            true,
-            false,
-            false,
-            '🍪',
-            true
-        );
-    }
-
-}
-
-//
-
-export class Key extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'key',
-            amount,
-            ItemCategory.SYSTEM,
-            ItemGroup.CURRENCY,
-            true,
-            false,
-            false,
-            '🔑',
-            true
-        );
-    }
-
-}
-
-//
-
-export class Turtle extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'turtle',
-            amount,
-            ItemCategory.COLLECTABLE,
-            ItemGroup.COLLECTABLE,
-            true,
-            false,
-            false,
-            '🐢'
-        );
-    }
-
-}
-
-//
-
-export class FishingLure extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'lure',
-            amount,
-            ItemCategory.FISHING,
-            ItemGroup.GAME_ASSET,
-            true,
-            true,
-            true,
-            '<:use_regular_bait:667784099037052931>'
-        );
-    }
-
-}
-
-//
-
-export class GoldFishingLure extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'gold_lure',
-            amount,
-            ItemCategory.FISHING,
-            ItemGroup.GAME_ASSET,
-            true,
-            true,
-            true,
-            '<:use_gold_bait:667786302674042901>'
-        );
-    }
-
-}
-
-//
-
-export class MysticFishingLure extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'mystic_lure',
-            amount,
-            ItemCategory.FISHING,
-            ItemGroup.GAME_ASSET,
-            true,
-            true,
-            true,
-            '<:use_mystic_bait:667786936395759646>'
-        );
-    }
-
-}
-
-//
-
-export class TreasureFishingLure extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'treasure_lure',
-            amount,
-            ItemCategory.FISHING,
-            ItemGroup.GAME_ASSET,
-            true,
-            true,
-            true,
-            '<:use_treasure_bait:667807893290090516>'
-        );
-    }
-
-}
-
-//
-
-export class WelcomeGiftLootbox extends StackableItem {
-
-    constructor( amount: number ) {
-        super (
-            'welcome_gift_lootbox',
-            amount,
-            ItemCategory.SYSTEM,
-            ItemGroup.LOOTBOX,
-            false,
-            false,
-            false,
-            'TODO'
-        );
-    }
-
-}
+export const ItemList: ItemPrefab[] = Object.values(Items);

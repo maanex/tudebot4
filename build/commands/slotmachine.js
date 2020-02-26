@@ -5,7 +5,7 @@ const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class SlotmachineCommand extends types_1.Command {
     constructor(lang) {
-        super('slotmachine', ['sm'], 'Sweet game of Slotmachine', false, false, lang);
+        super('slotmachine', ['sm'], 'Sweet game of Slotmachine', 7, false, false, lang);
         this.sm1emoji = {
             loading: ['<a:sm1c1:660603142710231060>', '<a:sm1c2:660603131553644554>', '<a:sm1c3:660603123831668787>', '<a:sm1c4:660603113601761299>', '<a:sm1c5:660603103703334912>', '<a:sm1c6:660601810632835114>'],
             static: ['<:gold_cookie:660877789192519681>', ':gem:', '<:donut_cookie:660877788412248084> ', '<:square_cookie:660877788118515723> ', '<:star_cookie:660877788378824704>', ':cookie:']
@@ -54,7 +54,6 @@ class SlotmachineCommand extends types_1.Command {
                 run: (mes, u) => this.runSm3(mes, u)
             },
         ];
-        this.cooldown = [];
         this.sm3blue = [];
     }
     execute(channel, user, args, event, repl) {
@@ -90,11 +89,6 @@ class SlotmachineCommand extends types_1.Command {
                 resolve(false);
                 return;
             }
-            if (this.cooldown.indexOf(user.id) >= 0) {
-                repl(`Oh noes! You goin too quick!`, 'bad', `Please wait a bit before using a slotmachine again!`);
-                resolve(false);
-                return;
-            }
             let price = machine.entry;
             tudeapi_1.default.clubUserByDiscordId(user.id).then(u => {
                 if (u.cookies < price) {
@@ -105,8 +99,6 @@ class SlotmachineCommand extends types_1.Command {
                 u.cookies -= price;
                 tudeapi_1.default.updateClubUser(u);
                 machine.run(event.message, u);
-                this.cooldown.push(user.id);
-                setTimeout(id => this.cooldown.splice(this.cooldown.indexOf(id), 1), 7000, user.id);
                 resolve(true);
             }).catch(err => {
                 repl('An error occured!', 'error');

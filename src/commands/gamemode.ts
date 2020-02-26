@@ -10,6 +10,7 @@ export default class GamemodeCommand extends Command {
       'gamemode',
       [ '/gamemode' ],
       'by Mojang',
+      0,
       false,
       true,
       lang

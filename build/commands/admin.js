@@ -12,19 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
+const parseArgs_1 = require("../util/parseArgs");
+const database_1 = require("../database/database");
 class AdminCommand extends types_1.Command {
     constructor(lang) {
-        super('admin', [], 'Admin', true, false, lang);
+        super('admin', [], 'Admin', 0, true, false, lang);
     }
     execute(orgChannel, user, args, event, repl) {
         if (user.id !== '137258778092503042')
             return false;
         try {
             if (args.length == 0) {
-                repl('admin <cmd>', 'bad', '• setupchannelgames <channel>\n• itemlist\n• setupitemshop <channel>');
+                repl('admin <cmd>', 'bad', ([
+                    'setupchannelgames <channel>',
+                    'itemlist',
+                    'setupitemshop <channel>',
+                    'resetdaily <user> [-c --clearstreak]'
+                ]).map(cmd => `• ${cmd}`).join('\n'));
                 return false;
             }
             let run = undefined;
+            let cmdl = parseArgs_1.default.parse(args);
             switch (args[0]) {
                 case 'setupchannelgames':
                     run = () => __awaiter(this, void 0, void 0, function* () {
@@ -67,7 +75,28 @@ class AdminCommand extends types_1.Command {
                     run();
                     break;
                 case 'itemlist':
-                    repl('Items:', 'success', tudeapi_1.default.items.map(i => i.id + ': ' + i.name).join('\n'));
+                    // repl('Items:', 'success', Items.itemIdMap.map(i => i.id).join('\n')); TODO ITEMS
+                    break;
+                case 'resetdaily':
+                    if (args.length < 2) {
+                        repl('user?');
+                        return;
+                    }
+                    run = () => __awaiter(this, void 0, void 0, function* () {
+                        const user = yield (event.message.mentions.users.size
+                            ? tudeapi_1.default.userByDiscordId(event.message.mentions.users.first().id)
+                            : tudeapi_1.default.userById(args[1]));
+                        const clearStreak = cmdl.c || cmdl.clearstreak;
+                        const update = clearStreak
+                            ? { '$set': { 'daily.last': 0 } }
+                            : { '$inc': { 'daily.last': -1 } };
+                        database_1.default
+                            .get('tudeclub')
+                            .collection('users')
+                            .updateOne({ _id: user.id }, update);
+                        repl('Yes sir!');
+                    });
+                    run();
                     break;
             }
             return true;

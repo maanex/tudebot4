@@ -1,8 +1,9 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
-import TudeApi, { Badge, Item } from "../thirdparty/tudeapi/tudeapi";
+import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import ParseArgs from "../util/parseArgs";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { Item } from "thirdparty/tudeapi/item";
 
 const AsciiTable = require('ascii-table');
 
@@ -16,6 +17,7 @@ export default class InventoryCommand extends Command {
         'items',
         'i' ],
       'See your inventory (or someone elses)',
+      0,
       false,
       false,
       lang
@@ -57,13 +59,13 @@ export default class InventoryCommand extends Command {
           const fields: { [cat: string]: Item[] } = {};
 
           for (let i of u.inventory.values()) {
-            if (fields[i.category.id]) fields[i.category.id].push(i);
-            else fields[i.category.id] = [i];
+            if (fields[i.prefab.category.id]) fields[i.prefab.category.id].push(i);
+            else fields[i.prefab.category.id] = [ i ];
           }
 
           if (cmdl.t || cmdl.table) {
             var table = new AsciiTable();
-            table.setHeading('id', 'amount', 'category', 'type', 'ref');
+            table.setHeading('type', 'amount', 'category', 'type', 'id');
             let from = 1; // start counting with 1 here, I know it's unconventional but whatever it needs(!) to be done
             let to = 10;
             if (cmdl.p || cmdl.page) {
@@ -73,7 +75,7 @@ export default class InventoryCommand extends Command {
             let c = 0;
             for (let i of u.inventory.values()) {
               if (++c >= from && c <= to)
-                table.addRow(i.id, i.amount, i.category.id, i.type.id, i.ref);
+                table.addRow(i.prefab.id, i.amount, i.prefab.category.id, i.prefab.group.id, i.id);
             }
             channel.send('```\n' + table.toString() + `\nShowing ${from} - ${to} out of ${u.inventory.size}` + '```');
           } else {
@@ -87,8 +89,8 @@ export default class InventoryCommand extends Command {
                 fields: Object.values(fields).map(v => {
                   return {
                     // name: v.length == 1 ? v[0].category.name : v[0].category.namepl,
-                    name: v[0].category.namepl || 'Unknown',
-                    value: v.map(i => `${i.icon} \`${i.amount == 1 ? '' : i.amount + 'x '}${i.name}\` (${i.ref})`).join('\n')
+                    name: v[0].prefab.category.namepl || 'Unknown',
+                    value: v.map(i => `${i.prefab.icon} \`${i.amount == 1 ? '' : i.amount + 'x '}${i.name}\` (${i.id})`).join('\n')
                   }
                 })
               }

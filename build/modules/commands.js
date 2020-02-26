@@ -14,6 +14,7 @@ class CommandsModule extends types_1.Module {
         this.activeInCommandsChannelRemoveTimer = {};
         this.commands = [];
         this.identifierMap = new Map();
+        this.cooldown = new Map();
     }
     onEnable() {
         this.loadCommands();
@@ -47,7 +48,11 @@ class CommandsModule extends types_1.Module {
             const command = this.identifierMap.get(cmd);
             if (command) {
                 if (command.sudoOnly && !sudo) {
-                    this.cmes(mes.channel, mes.author, ':x: Not allowed!');
+                    this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
+                    return;
+                }
+                if (this.cooldown.get(command.name).includes(mes.author.id)) {
+                    this.cmes(mes.channel, mes.author, 'Please wait a bit!', 'bad', `This command has a ${command.cooldown}s cooldown!`);
                     return;
                 }
                 function update(success) {
@@ -66,6 +71,8 @@ class CommandsModule extends types_1.Module {
                 else {
                     update(res);
                 }
+                this.cooldown.get(command.name).push(mes.author.id);
+                setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
             }
             else if (sudo) {
                 this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
@@ -90,6 +97,7 @@ class CommandsModule extends types_1.Module {
                     const cmd = new CmdClass(this.lang);
                     cmd.init();
                     this.commands.push(cmd);
+                    this.cooldown.set(cmd.name, []);
                     for (const identifier of [cmd.name, ...cmd.aliases]) {
                         if (this.identifierMap.has(identifier))
                             console.log(chalk.red(`Command "${identifier}" is declared multiple times!`));

@@ -12,8 +12,9 @@ export class ItemCategory {
 
   //
 
+  public static UNDEFINED = new ItemCategory('undefined');
   public static SYSTEM = new ItemCategory('system');
-  public static FISHING = new ItemCategory('fishing');
+  public static FISHING_EQUIPMENT = new ItemCategory('fishing_assets');
   public static COLLECTABLE = new ItemCategory('collectable');
 
 }
@@ -30,6 +31,7 @@ export class ItemGroup {
 
   //
 
+  public static UNDEFINED = new ItemGroup('undefined');
   public static CURRENCY = new ItemGroup('currency');
   public static LOOTBOX = new ItemGroup('lootbox');
   public static COLLECTABLE = new ItemGroup('collectable');
@@ -37,92 +39,52 @@ export class ItemGroup {
 
 }
 
+export interface ItemPrefab {
+  id: string;
+  category: ItemCategory;
+  group: ItemGroup;
+  expanded: boolean;
+  tradeable: boolean;
+  sellable: boolean;
+  purchaseable: boolean;
+  icon: string;
+  class: any;
+  create: any;
+  parse?: any;
+  _isDef?: boolean;
+}
+
 export abstract class Item {
 
   constructor (
+    public readonly prefab: ItemPrefab,
     public readonly id: string,
-    public readonly type: string,
     public readonly amount: number,
-    public readonly category: ItemCategory,
-    public readonly group: ItemGroup,
-    public readonly expanded: boolean,
-    public readonly tradeable: boolean,
-    public readonly sellable: boolean,
-    public readonly purchaseable: boolean,
-    public readonly icon: string,
     protected readonly meta: any = undefined,
-    public readonly _isDef: boolean = false,
   ) { };
 
   public get name(): string {
-    return TudeApi.clubLang[(this.amount==1?'item_':'itempl_')+this.id];
+    return TudeApi.clubLang[(this.amount==1?'item_':'itempl_')+this.prefab.id];
   }
 
 }
 
 export abstract class StackableItem extends Item {
 
-  constructor (
-    type: string,
-    amount: number,
-    category: ItemCategory,
-    group: ItemGroup,
-    tradeable: boolean,
-    sellable: boolean,
-    purchaseable: boolean,
-    icon: string,
-    _isDef: boolean = false,
-  ) {
-    super (
-      type,
-      type,
-      amount,
-      category,
-      group,
-      false,
-      tradeable,
-      sellable,
-      purchaseable,
-      icon,
-      undefined,
-      _isDef
-    )
+  constructor(prefab: ItemPrefab, amount: number) {
+    super(prefab, prefab.id, amount, undefined);
   };
 
   public set amount(amount) {
-    this['amount'] = amount;
+    super['amount'+''] = amount;
   }
 
 }
 
 export abstract class ExpandedItem extends Item {
 
-  constructor (
-    id: string,
-    type: string,
-    category: ItemCategory,
-    group: ItemGroup,
-    tradeable: boolean,
-    sellable: boolean,
-    purchaseable: boolean,
-    icon: string,
-    meta: any = {},
-    _isDef: boolean = false,
-  ) {
-    super (
-      id,
-      type,
-      1,
-      category,
-      group,
-      true,
-      tradeable,
-      sellable,
-      purchaseable,
-      icon,
-      meta,
-      _isDef
-    )
+  constructor(prefab: ItemPrefab, id: string, meta: any) {
+    super(prefab, id, 1, meta);
   };
 
 }

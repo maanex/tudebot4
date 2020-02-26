@@ -12,6 +12,7 @@ export default class UInfoCommand extends Command {
       'uinfo',
       [ ],
       'Userinfo',
+      0,
       false,
       true,
       lang

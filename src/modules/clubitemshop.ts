@@ -1,8 +1,7 @@
 import { TudeBot } from "../index";
 import { Message, TextChannel, Guild, GuildMember, User, MessageReaction, MessageEmbed, RichEmbed, RichEmbedOptions } from "discord.js";
-import TudeApi, { ClubUser, Item } from "../thirdparty/tudeapi/tudeapi";
+import TudeApi, { ClubUser, DeprItem } from "../thirdparty/tudeapi/tudeapi";
 import Database from "../database/database";
-import { DEFAULT_ITEMS } from "../thirdparty/tudeapi/itemlist";
 import { Module } from "../types";
 import Emojis from "../int/emojis";
 
@@ -95,30 +94,31 @@ export default class ClubItemShopModule extends Module {
     }
   }
 
-  private getItem(i: ShelfItem): Item {
+  private getItem(i: ShelfItem): DeprItem {
     switch (i.item) {
       case 'cookie':
-        return DEFAULT_ITEMS.cookie;
+        // return DEFAULT_ITEMS.cookie;
       case 'key':
-        return DEFAULT_ITEMS.key;
+        // return DEFAULT_ITEMS.key;
       default:
-        return TudeApi.items.find(item => item.id == i.item);
+        // return TudeApi.items.find(item => item.id == i.item);
+        return null; // TODO
     }
   }
 
   private getShelfColor(category: ShelfCategory): number {
     switch (category) {
-      case 'regular': return 0xD99E82;
-      case 'gem': return 0x8CCAF7;
-      case 'special': return 0xA6D388;
+      case 'regular': return 0xC88B6D;
+      case 'gem': return 0x44B674;
+      case 'special': return 0x768DC7;
       case 'event': return 0xFFFFFF; // EVENT-UPDATE
     }
   }
 
   private getCurrencyIcon(currency: Currency): string {
     switch (currency) {
-      case 'cookies': return '🍪';
-      case 'gems': return '💎';
+      case 'cookies': return Emojis.COOKIES;
+      case 'gems': return Emojis.GEMS;
       case 'event-tokens': return '[]'; // EVENT-UPDATE
     }
   }

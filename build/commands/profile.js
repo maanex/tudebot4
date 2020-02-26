@@ -5,7 +5,7 @@ const types_1 = require("../types");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 class ProfileCommand extends types_1.Command {
     constructor(lang) {
-        super('profile', ['p'], 'See your profile (or someone elses)', false, false, lang);
+        super('profile', ['p'], 'See your profile (or someone elses)', 5, false, false, lang);
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ class ProfileCommand extends types_1.Command {
                 let icon = undefined;
                 let xpbar = '';
                 let stats = `${emojis_1.default.BIG_SPACE}`;
-                let statItems = [`${emojis_1.default.COOKIES}  ${u.cookies}`, `${emojis_1.default.GEMS} ${u.gems}`];
+                let statItems = [`${emojis_1.default.COOKIES} ${u.cookies}`, `${emojis_1.default.GEMS} ${u.gems}`];
                 if (u.keys > 0)
                     statItems.push(`${emojis_1.default.KEYS} ${u.keys}`);
                 // @ts-ignore
@@ -87,13 +87,14 @@ class ProfileCommand extends types_1.Command {
                         badges.push(appearance.emoji);
                     }
                 }
-                let uname = user.username;
+                let uname = user.username.split('•').join('');
                 let uicon = user.avatarURL;
                 if (u.user.type == 1) {
                     uname = u.user.name;
                     // uicon = `https://www.gravatar.com/avatar/${md5.hash(u.user.email)}?s=60&d=identicon`;
                     if (u.user.tag == 0) {
-                        uname += ' ✔️';
+                        // uname += ' ✔️';
+                        uname += ' •';
                     }
                 }
                 channel.send({

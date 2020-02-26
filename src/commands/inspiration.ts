@@ -15,6 +15,7 @@ export default class InspirationCommand extends Command {
         'randomquote',
         'thinkaboutit' ],
       'Random quote from inspirobot.me',
+      0,
       false,
       false,
       lang

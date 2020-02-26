@@ -4,7 +4,7 @@ const types_1 = require("../types");
 class OpenCommand extends types_1.Command {
     constructor(lang) {
         super('open', ['o',
-            'unbox'], 'Open a lootbox', false, false, lang);
+            'unbox'], 'Open a lootbox', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         repl('This command is not yet available!', 'message', '~~We\'re~~ **I am** working on it');

@@ -14,6 +14,7 @@ export default class DogCommand extends Command {
         'dogimage',
         'dogimg' ],
       'A random dog image',
+      0,
       false,
       false,
       lang

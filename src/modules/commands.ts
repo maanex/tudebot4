@@ -18,6 +18,8 @@ export default class CommandsModule extends Module {
   private commands: Command[] = [];
   private identifierMap: Map<string, Command> = new Map();
 
+  private cooldown: Map<string, string[]> = new Map();
+
 
   constructor(conf: any, data: any, lang: (string) => string) {
     super('Commands', 'public', conf, data, lang);
@@ -56,7 +58,12 @@ export default class CommandsModule extends Module {
 
       if (command) {
         if (command.sudoOnly && !sudo) {
-          this.cmes(mes.channel, mes.author, ':x: Not allowed!');
+          this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
+          return;
+        }
+
+        if (this.cooldown.get(command.name).includes(mes.author.id)) {
+          this.cmes(mes.channel, mes.author, 'Please wait a bit!', 'bad', `This command has a ${command.cooldown}s cooldown!`);
           return;
         }
 
@@ -76,6 +83,9 @@ export default class CommandsModule extends Module {
         } else {
           update(res as boolean);
         }
+
+        this.cooldown.get(command.name).push(mes.author.id);
+        setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
       } else if (sudo) {
         this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
       }
@@ -103,6 +113,7 @@ export default class CommandsModule extends Module {
             const cmd: Command = new CmdClass(this.lang);
             cmd.init();
             this.commands.push(cmd);
+            this.cooldown.set(cmd.name, []);
 
             for (const identifier of [cmd.name, ...cmd.aliases]) {
               if (this.identifierMap.has(identifier)) console.log(chalk.red(`Command "${identifier}" is declared multiple times!`));

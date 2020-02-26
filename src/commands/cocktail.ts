@@ -17,6 +17,7 @@ export default class CocktailCommand extends Command {
         'schwanzschwanz',
         'mix' ],
       'A random cocktail recipe',
+      0,
       false,
       false,
       lang

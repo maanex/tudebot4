@@ -11,6 +11,7 @@ export default class ReloadCommand extends Command {
       'reload',
       [ ],
       'Reload',
+      0,
       true,
       false,
       lang

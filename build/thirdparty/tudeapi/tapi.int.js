@@ -11,9 +11,8 @@ class ItemCategory {
 }
 exports.ItemCategory = ItemCategory;
 //
-ItemCategory.UNDEFINED = new ItemCategory('undefined');
 ItemCategory.SYSTEM = new ItemCategory('system');
-ItemCategory.FISHING_EQUIPMENT = new ItemCategory('fishing_assets');
+ItemCategory.FISHING = new ItemCategory('fishing');
 ItemCategory.COLLECTABLE = new ItemCategory('collectable');
 class ItemGroup {
     constructor(id) {
@@ -25,39 +24,8 @@ class ItemGroup {
 }
 exports.ItemGroup = ItemGroup;
 //
-ItemGroup.UNDEFINED = new ItemGroup('undefined');
 ItemGroup.CURRENCY = new ItemGroup('currency');
 ItemGroup.LOOTBOX = new ItemGroup('lootbox');
 ItemGroup.COLLECTABLE = new ItemGroup('collectable');
 ItemGroup.GAME_ASSET = new ItemGroup('gameasset');
-class Item {
-    constructor(prefab, id, amount, meta = undefined) {
-        this.prefab = prefab;
-        this.id = id;
-        this.amount = amount;
-        this.meta = meta;
-    }
-    ;
-    get name() {
-        return tudeapi_1.default.clubLang[(this.amount == 1 ? 'item_' : 'itempl_') + this.prefab.id];
-    }
-}
-exports.Item = Item;
-class StackableItem extends Item {
-    constructor(prefab, amount) {
-        super(prefab, prefab.id, amount, undefined);
-    }
-    ;
-    set amount(amount) {
-        super['amount' + ''] = amount;
-    }
-}
-exports.StackableItem = StackableItem;
-class ExpandedItem extends Item {
-    constructor(prefab, id, meta) {
-        super(prefab, id, 1, meta);
-    }
-    ;
-}
-exports.ExpandedItem = ExpandedItem;
-//# sourceMappingURL=item.js.map
+//# sourceMappingURL=tapi.int.js.map

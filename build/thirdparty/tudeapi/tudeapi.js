@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const wcp_js_1 = require("../../thirdparty/wcp/wcp.js");
+const wcp_1 = require("../../thirdparty/wcp/wcp");
 const __1 = require("../..");
+const badgelist_1 = require("./badgelist");
+const item_1 = require("./item");
 const itemlist_1 = require("./itemlist");
-const badgelist_js_1 = require("./badgelist.js");
 const fetch = require('node-fetch');
 const settings = require('../../../config/settings.json').thirdparty;
 class TudeApi {
@@ -41,7 +42,7 @@ class TudeApi {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             fetch(this.baseurl + this.endpoints.club.badges, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { 'auth': this.key }
             })
                 .then(o => o.json())
                 .then(o => {
@@ -62,53 +63,52 @@ class TudeApi {
                             name: appearance.name,
                             icon: appearance.icon,
                             id: appid,
-                            emoji: badgelist_js_1.badgeEmojiList[b.id][appid]
+                            emoji: badgelist_1.badgeEmojiList[b.id][appid]
                         };
                     };
                 }
-                wcp_js_1.default.send({ status_tudeapi: '+Connected' });
+                wcp_1.default.send({ status_tudeapi: '+Connected' });
             })
                 .catch(err => {
                 console.error(err);
-                wcp_js_1.default.send({ status_tudeapi: '-Connection failed' });
+                wcp_1.default.send({ status_tudeapi: '-Connection failed' });
             });
             //
-            this.items = [];
-            let langLoaded = () => {
-                fetch(this.baseurl + this.endpoints.club.items, {
-                    method: 'get',
-                    headers: { 'auth': this.key },
-                })
-                    .then(o => o.json())
-                    .then(o => {
-                    for (let i of o) {
-                        let item = {
-                            id: i.id,
-                            ref: i.id,
-                            name: this.clubLang['item_' + i.id] || i.id,
-                            category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
-                            type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
-                            amount: 0,
-                            meta: {},
-                            expanded: (i.prop & 0b0001) != 0,
-                            tradeable: (i.prop & 0b0010) != 0,
-                            sellable: (i.prop & 0b0100) != 0,
-                            purchaseable: (i.prop & 0b1000) != 0,
-                            icon: itemlist_1.getItemIcon(i.id),
-                        };
-                        this.items.push(item);
-                    }
-                    resolve();
-                })
-                    .catch(err => {
-                    console.error(err);
-                    reject();
-                });
+            const langLoaded = () => {
+                // fetch(this.baseurl + this.endpoints.club.items, {
+                //     method: 'get',
+                //     headers: { 'auth': this.key } })
+                //     .then(o => o.json())
+                //     .then(o => {
+                //         for (const i of o) {
+                //             // const item: Item = {
+                //             //     id: i.id,
+                //             //     ref: i.id,
+                //             //     name: this.clubLang['item_' + i.id] || i.id,
+                //             //     category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
+                //             //     type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
+                //             //     amount: 0,
+                //             //     meta: {},
+                //             //     expanded: (i.prop & 0b0001) != 0,
+                //             //     tradeable: (i.prop & 0b0010) != 0,
+                //             //     sellable: (i.prop & 0b0100) != 0,
+                //             //     purchaseable: (i.prop & 0b1000) != 0,
+                //             //     icon: 'TODO'
+                //             // };
+                //             // this.items.push(item);
+                //         }
+                //         resolve();
+                //     })
+                //     .catch(err => {
+                //         console.error(err);
+                //         reject();
+                //     });
+                resolve();
             };
             //
             yield fetch(this.baseurl + this.endpoints.club.lang + language, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { 'auth': this.key }
             })
                 .then(o => o.json())
                 .then(o => {
@@ -339,25 +339,31 @@ class TudeApi {
         let id = item.id || ref;
         let amount = item.amount == undefined ? 1 : item.amount;
         let meta = item.meta == undefined ? {} : item.meta;
-        let preset = this.items.find(i => i.id == id) || {};
-        return {
-            id: id,
-            ref: ref,
-            amount: amount,
-            meta: meta,
-            category: preset.category,
-            name: preset.name,
-            expanded: preset.expanded,
-            sellable: preset.sellable,
-            purchaseable: preset.purchaseable,
-            tradeable: preset.tradeable,
-            type: preset.type,
-            icon: preset.icon,
-        };
+        const prefab = itemlist_1.ItemList.find(i => i.id == id);
+        if (!prefab) {
+            console.error(`No item prefab found for ${id}!`);
+            return undefined;
+        }
+        let instance = null;
+        if (prefab.parse) {
+            const nitem = JSON.parse(JSON.stringify(item));
+            nitem['type'] = nitem['id'];
+            nitem['id'] = ref;
+            instance = prefab.parse(nitem);
+        }
+        else if (prefab.class.prototype instanceof item_1.StackableItem) {
+            instance = new prefab.class(prefab, amount);
+        }
+        else if (prefab.class.prototype instanceof item_1.ExpandedItem) {
+            instance = new prefab.class(prefab, ref, meta);
+        }
+        else {
+            instance = new prefab.class(prefab, ref, amount, meta);
+        }
+        return instance;
     }
 }
 exports.default = TudeApi;
 TudeApi.badges = [];
-TudeApi.items = [];
 TudeApi.clubLang = {};
 //# sourceMappingURL=tudeapi.js.map

@@ -12,6 +12,8 @@ export default class Emojis {
   public static readonly KEYS               = '<:ckeys:681503976406908944>';
   public static readonly ITEMS_MONOCHROME   = '<:items:681509921283375186>';
   public static readonly ITEMS              = '<:citems:681509921136836623>';
+  public static readonly POINTS_MONOCHROME  = '<:mpoints:681782061295599637>';
+  public static readonly POINTS             = '<:points:681782061312638976>';
 
   public static readonly XPBAR = {
     left_empty: '<:xpbarleftempty:654357985845575716>',

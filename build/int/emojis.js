@@ -13,6 +13,8 @@ Emojis.KEYS_MONOCHROME = '<:keys:681504362845175820>';
 Emojis.KEYS = '<:ckeys:681503976406908944>';
 Emojis.ITEMS_MONOCHROME = '<:items:681509921283375186>';
 Emojis.ITEMS = '<:citems:681509921136836623>';
+Emojis.POINTS_MONOCHROME = '<:mpoints:681782061295599637>';
+Emojis.POINTS = '<:points:681782061312638976>';
 Emojis.XPBAR = {
     left_empty: '<:xpbarleftempty:654357985845575716>',
     left_half: '<:xpbarlefthalf:654353598301339668>',

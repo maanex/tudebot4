@@ -9,6 +9,7 @@ export default class BetaCommand extends Command {
       'beta',
       [ ],
       'Join the TudeBot Beta program',
+      0,
       false,
       false,
       lang

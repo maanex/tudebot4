@@ -11,10 +11,11 @@ class Module {
 }
 exports.Module = Module;
 class Command {
-    constructor(name, aliases, description, sudoOnly, hideOnHelp, lang) {
+    constructor(name, aliases, description, cooldown, sudoOnly, hideOnHelp, lang) {
         this.name = name;
         this.aliases = aliases;
         this.description = description;
+        this.cooldown = cooldown;
         this.sudoOnly = sudoOnly;
         this.hideOnHelp = hideOnHelp;
         this.lang = lang;

@@ -30,6 +30,7 @@ export default class HelpCommand extends Command {
       'help',
       ('.?!/%-+=~&,:'.split('').map(p => p + 'help')),
       'Help!',
+      0,
       false,
       true,
       lang

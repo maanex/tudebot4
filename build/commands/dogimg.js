@@ -6,7 +6,7 @@ class DogCommand extends types_1.Command {
     constructor(lang) {
         super('dog', ['doggo',
             'dogimage',
-            'dogimg'], 'A random dog image', false, false, lang);
+            'dogimg'], 'A random dog image', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

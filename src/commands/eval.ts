@@ -11,6 +11,7 @@ export default class EvalCommand extends Command {
       'eval',
       [ ],
       'Eval',
+      0,
       true,
       false,
       lang

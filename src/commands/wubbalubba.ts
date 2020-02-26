@@ -10,6 +10,7 @@ export default class WubbaLubbaDubDubCommand extends Command {
       'wubbalubbadubdub',
       [ ],
       'JEEZ RICK',
+      0,
       false,
       true,
       lang

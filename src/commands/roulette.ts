@@ -75,6 +75,7 @@ export default class RouletteCommand extends Command {
       'roulette',
       [ 'r' ],
       'Sweet game of Roulette',
+      0,
       false,
       false,
       lang

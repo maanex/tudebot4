@@ -3,6 +3,9 @@ import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import ParseArgs from "../util/parseArgs";
+import Database from "../database/database";
+import * as Items from "../thirdparty/tudeapi/itemlist";
 
 
 export default class AdminCommand extends Command {
@@ -12,6 +15,7 @@ export default class AdminCommand extends Command {
       'admin',
       [ ],
       'Admin',
+      0,
       true,
       false,
       lang
@@ -23,11 +27,17 @@ export default class AdminCommand extends Command {
 
     try {
       if (args.length == 0) {
-        repl('admin <cmd>', 'bad', '• setupchannelgames <channel>\n• itemlist\n• setupitemshop <channel>');
+        repl('admin <cmd>', 'bad', ([
+          'setupchannelgames <channel>',
+          'itemlist',
+          'setupitemshop <channel>',
+          'resetdaily <user> [-c --clearstreak]'
+        ]).map(cmd => `• ${cmd}`).join('\n'));
         return false;
       }
 
       let run: () => {} = undefined;
+      let cmdl = ParseArgs.parse(args);
       switch (args[0]) {
         case 'setupchannelgames':
           run = async () => {
@@ -70,7 +80,33 @@ export default class AdminCommand extends Command {
           break;
 
         case 'itemlist':
-          repl('Items:', 'success', TudeApi.items.map(i => i.id + ': ' + i.name).join('\n'));
+          // repl('Items:', 'success', Items.itemIdMap.map(i => i.id).join('\n')); TODO ITEMS
+          break;
+
+        case 'resetdaily':
+          if (args.length < 2) {
+            repl('user?');
+            return;
+          }
+
+          run = async () => {
+            const user = await (event.message.mentions.users.size
+              ? TudeApi.userByDiscordId(event.message.mentions.users.first().id)
+              : TudeApi.userById(args[1]));
+
+            const clearStreak = cmdl.c || cmdl.clearstreak;
+            
+            const update = clearStreak
+              ? { '$set': { 'daily.last': 0 } }
+              : { '$inc': { 'daily.last': -1 } };
+
+            Database
+              .get('tudeclub')
+              .collection('users')
+              .updateOne({ _id: user.id }, update);
+
+            repl('Yes sir!');
+          }; run();
           break;
       }
       return true;

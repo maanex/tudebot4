@@ -8,7 +8,7 @@ class MealCommand extends types_1.Command {
         super('meal', ['food',
             'whatshallieat',
             'makemefood',
-            'eat'], 'A random meal and how to make it', false, false, lang);
+            'eat'], 'A random meal and how to make it', 2, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         let cmdl = parseArgs_1.default.parse(args);

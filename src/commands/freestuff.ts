@@ -10,6 +10,7 @@ export default class FreestuffCommand extends Command {
       'freestuff',
       [ ],
       'Free stuff announcement tool',
+      0,
       false,
       true,
       lang

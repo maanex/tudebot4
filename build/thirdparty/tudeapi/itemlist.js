@@ -1,103 +1,143 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("./item");
-exports.getItemIcon = id => exports.itemIconList[id] || exports.itemIconDefault;
-exports.itemIconDefault = '❔';
-exports.itemIconList = {
-    'turtle': '🐢',
-    'lure': '<:use_regular_bait:667784099037052931>',
-    'gold_lure': '<:use_gold_bait:667786302674042901>',
-    'mystic_lure': '<:use_mystic_bait:667786936395759646>',
-    'treasure_lure': '<:use_treasure_bait:667807893290090516>',
-};
-exports.DEFAULT_ITEMS = {
-    cookie: {
-        id: 'cookie',
-        ref: 'cookie',
-        name: 'Cookie',
-        category: { id: 'system', name: 'System', namepl: 'System' },
-        type: { id: 'currency', name: 'Currency', namepl: 'Currency' },
-        amount: 1,
-        meta: {},
+const emojis_1 = require("../../int/emojis");
+exports.defaultItemIcon = '❔';
+//
+exports.Items = {
+    Test: {
+        id: 'test',
+        category: item_1.ItemCategory.UNDEFINED,
+        group: item_1.ItemGroup.UNDEFINED,
+        expanded: true,
+        tradeable: false,
+        sellable: false,
+        purchaseable: false,
+        icon: exports.defaultItemIcon,
+        class: class Test extends item_1.ExpandedItem {
+        },
+        create: (id, meta) => new exports.Items.Test.class(exports.Items.Test, id, meta)
+    },
+    Cookie: {
+        id: 'cookies',
+        category: item_1.ItemCategory.SYSTEM,
+        group: item_1.ItemGroup.CURRENCY,
         expanded: false,
         tradeable: true,
         sellable: false,
         purchaseable: false,
-        icon: '🍪',
+        icon: emojis_1.default.COOKIES,
+        class: class Cookie extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.Cookie.class(exports.Items.Cookie, amount),
         _isDef: true
     },
-    key: {
-        id: 'key',
-        ref: 'key',
-        name: 'Key',
-        category: { id: 'system', name: 'System', namepl: 'System' },
-        type: { id: 'currency', name: 'Currency', namepl: 'Currency' },
-        amount: 1,
-        meta: {},
+    Gem: {
+        id: 'gems',
+        category: item_1.ItemCategory.SYSTEM,
+        group: item_1.ItemGroup.CURRENCY,
         expanded: false,
         tradeable: false,
         sellable: false,
         purchaseable: false,
-        icon: '🔑',
+        icon: emojis_1.default.GEMS,
+        class: class Gem extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.Gem.class(exports.Items.Gem, amount),
         _isDef: true
     },
+    Key: {
+        id: 'keys',
+        category: item_1.ItemCategory.SYSTEM,
+        group: item_1.ItemGroup.CURRENCY,
+        expanded: false,
+        tradeable: false,
+        sellable: false,
+        purchaseable: false,
+        icon: emojis_1.default.KEYS,
+        class: class Key extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.Key.class(exports.Items.Key, amount),
+        _isDef: true
+    },
+    Turtle: {
+        id: 'turtle',
+        category: item_1.ItemCategory.COLLECTABLE,
+        group: item_1.ItemGroup.COLLECTABLE,
+        expanded: false,
+        tradeable: true,
+        sellable: false,
+        purchaseable: false,
+        icon: '🐢',
+        class: class Turtle extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.Turtle.class(exports.Items.Turtle, amount)
+    },
+    FishingLure: {
+        id: 'lure',
+        category: item_1.ItemCategory.FISHING_EQUIPMENT,
+        group: item_1.ItemGroup.GAME_ASSET,
+        expanded: false,
+        tradeable: true,
+        sellable: true,
+        purchaseable: true,
+        icon: '<:use_regular_bait:667784099037052931>',
+        class: class FishingLure extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.FishingLure.class(exports.Items.FishingLure, amount)
+    },
+    GoldFishingLure: {
+        id: 'gold_lure',
+        category: item_1.ItemCategory.FISHING_EQUIPMENT,
+        group: item_1.ItemGroup.GAME_ASSET,
+        expanded: false,
+        tradeable: true,
+        sellable: true,
+        purchaseable: true,
+        icon: '<:use_gold_bait:667786302674042901>',
+        class: class GoldFishingLure extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.GoldFishingLure.class(exports.Items.GoldFishingLure, amount)
+    },
+    MysticFishingLure: {
+        id: 'mystic_lure',
+        category: item_1.ItemCategory.FISHING_EQUIPMENT,
+        group: item_1.ItemGroup.GAME_ASSET,
+        expanded: false,
+        tradeable: true,
+        sellable: true,
+        purchaseable: true,
+        icon: '<:use_mystic_bait:667786936395759646>',
+        class: class MysticFishingLure extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.MysticFishingLure.class(exports.Items.MysticFishingLure, amount)
+    },
+    TreasureFishingLure: {
+        id: 'treasure_lure',
+        category: item_1.ItemCategory.FISHING_EQUIPMENT,
+        group: item_1.ItemGroup.GAME_ASSET,
+        expanded: false,
+        tradeable: true,
+        sellable: true,
+        purchaseable: true,
+        icon: '<:use_treasure_bait:667807893290090516>',
+        class: class TreasureFishingLure extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.TreasureFishingLure.class(exports.Items.TreasureFishingLure, amount)
+    },
+    WelcomeGiftLootbox: {
+        id: 'welcome_gift',
+        category: item_1.ItemCategory.SYSTEM,
+        group: item_1.ItemGroup.LOOTBOX,
+        expanded: false,
+        tradeable: false,
+        sellable: false,
+        purchaseable: false,
+        icon: 'TODO',
+        class: class WelcomeGiftLootbox extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.WelcomeGiftLootbox.class(exports.Items.WelcomeGiftLootbox, amount)
+    },
 };
-/*
- *
- */
-class Cookie extends item_1.StackableItem {
-    constructor(amount) {
-        super('cookie', amount, item_1.ItemCategory.SYSTEM, item_1.ItemGroup.CURRENCY, true, false, false, '🍪', true);
-    }
-}
-exports.Cookie = Cookie;
-//
-class Key extends item_1.StackableItem {
-    constructor(amount) {
-        super('key', amount, item_1.ItemCategory.SYSTEM, item_1.ItemGroup.CURRENCY, true, false, false, '🔑', true);
-    }
-}
-exports.Key = Key;
-//
-class Turtle extends item_1.StackableItem {
-    constructor(amount) {
-        super('turtle', amount, item_1.ItemCategory.COLLECTABLE, item_1.ItemGroup.COLLECTABLE, true, false, false, '🐢');
-    }
-}
-exports.Turtle = Turtle;
-//
-class FishingLure extends item_1.StackableItem {
-    constructor(amount) {
-        super('lure', amount, item_1.ItemCategory.FISHING, item_1.ItemGroup.GAME_ASSET, true, true, true, '<:use_regular_bait:667784099037052931>');
-    }
-}
-exports.FishingLure = FishingLure;
-//
-class GoldFishingLure extends item_1.StackableItem {
-    constructor(amount) {
-        super('gold_lure', amount, item_1.ItemCategory.FISHING, item_1.ItemGroup.GAME_ASSET, true, true, true, '<:use_gold_bait:667786302674042901>');
-    }
-}
-exports.GoldFishingLure = GoldFishingLure;
-//
-class MysticFishingLure extends item_1.StackableItem {
-    constructor(amount) {
-        super('mystic_lure', amount, item_1.ItemCategory.FISHING, item_1.ItemGroup.GAME_ASSET, true, true, true, '<:use_mystic_bait:667786936395759646>');
-    }
-}
-exports.MysticFishingLure = MysticFishingLure;
-//
-class TreasureFishingLure extends item_1.StackableItem {
-    constructor(amount) {
-        super('treasure_lure', amount, item_1.ItemCategory.FISHING, item_1.ItemGroup.GAME_ASSET, true, true, true, '<:use_treasure_bait:667807893290090516>');
-    }
-}
-exports.TreasureFishingLure = TreasureFishingLure;
-//
-class WelcomeGiftLootbox extends item_1.StackableItem {
-    constructor(amount) {
-        super('welcome_gift_lootbox', amount, item_1.ItemCategory.SYSTEM, item_1.ItemGroup.LOOTBOX, false, false, false, 'TODO');
-    }
-}
-exports.WelcomeGiftLootbox = WelcomeGiftLootbox;
+exports.ItemList = Object.values(exports.Items);
 //# sourceMappingURL=itemlist.js.map

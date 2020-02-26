@@ -10,9 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
-const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const database_1 = require("../database/database");
-const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class ClubItemShopModule extends types_1.Module {
@@ -94,25 +92,26 @@ class ClubItemShopModule extends types_1.Module {
     getItem(i) {
         switch (i.item) {
             case 'cookie':
-                return itemlist_1.DEFAULT_ITEMS.cookie;
+            // return DEFAULT_ITEMS.cookie;
             case 'key':
-                return itemlist_1.DEFAULT_ITEMS.key;
+            // return DEFAULT_ITEMS.key;
             default:
-                return tudeapi_1.default.items.find(item => item.id == i.item);
+                // return TudeApi.items.find(item => item.id == i.item);
+                return null; // TODO
         }
     }
     getShelfColor(category) {
         switch (category) {
-            case 'regular': return 0xD99E82;
-            case 'gem': return 0x8CCAF7;
-            case 'special': return 0xA6D388;
+            case 'regular': return 0xC88B6D;
+            case 'gem': return 0x44B674;
+            case 'special': return 0x768DC7;
             case 'event': return 0xFFFFFF; // EVENT-UPDATE
         }
     }
     getCurrencyIcon(currency) {
         switch (currency) {
-            case 'cookies': return '🍪';
-            case 'gems': return '💎';
+            case 'cookies': return emojis_1.default.COOKIES;
+            case 'gems': return emojis_1.default.GEMS;
             case 'event-tokens': return '[]'; // EVENT-UPDATE
         }
     }

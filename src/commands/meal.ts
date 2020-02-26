@@ -16,6 +16,7 @@ export default class MealCommand extends Command {
         'makemefood',
         'eat' ],
       'A random meal and how to make it',
+      2,
       false,
       false,
       lang

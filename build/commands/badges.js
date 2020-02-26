@@ -5,7 +5,7 @@ const types_1 = require("../types");
 class BadgesCommand extends types_1.Command {
     constructor(lang) {
         super('badges', ['badge',
-            'b'], 'See your badges (or someone elses)\nuse `badge display <name>` to display a badge on your profile', false, false, lang);
+            'b'], 'See your badges (or someone elses)\nuse `badge display <name>` to display a badge on your profile', 0, false, false, lang);
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {

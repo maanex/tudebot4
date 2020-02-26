@@ -9,7 +9,7 @@ class CocktailCommand extends types_1.Command {
             'drink',
             'makemeadrink',
             'schwanzschwanz',
-            'mix'], 'A random cocktail recipe', false, false, lang);
+            'mix'], 'A random cocktail recipe', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         const cmdl = parseArgs_1.default.parse(args);

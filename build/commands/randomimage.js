@@ -6,7 +6,7 @@ class RandomImageCommand extends types_1.Command {
     constructor(lang) {
         super('image', ['randomimage',
             'random',
-            'rndimg'], 'A completely random image', false, false, lang);
+            'rndimg'], 'A completely random image', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

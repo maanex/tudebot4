@@ -78,8 +78,6 @@ export default class SlotmachineCommand extends Command {
     //     run: (mes: Message, u: ClubUser) => this.runSm4(mes, u)
     // }
   ];
-  
-  private cooldown: string[] = [];
 
 
   constructor(lang: (string) => string) {
@@ -87,6 +85,7 @@ export default class SlotmachineCommand extends Command {
       'slotmachine',
       [ 'sm' ],
       'Sweet game of Slotmachine',
+      7,
       false,
       false,
       lang
@@ -133,12 +132,6 @@ export default class SlotmachineCommand extends Command {
         return;
       }
 
-      if (this.cooldown.indexOf(user.id) >= 0) {
-        repl(`Oh noes! You goin too quick!`, 'bad', `Please wait a bit before using a slotmachine again!`);
-        resolve(false);
-        return;
-      }
-
       let price = machine.entry;
       TudeApi.clubUserByDiscordId(user.id).then(u => {
         if (u.cookies < price) {
@@ -150,8 +143,6 @@ export default class SlotmachineCommand extends Command {
         u.cookies -= price;
         TudeApi.updateClubUser(u);
         machine.run(event.message, u);
-        this.cooldown.push(user.id);
-        setTimeout(id => this.cooldown.splice(this.cooldown.indexOf(id), 1), 7_000, user.id);
         resolve(true);
       }).catch(err => {
         repl('An error occured!', 'error');

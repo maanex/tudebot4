@@ -15,7 +15,7 @@ const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
 class BlackJackCommand extends types_1.Command {
     constructor(lang) {
-        super('blackjack', ['bj'], 'A sweet game of Black Jack', false, false, lang);
+        super('blackjack', ['bj'], 'A sweet game of Black Jack', 0, false, false, lang);
         this.hit = '✅';
         this.stand = '⏸️';
         this.hearts = '<:hearts:661657523878625295>';

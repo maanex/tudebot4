@@ -5,7 +5,7 @@ const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
 class UInfoCommand extends types_1.Command {
     constructor(lang) {
-        super('uinfo', [], 'Userinfo', false, true, lang);
+        super('uinfo', [], 'Userinfo', 0, false, true, lang);
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {

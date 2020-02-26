@@ -15,6 +15,7 @@ export default class CatCommand extends Command {
         'catimg',
         'pussy' ],
       'A random cat image',
+      0,
       false,
       false,
       lang

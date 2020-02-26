@@ -44,6 +44,7 @@ export abstract class Command {
     public readonly name: string,
     public readonly aliases: string[],
     public readonly description: string,
+    public readonly cooldown: number,
     public readonly sudoOnly: boolean,
     public readonly hideOnHelp: boolean,
 

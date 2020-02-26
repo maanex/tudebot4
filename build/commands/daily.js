@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
 class DailyCommand extends types_1.Command {
     constructor(lang) {
-        super('daily', ['d'], 'Get your daily reward', false, false, lang);
+        super('daily', ['d'], 'Get your daily reward', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {
@@ -19,11 +20,11 @@ class DailyCommand extends types_1.Command {
                     let desc = '';
                     let reward = o['reward'];
                     if (reward.points)
-                        desc += `**+${reward.points}** point${reward.points == 1 ? '' : 's'}\n`;
+                        desc += `**+${reward.points}** point${reward.points == 1 ? '' : 's'} *${emojis_1.default.POINTS}*\n`;
                     if (reward.cookies)
-                        desc += `**+${reward.cookies}** cookie${reward.cookies == 1 ? '' : 's'} *:cookie:*\n`;
+                        desc += `**+${reward.cookies}** cookie${reward.cookies == 1 ? '' : 's'} *${emojis_1.default.COOKIES}*\n`;
                     if (reward.gems)
-                        desc += `**+${reward.gems}** gem${reward.gems == 1 ? '' : 's'} *:gem:*\n`;
+                        desc += `**+${reward.gems}** gem${reward.gems == 1 ? '' : 's'} *${emojis_1.default.GEMS}*\n`;
                     let streak = o['streak'];
                     if (streak) {
                         let prefix = '';

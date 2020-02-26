@@ -11,6 +11,7 @@ export default class OpenCommand extends Command {
       [ 'o',
         'unbox' ],
       'Open a lootbox',
+      0,
       false,
       false,
       lang

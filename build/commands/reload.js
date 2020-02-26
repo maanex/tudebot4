@@ -5,7 +5,7 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 class ReloadCommand extends types_1.Command {
     constructor(lang) {
-        super('reload', [], 'Reload', true, false, lang);
+        super('reload', [], 'Reload', 0, true, false, lang);
     }
     execute(channel, user, args, event, repl) {
         tudeapi_1.default.reload();

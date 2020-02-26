@@ -7,7 +7,7 @@ class CatCommand extends types_1.Command {
         super('cat', ['kitten',
             'catimage',
             'catimg',
-            'pussy'], 'A random cat image', false, false, lang);
+            'pussy'], 'A random cat image', 0, false, false, lang);
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

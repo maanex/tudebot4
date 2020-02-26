@@ -11,6 +11,7 @@ export default class BadgesCommand extends Command {
       [ 'badge',
         'b' ],
       'See your badges (or someone elses)\nuse `badge display <name>` to display a badge on your profile',
+      0,
       false,
       false,
       lang

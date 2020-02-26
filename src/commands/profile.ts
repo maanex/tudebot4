@@ -13,6 +13,7 @@ export default class ProfileCommand extends Command {
       'profile',
       [ 'p' ],
       'See your profile (or someone elses)',
+      5,
       false,
       false,
       lang
@@ -36,7 +37,7 @@ export default class ProfileCommand extends Command {
           let icon = undefined;
           let xpbar = '';
           let stats = `${Emojis.BIG_SPACE}`;
-          let statItems = [`${Emojis.COOKIES}  ${u.cookies}`, `${Emojis.GEMS} ${u.gems}`];
+          let statItems = [`${Emojis.COOKIES} ${u.cookies}`, `${Emojis.GEMS} ${u.gems}`];
           if (u.keys > 0) statItems.push(`${Emojis.KEYS} ${u.keys}`);
           // @ts-ignore
           if (u.inventory.size > 0) {
@@ -85,7 +86,7 @@ export default class ProfileCommand extends Command {
             icon = appearance.icon;
             // icon = 'https://cdn.discordapp.com/attachments/543150321686413313/675367430641680384/guy.png';
           }
-          let badges: string[] = []
+          let badges: string[] = [];
           if (u.badges) {
             for (let b of Object.keys(u.badges)) {
               let badge = TudeApi.badgeById(parseInt(b));
@@ -94,13 +95,14 @@ export default class ProfileCommand extends Command {
             }
           }
 
-          let uname = user.username;
+          let uname = user.username.split('•').join('');
           let uicon = user.avatarURL;
           if (u.user.type == 1) {
             uname = u.user.name;
             // uicon = `https://www.gravatar.com/avatar/${md5.hash(u.user.email)}?s=60&d=identicon`;
             if (u.user.tag == 0) {
-              uname += ' ✔️';
+              // uname += ' ✔️';
+              uname += ' •';
             }
           }
 
@@ -128,7 +130,7 @@ export default class ProfileCommand extends Command {
           repl('An error occured!', 'bad');
           console.error(err);
           resolve(false);
-        })
+        });
     });
   }
 
