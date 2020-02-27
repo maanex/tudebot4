@@ -63,11 +63,11 @@ class MealCommand extends types_1.Command {
                             },
                             {
                                 name: 'Ingredients',
-                                value: ingredients.join('\n')
+                                value: ingredients.join('\n').substr(0, 1024)
                             },
                             {
                                 name: 'Instructions',
-                                value: meal.strInstructions
+                                value: meal.strInstructions.substr(0, 1024)
                             }
                         ],
                         footer: {

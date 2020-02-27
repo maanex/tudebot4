@@ -21,11 +21,11 @@ class TellmeCommand extends types_1.Command {
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let num = parseInt(args[0]);
+                let num = parseInt(user.id);
                 num /= (10 ** `${num}`.length);
                 yield TellmeCommand.run(yield TellmeCommand.getUrl(num));
                 const imgchannel = index_1.TudeBot.guilds.get('490590691974447124').channels.get('682573767528022049');
-                imgchannel.send('', { files: ['./TEST/out.png'] }).then((mes) => {
+                imgchannel.send('', { files: ['./tmp/out.png'] }).then((mes) => {
                     const url = mes.attachments.first().url;
                     channel.send({ embed: {
                             color: 0x2f3136,
@@ -90,7 +90,7 @@ class TellmeCommand extends types_1.Command {
                                 out.setPixelColor(parseInt(r.toString(16) + g.toString(16) + b.toString(16) + 'ff', 16), x, y);
                             }
                         }
-                        out.write('./TEST/out.png');
+                        out.write('./tmp/out.png');
                         resolve();
                     });
                 });
