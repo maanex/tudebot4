@@ -3,7 +3,7 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 import Emojis from "../int/emojis";
 
 
-export default class BetaCommand extends Command {
+export default class ShipCommand extends Command {
 
   constructor(lang: (string) => string) {
     super(

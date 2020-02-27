@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
-class BetaCommand extends types_1.Command {
+class ShipCommand extends types_1.Command {
     constructor(lang) {
         super('ship', [], 'Ship two people!', 0, false, false, lang);
     }
@@ -97,5 +97,5 @@ class BetaCommand extends types_1.Command {
         return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
     }
 }
-exports.default = BetaCommand;
+exports.default = ShipCommand;
 //# sourceMappingURL=ship.js.map

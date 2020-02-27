@@ -17,7 +17,7 @@ export class TudeBotClient extends Client {
   public modules: Map<string, Module> = null;
 
   constructor(props: any) {
-    super(props)
+    super(props);
     
     this.modlog = null;
     this.modules = new Map();
