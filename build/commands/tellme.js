@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 const Jimp = require("jimp");
-const index_1 = require("../index");
 const fetch = require('node-fetch');
 class TellmeCommand extends types_1.Command {
     constructor(lang) {
@@ -23,15 +23,13 @@ class TellmeCommand extends types_1.Command {
             try {
                 let num = parseInt(user.id);
                 num /= (10 ** `${num}`.length);
-                yield TellmeCommand.run(yield TellmeCommand.getUrl(num));
-                const imgchannel = index_1.TudeBot.guilds.get('490590691974447124').channels.get('682573767528022049');
-                imgchannel.send('', { files: ['./tmp/out.png'] }).then((mes) => {
-                    const url = mes.attachments.first().url;
-                    channel.send({ embed: {
-                            color: 0x2f3136,
-                            image: { url: url }
-                        } });
-                });
+                const imgBuffer = yield TellmeCommand.run(yield TellmeCommand.getUrl(num));
+                const file = new discord_js_1.Attachment(imgBuffer, user.username.toLowerCase() + '.png');
+                const embed = new discord_js_1.RichEmbed()
+                    .attachFile(file)
+                    .setColor(0x2f3136)
+                    .setImage(`attachment://${user.username.toLowerCase()}.png`);
+                channel.send('', { embed });
                 resolve(true);
             }
             catch (ex) {
@@ -90,8 +88,13 @@ class TellmeCommand extends types_1.Command {
                                 out.setPixelColor(parseInt(r.toString(16) + g.toString(16) + b.toString(16) + 'ff', 16), x, y);
                             }
                         }
-                        out.write('./tmp/out.png');
-                        resolve();
+                        // out.write('./tmp/out.png');
+                        out.getBuffer(Jimp.MIME_PNG, (err, res) => {
+                            if (err)
+                                reject();
+                            else
+                                resolve(res);
+                        });
                     });
                 });
             })

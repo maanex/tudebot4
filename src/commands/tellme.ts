@@ -1,4 +1,4 @@
-import { Message, Channel, User, TextChannel, Emoji } from "discord.js";
+import { Message, Channel, User, TextChannel, Emoji, Attachment, RichEmbed } from "discord.js";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 import Emojis from "../int/emojis";
 import * as Jimp from 'jimp';
@@ -27,15 +27,13 @@ export default class TellmeCommand extends Command {
         let num = parseInt(user.id);
         num /= (10 ** `${num}`.length);
         
-        await TellmeCommand.run(await TellmeCommand.getUrl(num));
-        const imgchannel = TudeBot.guilds.get('490590691974447124').channels.get('682573767528022049') as TextChannel;
-        imgchannel.send('', { files: [ './tmp/out.png' ] }).then((mes: Message) => {
-          const url = mes.attachments.first().url;
-          channel.send({ embed: {
-            color: 0x2f3136,
-            image: { url: url }
-          }});
-        });
+        const imgBuffer = await TellmeCommand.run(await TellmeCommand.getUrl(num));
+        const file = new Attachment(imgBuffer, user.username.toLowerCase() + '.png');
+        const embed = new RichEmbed()
+          .attachFile(file)
+          .setColor(0x2f3136)
+          .setImage(`attachment://${user.username.toLowerCase()}.png`);
+        channel.send('', { embed });
         resolve(true);
       } catch (ex) {
         channel.send({ embed: {
@@ -47,7 +45,7 @@ export default class TellmeCommand extends Command {
     });
   }
 
-  public static run(url: string) {
+  public static run(url: string): Promise<Buffer> {
     return new Promise(async (resolve, reject) => {
       const outsize = 256;
       Jimp.read(url)
@@ -101,8 +99,11 @@ export default class TellmeCommand extends Command {
                 }
               }
     
-              out.write('./tmp/out.png');
-              resolve();
+              // out.write('./tmp/out.png');
+              out.getBuffer(Jimp.MIME_PNG, (err, res) => {
+                if (err) reject();
+                else resolve(res);
+              });
             });
           });
         })

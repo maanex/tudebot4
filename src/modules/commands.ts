@@ -6,6 +6,7 @@ import Database from "../database/database";
 import WCP from "../thirdparty/wcp/wcp";
 import * as chalk from "chalk";
 import { Module } from "../types";
+import UnavailableCommand from "../commands/_unavailable";
 
 
 export default class CommandsModule extends Module {
@@ -101,25 +102,35 @@ export default class CommandsModule extends Module {
   private loadCommands() {
     this.commands = [];
     this.identifierMap = new Map();
+
+    const unavailableCommand = new UnavailableCommand(this.lang);
+    this.commands.push(unavailableCommand);
+    this.cooldown.set(unavailableCommand.name, []);
     Database
       .collection('settings')
       .findOne({ _id: 'commands' })
       .then(obj => {
         WCP.send({ config_commands: JSON.stringify(obj.data) });
 
-        for (const commandName in obj.data)
-          if (obj.data[commandName]) {
+        for (const commandName in obj.data) {
+          try {
             const CmdClass = require(`../commands/${commandName}`).default;
-            const cmd: Command = new CmdClass(this.lang);
-            cmd.init();
-            this.commands.push(cmd);
-            this.cooldown.set(cmd.name, []);
+            let cmd: Command = new CmdClass(this.lang);
+
+            if (obj.data[commandName]) {
+              cmd.init();
+              this.commands.push(cmd);
+              this.cooldown.set(cmd.name, []);
+            }
 
             for (const identifier of [cmd.name, ...cmd.aliases]) {
               if (this.identifierMap.has(identifier)) console.log(chalk.red(`Command "${identifier}" is declared multiple times!`));
-              else this.identifierMap.set(identifier, cmd);
+              else this.identifierMap.set(identifier, obj.data[commandName] ? cmd : unavailableCommand);
             }
+          } catch(err) {
+            console.error(`Class for command "${commandName}" not found!`);
           }
+        }
       })
       .catch(console.error)
   }

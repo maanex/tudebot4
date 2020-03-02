@@ -6,6 +6,7 @@ const database_1 = require("../database/database");
 const wcp_1 = require("../thirdparty/wcp/wcp");
 const chalk = require("chalk");
 const types_1 = require("../types");
+const _unavailable_1 = require("../commands/_unavailable");
 class CommandsModule extends types_1.Module {
     constructor(conf, data, lang) {
         super('Commands', 'public', conf, data, lang);
@@ -86,25 +87,34 @@ class CommandsModule extends types_1.Module {
     loadCommands() {
         this.commands = [];
         this.identifierMap = new Map();
+        const unavailableCommand = new _unavailable_1.default(this.lang);
+        this.commands.push(unavailableCommand);
+        this.cooldown.set(unavailableCommand.name, []);
         database_1.default
             .collection('settings')
             .findOne({ _id: 'commands' })
             .then(obj => {
             wcp_1.default.send({ config_commands: JSON.stringify(obj.data) });
-            for (const commandName in obj.data)
-                if (obj.data[commandName]) {
+            for (const commandName in obj.data) {
+                try {
                     const CmdClass = require(`../commands/${commandName}`).default;
-                    const cmd = new CmdClass(this.lang);
-                    cmd.init();
-                    this.commands.push(cmd);
-                    this.cooldown.set(cmd.name, []);
+                    let cmd = new CmdClass(this.lang);
+                    if (obj.data[commandName]) {
+                        cmd.init();
+                        this.commands.push(cmd);
+                        this.cooldown.set(cmd.name, []);
+                    }
                     for (const identifier of [cmd.name, ...cmd.aliases]) {
                         if (this.identifierMap.has(identifier))
                             console.log(chalk.red(`Command "${identifier}" is declared multiple times!`));
                         else
-                            this.identifierMap.set(identifier, cmd);
+                            this.identifierMap.set(identifier, obj.data[commandName] ? cmd : unavailableCommand);
                     }
                 }
+                catch (err) {
+                    console.error(`Class for command "${commandName}" not found!`);
+                }
+            }
         })
             .catch(console.error);
     }
