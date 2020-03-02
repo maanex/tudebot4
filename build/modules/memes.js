@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
+const dbstats_1 = require("../database/dbstats");
 class MemesModule extends types_1.Module {
     constructor(conf, data, lang) {
         super('Memes', 'private', conf, data, lang);
@@ -16,6 +17,7 @@ class MemesModule extends types_1.Module {
                 return;
             if (!mes.attachments.size)
                 return;
+            dbstats_1.DbStats.getUser(mes.author).then(u => u.memesSent++);
             let emojis = ['⭐', '🔥', '⬆️', '⬇️', '💩'];
             if (` ${mes.content} `.includes(' f '))
                 emojis.push(':pay_respect:496359590087098409');

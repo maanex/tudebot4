@@ -5,6 +5,13 @@ class Emojis {
 exports.default = Emojis;
 Emojis.BIG_SPACE = '<:nothing:409254826938204171>';
 Emojis.HIDE_THE_PAIN = '<:hidethepain:655169782806609921>';
+Emojis.NOT_COOL = '<:not_cool:490591156019920907>';
+Emojis.ME_IRL = '<:meirl:496357154199044097>';
+Emojis.DOOT = '<:doot:496770649562415115>';
+Emojis.UNO_REVERSE_CARD = '<:reverse:497129079322181643>';
+Emojis.DETRIOIT_BECOME_HUMAN = '<:DetroitBecomeHuman:497137159350779904>';
+Emojis.ALARM = '<a:ALARM:531531710903615518>';
+Emojis.SOCKPING = '<a:sockangry:531531711163531274>';
 Emojis.COOKIES_MONOCHROME = '<:cookies:681503976192999437>';
 Emojis.COOKIES = '<:ccookies:681503976197586944>';
 Emojis.GEMS_MONOCHROME = '<:gems:681503976407302148>';

@@ -13,7 +13,10 @@ const database_1 = require("./database");
 class DbStats {
     constructor() { }
     static getCommand(name) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () { return resolve(yield new DbStatCommand(name).load()); }));
+        return new DbStatCommand(name).load();
+    }
+    static getUser(user) {
+        return new DbStatUser(user).load();
     }
 }
 exports.DbStats = DbStats;
@@ -40,6 +43,62 @@ class DbStatCommand {
     }
 }
 exports.DbStatCommand = DbStatCommand;
+class DbStatUser {
+    constructor(user) {
+        this.user = user;
+        this.raw = {};
+    }
+    load(secondTry = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let c = yield database_1.default
+                .collection('stats-users')
+                .findOne({ _id: this.user.id });
+            if (!c) {
+                if (secondTry)
+                    return this;
+                yield database_1.default
+                    .collection('stats-users')
+                    .insertOne({
+                    _id: this.user.id,
+                    messagesSent: 0,
+                    memesSent: 0,
+                    dailiesClaimed: 0
+                });
+                return this.load(true);
+            }
+            for (let temp in c)
+                this.raw[temp] = c[temp];
+            return this;
+        });
+    }
+    setValue(set) {
+        database_1.default
+            .collection('stats-users')
+            .updateOne({ _id: this.user.id }, { '$set': set });
+    }
+    get messagesSent() {
+        return this.raw['messagesSent'] || 0;
+    }
+    set messagesSent(number) {
+        this.raw['messagesSent'] = number;
+        this.setValue({ messagesSent: number });
+    }
+    get memesSent() {
+        return this.raw['memesSent'] || 0;
+    }
+    set memesSent(number) {
+        this.raw['memesSent'] = number;
+        this.setValue({ memesSent: number });
+    }
+    get dailiesClaimed() {
+        return this.raw['dailiesClaimed'] || 0;
+    }
+    set dailiesClaimed(number) {
+        this.raw['dailiesClaimed'] = number;
+        this.setValue({ dailiesClaimed: number });
+    }
+}
+exports.DbStatUser = DbStatUser;
 class DbStatGraph {
     constructor(_collectionname, _dbquery, _objectid, raw, _fullraw) {
         this._collectionname = _collectionname;

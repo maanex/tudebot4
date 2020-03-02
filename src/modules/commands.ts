@@ -32,6 +32,7 @@ export default class CommandsModule extends Module {
     TudeBot.on('message', (mes: Message) => {
       if (mes.author.bot) return;
       if (!mes.guild) return;
+      if (mes.guild.id == "432899162150010901") DbStats.getUser(mes.author).then(u => u.messagesSent++); // TODO MAKE BETTER
       if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
 
       this.updateActiveInCommandsChannel(mes.author.id);

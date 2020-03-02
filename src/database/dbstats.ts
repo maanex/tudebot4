@@ -1,5 +1,5 @@
 import Database, { dbcollection } from "./database";
-import { RequestHandler } from "discord.js";
+import { RequestHandler, User } from "discord.js";
 
 
 export class DbStats {
@@ -7,7 +7,11 @@ export class DbStats {
     private constructor() {}
 
     static getCommand(name: string): Promise<DbStatCommand> {
-        return new Promise(async (resolve, reject) => resolve(await new DbStatCommand(name).load()));
+        return new DbStatCommand(name).load();
+    }
+
+    static getUser(user: User): Promise<DbStatUser> {
+        return new DbStatUser(user).load();
     }
 
 }
@@ -35,6 +39,67 @@ export class DbStatCommand {
 
     get executions(): DbStatGraph {
         return new DbStatGraph('stats-commands', {_id:this.name}, 'executions', this.raw['executions'], this.raw);
+    }
+
+}
+
+export class DbStatUser {
+
+    public readonly raw: {[key: string ]: number} = {};
+
+    constructor(
+        public readonly user: User
+    ) {}
+
+    async load(secondTry = false): Promise<this> {
+        let c = await Database
+            .collection('stats-users')
+            .findOne({ _id: this.user.id });
+        if (!c) {
+            if (secondTry) return this;
+            await Database
+                .collection('stats-users')
+                .insertOne({
+                    _id: this.user.id,
+                    messagesSent: 0,
+                    memesSent: 0,
+                    dailiesClaimed: 0
+                });
+            return this.load(true);
+        }
+        for (let temp in c)
+            this.raw[temp] = c[temp];
+        return this;
+    }
+
+    private setValue(set: any) {
+        Database
+            .collection('stats-users')
+            .updateOne({ _id: this.user.id}, { '$set': set });
+    }
+
+    get messagesSent(): number {
+        return this.raw['messagesSent'] || 0;
+    }
+    set messagesSent(number: number) {
+        this.raw['messagesSent'] = number;
+        this.setValue({ messagesSent: number });
+    }
+
+    get memesSent(): number {
+        return this.raw['memesSent'] || 0;
+    }
+    set memesSent(number: number) {
+        this.raw['memesSent'] = number;
+        this.setValue({ memesSent: number });
+    }
+
+    get dailiesClaimed(): number {
+        return this.raw['dailiesClaimed'] || 0;
+    }
+    set dailiesClaimed(number: number) {
+        this.raw['dailiesClaimed'] = number;
+        this.setValue({ dailiesClaimed: number });
     }
 
 }

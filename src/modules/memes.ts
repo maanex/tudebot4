@@ -1,6 +1,7 @@
 import { TudeBot } from '../index';
 import { Message, MessageReaction, User } from 'discord.js';
 import { Module } from "../types";
+import { DbStats } from '../database/dbstats';
 
 
 export default class MemesModule extends Module {
@@ -15,6 +16,8 @@ export default class MemesModule extends Module {
       if (!mes.guild) return;
       if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
       if (!mes.attachments.size) return;
+
+      DbStats.getUser(mes.author).then(u => u.memesSent++);
 
       let emojis = ['⭐', '🔥', '⬆️', '⬇️', '💩'];
 
