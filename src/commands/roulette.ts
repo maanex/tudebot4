@@ -318,7 +318,7 @@ export default class RouletteCommand extends Command {
           }
         }
       });
-      setTimeout(this.resetGame, 2000);
+      setTimeout(() => this.resetGame(), 2000);
     }, 2000 + Math.floor(Math.random() * 4000));
   }
 
