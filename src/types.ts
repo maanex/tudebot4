@@ -59,6 +59,4 @@ export abstract class Command {
 
 //
 
-export interface ModLog {
-  log: (guild: Guild, type: modlogType, text: string) => void
-}
+export type modlogFunction = (guild: Guild, type: modlogType, text: string) => void;

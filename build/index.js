@@ -17,16 +17,21 @@ const mongo_adapter_1 = require("./database/mongo.adapter");
 const util_1 = require("./util/util");
 const gitParser_1 = require("./util/gitParser");
 const chalk = require("chalk");
+const parseArgs_1 = require("./util/parseArgs");
 const settings = require('../config/settings.json');
 class TudeBotClient extends discord_js_1.Client {
-    constructor(props) {
+    constructor(props, flags) {
         super(props);
         this.modules = null;
+        this.devMode = !!flags['dev'];
         this.modlog = null;
         this.modules = new Map();
+        if (this.devMode) {
+            console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
+        }
         fixReactionEvent(this);
         util_1.Util.init();
-        wcp_1.default.init();
+        wcp_1.default.init(false /* this.devMode */);
         mongo_adapter_1.default.connect(settings.mongodb.url)
             .catch(err => {
             console.error(err);
@@ -111,7 +116,8 @@ class TudeBotClient extends discord_js_1.Client {
     }
 }
 exports.TudeBotClient = TudeBotClient;
-exports.TudeBot = new TudeBotClient({});
+const flags = parseArgs_1.default.parse(process.argv);
+exports.TudeBot = new TudeBotClient({}, flags);
 function fixReactionEvent(bot) {
     const events = {
         MESSAGE_REACTION_ADD: 'messageReactionAdd',

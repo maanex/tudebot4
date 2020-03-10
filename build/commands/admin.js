@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
@@ -27,7 +28,8 @@ class AdminCommand extends types_1.Command {
                     'setupchannelgames <channel>',
                     'itemlist',
                     'setupitemshop <channel>',
-                    'resetdaily <user> [-c --clearstreak]'
+                    'resetdaily <user> [-c --clearstreak]',
+                    'testmodlog'
                 ]).map(cmd => `• ${cmd}`).join('\n'));
                 return false;
             }
@@ -97,6 +99,9 @@ class AdminCommand extends types_1.Command {
                         repl('Yes sir!');
                     });
                     run();
+                    break;
+                case 'testmodlog':
+                    index_1.TudeBot.modlog(orgChannel.guild, 'message', args.join(' '));
                     break;
             }
             return true;

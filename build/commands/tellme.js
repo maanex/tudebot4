@@ -21,9 +21,8 @@ class TellmeCommand extends types_1.Command {
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let num = parseInt(args[0]);
+                let num = parseInt(user.id);
                 num /= (10 ** `${num}`.length);
-                let timeoutTimeout = setTimeout(() => { throw new Error('timeout'); }, 100);
                 const imgBuffer = yield TellmeCommand.run(yield TellmeCommand.getUrl(num));
                 const file = new discord_js_1.Attachment(imgBuffer, user.username.toLowerCase() + '.png');
                 const embed = new discord_js_1.RichEmbed()
@@ -31,7 +30,6 @@ class TellmeCommand extends types_1.Command {
                     .setColor(0x2f3136)
                     .setImage(`attachment://${user.username.toLowerCase()}.png`);
                 channel.send('', { embed });
-                clearTimeout(timeoutTimeout);
                 resolve(true);
             }
             catch (ex) {

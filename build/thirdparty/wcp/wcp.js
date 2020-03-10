@@ -14,7 +14,10 @@ class WCP {
     static get secret() {
         return settings.wcp.secret;
     }
-    static init() {
+    static init(offlineMode) {
+        this.offlineMode = offlineMode;
+        if (this.offlineMode)
+            return;
         WCP.send({
             running: true,
             status_mode: '+Productive',
@@ -42,10 +45,12 @@ class WCP {
         stdutils_1.hook_std((o) => WCP.sysout.push(chalk.bold.redBright(o)), process.stderr);
     }
     static reload() {
-        this.init();
+        this.init(this.offlineMode);
     }
     //
     static send(data) {
+        if (this.offlineMode)
+            return;
         fetch(this.endpoint, {
             method: 'post',
             headers: { 'authorization': this.secret, 'Content-Type': 'application/json' },
@@ -90,5 +95,6 @@ class WCP {
 }
 exports.default = WCP;
 //
+WCP.offlineMode = false;
 WCP.sysout = [];
 //# sourceMappingURL=wcp.js.map

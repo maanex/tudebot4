@@ -1,4 +1,4 @@
-import { Module, ModLog } from './types';
+import { Module, modlogFunction } from './types';
 import { Client, User } from "discord.js";
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
@@ -7,25 +7,34 @@ import MongoAdapter from './database/mongo.adapter';
 import { Util } from './util/util';
 import { logVersionDetails } from "./util/gitParser";
 import * as chalk from "chalk";
+import ParseArgs from './util/parseArgs';
 
 const settings = require('../config/settings.json');
 
 
 export class TudeBotClient extends Client {
 
-  public modlog: ModLog;
+  public readonly devMode;
+
+  public modlog: modlogFunction;
   public modules: Map<string, Module> = null;
 
-  constructor(props: any) {
+  constructor(props: any, flags: {[key: string]: string | boolean}) {
     super(props);
+
+    this.devMode = !!flags['dev'];
     
     this.modlog = null;
     this.modules = new Map();
 
+    if (this.devMode) {
+      console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
+    }
+
     fixReactionEvent(this);
 
     Util.init();
-    WCP.init();
+    WCP.init(false /* this.devMode */);
 
     MongoAdapter.connect(settings.mongodb.url)
       .catch(err => {
@@ -121,7 +130,8 @@ export class TudeBotClient extends Client {
 }
 
 
-export const TudeBot = new TudeBotClient ({ });
+const flags = ParseArgs.parse(process.argv);
+export const TudeBot = new TudeBotClient ({ }, flags);
 
 
 function fixReactionEvent(bot: TudeBotClient) {

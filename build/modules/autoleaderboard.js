@@ -68,14 +68,14 @@ class QuotesModule extends types_1.Module {
                     channel.send(content).then(mes => {
                         mes.react(this.UPDATE_EMOJI);
                     }).catch(err => {
-                        index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+                        index_1.TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
                     });
                 }
             }).catch(err => {
-                index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+                index_1.TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
             });
         }).catch(err => {
-            index_1.TudeBot.modlog.log(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
+            index_1.TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```');
         });
     }
     generateLeaderboard(guild) {

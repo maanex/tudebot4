@@ -31,7 +31,8 @@ export default class AdminCommand extends Command {
           'setupchannelgames <channel>',
           'itemlist',
           'setupitemshop <channel>',
-          'resetdaily <user> [-c --clearstreak]'
+          'resetdaily <user> [-c --clearstreak]',
+          'testmodlog'
         ]).map(cmd => `• ${cmd}`).join('\n'));
         return false;
       }
@@ -107,6 +108,10 @@ export default class AdminCommand extends Command {
 
             repl('Yes sir!');
           }; run();
+          break;
+
+        case 'testmodlog':
+          TudeBot.modlog(orgChannel.guild, 'message', args.join(' '));
           break;
       }
       return true;

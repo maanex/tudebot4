@@ -11,25 +11,25 @@ export default class ModlogModule extends Module {
   }
 
   public onEnable(): void {
-    TudeBot.modlog = {
-      log: function (guild: Guild, type: modlogType, text: string): void {
-        let id: string = guild.id;
-        if (!this.conf.channels[id]) return;
-        (guild.channels.get(this.conf.channels[id]) as TextChannel).send({
-          embed: {
-            color: 0x2f3136,
-            description: `${this.data[type]} ${text}`
-          }
-        });
-      }
+    const conf = this.conf;
+    const data = this.data;
+    TudeBot.modlog = function (guild: Guild, type: modlogType, text: string): void {
+      let id: string = guild.id;
+      if (!conf.channels[id]) return;
+      (guild.channels.get(conf.channels[id]) as TextChannel).send({
+        embed: {
+          color: 0x2f3136,
+          description: `${data[type]} ${text}`
+        }
+      });
     }
 
     TudeBot.on('guildMemberAdd', (mem: GuildMember) => {
-      TudeBot.modlog.log(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
+      TudeBot.modlog(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
     });
 
     TudeBot.on('guildMemberRemove', (mem: GuildMember) => {
-      TudeBot.modlog.log(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
+      TudeBot.modlog(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
     });
   }
 
