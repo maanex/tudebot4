@@ -16,7 +16,6 @@
     "@types/node": "^12.12.22",
     "@types/node-fetch": "^2.5.4",
     "ascii-table": "0.0.9",
-    "canvas": "^2.6.1",
     "chalk": "^3.0.0",
     "cron": "^1.7.2",
     "discord.js": "^11.5.1",
