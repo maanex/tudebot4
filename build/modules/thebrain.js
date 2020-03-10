@@ -67,7 +67,7 @@ class TheBrainModule extends types_1.Module {
     }
     setPlaytext() {
         index_1.TudeBot.user.setActivity(this.getText());
-        this.timeouts.push(setTimeout(this.setPlaytext, 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
+        this.timeouts.push(setTimeout(() => this.setPlaytext(), 1 * 60 * 1000 + Math.floor(Math.random() * 3 * 60 * 60 * 1000)));
     }
     getText() {
         let all = this.data.texts;
