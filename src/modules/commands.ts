@@ -80,7 +80,9 @@ export default class CommandsModule extends Module {
         const event = { message: mes, sudo: sudo, label: cmd };
         const res = command.execute(mes.channel as TextChannel, mes.author, args, event, cmes);
 
-        if (res['then']) {
+        if (res === undefined || res === null) {
+          update(false);
+        } else if (res['then']) {
           (res as Promise<boolean>).then(update).catch(() => {});
         } else {
           update(res as boolean);

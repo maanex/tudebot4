@@ -1,11 +1,12 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
-import TudeApi from "../thirdparty/tudeapi/tudeapi";
+import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 import ParseArgs from "../util/parseArgs";
 import Database from "../database/database";
 import * as Items from "../thirdparty/tudeapi/itemlist";
+import GetPointsModule from "modules/getpoints";
 
 
 export default class AdminCommand extends Command {
@@ -32,7 +33,8 @@ export default class AdminCommand extends Command {
           'itemlist',
           'setupitemshop <channel>',
           'resetdaily <user> [-c --clearstreak]',
-          'testmodlog'
+          'testmodlog',
+          'testlevelupreward'
         ]).map(cmd => `• ${cmd}`).join('\n'));
         return false;
       }
@@ -112,6 +114,15 @@ export default class AdminCommand extends Command {
 
         case 'testmodlog':
           TudeBot.modlog(orgChannel.guild, 'message', args.join(' '));
+          break;
+
+        case 'testlevelupreward':
+          if (args.length < 2 || isNaN(parseInt(args[1]))) {
+            repl('level?');
+            return false;
+          }
+          const module = TudeBot.modules.get('getpoints') as GetPointsModule;
+          module.assignLevelRoles(event.message.member, {level:parseInt(args[1])} as ClubUser);
           break;
       }
       return true;

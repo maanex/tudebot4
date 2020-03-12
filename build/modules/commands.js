@@ -68,7 +68,10 @@ class CommandsModule extends types_1.Module {
                 const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
                 const event = { message: mes, sudo: sudo, label: cmd };
                 const res = command.execute(mes.channel, mes.author, args, event, cmes);
-                if (res['then']) {
+                if (res === undefined || res === null) {
+                    update(false);
+                }
+                else if (res['then']) {
                     res.then(update).catch(() => { });
                 }
                 else {

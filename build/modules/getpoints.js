@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("..");
 const cron = require("cron");
@@ -105,27 +114,43 @@ class GetPointsModule extends types_1.Module {
             tudeapi_1.default.clubUserByDiscordId(user.id).then(u => this.punish(user, 'ReactionRemove')).catch(ex => { });
         });
         __1.TudeBot.on('guildMemberAdd', member => {
-            tudeapi_1.default.clubUserByDiscordId(member.id, member.user)
-                .then(u => {
-                for (let i = 1; i <= u.level; i++) {
-                    for (let gid in this.conf.levelthis.rewards) {
-                        let guild = __1.TudeBot.guilds.get(gid);
-                        if (!guild)
-                            continue;
-                        let roleid = this.conf.levelthis.rewards[gid][i];
-                        if (!roleid)
-                            continue;
-                        member.addRole(guild.roles.find(r => r.id == roleid));
-                    }
-                }
-            })
-                .catch();
+            this.assignLevelRoles(member);
         });
         //                      s m h d m dw
         this.cronjobs.push(cron.job('0 * * * * *', this.regenBags));
         this.cronjobs.push(cron.job('0 0 * * * *', this.fillBags));
         // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf.guilds.map(TudeBot.guilds.get))).start()); TODO error here
         this.cronjobs.forEach(j => j.start());
+    }
+    assignLevelRoles(member, clubUser, guild, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!member && !guild)
+                return false;
+            if (!member)
+                member = guild.members.find('id', userId);
+            if (!guild)
+                guild = member.guild;
+            if (!clubUser)
+                clubUser = yield tudeapi_1.default.clubUserByDiscordId(userId || member.id, member.user);
+            if (!member)
+                return false;
+            if (!guild)
+                return false;
+            if (!clubUser)
+                return false;
+            for (let i = 1; i <= clubUser.level; i++) {
+                for (let gid in this.conf.levelrewards) {
+                    let guild = __1.TudeBot.guilds.get(gid);
+                    if (!guild)
+                        continue;
+                    let roleid = this.conf.levelrewards[gid][i];
+                    if (!roleid)
+                        continue;
+                    member.addRole(guild.roles.find(r => r.id == roleid));
+                }
+            }
+            return true;
+        });
     }
     onBotReady() {
     }
@@ -157,17 +182,10 @@ class GetPointsModule extends types_1.Module {
                 description: desc
             }
         });
-        for (let gid in this.conf.levelthis.rewards) {
-            let guild = __1.TudeBot.guilds.get(gid);
-            if (!guild)
-                continue;
-            let mem = guild.members.get(duser.id);
-            if (!mem)
-                continue;
-            let roleid = this.conf.levelthis.rewards[gid][newLevel];
-            if (!roleid)
-                continue;
-            mem.addRole(guild.roles.find(r => r.id == roleid));
+        for (let guildId of this.conf.guilds) {
+            const guild = __1.TudeBot.guilds.find('id', guildId);
+            if (guild)
+                this.assignLevelRoles(null, user, guild);
         }
     }
     regenBags() {

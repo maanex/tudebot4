@@ -29,7 +29,8 @@ class AdminCommand extends types_1.Command {
                     'itemlist',
                     'setupitemshop <channel>',
                     'resetdaily <user> [-c --clearstreak]',
-                    'testmodlog'
+                    'testmodlog',
+                    'testlevelupreward'
                 ]).map(cmd => `• ${cmd}`).join('\n'));
                 return false;
             }
@@ -102,6 +103,14 @@ class AdminCommand extends types_1.Command {
                     break;
                 case 'testmodlog':
                     index_1.TudeBot.modlog(orgChannel.guild, 'message', args.join(' '));
+                    break;
+                case 'testlevelupreward':
+                    if (args.length < 2 || isNaN(parseInt(args[1]))) {
+                        repl('level?');
+                        return false;
+                    }
+                    const module = index_1.TudeBot.modules.get('getpoints');
+                    module.assignLevelRoles(event.message.member, { level: parseInt(args[1]) });
                     break;
             }
             return true;
