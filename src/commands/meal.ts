@@ -8,19 +8,14 @@ const fetch = require('node-fetch');
 
 export default class MealCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'meal',
-      [ 'food',
-        'whatshallieat',
-        'makemefood',
-        'eat' ],
-      'A random meal and how to make it',
-      2,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'meal',
+      aliases: [ 'food', 'whatshallieat', 'makemefood', 'eat' ],
+      description: 'A random meal and how to make it',
+      cooldown: 2,
+      groups: [ 'fun', 'apiwrapper' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

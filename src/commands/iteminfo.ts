@@ -6,16 +6,13 @@ import { ItemList } from "../thirdparty/tudeapi/itemlist";
 
 export default class ItemInfoCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'iteminfo',
-      [ ],
-      'Iteminfo',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'iteminfo',
+      description: 'Iteminfo',
+      hideOnHelp: true,
+      groups: [ 'club', 'info' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

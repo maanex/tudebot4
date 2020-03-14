@@ -5,17 +5,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class BadgesCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'badges',
-      [ 'badge',
-        'b' ],
-      'See your badges (or someone elses)\nuse `badge display <name>` to display a badge on your profile',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'badges',
+      aliases: [ 'badge', 'b' ],
+      description: 'See your badges (or someone elses)\nuse `badge display <name>` to display a badge on your profile',
+      groups: [ 'club' ],
+    });
   }
 
   public execute(channel: TextChannel, orgUser: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

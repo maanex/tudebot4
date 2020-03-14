@@ -5,10 +5,13 @@ const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
 const AsciiTable = require('ascii-table');
 class InventoryCommand extends types_1.Command {
-    constructor(lang) {
-        super('inventory', ['inv',
-            'items',
-            'i'], 'See your inventory (or someone elses)', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'inventory',
+            aliases: ['inv', 'items', 'i'],
+            description: 'See your inventory (or someone elses)',
+            groups: ['club'],
+        });
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {

@@ -5,16 +5,12 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class SourcecodeCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'sourcecode',
-      [ ],
-      "A link to the Bot's source code.",
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'sourcecode',
+      description: "A link to the Bot's source code.",
+      groups: [ 'info' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

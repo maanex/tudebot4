@@ -10,23 +10,14 @@ import { Item } from "thirdparty/tudeapi/item";
 
 export default class GiveCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'give',
-      [ 'g',
-        'send',
-        'trade',
-        'transaction',
-        'transcribe',
-        'transfer',
-        'yowtfjustgivethisdudewhatheneedsboi',
-        'wtfevenisthisbullshietherelikeforfookssakewhyaretheresoweirdcommandaliaseslikethisonewhyyyyy' ],
-      'Transfer items or cookies to other players',
-      5,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'give',
+      aliases: [ 'g', 'send', 'trade', 'transaction', 'transcribe', 'transfer', 'yowtfjustgivethisdudewhatheneedsboi', 'wtfevenisthisbullshietherelikeforfookssakewhyaretheresoweirdcommandaliaseslikethisonewhyyyyy' ],
+      description: 'Transfer items or cookies to other players',
+      cooldown: 5,
+      groups: [ 'club' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

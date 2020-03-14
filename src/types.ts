@@ -23,14 +23,43 @@ export abstract class Module {
 
     protected readonly conf: any,
     protected readonly data: any,
-    protected readonly lang: (string) => string
+    protected readonly guilds: Map<string, any>,
+    protected readonly lang: (key: string) => string
   ) { }
-
+  
   public abstract onEnable(): void;
-
+  
   public abstract onBotReady(): void;
-
+  
   public abstract onDisable(): void;
+  
+  //
+
+  protected isMessageEventValid(mes: Message): boolean {
+    if (mes.author.bot) return false;
+    if (!mes.guild) return false;
+    if (!this.isEnabledInGuild(mes.guild)) return false;
+    return true;
+  }
+
+  protected isEnabledInGuild(guild: Guild): boolean {
+    if (!guild) return false;
+    return this.guilds.has(guild.id);
+  }
+
+  protected guildData(guild: Guild): any {
+    return this.isEnabledInGuild(guild) ? this.guilds.get(guild.id) : {};
+  }
+
+}
+
+export interface GuildSettings {
+
+  id: string;
+  name: string;
+  club: boolean;
+  managers: { [userid: string]: string[] }
+  modules: { [moduleid: string]: any }
 
 }
 
@@ -38,18 +67,40 @@ export abstract class Module {
 
 export type CommandExecEvent = { message: Message, sudo: boolean, label: string };
 
+export interface CommandSettings {
+
+  name: string;
+  aliases?: string[];
+  description: string;
+  cooldown?: number;
+  groups?: string[];
+  sudoOnly?: boolean;
+  hideOnHelp?: boolean;
+
+}
+
 export abstract class Command {
 
-  constructor (
-    public readonly name: string,
-    public readonly aliases: string[],
-    public readonly description: string,
-    public readonly cooldown: number,
-    public readonly sudoOnly: boolean,
-    public readonly hideOnHelp: boolean,
+  public lang: (key: string) => string;
+  public resetCooldown: (user: User) => void;
 
-    protected readonly lang: (string) => string
-  ) { }
+  constructor (
+    public readonly settings: CommandSettings
+  ) {
+    if (!settings.aliases) settings.aliases = [];
+    if (!settings.cooldown) settings.cooldown = 0;
+    if (!settings.groups) settings.groups = [];
+    if (!settings.hideOnHelp) settings.hideOnHelp = false;
+    if (!settings.sudoOnly) settings.sudoOnly = false;
+  }
+
+  public get name(): string { return this.settings.name }
+  public get aliases(): string[] { return this.settings.aliases }
+  public get description(): string { return this.settings.description }
+  public get cooldown(): number { return this.settings.cooldown }
+  public get groups(): string[] { return this.settings.groups }
+  public get sudoOnly(): boolean { return this.settings.sudoOnly }
+  public get hideOnHelp(): boolean { return this.settings.hideOnHelp }
 
   public abstract execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean | Promise<boolean>;
 

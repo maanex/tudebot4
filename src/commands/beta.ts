@@ -4,16 +4,12 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class BetaCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'beta',
-      [ ],
-      'Join the TudeBot Beta program',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'beta',
+      description: 'Join the TudeBot Beta program',
+      groups: [ 'info' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

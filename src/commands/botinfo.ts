@@ -5,16 +5,15 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class BotInfoCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'botinfo',
-      [ 'test1234' ],
-      'Bot info',
-      0,
-      true,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'botinfo',
+      aliases: [ 'test1234' ],
+      description: 'Bot info',
+      cooldown: 0,
+      groups: [ ],
+      sudoOnly: true,
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

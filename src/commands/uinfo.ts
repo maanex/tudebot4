@@ -7,16 +7,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class UInfoCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'uinfo',
-      [ ],
-      'Userinfo',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'uinfo',
+      description: 'Userinfo',
+      groups: [ 'club', 'internal' ],
+      hideOnHelp: true,
+    });
   }
 
   public execute(channel: TextChannel, orgUser: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

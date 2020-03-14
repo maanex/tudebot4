@@ -6,16 +6,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class EvalCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'eval',
-      [ ],
-      'Eval',
-      0,
-      true,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'eval',
+      description: 'Eval',
+      sudoOnly: true,
+      groups: [ 'internal' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

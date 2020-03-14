@@ -11,16 +11,13 @@ import GetPointsModule from "modules/getpoints";
 
 export default class AdminCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'admin',
-      [ ],
-      'Admin',
-      0,
-      true,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'admin',
+      description: 'Admin',
+      groups: [ 'internal' ],
+      sudoOnly: true,
+    });
   }
 
   public execute(orgChannel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

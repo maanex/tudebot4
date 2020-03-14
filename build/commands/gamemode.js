@@ -2,8 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 class GamemodeCommand extends types_1.Command {
-    constructor(lang) {
-        super('gamemode', ['/gamemode'], 'by Mojang', 0, false, true, lang);
+    constructor() {
+        super({
+            name: 'gamemode',
+            aliases: ['/gamemode'],
+            description: 'by Mojang',
+            hideOnHelp: true,
+            groups: ['fun', 'easteregg'],
+        });
     }
     execute(channel, user, args, event, repl) {
         if (args.length == 0) {

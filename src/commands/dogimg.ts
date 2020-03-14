@@ -7,18 +7,13 @@ const fetch = require('node-fetch');
 
 export default class DogCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'dog',
-      [ 'doggo',
-        'dogimage',
-        'dogimg' ],
-      'A random dog image',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'dog',
+      aliases: [ 'doggo', 'dogimage', 'dogimg' ],
+      description: 'A random dog image',
+      groups: [ 'fun', 'images', 'apiwrapper' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

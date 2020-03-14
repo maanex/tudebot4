@@ -6,16 +6,15 @@ import { DbStats } from '../database/dbstats';
 
 export default class MemesModule extends Module {
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Memes', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Memes', 'public', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
     TudeBot.on('message', mes => {
-      if (mes.author.bot) return;
-      if (!mes.guild) return;
-      if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
+      if (!this.isMessageEventValid(mes)) return;
       if (!mes.attachments.size) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
 
       DbStats.getUser(mes.author).then(u => u.memesSent++);
 
@@ -64,7 +63,8 @@ export default class MemesModule extends Module {
       if (user.bot) return;
       if (mes.author.bot) return;
       if (!mes.guild) return;
-      if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
+      if (!this.isEnabledInGuild(mes.guild)) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
       if (!mes.attachments.size) return;
 
       // TODO update database values on up/downvote

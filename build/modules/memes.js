@@ -4,18 +4,16 @@ const index_1 = require("../index");
 const types_1 = require("../types");
 const dbstats_1 = require("../database/dbstats");
 class MemesModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Memes', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Memes', 'public', conf, data, guilds, lang);
     }
     onEnable() {
         index_1.TudeBot.on('message', mes => {
-            if (mes.author.bot)
-                return;
-            if (!mes.guild)
-                return;
-            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
+            if (!this.isMessageEventValid(mes))
                 return;
             if (!mes.attachments.size)
+                return;
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
                 return;
             dbstats_1.DbStats.getUser(mes.author).then(u => u.memesSent++);
             let emojis = ['⭐', '🔥', '⬆️', '⬇️', '💩'];
@@ -56,7 +54,9 @@ class MemesModule extends types_1.Module {
                 return;
             if (!mes.guild)
                 return;
-            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
+            if (!this.isEnabledInGuild(mes.guild))
+                return;
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
                 return;
             if (!mes.attachments.size)
                 return;

@@ -73,16 +73,14 @@ export default class BlackJackCommand extends Command {
   private currentGameTimer = null;
 
 
-  constructor(lang: (string) => string) {
-    super(
-      'blackjack',
-      [ 'bj' ],
-      'A sweet game of Black Jack',
-      5,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'blackjack',
+      aliases: [ 'bj' ],
+      description: 'A sweet game of Black Jack',
+      cooldown: 5,
+      groups: [ 'club', 'casino' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

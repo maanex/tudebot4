@@ -8,16 +8,14 @@ import * as md5 from "../util/md5";
 
 export default class ProfileCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'profile',
-      [ 'p' ],
-      'See your profile (or someone elses)',
-      5,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'profile',
+      aliases: [ 'p' ],
+      description: 'See your profile (or someone elses)',
+      cooldown: 5,
+      groups: [ 'club' ],
+    });
   }
 
   public execute(channel: TextChannel, orgUser: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

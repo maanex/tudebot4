@@ -21,28 +21,34 @@ export default class ClubItemShopModule extends Module {
   private channels: TextChannel[] = [];
   
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Tude Club Item Shop', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Tude Club Item Shop', 'private', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
   }
 
   public onBotReady(): void {
-    for (let path of this.conf.channels) {
-      let guildid = path.split('/')[0];
-      let channelid = path.split('/')[1];
-      if (!guildid || !channelid) return;
+    for (let guildid of this.guilds.keys()) {
       let guild = TudeBot.guilds.get(guildid);
       if (!guild) return;
-      let channel = guild.channels.get(channelid);
-      if (!channel) return;
-      this.channels.push(channel as TextChannel);
+      for (let channelid of this.guilds.get(guildid).channels) {
+        let channel = guild.channels.get(channelid);
+        if (!channel) return;
+        this.channels.push(channel as TextChannel);
+      }
     }
 
     this.getShopdata().then(d => {
       this.channels.forEach(c => this.update(c, d));
     }).catch(err => console.error);
+
+    TudeBot.on('message', mes => {
+      if (!this.isMessageEventValid(mes)) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
+
+      // TODO
+    });
   }
 
   public onDisable(): void {

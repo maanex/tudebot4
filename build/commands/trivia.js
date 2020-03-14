@@ -5,10 +5,14 @@ const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 const fetch = require('node-fetch');
 class TriviaCommand extends types_1.Command {
-    constructor(lang) {
-        super('trivia', ['quiz',
-            'quizz',
-            'question'], 'Trivia time!', 10, false, false, lang);
+    constructor() {
+        super({
+            name: 'trivia',
+            aliases: ['quiz', 'quizz', 'question'],
+            description: 'Trivia time!',
+            cooldown: 10,
+            groups: ['fun', 'apiwrapper'],
+        });
     }
     execute(channel, user, args, event, repl) {
         let cmdl = parseArgs_1.default.parse(args);

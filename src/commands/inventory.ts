@@ -10,18 +10,13 @@ const AsciiTable = require('ascii-table');
 
 export default class InventoryCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'inventory',
-      [ 'inv',
-        'items',
-        'i' ],
-      'See your inventory (or someone elses)',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'inventory',
+      aliases: [ 'inv', 'items', 'i' ],
+      description: 'See your inventory (or someone elses)',
+      groups: [ 'club' ],
+    });
   }
 
   public execute(channel: TextChannel, orgUser: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

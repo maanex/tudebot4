@@ -3,10 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const fetch = require('node-fetch');
 class DogCommand extends types_1.Command {
-    constructor(lang) {
-        super('dog', ['doggo',
-            'dogimage',
-            'dogimg'], 'A random dog image', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'dog',
+            aliases: ['doggo', 'dogimage', 'dogimg'],
+            description: 'A random dog image',
+            groups: ['fun', 'images', 'apiwrapper'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

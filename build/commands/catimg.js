@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const fetch = require('node-fetch');
 class CatCommand extends types_1.Command {
-    constructor(lang) {
-        super('cat', ['kitten',
-            'catimage',
-            'catimg',
-            'pussy'], 'A random cat image', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'cat',
+            aliases: ['kitten', 'catimage', 'catimg', 'pussy'],
+            description: 'A random cat image',
+            groups: ['fun', 'images', 'apiwrapper'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

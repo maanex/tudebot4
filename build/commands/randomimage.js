@@ -3,10 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const fetch = require('node-fetch');
 class RandomImageCommand extends types_1.Command {
-    constructor(lang) {
-        super('image', ['randomimage',
-            'random',
-            'rndimg'], 'A completely random image', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'image',
+            aliases: ['randomimage', 'random', 'rndimg'],
+            description: 'A completely random image',
+            groups: ['fun', 'images'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

@@ -10,15 +10,14 @@ export default class CountingModule extends Module {
   private lastNum: number = 0;
 
   
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Counting', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Counting', 'public', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
     TudeBot.on('message', (mes: Message) => {
-      if (mes.author.bot) return;
-      if (!mes.guild) return;
-      if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
+      if (!this.isMessageEventValid(mes)) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
 
       let content: string = mes.content.split(' ')[0];
 

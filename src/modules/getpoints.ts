@@ -20,15 +20,13 @@ export default class GetPointsModule extends Module {
   private cronjobs: cron.CronJob[] = [];
 
   
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Module Name', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Get Points', 'private', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
     TudeBot.on('message', mes => {
-      if (mes.author.bot) return;
-      if (!mes.guild) return;
-      if (!this.conf.guilds.includes(mes.guild.id)) return;
+      if (!this.isMessageEventValid(mes)) return;
 
       let messcont = mes.content;
       // // NOTHING WRONG WITH THIS CODE, JUST DISABLED, PERFORMANCE WISE - NOTHING WRONG WITH PERFORMANCE EITHER, MORE LIKE... A BIT OVERKILL AT THIS POINT, HUH?
@@ -63,9 +61,7 @@ export default class GetPointsModule extends Module {
     });
 
     TudeBot.on('messageDelete', mes => {
-      if (mes.author.bot) return;
-      if (!mes.guild) return;
-      if (!this.conf.guilds.includes(mes.guild.id)) return;
+      if (!this.isMessageEventValid(mes)) return;
 
       if (this.reactionsAddedLast5Sec[mes.author.id] > 6) this.punish(mes.author, 'MessageDelete');
     });
@@ -74,7 +70,7 @@ export default class GetPointsModule extends Module {
       let mes = reaction.message;
       if (user.bot) return;
       if (!mes.guild) return;
-      if (!this.conf.guilds.includes(mes.guild.id)) return;
+      if (!this.isEnabledInGuild(mes.guild)) return;
 
       let quality = 1;
       if (reaction.count == 1) quality = 1.2;
@@ -100,7 +96,7 @@ export default class GetPointsModule extends Module {
       let mes = reaction.message;
       if (user.bot) return;
       if (!mes.guild) return;
-      if (!this.conf.guilds.includes(mes.guild.id)) return;
+      if (!this.isEnabledInGuild(mes.guild)) return;
 
       TudeApi.clubUserByDiscordId(user.id).then(u => this.punish(user, 'ReactionRemove')).catch(ex => { });
     });
@@ -112,7 +108,7 @@ export default class GetPointsModule extends Module {
     //                      s m h d m dw
     this.cronjobs.push(cron.job('0 * * * * *', this.regenBags));
     this.cronjobs.push(cron.job('0 0 * * * *', this.fillBags));
-    // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf.guilds.map(TudeBot.guilds.get))).start()); TODO error here
+    // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf-nonononoooo.guilds.map(TudeBot.guilds.get)))); TODO error here
     this.cronjobs.forEach(j => j.start());
   }
 
@@ -128,13 +124,9 @@ export default class GetPointsModule extends Module {
     if (!clubUser) return false;
 
     for (let i = 1; i <= clubUser.level; i++) {
-      for (let gid in this.conf.levelrewards) {
-        let guild = TudeBot.guilds.get(gid);
-        if (!guild) continue;
-        let roleid = this.conf.levelrewards[gid][i];
-        if (!roleid) continue;
-        member.addRole(guild.roles.find(r => r.id == roleid));
-      }
+      let roleid = this.guildData(guild).levelrewards[i];
+      if (!roleid) continue;
+      member.addRole(guild.roles.find(r => r.id == roleid));
     }
     return true;
   }
@@ -164,7 +156,7 @@ export default class GetPointsModule extends Module {
         description: desc
       }
     });
-    for (let guildId of this.conf.guilds) {
+    for (let guildId of this.guilds.keys()) {
       const guild = TudeBot.guilds.find('id', guildId);
       if (guild) this.assignLevelRoles(null, user, guild);
     }

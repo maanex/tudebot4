@@ -15,8 +15,13 @@ const emojis_1 = require("../int/emojis");
 const Jimp = require("jimp");
 const fetch = require('node-fetch');
 class TellmeCommand extends types_1.Command {
-    constructor(lang) {
-        super('tellme', [], 'Tell me my future', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'tellme',
+            aliases: [],
+            description: 'Tell me my future',
+            groups: ['fun', 'rng'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {

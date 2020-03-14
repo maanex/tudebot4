@@ -8,20 +8,13 @@ const fetch = require('node-fetch');
 
 export default class CocktailCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'cocktail',
-      [ 'cocktails',
-        'drink',
-        'makemeadrink',
-        'schwanzschwanz',
-        'mix' ],
-      'A random cocktail recipe',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'cocktail',
+      aliases: [ 'cocktails', 'drink', 'makemeadrink', 'schwanzschwanz', 'mix' ],
+      description: 'A random cocktail recipe',
+      groups: [ 'fun', 'apiwrapper' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

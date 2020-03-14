@@ -7,18 +7,13 @@ const fetch = require('node-fetch');
 
 export default class RandomImageCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'image',
-      [ 'randomimage',
-        'random',
-        'rndimg' ],
-      'A completely random image',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'image',
+      aliases: [ 'randomimage', 'random', 'rndimg' ],
+      description: 'A completely random image',
+      groups: [ 'fun', 'images' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

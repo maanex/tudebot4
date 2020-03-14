@@ -4,8 +4,13 @@ const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 class RouletteCommand extends types_1.Command {
-    constructor(lang) {
-        super('roulette', ['r'], 'Sweet game of Roulette', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'roulette',
+            aliases: ['r'],
+            description: 'Sweet game of Roulette',
+            groups: ['club', 'casino'],
+        });
         this.images = [
             'https://cdn.discordapp.com/attachments/655354019631333397/655357917431726090/r0.png',
             'https://cdn.discordapp.com/attachments/655354019631333397/655357922662023181/r1.png',

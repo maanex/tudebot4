@@ -2,9 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 class OpenCommand extends types_1.Command {
-    constructor(lang) {
-        super('open', ['o',
-            'unbox'], 'Open a lootbox', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'open',
+            aliases: ['o', 'unbox'],
+            description: 'Open a lootbox',
+            groups: ['club'],
+        });
     }
     execute(channel, user, args, event, repl) {
         repl('This command is not yet available!', 'message', '~~We\'re~~ **I am** working on it');

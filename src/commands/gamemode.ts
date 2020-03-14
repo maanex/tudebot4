@@ -5,16 +5,14 @@ import { Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class GamemodeCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'gamemode',
-      [ '/gamemode' ],
-      'by Mojang',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'gamemode',
+      aliases: [ '/gamemode' ],
+      description: 'by Mojang',
+      hideOnHelp: true,
+      groups: [ 'fun', 'easteregg' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

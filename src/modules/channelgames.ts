@@ -7,10 +7,11 @@ import { Module } from "../types";
 import Emojis from "../int/emojis";
 
 
+// TODO ALL OF THIS HERE SHIT
 export default class QuotesModule extends Module {
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Module Name', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Channel Games', 'private', conf, data, guilds, lang);
   }
 
   public onEnable(): void {

@@ -4,8 +4,8 @@ const index_1 = require("../index");
 const nreq = require("request");
 const types_1 = require("../types");
 class TheBrainModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('The Brain', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('The Brain', 'public', conf, data, guilds, lang);
         this.timeouts = [];
     }
     onEnable() {

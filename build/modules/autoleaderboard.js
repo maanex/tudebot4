@@ -4,8 +4,8 @@ const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 class QuotesModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Module Name', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Auto Leaderboard', 'private', conf, data, guilds, lang);
         this.UPDATE_COOLDOWN = 2 * 60000;
         this.UPDATE_EMOJI = '🔄';
         this.channels = [];
@@ -15,27 +15,25 @@ class QuotesModule extends types_1.Module {
             let mes = reaction.message;
             if (user.bot)
                 return;
-            if (!mes.guild)
+            if (!this.isEnabledInGuild(mes.guild))
                 return;
-            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
                 return;
             if (reaction.emoji.name == this.UPDATE_EMOJI)
                 this.update(mes.channel);
         });
     }
     onBotReady() {
-        for (let path of this.conf.channels) {
-            let guildid = path.split('/')[0];
-            let channelid = path.split('/')[1];
-            if (!guildid || !channelid)
-                return;
+        for (let guildid of this.guilds.keys()) {
             let guild = index_1.TudeBot.guilds.get(guildid);
             if (!guild)
                 return;
-            let channel = guild.channels.get(channelid);
-            if (!channel)
-                return;
-            this.channels.push(channel);
+            for (let channelid of this.guilds.get(guildid).channels) {
+                let channel = guild.channels.get(channelid);
+                if (!channel)
+                    return;
+                this.channels.push(channel);
+            }
         }
         let lastmin = 0;
         this.interval = setInterval(() => {
@@ -45,9 +43,9 @@ class QuotesModule extends types_1.Module {
             lastmin = currmin;
             if (currmin != 0)
                 return;
-            this.channels.forEach(this.update);
+            this.channels.forEach(c => this.update(c));
         }, 30000);
-        this.channels.forEach(this.update);
+        this.channels.forEach(c => this.update(c));
     }
     onDisable() {
         clearInterval(this.interval);

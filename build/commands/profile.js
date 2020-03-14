@@ -4,8 +4,14 @@ const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 class ProfileCommand extends types_1.Command {
-    constructor(lang) {
-        super('profile', ['p'], 'See your profile (or someone elses)', 5, false, false, lang);
+    constructor() {
+        super({
+            name: 'profile',
+            aliases: ['p'],
+            description: 'See your profile (or someone elses)',
+            cooldown: 5,
+            groups: ['club'],
+        });
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {

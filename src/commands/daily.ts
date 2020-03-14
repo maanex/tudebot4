@@ -7,16 +7,13 @@ import Emojis from "../int/emojis";
 
 export default class DailyCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'daily',
-      [ 'd' ],
-      'Get your daily reward',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'daily',
+      aliases: [ 'd' ],
+      description: 'Get your daily reward',
+      groups: [ 'club' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

@@ -7,19 +7,13 @@ const fetch = require('node-fetch');
 
 export default class CatCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'cat',
-      [ 'kitten',
-        'catimage',
-        'catimg',
-        'pussy' ],
-      'A random cat image',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'cat',
+      aliases: [ 'kitten', 'catimage', 'catimg', 'pussy' ],
+      description: 'A random cat image',
+      groups: [ 'fun', 'images', 'apiwrapper' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

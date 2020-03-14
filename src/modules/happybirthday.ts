@@ -10,16 +10,16 @@ export default class HappyBirthdayModule extends Module {
   private lastDay = '';
   
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Happy Birthday', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Happy Birthday', 'private', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
-    this.interval = setInterval(this.check, 1000 * 60 * 60);
-    this.check();
   }
 
   public onBotReady(): void {
+    this.interval = setInterval(() => this.check(), 1000 * 60 * 60);
+    this.check();
   }
 
   public onDisable(): void {
@@ -34,7 +34,7 @@ export default class HappyBirthdayModule extends Module {
     this.lastDay = dstr;
 
     let maxdelay = 1000 * 60 * 60 * 5; // 5h
-    setTimeout((daystr, bot, conf, data) => {
+    setTimeout((daystr, guilds, data) => {
       let users = [];
       for (let user in data) {
         if (data[user] == daystr)
@@ -45,16 +45,14 @@ export default class HappyBirthdayModule extends Module {
       let usrstr = users.map(u => `<@${u}>`).join(' & ');
       msg = msg.split('{}').join(usrstr);
 
-      for (let c of conf.channels) {
-        let gid = c.split('/')[0];
-        let cid = c.split('/')[1];
-        let guild = bot.guilds.find(g => g.id == gid);
+      for (let g of guilds.keys()) {
+        let guild = TudeBot.guilds.get(g);
         if (!guild) continue;
-        let channel = guild.channels.find(c => c.id == cid);
+        let channel = guild.channels.get(guilds.get(g).channel);
         if (!channel || channel.type !== 'text') continue;
         (channel as TextChannel).send(`@everyone ${msg}`);
       }
-    }, Math.floor(Math.random() * maxdelay), dstr, TudeBot, this.conf, this.data);
+    }, Math.floor(Math.random() * maxdelay * 0), dstr, this.guilds, this.data);
   }
 
 }

@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const fetch = require('node-fetch');
 class InspirationCommand extends types_1.Command {
-    constructor(lang) {
-        super('inspiration', ['inspirational',
-            'inspirobot',
-            'randomquote',
-            'thinkaboutit'], 'Random quote from inspirobot.me', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'inspiration',
+            aliases: ['inspirational', 'inspirobot', 'randomquote', 'thinkaboutit'],
+            description: 'Random quote from inspirobot.me',
+            groups: ['fun', 'apiwrapper'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

@@ -2,8 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 class WubbaLubbaDubDubCommand extends types_1.Command {
-    constructor(lang) {
-        super('wubbalubbadubdub', [], 'JEEZ RICK', 0, false, true, lang);
+    constructor() {
+        super({
+            name: 'wubbalubbadubdub',
+            description: 'JEEZ RICK',
+            groups: ['fun', 'club', 'easteregg'],
+            hideOnHelp: true,
+        });
     }
     execute(channel, user, args, event, repl) {
         const role = channel.guild.roles.find(r => r.id == '496377983494258689');

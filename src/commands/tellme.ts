@@ -9,16 +9,13 @@ const fetch = require('node-fetch');
 
 export default class TellmeCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'tellme',
-      [ ],
-      'Tell me my future',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'tellme',
+      aliases: [ ],
+      description: 'Tell me my future',
+      groups: [ 'fun', 'rng' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

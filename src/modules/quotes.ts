@@ -5,15 +5,14 @@ import { Module } from "../types";
 
 export default class QuotesModule extends Module {
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Quotes', 'public', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Quotes', 'public', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
     TudeBot.on('message', mes => {
-      if (mes.author.bot) return;
-      if (!mes.guild) return;
-      if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
+      if (!this.isMessageEventValid(mes)) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
 
       if (!mes.mentions.users.array().length) {
         mes.reply('Bidde `@User [text]` machen. Dange.').then((m: Message) => m.delete(20000));

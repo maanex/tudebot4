@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
 class HappyBirthdayModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Happy Birthday', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Happy Birthday', 'private', conf, data, guilds, lang);
         this.lastDay = '';
     }
     onEnable() {
-        this.interval = setInterval(this.check, 1000 * 60 * 60);
-        this.check();
     }
     onBotReady() {
+        this.interval = setInterval(() => this.check(), 1000 * 60 * 60);
+        this.check();
     }
     onDisable() {
         clearInterval(this.interval);
@@ -24,7 +24,7 @@ class HappyBirthdayModule extends types_1.Module {
             return;
         this.lastDay = dstr;
         let maxdelay = 1000 * 60 * 60 * 5; // 5h
-        setTimeout((daystr, bot, conf, data) => {
+        setTimeout((daystr, guilds, data) => {
             let users = [];
             for (let user in data) {
                 if (data[user] == daystr)
@@ -35,18 +35,16 @@ class HappyBirthdayModule extends types_1.Module {
             let msg = this.lang(users.length > 1 ? 'birthday_message_mult' : 'birthday_message');
             let usrstr = users.map(u => `<@${u}>`).join(' & ');
             msg = msg.split('{}').join(usrstr);
-            for (let c of conf.channels) {
-                let gid = c.split('/')[0];
-                let cid = c.split('/')[1];
-                let guild = bot.guilds.find(g => g.id == gid);
+            for (let g of guilds.keys()) {
+                let guild = index_1.TudeBot.guilds.get(g);
                 if (!guild)
                     continue;
-                let channel = guild.channels.find(c => c.id == cid);
+                let channel = guild.channels.get(guilds.get(g).channel);
                 if (!channel || channel.type !== 'text')
                     continue;
                 channel.send(`@everyone ${msg}`);
             }
-        }, Math.floor(Math.random() * maxdelay), dstr, index_1.TudeBot, this.conf, this.data);
+        }, Math.floor(Math.random() * maxdelay * 0), dstr, this.guilds, this.data);
     }
 }
 exports.default = HappyBirthdayModule;

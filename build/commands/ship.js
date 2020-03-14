@@ -3,8 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class ShipCommand extends types_1.Command {
-    constructor(lang) {
-        super('ship', [], 'Ship two people!', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'ship',
+            description: 'Ship two people!',
+            groups: ['fun', 'rng'],
+        });
     }
     execute(channel, user, args, event, repl) {
         if (args.length < 2) {

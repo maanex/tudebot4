@@ -4,18 +4,16 @@ const index_1 = require("../index");
 const util = require("../util/util");
 const types_1 = require("../types");
 class CountingModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Counting', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Counting', 'public', conf, data, guilds, lang);
         this.lastUser = '';
         this.lastNum = 0;
     }
     onEnable() {
         index_1.TudeBot.on('message', (mes) => {
-            if (mes.author.bot)
+            if (!this.isMessageEventValid(mes))
                 return;
-            if (!mes.guild)
-                return;
-            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
                 return;
             let content = mes.content.split(' ')[0];
             if (this.lastUser != '' && this.lastUser == mes.author.id) {

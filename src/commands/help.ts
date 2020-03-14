@@ -3,7 +3,8 @@ import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
-import CommandsModule from "modules/commands";
+import CommandsModule from "../modules/commands";
+import ParseArgs from "../util/parseArgs";
 
 
 export default class HelpCommand extends Command {
@@ -25,16 +26,14 @@ export default class HelpCommand extends Command {
   ];
 
 
-  constructor(lang: (string) => string) {
-    super(
-      'help',
-      ('.?!/%-+=~&,:'.split('').map(p => p + 'help')),
-      'Help!',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'help',
+      aliases: [...('.?!/%-+=~&,:'.split('').map(p => p + 'help')),'commands','commandlist'],
+      description: 'Help!',
+      groups: ['info'],
+      hideOnHelp: true,
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
@@ -58,58 +57,85 @@ export default class HelpCommand extends Command {
 
       repl('Help', 'message', text);
     } else {
+      const cmdline = ParseArgs.parse(args);
       let cmd = args[0];
-      let command: Command;
-      out: for (let c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
-        if (c.name === cmd) {
-          command = c;
-          break out;
+
+      if (cmdline.groups) {
+        let out = {};
+        for (let c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
+          for (let g of c.groups) {
+            if (out[g]) out[g]++;
+            else out[g] = 1;
+          }
         }
-        for (let a of c.aliases)
-          if (a === cmd) {
+        let mes = [];
+        for (let key in out)
+          mes.push(`**${key}** (${out[key]})`);
+        repl('Command groups:', 'message', mes.join('\n'));
+      } else if (cmd.startsWith('#')) {
+        cmd += args.length >= 2 ? args[1] : '';
+        let cmds = [];
+        for (let c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
+          if (c.groups.includes(cmd.substr(1)))
+            cmds.push(c);
+        }
+        cmds = cmds.map(c => `**${c.name}** *${c.groups.join(', ')}*`);
+        repl(`Commands in group ${cmd}:`, 'message', cmds.join('\n'));
+      } else {
+        let command: Command;
+        out: for (let c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
+          if (c.name === cmd) {
             command = c;
             break out;
           }
-      }
-      if (!command) {
-        switch (cmd.toLowerCase()) {
-          case 'me':
-            channel.send(`I'm here for you ${user} :)`);
-            break;
-
-          default:
-            repl('UH...', 'bad', `Command ${cmd} not found!`);
-        }
-      } else {
-        if (command.name == 'help' && !event.sudo) {
-          repl('Help', 'message', this.helphelp(user));
-        } else {
-          let easteregg = [];
-          if (Math.random() < 0.1) {
-            easteregg.push({
-              name: 'Hotel',
-              value: 'Trivago',
-              inline: true
-            })
-          }
-          channel.send({
-            embed: {
-              title: command.name,
-              description: command.description,
-              fields: [
-                {
-                  name: 'Aliases',
-                  value: command.aliases.length ? (command.aliases.join(', ') + Emojis.BIG_SPACE) : `[${Emojis.BIG_SPACE}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
-                  inline: true
-                },
-                {
-                  name: 'Allowed',
-                  value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
-                  inline: true
-                }, ...easteregg
-              ]
+          for (let a of c.aliases)
+            if (a === cmd) {
+              command = c;
+              break out;
             }
-          });
+        }
+        if (!command) {
+          switch (cmd.toLowerCase()) {
+            case 'me':
+              channel.send(`I'm here for you ${user} :)`);
+              break;
+
+            default:
+              repl('UH...', 'bad', `Command ${cmd} not found!`);
+          }
+        } else {
+          if (command.name == 'help' && !event.sudo) {
+            repl('Help', 'message', this.helphelp(user));
+          } else {
+            let fields = [];
+            if (command.cooldown) {
+              fields.push({ name: 'Cooldown', value: `${command.cooldown}s`, inline: true });
+            }
+            if (command.groups) {
+              fields.push({ name: 'In Groups', value: command.groups.join(', '), inline: true });
+            }
+            if (Math.random() < 0.1) {
+              fields.push({ name: 'Hotel', value: 'Trivago', inline: true });
+            }
+            channel.send({
+              embed: {
+                title: command.name,
+                description: command.description,
+                fields: [
+                  {
+                    name: 'Aliases',
+                    value: command.aliases.length ? (command.aliases.join(', ') + Emojis.BIG_SPACE) : `[${Emojis.BIG_SPACE}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
+                    inline: true
+                  },
+                  {
+                    name: 'Allowed',
+                    value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
+                    inline: true
+                  }, ...fields
+                ]
+              }
+            });
+          }
         }
       }
     }

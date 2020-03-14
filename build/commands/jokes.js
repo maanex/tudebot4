@@ -2,8 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 class JokesCommand extends types_1.Command {
-    constructor(lang) {
-        super('joke', ['jokes'], 'Jokes on you', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'joke',
+            aliases: ['jokes'],
+            description: 'Jokes on you',
+            groups: ['fun', 'rng'],
+        });
     }
     execute(channel, user, args, event, repl) {
         const joke = jokes[Math.floor(Math.random() * jokes.length)];

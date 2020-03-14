@@ -3,17 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
 class ModlogModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Modlog', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Modlog', 'public', conf, data, guilds, lang);
     }
     onEnable() {
-        const conf = this.conf;
         const data = this.data;
+        const guilds = this.guilds;
         index_1.TudeBot.modlog = function (guild, type, text) {
             let id = guild.id;
-            if (!conf.channels[id])
+            if (!guilds.has(id))
                 return;
-            guild.channels.get(conf.channels[id]).send({
+            guild.channels.get(guilds.get(id).channel).send({
                 embed: {
                     color: 0x2f3136,
                     description: `${data[type]} ${text}`

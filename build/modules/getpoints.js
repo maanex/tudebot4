@@ -14,8 +14,8 @@ const cron = require("cron");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 class GetPointsModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Module Name', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Get Points', 'private', conf, data, guilds, lang);
         this.max_regenValue = 20;
         this.max_totalValue = 30;
         this.pointBags = {};
@@ -25,11 +25,7 @@ class GetPointsModule extends types_1.Module {
     }
     onEnable() {
         __1.TudeBot.on('message', mes => {
-            if (mes.author.bot)
-                return;
-            if (!mes.guild)
-                return;
-            if (!this.conf.guilds.includes(mes.guild.id))
+            if (!this.isMessageEventValid(mes))
                 return;
             let messcont = mes.content;
             // // NOTHING WRONG WITH THIS CODE, JUST DISABLED, PERFORMANCE WISE - NOTHING WRONG WITH PERFORMANCE EITHER, MORE LIKE... A BIT OVERKILL AT THIS POINT, HUH?
@@ -64,11 +60,7 @@ class GetPointsModule extends types_1.Module {
             tudeapi_1.default.clubUserByDiscordId(mes.author.id).then(u => this.reward(u, 'MessageEngagement', .5)).catch(ex => { });
         });
         __1.TudeBot.on('messageDelete', mes => {
-            if (mes.author.bot)
-                return;
-            if (!mes.guild)
-                return;
-            if (!this.conf.guilds.includes(mes.guild.id))
+            if (!this.isMessageEventValid(mes))
                 return;
             if (this.reactionsAddedLast5Sec[mes.author.id] > 6)
                 this.punish(mes.author, 'MessageDelete');
@@ -79,7 +71,7 @@ class GetPointsModule extends types_1.Module {
                 return;
             if (!mes.guild)
                 return;
-            if (!this.conf.guilds.includes(mes.guild.id))
+            if (!this.isEnabledInGuild(mes.guild))
                 return;
             let quality = 1;
             if (reaction.count == 1)
@@ -109,7 +101,7 @@ class GetPointsModule extends types_1.Module {
                 return;
             if (!mes.guild)
                 return;
-            if (!this.conf.guilds.includes(mes.guild.id))
+            if (!this.isEnabledInGuild(mes.guild))
                 return;
             tudeapi_1.default.clubUserByDiscordId(user.id).then(u => this.punish(user, 'ReactionRemove')).catch(ex => { });
         });
@@ -119,7 +111,7 @@ class GetPointsModule extends types_1.Module {
         //                      s m h d m dw
         this.cronjobs.push(cron.job('0 * * * * *', this.regenBags));
         this.cronjobs.push(cron.job('0 0 * * * *', this.fillBags));
-        // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf.guilds.map(TudeBot.guilds.get))).start()); TODO error here
+        // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf-nonononoooo.guilds.map(TudeBot.guilds.get)))); TODO error here
         this.cronjobs.forEach(j => j.start());
     }
     assignLevelRoles(member, clubUser, guild, userId) {
@@ -139,15 +131,10 @@ class GetPointsModule extends types_1.Module {
             if (!clubUser)
                 return false;
             for (let i = 1; i <= clubUser.level; i++) {
-                for (let gid in this.conf.levelrewards) {
-                    let guild = __1.TudeBot.guilds.get(gid);
-                    if (!guild)
-                        continue;
-                    let roleid = this.conf.levelrewards[gid][i];
-                    if (!roleid)
-                        continue;
-                    member.addRole(guild.roles.find(r => r.id == roleid));
-                }
+                let roleid = this.guildData(guild).levelrewards[i];
+                if (!roleid)
+                    continue;
+                member.addRole(guild.roles.find(r => r.id == roleid));
             }
             return true;
         });
@@ -182,7 +169,7 @@ class GetPointsModule extends types_1.Module {
                 description: desc
             }
         });
-        for (let guildId of this.conf.guilds) {
+        for (let guildId of this.guilds.keys()) {
             const guild = __1.TudeBot.guilds.find('id', guildId);
             if (guild)
                 this.assignLevelRoles(null, user, guild);

@@ -254,6 +254,8 @@ class TudeApi {
         });
     }
     static parseClubUserDailyData(rawDaily) {
+        if (!rawDaily)
+            return { last: new Date(0), claimable: true, streak: 0 };
         let daynum = rawDaily.last;
         let date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111);
         let delta = new Date().getTime() - date.getTime();

@@ -9,8 +9,8 @@ export default class TheBrainModule extends Module {
   private timeouts = [];
   
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('The Brain', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('The Brain', 'public', conf, data, guilds, lang);
   }
 
   public onEnable(): void {

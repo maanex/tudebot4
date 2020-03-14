@@ -4,12 +4,13 @@ const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
 const fetch = require('node-fetch');
 class CocktailCommand extends types_1.Command {
-    constructor(lang) {
-        super('cocktail', ['cocktails',
-            'drink',
-            'makemeadrink',
-            'schwanzschwanz',
-            'mix'], 'A random cocktail recipe', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'cocktail',
+            aliases: ['cocktails', 'drink', 'makemeadrink', 'schwanzschwanz', 'mix'],
+            description: 'A random cocktail recipe',
+            groups: ['fun', 'apiwrapper'],
+        });
     }
     execute(channel, user, args, event, repl) {
         const cmdl = parseArgs_1.default.parse(args);

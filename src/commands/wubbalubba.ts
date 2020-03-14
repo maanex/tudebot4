@@ -5,16 +5,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class WubbaLubbaDubDubCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'wubbalubbadubdub',
-      [ ],
-      'JEEZ RICK',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'wubbalubbadubdub',
+      description: 'JEEZ RICK',
+      groups: [ 'fun', 'club', 'easteregg' ],
+      hideOnHelp: true,
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

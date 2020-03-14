@@ -7,19 +7,13 @@ const fetch = require('node-fetch');
 
 export default class InspirationCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'inspiration',
-      [ 'inspirational',
-        'inspirobot',
-        'randomquote',
-        'thinkaboutit' ],
-      'Random quote from inspirobot.me',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'inspiration',
+      aliases: [ 'inspirational', 'inspirobot', 'randomquote', 'thinkaboutit' ],
+      description: 'Random quote from inspirobot.me',
+      groups: [ 'fun', 'apiwrapper' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

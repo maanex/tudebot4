@@ -4,11 +4,14 @@ const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
 const fetch = require('node-fetch');
 class MealCommand extends types_1.Command {
-    constructor(lang) {
-        super('meal', ['food',
-            'whatshallieat',
-            'makemefood',
-            'eat'], 'A random meal and how to make it', 2, false, false, lang);
+    constructor() {
+        super({
+            name: 'meal',
+            aliases: ['food', 'whatshallieat', 'makemefood', 'eat'],
+            description: 'A random meal and how to make it',
+            cooldown: 2,
+            groups: ['fun', 'apiwrapper'],
+        });
     }
     execute(channel, user, args, event, repl) {
         let cmdl = parseArgs_1.default.parse(args);

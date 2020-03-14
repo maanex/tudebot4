@@ -6,15 +6,14 @@ const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
 const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
 class GiveCommand extends types_1.Command {
-    constructor(lang) {
-        super('give', ['g',
-            'send',
-            'trade',
-            'transaction',
-            'transcribe',
-            'transfer',
-            'yowtfjustgivethisdudewhatheneedsboi',
-            'wtfevenisthisbullshietherelikeforfookssakewhyaretheresoweirdcommandaliaseslikethisonewhyyyyy'], 'Transfer items or cookies to other players', 5, false, false, lang);
+    constructor() {
+        super({
+            name: 'give',
+            aliases: ['g', 'send', 'trade', 'transaction', 'transcribe', 'transfer', 'yowtfjustgivethisdudewhatheneedsboi', 'wtfevenisthisbullshietherelikeforfookssakewhyaretheresoweirdcommandaliaseslikethisonewhyyyyy'],
+            description: 'Transfer items or cookies to other players',
+            cooldown: 5,
+            groups: ['club'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

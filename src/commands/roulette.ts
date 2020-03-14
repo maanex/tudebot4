@@ -70,16 +70,13 @@ export default class RouletteCommand extends Command {
   private currentGameTimer = null;
 
 
-  constructor(lang: (string) => string) {
-    super(
-      'roulette',
-      [ 'r' ],
-      'Sweet game of Roulette',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'roulette',
+      aliases: [ 'r' ],
+      description: 'Sweet game of Roulette',
+      groups: [ 'club', 'casino' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

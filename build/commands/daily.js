@@ -4,8 +4,13 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class DailyCommand extends types_1.Command {
-    constructor(lang) {
-        super('daily', ['d'], 'Get your daily reward', 0, false, false, lang);
+    constructor() {
+        super({
+            name: 'daily',
+            aliases: ['d'],
+            description: 'Get your daily reward',
+            groups: ['club'],
+        });
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {

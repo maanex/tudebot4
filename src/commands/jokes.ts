@@ -5,16 +5,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class JokesCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'joke',
-      [ 'jokes' ],
-      'Jokes on you',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'joke',
+      aliases: [ 'jokes' ],
+      description: 'Jokes on you',
+      groups: [ 'fun', 'rng' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

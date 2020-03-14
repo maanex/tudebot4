@@ -4,8 +4,14 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class SlotmachineCommand extends types_1.Command {
-    constructor(lang) {
-        super('slotmachine', ['sm'], 'Sweet game of Slotmachine', 7, false, false, lang);
+    constructor() {
+        super({
+            name: 'slotmachine',
+            aliases: ['sm'],
+            description: 'Sweet game of Slotmachine',
+            cooldown: 7,
+            groups: ['club', 'casino'],
+        });
         this.sm1emoji = {
             loading: ['<a:sm1c1:660603142710231060>', '<a:sm1c2:660603131553644554>', '<a:sm1c3:660603123831668787>', '<a:sm1c4:660603113601761299>', '<a:sm1c5:660603103703334912>', '<a:sm1c6:660601810632835114>'],
             static: ['<:gold_cookie:660877789192519681>', ':gem:', '<:donut_cookie:660877788412248084> ', '<:square_cookie:660877788118515723> ', '<:star_cookie:660877788378824704>', ':cookie:']
@@ -259,7 +265,7 @@ class SlotmachineCommand extends types_1.Command {
                         prize = 1000;
                     }
                 }
-                let sendNudesEasteregg = Math.random() < 0.0001; // 0.01%;
+                let sendNudesEasteregg = Math.random() < 0.005; // 0.5%;
                 if (sendNudesEasteregg) {
                     text = text.replace('Ｎｉｃｅｒ　Ｄｉｃｅｒ', 'ｓｅｎｄ');
                     text = text.replace('%s', ':regional_indicator_n:')

@@ -5,16 +5,12 @@ import Emojis from "../int/emojis";
 
 export default class ShipCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'ship',
-      [ ],
-      'Ship two people!',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'ship',
+      description: 'Ship two people!',
+      groups: [ 'fun', 'rng' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

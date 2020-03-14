@@ -4,8 +4,13 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
 class UInfoCommand extends types_1.Command {
-    constructor(lang) {
-        super('uinfo', [], 'Userinfo', 0, false, true, lang);
+    constructor() {
+        super({
+            name: 'uinfo',
+            description: 'Userinfo',
+            groups: ['club', 'internal'],
+            hideOnHelp: true,
+        });
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {

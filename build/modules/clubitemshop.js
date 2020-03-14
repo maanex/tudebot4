@@ -14,29 +14,34 @@ const database_1 = require("../database/database");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
 class ClubItemShopModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Tude Club Item Shop', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Tude Club Item Shop', 'private', conf, data, guilds, lang);
         this.channels = [];
     }
     onEnable() {
     }
     onBotReady() {
-        for (let path of this.conf.channels) {
-            let guildid = path.split('/')[0];
-            let channelid = path.split('/')[1];
-            if (!guildid || !channelid)
-                return;
+        for (let guildid of this.guilds.keys()) {
             let guild = index_1.TudeBot.guilds.get(guildid);
             if (!guild)
                 return;
-            let channel = guild.channels.get(channelid);
-            if (!channel)
-                return;
-            this.channels.push(channel);
+            for (let channelid of this.guilds.get(guildid).channels) {
+                let channel = guild.channels.get(channelid);
+                if (!channel)
+                    return;
+                this.channels.push(channel);
+            }
         }
         this.getShopdata().then(d => {
             this.channels.forEach(c => this.update(c, d));
         }).catch(err => console.error);
+        index_1.TudeBot.on('message', mes => {
+            if (!this.isMessageEventValid(mes))
+                return;
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
+                return;
+            // TODO
+        });
     }
     onDisable() {
     }

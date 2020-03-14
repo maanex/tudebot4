@@ -16,8 +16,13 @@ const types_1 = require("../types");
 const parseArgs_1 = require("../util/parseArgs");
 const database_1 = require("../database/database");
 class AdminCommand extends types_1.Command {
-    constructor(lang) {
-        super('admin', [], 'Admin', 0, true, false, lang);
+    constructor() {
+        super({
+            name: 'admin',
+            description: 'Admin',
+            groups: ['internal'],
+            sudoOnly: true,
+        });
     }
     execute(orgChannel, user, args, event, repl) {
         if (user.id !== '137258778092503042')

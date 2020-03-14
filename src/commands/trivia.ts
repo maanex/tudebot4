@@ -9,18 +9,14 @@ const fetch = require('node-fetch');
 
 export default class TriviaCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'trivia',
-      [ 'quiz',
-        'quizz',
-        'question' ],
-      'Trivia time!',
-      10,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'trivia',
+      aliases: [ 'quiz', 'quizz', 'question' ],
+      description: 'Trivia time!',
+      cooldown: 10,
+      groups: [ 'fun', 'apiwrapper' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {

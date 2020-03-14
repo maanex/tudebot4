@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
 class SelfrolesModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Selfroles', 'public', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Selfroles', 'public', conf, data, guilds, lang);
     }
     onEnable() {
         index_1.TudeBot.on('messageReactionAdd', (reaction, user) => {
@@ -12,12 +12,14 @@ class SelfrolesModule extends types_1.Module {
                 return;
             if (!reaction.message.guild)
                 return;
-            if (!this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`])
+            if (!this.isEnabledInGuild(reaction.message.guild))
+                return;
+            if (!this.guildData(reaction.message.guild).channels.includes(reaction.message.channel.id))
                 return;
             let role = this.findRole(reaction);
             if (!role)
                 return;
-            let extraRoles = this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`].extraRoles || [];
+            let extraRoles = this.guildData(reaction.message.guild).extraRoles || [];
             let member = reaction.message.guild.member(user);
             if (member.roles.find(r => r.id == role.id)) {
                 member.removeRole(role);
@@ -36,7 +38,9 @@ class SelfrolesModule extends types_1.Module {
                 return;
             if (!reaction.message.guild)
                 return;
-            if (!this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`])
+            if (!this.isEnabledInGuild(reaction.message.guild))
+                return;
+            if (!this.guildData(reaction.message.guild).channels.includes(reaction.message.channel.id))
                 return;
             let role = this.findRole(reaction);
             if (!role)
@@ -51,10 +55,10 @@ class SelfrolesModule extends types_1.Module {
     onDisable() {
     }
     findRole(reaction) {
-        let serverdat = this.data[reaction.message.guild.id];
+        let serverdat = this.guildData(reaction.message.guild);
         if (!serverdat)
             return null;
-        let role = serverdat[reaction.emoji.name];
+        let role = serverdat.roles[reaction.emoji.name];
         if (!role)
             return null;
         return reaction.message.guild.roles.get(role);

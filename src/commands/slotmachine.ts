@@ -80,16 +80,14 @@ export default class SlotmachineCommand extends Command {
   ];
 
 
-  constructor(lang: (string) => string) {
-    super(
-      'slotmachine',
-      [ 'sm' ],
-      'Sweet game of Slotmachine',
-      7,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'slotmachine',
+      aliases: [ 'sm' ],
+      description: 'Sweet game of Slotmachine',
+      cooldown: 7,
+      groups: [ 'club', 'casino' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
@@ -296,7 +294,7 @@ export default class SlotmachineCommand extends Command {
           }
         }
   
-        let sendNudesEasteregg = Math.random() < 0.0001; // 0.01%;
+        let sendNudesEasteregg = Math.random() < 0.005; // 0.5%;
         if (sendNudesEasteregg) {
           text = text.replace('Ｎｉｃｅｒ　Ｄｉｃｅｒ', 'ｓｅｎｄ');
           text = text.replace('%s', ':regional_indicator_n:')

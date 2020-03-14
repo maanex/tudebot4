@@ -3,16 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
 class QuotesModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Quotes', 'public', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Quotes', 'public', conf, data, guilds, lang);
     }
     onEnable() {
         index_1.TudeBot.on('message', mes => {
-            if (mes.author.bot)
+            if (!this.isMessageEventValid(mes))
                 return;
-            if (!mes.guild)
-                return;
-            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
                 return;
             if (!mes.mentions.users.array().length) {
                 mes.reply('Bidde `@User [text]` machen. Dange.').then((m) => m.delete(20000));

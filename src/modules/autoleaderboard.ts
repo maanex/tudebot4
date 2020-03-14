@@ -14,16 +14,16 @@ export default class QuotesModule extends Module {
   private channels: TextChannel[] = [];
   
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Module Name', 'private', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Auto Leaderboard', 'private', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       let mes = reaction.message;
       if (user.bot) return;
-      if (!mes.guild) return;
-      if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`)) return;
+      if (!this.isEnabledInGuild(mes.guild)) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
 
       if (reaction.emoji.name == this.UPDATE_EMOJI)
         this.update(mes.channel as TextChannel);
@@ -31,15 +31,14 @@ export default class QuotesModule extends Module {
   }
 
   public onBotReady(): void {
-    for (let path of this.conf.channels) {
-      let guildid = path.split('/')[0];
-      let channelid = path.split('/')[1];
-      if (!guildid || !channelid) return;
+    for (let guildid of this.guilds.keys()) {
       let guild = TudeBot.guilds.get(guildid);
       if (!guild) return;
-      let channel = guild.channels.get(channelid);
-      if (!channel) return;
-      this.channels.push(channel as TextChannel);
+      for (let channelid of this.guilds.get(guildid).channels) {
+        let channel = guild.channels.get(channelid);
+        if (!channel) return;
+        this.channels.push(channel as TextChannel);
+      }
     }
 
     let lastmin = 0;
@@ -48,9 +47,9 @@ export default class QuotesModule extends Module {
       if (currmin == lastmin) return;
       lastmin = currmin;
       if (currmin != 0) return;
-      this.channels.forEach(this.update);
+      this.channels.forEach(c => this.update(c));
     }, 30_000);
-    this.channels.forEach(this.update);
+    this.channels.forEach(c => this.update(c));
   }
 
   public onDisable(): void {

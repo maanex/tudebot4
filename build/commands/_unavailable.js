@@ -2,8 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 class UnavailableCommand extends types_1.Command {
-    constructor(lang) {
-        super('_unavailable', [], 'Default command for when a command is unavailable.', 0, false, true, lang);
+    constructor() {
+        super({
+            name: '_unavailable',
+            description: 'Default command for when a command is unavailable.',
+            hideOnHelp: true,
+        });
     }
     execute(channel, user, args, event, repl) {
         repl('This command has been disabled.', 'bad');

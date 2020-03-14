@@ -4,16 +4,12 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class UnavailableCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      '_unavailable',
-      [ ],
-      'Default command for when a command is unavailable.',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: '_unavailable',
+      description: 'Default command for when a command is unavailable.',
+      hideOnHelp: true,
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

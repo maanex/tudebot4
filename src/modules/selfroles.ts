@@ -5,20 +5,21 @@ import { Module } from "../types";
 
 export default class SelfrolesModule extends Module {
 
-  constructor(conf: any, data: any, lang: (string) => string) {
-    super('Selfroles', 'public', conf, data, lang);
+  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
+    super('Selfroles', 'public', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       if (user.bot) return;
       if (!reaction.message.guild) return;
-      if (!this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`]) return;
+      if (!this.isEnabledInGuild(reaction.message.guild)) return;
+      if (!this.guildData(reaction.message.guild).channels.includes(reaction.message.channel.id)) return;
   
       let role = this.findRole(reaction);
       if (!role) return;
   
-      let extraRoles = this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`].extraRoles || [];
+      let extraRoles = this.guildData(reaction.message.guild).extraRoles || [];
   
       let member = reaction.message.guild.member(user);
       if (member.roles.find(r => r.id == role.id)) {
@@ -36,7 +37,8 @@ export default class SelfrolesModule extends Module {
     TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
       if (user.bot) return;
       if (!reaction.message.guild) return;
-      if (!this.conf.channels[`${reaction.message.guild.id}/${reaction.message.channel.id}`]) return;
+      if (!this.isEnabledInGuild(reaction.message.guild)) return;
+      if (!this.guildData(reaction.message.guild).channels.includes(reaction.message.channel.id)) return;
   
       let role = this.findRole(reaction);
       if (!role) return;
@@ -54,9 +56,9 @@ export default class SelfrolesModule extends Module {
   }
 
   private findRole(reaction: MessageReaction): Role {
-    let serverdat = this.data[reaction.message.guild.id];
+    let serverdat = this.guildData(reaction.message.guild);
     if (!serverdat) return null;
-    let role = serverdat[reaction.emoji.name];
+    let role = serverdat.roles[reaction.emoji.name];
     if (!role) return null;
     return reaction.message.guild.roles.get(role);
   }

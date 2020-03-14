@@ -14,8 +14,14 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
 class BlackJackCommand extends types_1.Command {
-    constructor(lang) {
-        super('blackjack', ['bj'], 'A sweet game of Black Jack', 5, false, false, lang);
+    constructor() {
+        super({
+            name: 'blackjack',
+            aliases: ['bj'],
+            description: 'A sweet game of Black Jack',
+            cooldown: 5,
+            groups: ['club', 'casino'],
+        });
         this.hit = '✅';
         this.stand = '⏸️';
         this.hearts = '<:hearts:661657523878625295>';

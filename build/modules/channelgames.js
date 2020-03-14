@@ -13,9 +13,10 @@ const __1 = require("..");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
+// TODO ALL OF THIS HERE SHIT
 class QuotesModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Module Name', 'private', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Channel Games', 'private', conf, data, guilds, lang);
     }
     onEnable() {
         __1.TudeBot.on('messageReactionAdd', (reaction, user) => {

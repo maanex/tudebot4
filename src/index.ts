@@ -1,4 +1,4 @@
-import { Module, modlogFunction } from './types';
+import { Module, modlogFunction, GuildSettings } from './types';
 import { Client, User } from "discord.js";
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
@@ -18,6 +18,7 @@ export class TudeBotClient extends Client {
 
   public modlog: modlogFunction;
   public modules: Map<string, Module> = null;
+  public guildSettings: Map<string, GuildSettings> = null;
 
   constructor(props: any, flags: {[key: string]: string | boolean}) {
     super(props);
@@ -26,6 +27,7 @@ export class TudeBotClient extends Client {
     
     this.modlog = null;
     this.modules = new Map();
+    this.guildSettings = new Map();
 
     if (this.devMode) {
       console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
@@ -59,9 +61,40 @@ export class TudeBotClient extends Client {
           }
         });
     
+        await this.loadGuilds(false);
         await this.loadModules(false);
         this.login(settings.bot.token);
       });
+  }
+
+  loadGuilds(isReload: boolean): Promise<void> {
+    return new Promise((resolve, reject) => {
+      Database
+        .collection('settings')
+        .find({ guild: true })
+        .toArray()
+        .then(guilds => {
+          this.guildSettings = new Map();
+
+          for (const guild of guilds) {
+            const setting: GuildSettings = {
+              id: guild._id,
+              name: guild.name,
+              club: guild.club,
+              managers: guild.managers,
+              modules: guild.modules
+            };
+            this.guildSettings.set(guild._id, setting);
+          }
+          
+          resolve();
+        })
+        .catch(err => {
+          console.error('An error occured while fetching guild configuration data');
+          console.error(err);
+          reject(err);
+        })
+    });
   }
 
   loadModules(isReload: boolean): Promise<void> {
@@ -83,11 +116,19 @@ export class TudeBotClient extends Client {
 
           for (let mod in data) {
             let modData = {};
+
             try { modData = require(`../config/moduledata/${mod}.json`); }
             catch (ex) { }
+
+            let guilds = new Map<string, any>();
+            for (const guild of this.guildSettings.values()) {
+              if (guild.modules[mod])
+                guilds.set(guild.id, guild.modules[mod]);
+            }
+
             try {
               const ModClass = require(`./modules/${mod}`).default;
-              let module: Module = new ModClass(data[mod], modData, this.lang);
+              let module: Module = new ModClass(data[mod], modData, guilds, this.lang);
               this.modules.set(mod, module);
               module.onEnable();
               if (isReload) module.onBotReady();
@@ -117,6 +158,7 @@ export class TudeBotClient extends Client {
     return new Promise(async (resolve, reject) => {
       this.removeAllListeners();
       fixReactionEvent(this);
+      await this.loadGuilds(true);
       await this.loadModules(true);
       this.emit('ready');
       resolve();

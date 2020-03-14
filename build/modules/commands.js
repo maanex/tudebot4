@@ -8,8 +8,8 @@ const chalk = require("chalk");
 const types_1 = require("../types");
 const _unavailable_1 = require("../commands/_unavailable");
 class CommandsModule extends types_1.Module {
-    constructor(conf, data, lang) {
-        super('Commands', 'public', conf, data, lang);
+    constructor(conf, data, guilds, lang) {
+        super('Commands', 'public', conf, data, guilds, lang);
         this.ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60000;
         this.activeInCommandsChannel = [];
         this.activeInCommandsChannelRemoveTimer = {};
@@ -20,16 +20,43 @@ class CommandsModule extends types_1.Module {
     onEnable() {
         this.loadCommands();
         index_1.TudeBot.on('message', (mes) => {
-            if (mes.author.bot)
-                return;
-            if (!mes.guild)
+            if (!this.isMessageEventValid(mes))
                 return;
             if (mes.guild.id == "432899162150010901")
                 dbstats_1.DbStats.getUser(mes.author).then(u => u.messagesSent++); // TODO MAKE BETTER
-            if (!this.conf.channels.includes(`${mes.guild.id}/${mes.channel.id}`))
-                return;
-            this.updateActiveInCommandsChannel(mes.author.id);
-            const txt = mes.content;
+            const guildInfo = index_1.TudeBot.guildSettings.get(mes.guild.id);
+            const guildSettings = this.guilds.get(mes.guild.id);
+            let execute = false;
+            let prefix = '';
+            let whitelist, blacklist;
+            if (guildSettings.global) {
+                if (guildSettings.global.enabled)
+                    execute = true;
+                if (guildSettings.global.prefix)
+                    prefix = guildSettings.global.prefix;
+                if (guildSettings.global.whitelist)
+                    whitelist = guildSettings.global.whitelist;
+                if (guildSettings.global.blacklist)
+                    blacklist = guildSettings.global.blacklist;
+            }
+            if (guildSettings.channels && guildSettings.channels[mes.channel.id]) {
+                const conf = guildSettings.channels[mes.channel.id];
+                execute = conf.enabled;
+                if (conf.prefix !== undefined)
+                    prefix = conf.prefix;
+                if (conf.whitelist !== undefined)
+                    whitelist = conf.whitelist || [];
+                if (conf.blacklist !== undefined)
+                    blacklist = conf.blacklist || [];
+            }
+            if (guildInfo.club)
+                this.updateActiveInCommandsChannel(mes.author.id);
+            let txt = mes.content;
+            if (prefix) {
+                if (!txt.startsWith(prefix))
+                    return;
+                txt = txt.substr(prefix.length);
+            }
             const args = txt.split(' ');
             let cmd = args.splice(0, 1)[0].toLowerCase();
             let sudo = false;
@@ -48,41 +75,74 @@ class CommandsModule extends types_1.Module {
                     }
                 }
             }
+            if (!sudo && !execute)
+                return;
             const command = this.identifierMap.get(cmd);
-            if (command) {
-                if (command.sudoOnly && !sudo) {
-                    this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
-                    return;
-                }
-                if (this.cooldown.get(command.name).includes(mes.author.id)) {
-                    this.cmes(mes.channel, mes.author, 'Please wait a bit!', 'bad', `This command has a ${command.cooldown}s cooldown!`);
-                    return;
-                }
-                function update(success) {
-                    dbstats_1.DbStats.getCommand(command.name).then(c => {
-                        c.calls.updateToday(1);
-                        if (success)
-                            c.executions.updateToday(1);
-                    });
-                }
-                const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
-                const event = { message: mes, sudo: sudo, label: cmd };
-                const res = command.execute(mes.channel, mes.author, args, event, cmes);
-                if (res === undefined || res === null) {
-                    update(false);
-                }
-                else if (res['then']) {
-                    res.then(update).catch(() => { });
-                }
-                else {
-                    update(res);
-                }
-                this.cooldown.get(command.name).push(mes.author.id);
-                setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
+            if (!command) {
+                if (sudo)
+                    this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
+                return;
             }
-            else if (sudo) {
-                this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
+            if (whitelist) {
+                execute = false;
+                for (let check of whitelist) {
+                    if (check.startsWith('#')) {
+                        if (check == '#all')
+                            execute = true;
+                        else if (command.groups.includes(check.substr(1)))
+                            execute = true;
+                    }
+                    else {
+                        if (command.name == check)
+                            execute = true;
+                    }
+                }
             }
+            if (blacklist && execute) {
+                for (let check of blacklist) {
+                    if (check.startsWith('#')) {
+                        if (check == '#all')
+                            execute = false;
+                        else if (command.groups.includes(check.substr(1)))
+                            execute = false;
+                    }
+                    else {
+                        if (command.name == check)
+                            execute = false;
+                    }
+                }
+            }
+            if (!execute && !sudo)
+                return;
+            if (command.sudoOnly && !sudo) {
+                this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
+                return;
+            }
+            if (this.cooldown.get(command.name).includes(mes.author.id)) {
+                this.cmes(mes.channel, mes.author, 'Please wait a bit!', 'bad', `This command has a ${command.cooldown}s cooldown!`);
+                return;
+            }
+            function update(success) {
+                dbstats_1.DbStats.getCommand(command.name).then(c => {
+                    c.calls.updateToday(1);
+                    if (success)
+                        c.executions.updateToday(1);
+                });
+            }
+            const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
+            const event = { message: mes, sudo: sudo, label: cmd };
+            const res = command.execute(mes.channel, mes.author, args, event, cmes);
+            if (res === undefined || res === null) {
+                update(false);
+            }
+            else if (res['then']) {
+                res.then(update).catch(() => { });
+            }
+            else {
+                update(res);
+            }
+            this.cooldown.get(command.name).push(mes.author.id);
+            setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
         });
     }
     onBotReady() {
@@ -92,7 +152,7 @@ class CommandsModule extends types_1.Module {
     loadCommands() {
         this.commands = [];
         this.identifierMap = new Map();
-        const unavailableCommand = new _unavailable_1.default(this.lang);
+        const unavailableCommand = new _unavailable_1.default();
         this.commands.push(unavailableCommand);
         this.cooldown.set(unavailableCommand.name, []);
         database_1.default
@@ -103,7 +163,9 @@ class CommandsModule extends types_1.Module {
             for (const commandName in obj.data) {
                 try {
                     const CmdClass = require(`../commands/${commandName}`).default;
-                    let cmd = new CmdClass(this.lang);
+                    let cmd = new CmdClass();
+                    cmd.lang = this.lang;
+                    cmd.resetCooldown = (user) => this.cooldown.get(cmd.name).splice(this.cooldown.get(cmd.name).indexOf(user.id), 1);
                     if (obj.data[commandName]) {
                         cmd.init();
                         this.commands.push(cmd);
@@ -117,7 +179,7 @@ class CommandsModule extends types_1.Module {
                     }
                 }
                 catch (err) {
-                    console.error(`Class for command "${commandName}" not found!`);
+                    console.error(chalk.bold.red(`Class for command "${commandName}" not found!`));
                 }
             }
         })

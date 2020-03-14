@@ -6,16 +6,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class ReloadCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'reload',
-      [ ],
-      'Reload',
-      0,
-      true,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'reload',
+      description: 'Reload',
+      sudoOnly: true,
+      groups: [ 'internal' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

@@ -5,17 +5,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class OpenCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'open',
-      [ 'o',
-        'unbox' ],
-      'Open a lootbox',
-      0,
-      false,
-      false,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'open',
+      aliases: [ 'o', 'unbox' ],
+      description: 'Open a lootbox',
+      groups: [ 'club' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {

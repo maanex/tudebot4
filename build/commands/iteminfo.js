@@ -4,8 +4,13 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
 class ItemInfoCommand extends types_1.Command {
-    constructor(lang) {
-        super('iteminfo', [], 'Iteminfo', 0, false, true, lang);
+    constructor() {
+        super({
+            name: 'iteminfo',
+            description: 'Iteminfo',
+            hideOnHelp: true,
+            groups: ['club', 'info'],
+        });
     }
     execute(channel, user, args, event, repl) {
         if (!args[0]) {

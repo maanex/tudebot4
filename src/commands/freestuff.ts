@@ -5,16 +5,13 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 
 export default class FreestuffCommand extends Command {
 
-  constructor(lang: (string) => string) {
-    super(
-      'freestuff',
-      [ ],
-      'Free stuff announcement tool',
-      0,
-      false,
-      true,
-      lang
-    );
+  constructor() {
+    super({
+      name: 'freestuff',
+      description: 'Free stuff announcement tool',
+      hideOnHelp: true,
+      groups: [ 'internal' ],
+    });
   }
 
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
