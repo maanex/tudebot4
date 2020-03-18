@@ -119,7 +119,7 @@ class GetPointsModule extends types_1.Module {
             if (!member && !guild)
                 return false;
             if (!member)
-                member = guild.members.find('id', userId);
+                member = guild.members.find(find => find.id == userId);
             if (!guild)
                 guild = member.guild;
             if (!clubUser)
@@ -170,9 +170,9 @@ class GetPointsModule extends types_1.Module {
             }
         });
         for (let guildId of this.guilds.keys()) {
-            const guild = __1.TudeBot.guilds.find('id', guildId);
+            const guild = __1.TudeBot.guilds.find(find => find.id == guildId);
             if (guild)
-                this.assignLevelRoles(null, user, guild);
+                this.assignLevelRoles(null, user, guild, duser.id);
         }
     }
     regenBags() {

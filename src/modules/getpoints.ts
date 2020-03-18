@@ -115,7 +115,7 @@ export default class GetPointsModule extends Module {
   public async assignLevelRoles(member?: GuildMember, clubUser?: ClubUser, guild?: Guild, userId?: string): Promise<boolean> {
     if (!member && !guild) return false;
 
-    if (!member) member = guild.members.find('id', userId);
+    if (!member) member = guild.members.find(find => find.id == userId);
     if (!guild) guild = member.guild;
     if (!clubUser) clubUser = await TudeApi.clubUserByDiscordId(userId || member.id, member.user);
 
@@ -157,8 +157,8 @@ export default class GetPointsModule extends Module {
       }
     });
     for (let guildId of this.guilds.keys()) {
-      const guild = TudeBot.guilds.find('id', guildId);
-      if (guild) this.assignLevelRoles(null, user, guild);
+      const guild = TudeBot.guilds.find(find => find.id == guildId);
+      if (guild) this.assignLevelRoles(null, user, guild, duser.id);
     }
   }
 
