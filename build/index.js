@@ -31,6 +31,7 @@ class TudeBotClient extends discord_js_1.Client {
         if (this.devMode) {
             console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
         }
+        gitParser_1.logVersionDetails();
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init(false /* this.devMode */);
@@ -42,7 +43,6 @@ class TudeBotClient extends discord_js_1.Client {
             .then(() => __awaiter(this, void 0, void 0, function* () {
             console.log('Connected to Mongo');
             wcp_1.default.send({ status_mongodb: '+Connected' });
-            gitParser_1.logVersionDetails();
             yield tudeapi_1.default.init(settings.lang);
             yield database_1.default.init();
             this.on('ready', () => {

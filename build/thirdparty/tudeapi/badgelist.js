@@ -28,5 +28,8 @@ exports.badgeEmojiList = {
         "<:badge_events_7:664078624638369812>",
         "<:badge_events_8:664078624550551565>"
     ],
+    "4": [
+        "<:badge_linjo_beta:693769581986316390>",
+    ]
 };
 //# sourceMappingURL=badgelist.js.map

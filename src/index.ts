@@ -33,6 +33,8 @@ export class TudeBotClient extends Client {
       console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
     }
 
+    logVersionDetails();
+
     fixReactionEvent(this);
 
     Util.init();
@@ -46,8 +48,6 @@ export class TudeBotClient extends Client {
       .then(async () => {
         console.log('Connected to Mongo');
         WCP.send({ status_mongodb: '+Connected' });
-
-        logVersionDetails();
 
         await TudeApi.init(settings.lang);
         await Database.init();
