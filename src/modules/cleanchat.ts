@@ -14,7 +14,7 @@ export default class AutoSupportModule extends Module {
   public onEnable(): void {
     TudeBot.on('message', (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return;
-      // if (mes.member.highestRole.comparePositionTo(mes.guild.me.highestRole) > 0) return; // TODO REENABLE, DISABLED FOR EASIER TESTING
+      if (mes.member.highestRole.comparePositionTo(mes.guild.me.highestRole) > 0) return; // TODO REENABLE, DISABLED FOR EASIER TESTING
 
       if (this.checkInviteLinks(mes)) return;
     });
