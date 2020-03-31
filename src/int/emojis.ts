@@ -35,4 +35,15 @@ export default class Emojis {
       right_full: '<:xpbarrightfull:654353598204870656>'
   }
 
+  public static readonly MODLOG = {
+     user_join: '<:user_join:536593880271814656>',
+     user_quit: '<:user_quit:536593879940595732>',
+       message: '<:message:536593879865098251>',
+    clean_chat: '<:cleanchat:536595613412753419>',
+       diverse: '<:diverse:536598631394967562>',
+        punish: '<:punish:536848046852538368>',
+       warning: '<:warning:536888614903349258>',
+        reload: '<:reload:536892027300741121'
+  }
+
 }

@@ -16,6 +16,7 @@ export class TudeBotClient extends Client {
 
   public readonly devMode;
 
+  public config = settings;
   public modlog: modlogFunction;
   public modules: Map<string, Module> = null;
   public guildSettings: Map<string, GuildSettings> = null;
@@ -130,11 +131,14 @@ export class TudeBotClient extends Client {
               const ModClass = require(`./modules/${mod}`).default;
               let module: Module = new ModClass(data[mod], modData, guilds, this.lang);
               this.modules.set(mod, module);
-              module.onEnable();
               if (isReload) module.onBotReady();
             } catch (ex) {
               console.error(ex);
             }
+          }
+
+          for (let module of this.modules.values()) {
+            module.onEnable();
           }
           
           resolve();

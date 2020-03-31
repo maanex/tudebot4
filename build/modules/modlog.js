@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
 class ModlogModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Modlog', 'public', conf, data, guilds, lang);
@@ -16,7 +17,7 @@ class ModlogModule extends types_1.Module {
             guild.channels.get(guilds.get(id).channel).send({
                 embed: {
                     color: 0x2f3136,
-                    description: `${data[type]} ${text}`
+                    description: `${emojis_1.default.MODLOG[type]} ${text}`
                 }
             });
         };

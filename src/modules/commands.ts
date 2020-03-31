@@ -39,12 +39,14 @@ export default class CommandsModule extends Module {
       let execute = false;
       let prefix = '';
       let whitelist, blacklist;
+      let deletemes = false;
 
       if (guildSettings.global) {
         if (guildSettings.global.enabled) execute = true;
         if (guildSettings.global.prefix) prefix = guildSettings.global.prefix;
         if (guildSettings.global.whitelist) whitelist = guildSettings.global.whitelist;
         if (guildSettings.global.blacklist) blacklist = guildSettings.global.blacklist;
+        if (guildSettings.global.delete) deletemes = true;
       }
       if (guildSettings.channels && guildSettings.channels[mes.channel.id]) {
         const conf = guildSettings.channels[mes.channel.id];
@@ -52,6 +54,7 @@ export default class CommandsModule extends Module {
         if (conf.prefix !== undefined) prefix = conf.prefix;
         if (conf.whitelist !== undefined) whitelist = conf.whitelist || [];
         if (conf.blacklist !== undefined) blacklist = conf.blacklist || [];
+        if (guildSettings.delete !== undefined) deletemes = guildSettings.delete;
       }
 
       if (guildInfo.club) this.updateActiveInCommandsChannel(mes.author.id);
@@ -134,6 +137,8 @@ export default class CommandsModule extends Module {
       const cmes: ReplyFunction = (text: string, type?: cmesType, desc?: string, settings?: any) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
       const event = { message: mes, sudo: sudo, label: cmd };
       const res = command.execute(mes.channel as TextChannel, mes.author, args, event, cmes);
+
+      if (deletemes) mes.delete();
 
       if (res === undefined || res === null) {
         update(false);

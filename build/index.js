@@ -22,6 +22,7 @@ const settings = require('../config/settings.json');
 class TudeBotClient extends discord_js_1.Client {
     constructor(props, flags) {
         super(props);
+        this.config = settings;
         this.modules = null;
         this.guildSettings = null;
         this.devMode = !!flags['dev'];
@@ -112,13 +113,15 @@ class TudeBotClient extends discord_js_1.Client {
                         const ModClass = require(`./modules/${mod}`).default;
                         let module = new ModClass(data[mod], modData, guilds, this.lang);
                         this.modules.set(mod, module);
-                        module.onEnable();
                         if (isReload)
                             module.onBotReady();
                     }
                     catch (ex) {
                         console.error(ex);
                     }
+                }
+                for (let module of this.modules.values()) {
+                    module.onEnable();
                 }
                 resolve();
             })

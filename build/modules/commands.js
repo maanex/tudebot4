@@ -29,6 +29,7 @@ class CommandsModule extends types_1.Module {
             let execute = false;
             let prefix = '';
             let whitelist, blacklist;
+            let deletemes = false;
             if (guildSettings.global) {
                 if (guildSettings.global.enabled)
                     execute = true;
@@ -38,6 +39,8 @@ class CommandsModule extends types_1.Module {
                     whitelist = guildSettings.global.whitelist;
                 if (guildSettings.global.blacklist)
                     blacklist = guildSettings.global.blacklist;
+                if (guildSettings.global.delete)
+                    deletemes = true;
             }
             if (guildSettings.channels && guildSettings.channels[mes.channel.id]) {
                 const conf = guildSettings.channels[mes.channel.id];
@@ -48,6 +51,8 @@ class CommandsModule extends types_1.Module {
                     whitelist = conf.whitelist || [];
                 if (conf.blacklist !== undefined)
                     blacklist = conf.blacklist || [];
+                if (guildSettings.delete !== undefined)
+                    deletemes = guildSettings.delete;
             }
             if (guildInfo.club)
                 this.updateActiveInCommandsChannel(mes.author.id);
@@ -132,6 +137,8 @@ class CommandsModule extends types_1.Module {
             const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
             const event = { message: mes, sudo: sudo, label: cmd };
             const res = command.execute(mes.channel, mes.author, args, event, cmes);
+            if (deletemes)
+                mes.delete();
             if (res === undefined || res === null) {
                 update(false);
             }

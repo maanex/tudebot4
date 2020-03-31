@@ -2,6 +2,7 @@ import { modlogType } from '../types';
 import { TudeBot } from "../index";
 import { GuildMember, Guild, TextChannel } from "discord.js";
 import { Module } from "../types";
+import Emojis from '../int/emojis';
 
 
 export default class ModlogModule extends Module {
@@ -19,7 +20,7 @@ export default class ModlogModule extends Module {
       (guild.channels.get(guilds.get(id).channel) as TextChannel).send({
         embed: {
           color: 0x2f3136,
-          description: `${data[type]} ${text}`
+          description: `${Emojis.MODLOG[type]} ${text}`
         }
       });
     }

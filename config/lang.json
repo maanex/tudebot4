@@ -27,5 +27,13 @@
         "Go thank them!",
         "It's all going according to plan.",
         "Just as expected."
+    ],
+    "wrong_channel_topic": [
+        "Wrong channel, {user}. Head over to {channel}!",
+        ":sunglasses: :point_right: {channel}",
+        "Conversations about {topic} in {channel} please, {user}",
+        ":arrow_right: {channel} :arrow_left:",
+        "{channel} :eyes:",
+        "Go check out {channel} to talk about {topic}!"
     ]
 }

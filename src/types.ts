@@ -67,13 +67,15 @@ export interface GuildSettings {
 
 export type CommandExecEvent = { message: Message, sudo: boolean, label: string };
 
+export type CommandGroup = 'fun' | 'images' | 'apiwrapper' | 'rng' | 'internal' | 'club' | 'easteregg' | 'casino' | 'info';
+
 export interface CommandSettings {
 
   name: string;
   aliases?: string[];
   description: string;
   cooldown?: number;
-  groups?: string[];
+  groups?: CommandGroup[];
   sudoOnly?: boolean;
   hideOnHelp?: boolean;
 
