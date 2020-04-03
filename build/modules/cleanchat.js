@@ -4,7 +4,6 @@ const index_1 = require("../index");
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
 const generateInviteLinkMeme_1 = require("../functions/generateInviteLinkMeme");
-const emojis_1 = require("../int/emojis");
 class AutoSupportModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Auto Support', 'public', conf, data, guilds, lang);
@@ -15,7 +14,8 @@ class AutoSupportModule extends types_1.Module {
         index_1.TudeBot.on('message', (mes) => {
             if (!this.isMessageEventValid(mes))
                 return;
-            // if (mes.member.highestRole.comparePositionTo(mes.guild.me.highestRole) > 0) return; // TODO REENABLE, DISABLED FOR EASIER TESTING
+            if (mes.member.highestRole.comparePositionTo(mes.guild.me.highestRole) > 0)
+                return; // TODO REENABLE, DISABLED FOR EASIER TESTING
             if (this.checkInviteLinks(mes))
                 return;
         });
@@ -28,7 +28,7 @@ class AutoSupportModule extends types_1.Module {
         message.channel.send({
             embed: {
                 color: 0x2f3136,
-                title: emojis_1.default.MODLOG.clean_chat + ' ' + title,
+                title: title,
                 description: description,
                 footer: { text: 'CleanChat • Auto Moderator' }
             }
@@ -53,10 +53,10 @@ class AutoSupportModule extends types_1.Module {
             });
         }
         else if (this.inviteResponseStatus == 1) {
-            this.repl(mes, 'I was not kidding!', 'No advertising here. And no Discord server invite links!');
+            this.repl(mes, 'I was not kidding!', 'No advertising here. And no Discord invite links!');
         }
         else if (this.inviteResponseStatus == 5) {
-            this.repl(mes, 'See, I tried to stay calm...', 'but enough is enough, would you please shut the fu*** up and stop posting invite links?');
+            this.repl(mes, 'See, I tried to stay calm but enough is enough!', 'Now would you please shut the fu*** up and stop posting invite links?');
         }
         this.inviteResponseStatus++;
         setTimeout(i => i.inviteResponoseStatus--, 5 * 60 * 1000, this);
