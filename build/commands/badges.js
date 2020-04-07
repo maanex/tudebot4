@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
 class BadgesCommand extends types_1.Command {
     constructor() {
         super({
@@ -61,6 +63,14 @@ class BadgesCommand extends types_1.Command {
                             repl('Displayed badge updated!', 'success', 'Go have a look at your profile with `profile`');
                         })
                             .catch(err => repl('An error occured!', 'error'));
+                    default:
+                        const lookup = tudeapi_1.default.badgeByKeyword(args[0])
+                            || tudeapi_1.default.badgeBySearchQuery(args.join(' '));
+                        if (!lookup) {
+                            repl(':grey_question:', 'bad', `No badge by the name \`${args.join(' ')}\` found!`);
+                            return;
+                        }
+                        channel.send(this.createBadgeInfoEmbed(lookup));
                 }
                 return;
             }
@@ -112,6 +122,20 @@ class BadgesCommand extends types_1.Command {
                 console.error(err);
                 resolve(false);
             });
+        });
+    }
+    createBadgeInfoEmbed(badge) {
+        return new discord_js_1.RichEmbed({
+            title: `${badge.getAppearance(0).name} ${emojis_1.default.BIG_SPACE} \`${badge.keyword}\``,
+            description: badge.info,
+            fields: badge.appearance.length == 1 ? undefined : [
+                {
+                    name: 'Stages',
+                    value: badge.appearance.map(a => (a.from == 0) ? '' : `${badge.getAppearance(a.from).emoji} **${a.name}** (${a.from}x)`).join('\n')
+                }
+            ],
+            thumbnail: { url: badge.getAppearance(0).icon },
+            color: 0x2f3136
         });
     }
 }

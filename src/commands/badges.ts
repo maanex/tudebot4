@@ -1,6 +1,7 @@
-import { Message, Channel, User, TextChannel } from "discord.js";
+import { Message, Channel, User, TextChannel, RichEmbed } from "discord.js";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import Emojis from "../int/emojis";
 
 
 export default class BadgesCommand extends Command {
@@ -59,6 +60,15 @@ export default class BadgesCommand extends Command {
                 repl('Displayed badge updated!', 'success', 'Go have a look at your profile with `profile`');
               })
               .catch(err => repl('An error occured!', 'error'));
+
+            default:
+              const lookup = TudeApi.badgeByKeyword(args[0])
+                   || TudeApi.badgeBySearchQuery(args.join(' '));
+              if (!lookup) {
+                repl(':grey_question:', 'bad', `No badge by the name \`${args.join(' ')}\` found!`);
+                return;
+              }
+              channel.send(this.createBadgeInfoEmbed(lookup));
         }
         return;
       }
@@ -112,6 +122,21 @@ export default class BadgesCommand extends Command {
           console.error(err);
           resolve(false);
         })
+    });
+  }
+
+  createBadgeInfoEmbed(badge: Badge): RichEmbed {
+    return new RichEmbed({
+      title: `${badge.getAppearance(0).name} ${Emojis.BIG_SPACE} \`${badge.keyword}\``,
+      description: badge.info,
+      fields: badge.appearance.length == 1 ? undefined : [
+        {
+          name: 'Stages',
+          value: badge.appearance.map(a => (a.from == 0) ? '' : `${badge.getAppearance(a.from).emoji} **${a.name}** (${a.from}x)`).join('\n')
+        }
+      ],
+      thumbnail: { url: badge.getAppearance(0).icon },
+      color: 0x2f3136
     });
   }
 

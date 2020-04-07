@@ -370,6 +370,14 @@ export default class TudeApi {
         return this.badges.find(b => b.keyword == keyword.toLowerCase());
     }
 
+    public static badgeBySearchQuery(search: string):Badge {
+        return this.badges.find(b => {
+            b.description.includes(search.toLowerCase()) || 
+            b.info.includes(search.toLowerCase()) ||
+            b.getAppearance(0).name.includes(search.toLowerCase())
+        });
+    }
+
     public static clubLeaderboard():Promise<Leaderboard> {
         return new Promise((resolve, reject) => {
             fetch(this.baseurl + this.endpoints.club.leaderboard, {

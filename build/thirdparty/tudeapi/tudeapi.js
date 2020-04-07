@@ -273,6 +273,13 @@ class TudeApi {
     static badgeByKeyword(keyword) {
         return this.badges.find(b => b.keyword == keyword.toLowerCase());
     }
+    static badgeBySearchQuery(search) {
+        return this.badges.find(b => {
+            b.description.includes(search.toLowerCase()) ||
+                b.info.includes(search.toLowerCase()) ||
+                b.getAppearance(0).name.includes(search.toLowerCase());
+        });
+    }
     static clubLeaderboard() {
         return new Promise((resolve, reject) => {
             fetch(this.baseurl + this.endpoints.club.leaderboard, {
