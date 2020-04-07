@@ -42,7 +42,7 @@ export default class AutoSupportModule extends Module {
   private inviteResponseStatus = 0;
 
   public checkInviteLinks(mes: Message): boolean {
-    if (!/discord.gg\/.+/i.test(mes.content)) return false;
+    if (!/discord.gg\/.+/i.test(mes.content) && !/discordapp.com\/invite\/.+/i.test(mes.content)) return false;
 
     if (this.inviteResponseStatus == 0) {
       generateInviteLinkMeme(mes.author.username)
@@ -66,6 +66,8 @@ export default class AutoSupportModule extends Module {
 
     this.inviteResponseStatus++;
     setTimeout(i => i.inviteResponoseStatus--, 5*60*1000, this);
+
+    TudeBot.modlog(mes.guild, 'clean_chat', `${mes.author} sent an invite link.`);
 
     mes.delete();
     return true;

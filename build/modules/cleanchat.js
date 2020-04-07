@@ -60,6 +60,7 @@ class AutoSupportModule extends types_1.Module {
         }
         this.inviteResponseStatus++;
         setTimeout(i => i.inviteResponoseStatus--, 5 * 60 * 1000, this);
+        index_1.TudeBot.modlog(mes.guild, 'clean_chat', `${mes.author} sent an invite link.`);
         mes.delete();
         return true;
     }

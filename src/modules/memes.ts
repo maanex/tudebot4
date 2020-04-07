@@ -3,6 +3,7 @@ import { Message, MessageReaction, User } from 'discord.js';
 import { Module } from "../types";
 import { DbStats } from '../database/dbstats';
 import Emojis from '../int/emojis';
+import Database from '../database/database';
 
 
 export default class MemesModule extends Module {
@@ -64,8 +65,17 @@ export default class MemesModule extends Module {
         });
       }
 
-      // TODO upload to the tude memes database
-      // TODO meme of the month
+      if (this.guildData(mes.guild).motm) {
+        Database
+          .collection('memes')
+          .insertOne({
+            _id: mes.id,
+            author: mes.author.id,
+            caption: mes.content,
+            image: mes.attachments.first().url,
+            rating: 0
+          });
+      }
     });
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
@@ -90,7 +100,7 @@ export default class MemesModule extends Module {
         }
       }
 
-      // TODO update database values on up/downvote
+      this.updateMemeRating(mes);
 
       if (reaction.emoji.name == '⭐') {
         user.send({
@@ -104,6 +114,35 @@ export default class MemesModule extends Module {
         });
       }
     });
+
+    TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
+      let mes = reaction.message;
+      if (user.bot) return;
+      if (mes.author.bot) return;
+      if (!mes.guild) return;
+      if (!this.isEnabledInGuild(mes.guild)) return;
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
+      if (!mes.attachments.size) return;
+
+      this.updateMemeRating(mes);
+    });
+  }
+
+  updateMemeRating(mes: Message) {
+    if (this.guildData(mes.guild).motm) {
+      let rating = 0;
+      for (const reaction of mes.reactions.array()) {
+        if (this.RATINGS[reaction.emoji.name])
+          rating += this.RATINGS[reaction.emoji.name] * reaction.count;
+      }
+      Database
+        .collection('memes')
+        .updateOne({ _id: mes.id }, {
+          '$set': {
+            rating: rating
+          }
+        });
+    }
   }
 
   public onBotReady(): void {

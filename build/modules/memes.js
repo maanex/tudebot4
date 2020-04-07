@@ -4,6 +4,7 @@ const index_1 = require("../index");
 const types_1 = require("../types");
 const dbstats_1 = require("../database/dbstats");
 const emojis_1 = require("../int/emojis");
+const database_1 = require("../database/database");
 class MemesModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Memes', 'public', conf, data, guilds, lang);
@@ -51,8 +52,17 @@ class MemesModule extends types_1.Module {
                     }
                 });
             }
-            // TODO upload to the tude memes database
-            // TODO meme of the month
+            if (this.guildData(mes.guild).motm) {
+                database_1.default
+                    .collection('memes')
+                    .insertOne({
+                    _id: mes.id,
+                    author: mes.author.id,
+                    caption: mes.content,
+                    image: mes.attachments.first().url,
+                    rating: 0
+                });
+            }
         });
         index_1.TudeBot.on('messageReactionAdd', (reaction, user) => {
             let mes = reaction.message;
@@ -80,7 +90,7 @@ class MemesModule extends types_1.Module {
                     setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5);
                 }
             }
-            // TODO update database values on up/downvote
+            this.updateMemeRating(mes);
             if (reaction.emoji.name == '⭐') {
                 user.send({
                     embed: {
@@ -93,6 +103,38 @@ class MemesModule extends types_1.Module {
                 });
             }
         });
+        index_1.TudeBot.on('messageReactionRemove', (reaction, user) => {
+            let mes = reaction.message;
+            if (user.bot)
+                return;
+            if (mes.author.bot)
+                return;
+            if (!mes.guild)
+                return;
+            if (!this.isEnabledInGuild(mes.guild))
+                return;
+            if (!this.guildData(mes.guild).channels.includes(mes.channel.id))
+                return;
+            if (!mes.attachments.size)
+                return;
+            this.updateMemeRating(mes);
+        });
+    }
+    updateMemeRating(mes) {
+        if (this.guildData(mes.guild).motm) {
+            let rating = 0;
+            for (const reaction of mes.reactions.array()) {
+                if (this.RATINGS[reaction.emoji.name])
+                    rating += this.RATINGS[reaction.emoji.name] * reaction.count;
+            }
+            database_1.default
+                .collection('memes')
+                .updateOne({ _id: mes.id }, {
+                '$set': {
+                    rating: rating
+                }
+            });
+        }
     }
     onBotReady() {
     }

@@ -37,10 +37,10 @@
         "Go check out {channel} to talk about {topic}!"
     ],
     "meme_upvote_own_post": [
-        "{user}, shame on you for upvoting your own meme! {not_cool}",
-        ">be {username}\n>upvote your own meme\n>not cool",
+        "{user} shame on you for upvoting your own meme! {not_cool}",
+        ">be {username}\n>upvote own meme\n>not cool",
         "{not_cool} Upvoting your own meme is not cool {user}",
         "upvoting your own meme is small pp move {user}",
-        "Imagine being so desperate that you have to upvote your own meme ${user} lmao"
+        "Imagine being so desperate that you have to upvote your own meme {user} lmao"
     ]
 }
