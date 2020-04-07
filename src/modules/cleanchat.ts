@@ -47,11 +47,11 @@ export default class AutoSupportModule extends Module {
     if (this.inviteResponseStatus == 0) {
       generateInviteLinkMeme(mes.author.username)
         .then(img => {
-          const file = new Attachment(img, `i-do-not-like-you-${mes.author.username.toLowerCase()}.png`);
+          const file = new Attachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`);
           const embed = new RichEmbed()
             .attachFile(file)
             .setColor(0x2f3136)
-            .setImage(`attachment://i-do-not-like-you-${mes.author.username.toLowerCase()}.png`);
+            .setImage(`attachment://shut-up-${mes.author.username.toLowerCase()}.png`);
           mes.channel.send(embed);
         })
         .catch(err => {

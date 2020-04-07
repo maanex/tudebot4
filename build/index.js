@@ -136,7 +136,7 @@ class TudeBotClient extends discord_js_1.Client {
         let res = require(`../config/lang.json`)[key];
         if (!res)
             return key;
-        if (res.length !== undefined)
+        if (res.push !== undefined)
             res = res[Math.floor(Math.random() * res.length)];
         for (const key in params)
             res = res.split(`{${key}}`).join(params[key]);

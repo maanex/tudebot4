@@ -108,10 +108,10 @@ class GetPointsModule extends types_1.Module {
         __1.TudeBot.on('guildMemberAdd', member => {
             this.assignLevelRoles(member);
         });
-        //                      s m h d m dw
-        this.cronjobs.push(cron.job('0 * * * * *', this.regenBags));
-        this.cronjobs.push(cron.job('0 0 * * * *', this.fillBags));
-        // this.cronjobs.push(cron.job('0 0 * * * *', () => checkVoice(this.conf-nonononoooo.guilds.map(TudeBot.guilds.get)))); TODO error here
+        //                           m h d m dw
+        this.cronjobs.push(cron.job('* * * * *', this.regenBags));
+        this.cronjobs.push(cron.job('0 * * * *', this.fillBags));
+        // this.cronjobs.push(cron.job('* * * * *', () => checkVoice(this.conf-nonononoooo.guilds.map(TudeBot.guilds.get)))); TODO error here
         this.cronjobs.forEach(j => j.start());
     }
     assignLevelRoles(member, clubUser, guild, userId) {

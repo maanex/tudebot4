@@ -35,16 +35,16 @@ class AutoSupportModule extends types_1.Module {
         });
     }
     checkInviteLinks(mes) {
-        if (!/discord.gg\/.+/i.test(mes.content))
+        if (!/discord.gg\/.+/i.test(mes.content) && !/discordapp.com\/invite\/.+/i.test(mes.content))
             return false;
         if (this.inviteResponseStatus == 0) {
             generateInviteLinkMeme_1.default(mes.author.username)
                 .then(img => {
-                const file = new discord_js_1.Attachment(img, `i-do-not-like-you-${mes.author.username.toLowerCase()}.png`);
+                const file = new discord_js_1.Attachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`);
                 const embed = new discord_js_1.RichEmbed()
                     .attachFile(file)
                     .setColor(0x2f3136)
-                    .setImage(`attachment://i-do-not-like-you-${mes.author.username.toLowerCase()}.png`);
+                    .setImage(`attachment://shut-up-${mes.author.username.toLowerCase()}.png`);
                 mes.channel.send(embed);
             })
                 .catch(err => {

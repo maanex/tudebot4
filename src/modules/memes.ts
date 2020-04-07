@@ -1,14 +1,16 @@
 import { TudeBot } from '../index';
-import { Message, MessageReaction, User } from 'discord.js';
+import { Message, MessageReaction, User, TextChannel } from 'discord.js';
 import { Module } from "../types";
 import { DbStats } from '../database/dbstats';
 import Emojis from '../int/emojis';
 import Database from '../database/database';
+import * as cron from 'cron';
 
 
 export default class MemesModule extends Module {
 
   private readonly RATINGS = {
+    '⭐': +3,
     '🔥': +2,
     '⬆️': +1,
     '⬇️': -1,
@@ -29,7 +31,7 @@ export default class MemesModule extends Module {
 
       DbStats.getUser(mes.author).then(u => u.memesSent++);
 
-      let emojis = ['⭐', '🔥', '⬆️', '⬇️', '💩'];
+      let emojis = Object.keys(this.RATINGS);
 
       if (` ${mes.content} `.includes(' f '))
         emojis.push(':pay_respect:496359590087098409');
@@ -47,11 +49,9 @@ export default class MemesModule extends Module {
         }
       }
 
-
       let counter = 0;
       for (let e of emojis)
         setTimeout(() => mes.react(e), counter++ * 500);
-
 
       if (Math.floor(Math.random() * 500) == 0) {
         let gif = (["https://cdn.discordapp.com/attachments/497071913718382604/497071937772847104/giphy.gif",
@@ -89,7 +89,7 @@ export default class MemesModule extends Module {
 
       if (this.RATINGS[reaction.emoji.name]) {
         const rating = this.RATINGS[reaction.emoji.name];
-        if (rating > 0 && mes.author.id == user.id && !this.selfUpvoteCooldown.includes(mes.author.id)) {
+        if (rating > 0 && reaction.emoji.name != '⭐' && mes.author.id == user.id && !this.selfUpvoteCooldown.includes(mes.author.id)) {
           mes.channel.send(this.lang('meme_upvote_own_post', {
             user: user.toString(),
             username: user.username,
@@ -130,7 +130,7 @@ export default class MemesModule extends Module {
 
   updateMemeRating(mes: Message) {
     if (this.guildData(mes.guild).motm) {
-      let rating = 0;
+      let rating = -Object.values(this.RATINGS)['stack']();
       for (const reaction of mes.reactions.array()) {
         if (this.RATINGS[reaction.emoji.name])
           rating += this.RATINGS[reaction.emoji.name] * reaction.count;
@@ -144,13 +144,74 @@ export default class MemesModule extends Module {
         });
     }
   }
+  
+  private cronjobs: cron.CronJob[] = [];
 
   public onBotReady(): void {
-
+    this.electMemeOfTheMonth(); // TODO REMOVE
+    //                           m h d m dw
+    this.cronjobs.push(cron.job('0 6 1 * *', this.electMemeOfTheMonth));
   }
 
   public onDisable(): void {
+    this.cronjobs.forEach(j => j.stop());
+    this.cronjobs = [];
+  }
 
+  private async electMemeOfTheMonth() {
+    const top5: {
+      _id: string,
+      author: string,
+      caption: string,
+      image: string,
+      rating: number,
+      message: Message
+    }[] = await Database
+      .collection('memes')
+      .find({ }, {
+        sort: { rating: -1 },
+        limit: 5,
+      })
+      .toArray();
+
+    if (!top5.length) return;
+    
+    this.guilds.forEach(async (data, gid) => {
+      if (data.motm) {
+        const guild = TudeBot.guilds.get(gid);
+        if (!guild) return;
+        const channel = guild.channels.get(data.channels[0]) as TextChannel;
+        for (const meme of top5) {
+          meme.message = await channel.fetchMessage(meme._id);
+        }
+        while (top5.length && !top5[0].message) top5.splice(0, 1);
+        if (!top5.length) return;
+
+        const now = new Date();
+        channel.send({ embed: {
+          title: `Meme Of The Month • ${this.lang('meme_month_' + now.getMonth())} ${now.getFullYear()}`,
+          description: `by ${top5[0].message.author} (▲${top5[0].rating})` + (top5[0].caption ? `\n\n**${top5[0].caption}**` : ''),
+          image: { url: top5[0].image },
+          color: 0x2f3136
+        }}).then(mes => {
+          top5.splice(0, 1);
+          channel.send({ embed: {
+            fields: [{
+              name: 'Honorable Mentions',
+              value: top5.map((v, i) => `[**#${i+2}**](https://discordapp.com/channels/${gid}/${channel.id}/${v.message.id}) by ${v.message.author} (▲${v.rating})`).join('\n')
+            }],
+            color: 0x2f3136
+          }}).then(mes2 => {
+            if (!top5[0].message.pinned && top5[0].message.pinnable)
+              top5[0].message.pin();
+
+            Database
+              .collection('memes')
+              .deleteMany({ });
+          });
+        });
+      }
+    });
   }
 
 }
