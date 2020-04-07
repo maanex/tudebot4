@@ -34,10 +34,11 @@ class StayOnTopicModule extends types_1.Module {
     onDisable() {
     }
     redirectUser(user, from, to, topic) {
-        from.send(this.lang('wrong_channel_topic')
-            .split('{user}').join(user.toString())
-            .split('{topic}').join(topic)
-            .split('{channel}').join(to.toString()));
+        from.send(this.lang('wrong_channel_topic', {
+            user: user.toString(),
+            topic: topic,
+            channel: to.toString()
+        }));
     }
 }
 exports.default = StayOnTopicModule;

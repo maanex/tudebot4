@@ -151,10 +151,12 @@ export class TudeBotClient extends Client {
     });
   }
 
-  lang(key: string): string {
+  lang(key: string, params?: { [key: string]: string }): string {
     let res = require(`../config/lang.json`)[key];
-    if (!res) return '';
-    if (res.length !== undefined) return res[Math.floor(Math.random() * res.length)];
+    if (!res) return key;
+    if (res.length !== undefined) res = res[Math.floor(Math.random() * res.length)];
+    for (const key in params)
+      res = res.split(`{${key}}`).join(params[key]);
     return res;
   }
 

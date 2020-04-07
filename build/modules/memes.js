@@ -3,9 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const types_1 = require("../types");
 const dbstats_1 = require("../database/dbstats");
+const emojis_1 = require("../int/emojis");
 class MemesModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Memes', 'public', conf, data, guilds, lang);
+        this.RATINGS = {
+            '🔥': +2,
+            '⬆️': +1,
+            '⬇️': -1,
+            '💩': -2,
+        };
+        this.selfUpvoteCooldown = [];
     }
     onEnable() {
         index_1.TudeBot.on('message', mes => {
@@ -60,6 +68,18 @@ class MemesModule extends types_1.Module {
                 return;
             if (!mes.attachments.size)
                 return;
+            if (this.RATINGS[reaction.emoji.name]) {
+                const rating = this.RATINGS[reaction.emoji.name];
+                if (rating > 0 && mes.author.id == user.id && !this.selfUpvoteCooldown.includes(mes.author.id)) {
+                    mes.channel.send(this.lang('meme_upvote_own_post', {
+                        user: user.toString(),
+                        username: user.username,
+                        not_cool: emojis_1.default.NOT_COOL
+                    }));
+                    this.selfUpvoteCooldown.push(mes.author.id);
+                    setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5);
+                }
+            }
             // TODO update database values on up/downvote
             if (reaction.emoji.name == '⭐') {
                 user.send({

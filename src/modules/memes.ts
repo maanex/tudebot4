@@ -2,9 +2,19 @@ import { TudeBot } from '../index';
 import { Message, MessageReaction, User } from 'discord.js';
 import { Module } from "../types";
 import { DbStats } from '../database/dbstats';
+import Emojis from '../int/emojis';
 
 
 export default class MemesModule extends Module {
+
+  private readonly RATINGS = {
+    '🔥': +2,
+    '⬆️': +1,
+    '⬇️': -1,
+    '💩': -2,
+  };
+
+  private selfUpvoteCooldown: string[] = [];
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
     super('Memes', 'public', conf, data, guilds, lang);
@@ -66,6 +76,19 @@ export default class MemesModule extends Module {
       if (!this.isEnabledInGuild(mes.guild)) return;
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
       if (!mes.attachments.size) return;
+
+      if (this.RATINGS[reaction.emoji.name]) {
+        const rating = this.RATINGS[reaction.emoji.name];
+        if (rating > 0 && mes.author.id == user.id && !this.selfUpvoteCooldown.includes(mes.author.id)) {
+          mes.channel.send(this.lang('meme_upvote_own_post', {
+            user: user.toString(),
+            username: user.username,
+            not_cool: Emojis.NOT_COOL
+          }));
+          this.selfUpvoteCooldown.push(mes.author.id);
+          setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5);
+        }
+      }
 
       // TODO update database values on up/downvote
 

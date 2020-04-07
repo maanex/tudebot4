@@ -132,12 +132,14 @@ class TudeBotClient extends discord_js_1.Client {
             });
         });
     }
-    lang(key) {
+    lang(key, params) {
         let res = require(`../config/lang.json`)[key];
         if (!res)
-            return '';
+            return key;
         if (res.length !== undefined)
-            return res[Math.floor(Math.random() * res.length)];
+            res = res[Math.floor(Math.random() * res.length)];
+        for (const key in params)
+            res = res.split(`{${key}}`).join(params[key]);
         return res;
     }
     reload() {

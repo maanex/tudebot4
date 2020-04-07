@@ -24,7 +24,7 @@ export abstract class Module {
     protected readonly conf: any,
     protected readonly data: any,
     protected readonly guilds: Map<string, any>,
-    protected readonly lang: (key: string) => string
+    protected readonly lang: (key: string, params?: { [key: string]: string }) => string
   ) { }
   
   public abstract onEnable(): void;

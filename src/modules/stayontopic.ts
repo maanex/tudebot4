@@ -39,11 +39,10 @@ export default class StayOnTopicModule extends Module {
   }
 
   private redirectUser(user: User, from: TextChannel, to: TextChannel, topic: string) {
-    from.send(
-      this.lang('wrong_channel_topic')
-      .split('{user}').join(user.toString())
-      .split('{topic}').join(topic)
-      .split('{channel}').join(to.toString())
-    );
+    from.send(this.lang('wrong_channel_topic', {
+      user: user.toString(),
+      topic: topic,
+      channel: to.toString()
+    }));
   }
 }
