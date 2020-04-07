@@ -9,6 +9,7 @@ import SupportCommand from "../commands/support";
 export default class AutoSupportModule extends Module {
 
   private witClient;
+  private cooldown: string[] = [];
   
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
     super('Auto Support', 'public', conf, data, guilds, lang);
@@ -27,12 +28,15 @@ export default class AutoSupportModule extends Module {
           if (data.entities.intent[0].value != 'support') return;
           if (!data.entities.issue) return;
           
-          if (!data.entities.target || data.entities.target[0].suggested)
+          if (!data.entities.target || data.entities.target[0].suggested || data.entities.target[0].value == 'bot')
             data.entities.target = [{ value: this.guildData(mes.guild).channels[mes.channel.id] }];
 
           if (data.entities.target[0].value.includes('free')) {
             if (SupportCommand.RESOUCES.freestuff[data.entities.issue[0].value]) {
+              if (this.cooldown.includes(data.entities.issue[0].value)) return;
               SupportCommand.sendSupportEmbed(SupportCommand.RESOUCES.freestuff[data.entities.issue[0].value], mes.channel as TextChannel, mes.author);
+              this.cooldown.push(data.entities.issue[0].value);
+              setTimeout(() => this.cooldown.splice(this.cooldown.indexOf(data.entities.issue[0].value), 1), 1000 * 60 * 5);
             }
           }
         });
