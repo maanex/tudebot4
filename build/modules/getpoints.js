@@ -109,8 +109,8 @@ class GetPointsModule extends types_1.Module {
             this.assignLevelRoles(member);
         });
         //                           m h d m dw
-        this.cronjobs.push(cron.job('* * * * *', this.regenBags));
-        this.cronjobs.push(cron.job('0 * * * *', this.fillBags));
+        this.cronjobs.push(cron.job('* * * * *', () => this.regenBags()));
+        this.cronjobs.push(cron.job('0 * * * *', () => this.fillBags()));
         // this.cronjobs.push(cron.job('* * * * *', () => checkVoice(this.conf-nonononoooo.guilds.map(TudeBot.guilds.get)))); TODO error here
         this.cronjobs.forEach(j => j.start());
     }

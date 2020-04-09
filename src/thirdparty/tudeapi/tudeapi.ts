@@ -285,9 +285,9 @@ export default class TudeApi {
                 .then(o => {
                     if (o) {
                         o['_raw_inventory'] = o.inventory;
-                        o.inventory = [];
+                        o.inventory = new Map();
                         for (let ref in o['_raw_inventory'])
-                            o.inventory.push(this.parseItem(ref, o['_raw_inventory'][ref]));                        
+                            o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));                        
     
                         o['_raw_daily'] = o.daily;
                         o.daily = this.parseClubUserDailyData(o.daily);
@@ -401,11 +401,59 @@ export default class TudeApi {
     public static updateClubUser(user: ClubUser):void {
         let u: any = { };
         u.points = { add: user.points - user['_org_points'] };
+        if (!u.points.add) delete u.points;
         u.cookies = { add: user.cookies - user['_org_cookies'] };
+        if (!u.cookies.add) delete u.cookies;
         u.gems = { add: user.gems - user['_org_gems'] };
+        if (!u.gems.add) delete u.gems;
         u.keys = { add: user.keys - user['_org_keys'] };
+        if (!u.keys.add) delete u.keys;
+
         if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
             u['profile'] = { disp_badge: user.profile.disp_badge };
+
+        console.log(u)
+        
+        const updatedItems: Item[] = [];
+        if (user.inventory) {
+            u.inventory = {};
+            user.inventory.forEach((item, key) => {
+                const org = user['_raw_inventory'][key];
+                let out = { } as any;
+                let changes = false;
+                if (!org) {
+                    out = {
+                        amount: item.amount,
+                        meta: item.metaChanges
+                    };
+                    updatedItems.push(item);
+                    changes = true;
+                } else {
+                    if (item.prefab.expanded) {
+                        if (item.metaChanges) {
+                            out.meta = item.metaChanges;
+                            updatedItems.push(item);
+                            changes = true;
+                        }
+                        if (item.amount == 0) {
+                            out.amount = 0;
+                            changes = true;
+                        }
+                    } else {
+                        if (!org.amount) org.amount = 1;
+                        if (org.amount != item.amount) {
+                            out.amount = { add: item.amount - org.amount };
+                            updatedItems.push(item);
+                            changes = true;
+                        }
+                    }
+                }
+                if (changes) {
+                    u.inventory[key] = out;
+                }
+            });
+        }
+        console.log(u)
         fetch(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
             body:    JSON.stringify(u),
@@ -413,13 +461,20 @@ export default class TudeApi {
         })
             .then(o => o.json())
             .then(o => {
-                user['_org_points'] += u.points.add;
-                user['_org_cookies'] += u.cookies.add;
-                user['_org_gems'] += u.gems.add;
-                user['_org_keys'] += u.keys.add;
+                user['_org_points'] += u.points ? u.points.add : 0;
+                user['_org_cookies'] += u.cookies ? u.cookies.add : 0;
+                user['_org_gems'] += u.gems ? u.gems.add : 0;
+                user['_org_keys'] += u.keys ? u.keys.add : 0;
                 user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
                 if (o['levelup'] != undefined)
                     TudeBot.getModule<GetPointsModule>('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                if (o['items']) {
+                    for (const id of o['items']) {
+                        if (!updatedItems.length) break;
+                        updatedItems[0].id = id;
+                        updatedItems.splice(0, 1);
+                    }
+                }
             })
             .catch(console.error);
     }

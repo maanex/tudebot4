@@ -150,7 +150,7 @@ export default class MemesModule extends Module {
   public onBotReady(): void {
     this.electMemeOfTheMonth(); // TODO REMOVE
     //                           m h d m dw
-    this.cronjobs.push(cron.job('0 6 1 * *', this.electMemeOfTheMonth));
+    this.cronjobs.push(cron.job('0 6 1 * *', () => this.electMemeOfTheMonth()));
   }
 
   public onDisable(): void {

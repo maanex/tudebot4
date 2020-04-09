@@ -83,9 +83,8 @@ export default class InventoryCommand extends Command {
                 color: 0x2f3136,
                 fields: Object.values(fields).map(v => {
                   return {
-                    // name: v.length == 1 ? v[0].category.name : v[0].category.namepl,
-                    name: v[0].prefab.category.namepl || 'Unknown',
-                    value: v.map(i => `${i.prefab.icon} \`${i.amount == 1 ? '' : i.amount + 'x '}${i.name}\` (${i.id})`).join('\n')
+                    name: v[0].prefab.category.namepl || 'Other',
+                    value: v.map(i => `${i.prefab.icon} **${i.prefab.expanded ? ' ' : i.amount + 'x '}**${i.name} *\`${i.id}\`*`).join('\n')
                   }
                 })
               }

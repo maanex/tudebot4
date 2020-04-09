@@ -31,13 +31,18 @@ ItemGroup.LOOTBOX = new ItemGroup('lootbox');
 ItemGroup.COLLECTABLE = new ItemGroup('collectable');
 ItemGroup.GAME_ASSET = new ItemGroup('gameasset');
 class Item {
-    constructor(prefab, id, amount, meta = undefined) {
+    constructor(prefab, id, _amount, _meta = undefined) {
         this.prefab = prefab;
         this.id = id;
-        this.amount = amount;
-        this.meta = meta;
+        this._amount = _amount;
+        this._meta = _meta;
+        this.metaChanges = undefined;
     }
     ;
+    set amount(amount) { this._amount = amount; }
+    get amount() { return this._amount; }
+    set meta(meta) { this._meta = meta; this.metaChanges = meta; }
+    get meta() { return this._meta; }
     get name() {
         return tudeapi_1.default.clubLang[(this.amount == 1 ? 'item_' : 'itempl_') + this.prefab.id];
     }
@@ -48,9 +53,10 @@ class StackableItem extends Item {
         super(prefab, prefab.id, amount, undefined);
     }
     ;
-    set amount(amount) {
-        super['amount' + ''] = amount;
+    set meta(meta) {
+        console.trace(`Attempted to change meta on a non-extended item. ${this.prefab.id}`);
     }
+    get meta() { return undefined; }
 }
 exports.StackableItem = StackableItem;
 class ExpandedItem extends Item {
@@ -58,6 +64,13 @@ class ExpandedItem extends Item {
         super(prefab, id, 1, meta);
     }
     ;
+    set amount(amount) {
+        if (amount == 0)
+            this._amount = 0;
+        else
+            this._amount = 1;
+    }
+    get amount() { return this._amount; }
 }
 exports.ExpandedItem = ExpandedItem;
 //# sourceMappingURL=item.js.map

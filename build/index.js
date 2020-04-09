@@ -46,6 +46,16 @@ class TudeBotClient extends discord_js_1.Client {
             wcp_1.default.send({ status_mongodb: '+Connected' });
             yield tudeapi_1.default.init(settings.lang);
             yield database_1.default.init();
+            tudeapi_1.default
+                .clubUserById('42')
+                .then(u => {
+                Array.from(u.inventory.values()).forEach(i => {
+                    if (i.prefab.id == 'test') {
+                        u.inventory.get(i.id).amount = 0;
+                    }
+                });
+                tudeapi_1.default.updateClubUser(u);
+            });
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
