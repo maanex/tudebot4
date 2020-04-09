@@ -411,12 +411,11 @@ export default class TudeApi {
 
         if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
             u['profile'] = { disp_badge: user.profile.disp_badge };
-
-        console.log(u)
         
         const updatedItems: Item[] = [];
         if (user.inventory) {
             u.inventory = {};
+            let ichanges = false;
             user.inventory.forEach((item, key) => {
                 const org = user['_raw_inventory'][key];
                 let out = { } as any;
@@ -450,10 +449,11 @@ export default class TudeApi {
                 }
                 if (changes) {
                     u.inventory[key] = out;
+                    ichanges = true;
                 }
             });
+            if (!ichanges) delete u.inventory;
         }
-        console.log(u)
         fetch(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
             body:    JSON.stringify(u),

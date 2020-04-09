@@ -314,10 +314,10 @@ class TudeApi {
             delete u.keys;
         if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
             u['profile'] = { disp_badge: user.profile.disp_badge };
-        console.log(u);
         const updatedItems = [];
         if (user.inventory) {
             u.inventory = {};
+            let ichanges = false;
             user.inventory.forEach((item, key) => {
                 const org = user['_raw_inventory'][key];
                 let out = {};
@@ -354,10 +354,12 @@ class TudeApi {
                 }
                 if (changes) {
                     u.inventory[key] = out;
+                    ichanges = true;
                 }
             });
+            if (!ichanges)
+                delete u.inventory;
         }
-        console.log(u);
         fetch(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
             body: JSON.stringify(u),
@@ -374,6 +376,8 @@ class TudeApi {
                 __1.TudeBot.getModule('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
             if (o['items']) {
                 for (const id of o['items']) {
+                    if (!updatedItems.length)
+                        break;
                     updatedItems[0].id = id;
                     updatedItems.splice(0, 1);
                 }
