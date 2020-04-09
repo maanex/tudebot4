@@ -10,7 +10,6 @@ class ItemInfoCommand extends types_1.Command {
             name: 'iteminfo',
             description: 'Iteminfo',
             aliases: ['item'],
-            hideOnHelp: true,
             groups: ['club', 'info'],
         });
     }

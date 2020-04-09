@@ -12,7 +12,6 @@ export default class ItemInfoCommand extends Command {
       name: 'iteminfo',
       description: 'Iteminfo',
       aliases: [ 'item' ],
-      hideOnHelp: true,
       groups: [ 'club', 'info' ],
     });
   }

@@ -19,7 +19,7 @@ export default class SupportCommand extends Command {
   constructor() {
     super({
       name: 'support',
-      description: 'For the mod and support team to quickly show relevant resources.',
+      description: 'For the support team to quickly show relevant resources.',
       aliases: [ 'supp', 'sup' ],
       groups: [ 'info' ],
     });
