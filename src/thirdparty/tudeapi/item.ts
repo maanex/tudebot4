@@ -41,6 +41,7 @@ export class ItemGroup {
 
 export interface ItemPrefab {
   id: string;
+  selectionAliases?: string[];
   category: ItemCategory;
   group: ItemGroup;
   expanded: boolean;

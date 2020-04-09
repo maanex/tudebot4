@@ -1,5 +1,6 @@
 import { Item, ItemCategory, ItemGroup, StackableItem, ItemPrefab, ExpandedItem } from "./item";
 import Emojis from "../../int/emojis";
+import TudeApi from "./tudeapi";
 
 export const defaultItemIcon = '❔';
 
@@ -19,7 +20,8 @@ export const Items = {
     create: (id: string, meta: any) => new Items.Test.class(Items.Test, id, meta)
   },
   Cookie: {
-    id: 'cookies',
+    id: 'cookie',
+    selectionAliases: [ 'cookies' ],
     category: ItemCategory.SYSTEM,
     group: ItemGroup.CURRENCY,
     expanded: false,
@@ -32,7 +34,8 @@ export const Items = {
     _isDef: true
   },
   Gem: {
-    id: 'gems',
+    id: 'gem',
+    selectionAliases: [ 'gems' ],
     category: ItemCategory.SYSTEM,
     group: ItemGroup.CURRENCY,
     expanded: false,
@@ -45,7 +48,8 @@ export const Items = {
     _isDef: true
   },
   Key: {
-    id: 'keys',
+    id: 'key',
+    selectionAliases: [ 'keys' ],
     category: ItemCategory.SYSTEM,
     group: ItemGroup.CURRENCY,
     expanded: false,
@@ -132,3 +136,26 @@ export const Items = {
 };
 
 export const ItemList: ItemPrefab[] = Object.values(Items);
+
+export function findItem(query: string) {
+  query = query.toLowerCase();
+  let item = ItemList.find(i => {
+    if (i.id.toLowerCase() == query) return true;
+    if (i.selectionAliases && i.selectionAliases.includes(query)) return true;
+    if (TudeApi.clubLang['item_'+i.id]) {
+      if ((TudeApi.clubLang['item_'+i.id]).toLowerCase() == query)
+        return true;
+    }
+    return false;
+  });
+  if (!item) {
+    item = ItemList.find(i => {
+      if (TudeApi.clubLang['item_'+i.id]) {
+        if ((TudeApi.clubLang['item_'+i.id]).toLowerCase().includes(query))
+          return true;
+      }
+      return false;
+    });
+  }
+  return item;
+}

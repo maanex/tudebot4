@@ -4,6 +4,8 @@ import TudeApi, { ClubUser, DeprItem } from "../thirdparty/tudeapi/tudeapi";
 import Database from "../database/database";
 import { Module } from "../types";
 import Emojis from "../int/emojis";
+import { Items, findItem } from "../thirdparty/tudeapi/itemlist";
+import { Item } from "thirdparty/tudeapi/item";
 
 
 type ShelfCategory = 'regular' | 'gem' | 'special' | 'event';
@@ -47,7 +49,114 @@ export default class ClubItemShopModule extends Module {
       if (!this.isMessageEventValid(mes)) return;
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
 
-      // TODO
+      const args = mes.content.toLowerCase().split(' ');
+
+      function repl(message: string, desc?: string) {
+        mes.channel.send({ embed: {
+          title: desc ? message : '',
+          description: desc || message,
+          color: 0x2f3136,
+          footer: { text: `@${mes.author.tag}` }
+        }}).then(mes => {
+          (mes as Message).delete(7000);
+        });
+      }
+
+      mes.delete(5000);
+
+      const item = findItem(args[0]);
+      if (!item) {
+        repl(`Item \`${args[0]}\` not found!`);
+        return;
+      }
+
+      let amount = 1;
+      if (args.length > 1) {
+        if (item.expanded) {
+          repl('You can only buy one item of this kind at a time!');
+          return;
+        }
+        amount = parseInt(args[1]);
+        if (!amount || isNaN(amount) || amount <= 0) {
+          repl(`\`${args[1]}\` is an invalid amount!`);
+          return;
+        }
+      }
+
+      this.getShopdata().then(d => {
+        out:
+        for (const shelf of d) {
+          for (const sitem of shelf.items) {
+            if (sitem.item == item.id) {
+              TudeApi.clubUserByDiscordId(mes.author.id).then(u => {
+                if (!u) return;
+
+                const price = (sitem.discount || sitem.price) * amount;
+                let currencyEmoji = '';
+                let currencyLeft = 0;
+                if (sitem.currency == 'cookies') {
+                  if (u.cookies < price) {
+                    repl(`This would cost ${price} ${Emojis.COOKIES}, you only have ${u.cookies}!`);
+                    return;
+                  }
+                  u.cookies -= price;
+                  currencyEmoji = Emojis.COOKIES;
+                  currencyLeft = u.cookies;
+                } else if (sitem.currency == 'gems') {
+                  if (u.gems < price) {
+                    repl(`This would cost ${price} ${Emojis.GEMS}, you only have ${u.gems}!`);
+                    return;
+                  }
+                  u.gems -= price;
+                  currencyEmoji = Emojis.GEMS;
+                  currencyLeft = u.gems;
+                } else if (sitem.currency == 'event-tokens') {
+                  repl('Huh? Not implemented. Ping @Maanex, thx');
+                  return;
+                }
+
+                let itemi: Item = undefined;
+                if (item._isDef) {
+                  switch(item.id) {
+                    case 'cookie':
+                      u.cookies += amount;
+                      itemi = item.create(u.cookies);
+                      break;
+                    case 'gem':
+                      u.gems += amount;
+                      itemi = item.create(u.gems);
+                      break;
+                    case 'key':
+                      u.keys += amount;
+                      itemi = item.create(u.keys);
+                      break;
+                    default: return;
+                  }
+                } else if (u.inventory.has(item.id)) {
+                  if (item.expanded) {
+                    repl('An error occured!', 'Try again later!');
+                    return;
+                  }
+                  itemi = u.inventory.get(item.id);
+                  itemi.amount += amount;
+                } else {
+                  const itemInstance: Item = item.expanded ? new item.class(item, item.id, {}) : new item.class(item, amount);
+                  u.inventory.set(item.id, itemInstance);
+                  itemi = itemInstance;
+                }
+                if (!itemi) return;
+                
+                repl(`You purchased ${amount} ${TudeApi.clubLang[(amount==1?'item_':'itempl_') + itemi.id]} for ${price} ${currencyEmoji}`
+                    ,`You now have ${itemi.amount} ${itemi.name} and ${currencyLeft} ${currencyEmoji} left!`);
+
+                TudeApi.updateClubUser(u);
+              });
+              return;
+            }
+          }
+        }
+        repl(`We do not have ${TudeApi.clubLang['itempl_'+item.id]} in sock at the moment, sorry!`);
+      });
     });
   }
 

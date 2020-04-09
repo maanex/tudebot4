@@ -13,6 +13,7 @@ const __1 = require("..");
 const cron = require("cron");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
 class GetPointsModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Get Points', 'private', conf, data, guilds, lang);
@@ -157,11 +158,11 @@ class GetPointsModule extends types_1.Module {
             return;
         let desc = `You are now **Level ${newLevel}**\n`;
         if (rewards.cookies)
-            desc += `\n+${rewards.cookies} Cookies`;
+            desc += `\n+${rewards.cookies} ${emojis_1.default.COOKIES}`;
         if (rewards.gems)
-            desc += `\n+${rewards.gems} Gems`;
+            desc += `\n+${rewards.gems} ${emojis_1.default.GEMS}`;
         if (rewards.keys)
-            desc += `\n+${rewards.keys} Keys`;
+            desc += `\n+${rewards.keys} ${emojis_1.default.KEYS}`;
         duser.send({
             embed: {
                 color: 0x2f3136,

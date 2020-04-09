@@ -1,7 +1,7 @@
 import { User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import { Command, CommandExecEvent, ReplyFunction } from "../types";
-import { ItemList } from "../thirdparty/tudeapi/itemlist";
+import { ItemList, findItem } from "../thirdparty/tudeapi/itemlist";
 import ParseArgs from "../util/parseArgs";
 
 
@@ -23,23 +23,7 @@ export default class ItemInfoCommand extends Command {
     }
     let cmdl = ParseArgs.parse(args);
 
-    let item = ItemList.find(i => {
-      if (i.id.toLowerCase() == args[0].toLowerCase()) return true;
-      if (TudeApi.clubLang['item_'+i.id]) {
-        if ((TudeApi.clubLang['item_'+i.id]).toLowerCase() == args.join(' ').toLowerCase())
-          return true;
-      }
-      return false;
-    });
-    if (!item) {
-      item = ItemList.find(i => {
-        if (TudeApi.clubLang['item_'+i.id]) {
-          if ((TudeApi.clubLang['item_'+i.id]).toLowerCase().includes(args.join(' ').toLowerCase()))
-            return true;
-        }
-        return false;
-      });
-    }
+    const item = findItem(args.join(' '));
 
     if (cmdl.r || cmdl.raw) {
       repl('```json\n' + JSON.stringify(item, null, 2) + '```');

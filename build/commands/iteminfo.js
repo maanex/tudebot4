@@ -19,24 +19,7 @@ class ItemInfoCommand extends types_1.Command {
             return false;
         }
         let cmdl = parseArgs_1.default.parse(args);
-        let item = itemlist_1.ItemList.find(i => {
-            if (i.id.toLowerCase() == args[0].toLowerCase())
-                return true;
-            if (tudeapi_1.default.clubLang['item_' + i.id]) {
-                if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase() == args.join(' ').toLowerCase())
-                    return true;
-            }
-            return false;
-        });
-        if (!item) {
-            item = itemlist_1.ItemList.find(i => {
-                if (tudeapi_1.default.clubLang['item_' + i.id]) {
-                    if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase().includes(args.join(' ').toLowerCase()))
-                        return true;
-                }
-                return false;
-            });
-        }
+        const item = itemlist_1.findItem(args.join(' '));
         if (cmdl.r || cmdl.raw) {
             repl('```json\n' + JSON.stringify(item, null, 2) + '```');
             return !!item;

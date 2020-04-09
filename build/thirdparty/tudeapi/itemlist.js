@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("./item");
 const emojis_1 = require("../../int/emojis");
+const tudeapi_1 = require("./tudeapi");
 exports.defaultItemIcon = '❔';
 //
 exports.Items = {
@@ -19,7 +20,8 @@ exports.Items = {
         create: (id, meta) => new exports.Items.Test.class(exports.Items.Test, id, meta)
     },
     Cookie: {
-        id: 'cookies',
+        id: 'cookie',
+        selectionAliases: ['cookies'],
         category: item_1.ItemCategory.SYSTEM,
         group: item_1.ItemGroup.CURRENCY,
         expanded: false,
@@ -33,7 +35,8 @@ exports.Items = {
         _isDef: true
     },
     Gem: {
-        id: 'gems',
+        id: 'gem',
+        selectionAliases: ['gems'],
         category: item_1.ItemCategory.SYSTEM,
         group: item_1.ItemGroup.CURRENCY,
         expanded: false,
@@ -47,7 +50,8 @@ exports.Items = {
         _isDef: true
     },
     Key: {
-        id: 'keys',
+        id: 'key',
+        selectionAliases: ['keys'],
         category: item_1.ItemCategory.SYSTEM,
         group: item_1.ItemGroup.CURRENCY,
         expanded: false,
@@ -140,4 +144,29 @@ exports.Items = {
     },
 };
 exports.ItemList = Object.values(exports.Items);
+function findItem(query) {
+    query = query.toLowerCase();
+    let item = exports.ItemList.find(i => {
+        if (i.id.toLowerCase() == query)
+            return true;
+        if (i.selectionAliases && i.selectionAliases.includes(query))
+            return true;
+        if (tudeapi_1.default.clubLang['item_' + i.id]) {
+            if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase() == query)
+                return true;
+        }
+        return false;
+    });
+    if (!item) {
+        item = exports.ItemList.find(i => {
+            if (tudeapi_1.default.clubLang['item_' + i.id]) {
+                if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase().includes(query))
+                    return true;
+            }
+            return false;
+        });
+    }
+    return item;
+}
+exports.findItem = findItem;
 //# sourceMappingURL=itemlist.js.map

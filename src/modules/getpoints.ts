@@ -3,6 +3,7 @@ import { Message, MessageReaction, User as DiscordUser, Guild, VoiceChannel, Gui
 import * as cron from 'cron';
 import TudeApi, { User, ClubUser } from '../thirdparty/tudeapi/tudeapi';
 import { Module } from "../types";
+import Emojis from '../int/emojis';
 
 
 export type rewardReason = 'MessageSent' | 'MessageReaction' | 'MessageEngagement';
@@ -146,9 +147,9 @@ export default class GetPointsModule extends Module {
     let duser = TudeBot.users.get(user.user['accounts']['discord']);
     if (!duser) return;
     let desc = `You are now **Level ${newLevel}**\n`;
-    if (rewards.cookies) desc += `\n+${rewards.cookies} Cookies`;
-    if (rewards.gems) desc += `\n+${rewards.gems} Gems`;
-    if (rewards.keys) desc += `\n+${rewards.keys} Keys`;
+    if (rewards.cookies) desc += `\n+${rewards.cookies} ${Emojis.COOKIES}`;
+    if (rewards.gems) desc += `\n+${rewards.gems} ${Emojis.GEMS}`;
+    if (rewards.keys) desc += `\n+${rewards.keys} ${Emojis.KEYS}`;
     duser.send({
       embed: {
         color: 0x2f3136,
