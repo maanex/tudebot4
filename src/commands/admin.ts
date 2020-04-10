@@ -5,7 +5,7 @@ import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 import ParseArgs from "../util/parseArgs";
 import Database from "../database/database";
-import * as Items from "../thirdparty/tudeapi/itemlist";
+import * as Items from "../content/itemlist";
 import GetPointsModule from "modules/getpoints";
 
 

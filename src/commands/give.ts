@@ -4,7 +4,7 @@ import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
 import ParseArgs from "../util/parseArgs";
 import CommandsModule from "../modules/commands";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
-import { ItemList } from "../thirdparty/tudeapi/itemlist";
+import { ItemList } from "../content/itemlist";
 import { Item } from "thirdparty/tudeapi/item";
 
 

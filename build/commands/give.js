@@ -4,7 +4,7 @@ const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const parseArgs_1 = require("../util/parseArgs");
 const types_1 = require("../types");
-const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
+const itemlist_1 = require("../content/itemlist");
 class GiveCommand extends types_1.Command {
     constructor() {
         super({

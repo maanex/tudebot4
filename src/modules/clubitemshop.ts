@@ -4,7 +4,7 @@ import TudeApi, { ClubUser, DeprItem } from "../thirdparty/tudeapi/tudeapi";
 import Database from "../database/database";
 import { Module } from "../types";
 import Emojis from "../int/emojis";
-import { Items, findItem } from "../thirdparty/tudeapi/itemlist";
+import { Items, findItem, ItemList } from "../content/itemlist";
 import { Item } from "thirdparty/tudeapi/item";
 
 
@@ -35,7 +35,7 @@ export default class ClubItemShopModule extends Module {
       let guild = TudeBot.guilds.get(guildid);
       if (!guild) return;
       for (let channelid of this.guilds.get(guildid).channels) {
-        let channel = guild.channels.get(channelid);
+        const channel = guild.channels.get(channelid);
         if (!channel) return;
         this.channels.push(channel as TextChannel);
       }
@@ -171,14 +171,14 @@ export default class ClubItemShopModule extends Module {
           if (m.author.id != TudeBot.user.id) continue;
           if (c == 0) {
             if (!m.embeds.length)
-              m.edit('​\n\n\n​' /* contains two zero with dividers at start and end of the string */, {
-                embed: {
-                  title: 'Welcome to the shop!',
-                  color: 0x2f3136,
-                  description: '*Scroll up to browse the shelfs!*\n> To purchase an item, just type it\'s name into this channel.\n> To buy multiple of a kind, let\'s say 5 fishing lure, just add\n> the amount like so: `lure 5`.',
-                  footer: { text: 'Purchasing an item cannot be undone.' }
-                }
-              });
+            m.edit('​\n\n\n​' /* contains two zero with dividers at start and end of the string */, {
+              embed: {
+                title: 'Welcome to the shop!',
+                color: 0x2f3136,
+                description: '*Scroll up to browse the shelfs!*\n> To purchase an item, just type it\'s name into this channel.\n> To buy multiple of a kind, let\'s say 5 fishing lure, just add\n> the amount like so: `lure 5`.',
+                footer: { text: 'Purchasing an item cannot be undone.' }
+              }
+            });
           } else if (c < shelfs.length + 1) {
             let s = shelfs[shelfs.length - c];
             if (s.changes)
@@ -202,22 +202,10 @@ export default class ClubItemShopModule extends Module {
       title: shelf.title,
       color: this.getShelfColor(shelf.category),
       description: shelf.items.map(i => {
-        let itemdata = this.getItem(i);
+        let itemdata = findItem(i.item);
         if (!itemdata) return 'error, item not found: ' + i.item;
-        return `${itemdata.icon} ${itemdata.name}\n${Emojis.BIG_SPACE} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
+        return `${itemdata.icon} ${TudeApi.clubLang['item_'+itemdata.id]}\n${Emojis.BIG_SPACE} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
       }).join('\n\n')
-    }
-  }
-
-  private getItem(i: ShelfItem): DeprItem {
-    switch (i.item) {
-      case 'cookie':
-        // return DEFAULT_ITEMS.cookie;
-      case 'key':
-        // return DEFAULT_ITEMS.key;
-      default:
-        // return TudeApi.items.find(item => item.id == i.item);
-        return null; // TODO
     }
   }
 

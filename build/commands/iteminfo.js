@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
-const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
+const itemlist_1 = require("../content/itemlist");
 const parseArgs_1 = require("../util/parseArgs");
 class ItemInfoCommand extends types_1.Command {
     constructor() {
         super({
             name: 'iteminfo',
+            aliases: ['ii', 'finditem', 'itemsearch'],
             description: 'Get generic information about any item',
             groups: ['club', 'info'],
         });
@@ -24,14 +25,18 @@ class ItemInfoCommand extends types_1.Command {
             return !!item;
         }
         if (!item) {
-            repl(`No item by the name ${args.join(' ')} found!`, 'bad');
-            return;
+            repl(`No item by the name **${args.join(' ')}** found!`, 'bad');
+            return false;
         }
         const name = tudeapi_1.default.clubLang['item_' + item.id];
         channel.send({ embed: {
                 title: `${item.icon} ${name}`,
                 description: `\`${item.id}\``,
                 fields: [
+                    {
+                        name: 'Description',
+                        value: tudeapi_1.default.clubLang['itemdesc_' + item.id] || 'No description found!'
+                    },
                     {
                         name: 'Properties',
                         value: [
@@ -56,7 +61,7 @@ class ItemInfoCommand extends types_1.Command {
                 color: 0x2f3136,
                 footer: { text: `@${user.tag}` }
             } });
-        return !!item;
+        return true;
     }
 }
 exports.default = ItemInfoCommand;

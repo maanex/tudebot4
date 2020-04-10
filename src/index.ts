@@ -8,7 +8,7 @@ import { Util } from './util/util';
 import { logVersionDetails } from "./util/gitParser";
 import * as chalk from "chalk";
 import ParseArgs from './util/parseArgs';
-import { Items } from './thirdparty/tudeapi/itemlist';
+import { Items } from './content/itemlist';
 import BadoszAPI from './thirdparty/badoszapi/badoszApi';
 
 const settings = require('../config/settings.json');

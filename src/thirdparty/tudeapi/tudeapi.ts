@@ -6,7 +6,8 @@ import { TudeBot } from "../..";
 import { badgeEmojiList } from "./badgelist";
 import GetPointsModule from "../../modules/getpoints";
 import { Item, StackableItem, ItemCategory, ItemGroup, ExpandedItem } from "./item";
-import { ItemList } from "./itemlist";
+import { ItemList } from "../../content/itemlist";
+import chalk = require("chalk");
 
 
 const fetch = require('node-fetch');
@@ -456,7 +457,7 @@ export default class TudeApi {
         }
         fetch(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
-            body:    JSON.stringify(u),
+            body: JSON.stringify(u),
             headers: { 'auth': this.key, 'Content-Type': 'application/json' },
         })
             .then(o => o.json())

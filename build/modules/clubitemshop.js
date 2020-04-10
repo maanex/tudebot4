@@ -14,7 +14,7 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const database_1 = require("../database/database");
 const types_1 = require("../types");
 const emojis_1 = require("../int/emojis");
-const itemlist_1 = require("../thirdparty/tudeapi/itemlist");
+const itemlist_1 = require("../content/itemlist");
 class ClubItemShopModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Tude Club Item Shop', 'private', conf, data, guilds, lang);
@@ -28,7 +28,7 @@ class ClubItemShopModule extends types_1.Module {
             if (!guild)
                 return;
             for (let channelid of this.guilds.get(guildid).channels) {
-                let channel = guild.channels.get(channelid);
+                const channel = guild.channels.get(channelid);
                 if (!channel)
                     return;
                 this.channels.push(channel);
@@ -191,23 +191,12 @@ class ClubItemShopModule extends types_1.Module {
             title: shelf.title,
             color: this.getShelfColor(shelf.category),
             description: shelf.items.map(i => {
-                let itemdata = this.getItem(i);
+                let itemdata = itemlist_1.findItem(i.item);
                 if (!itemdata)
                     return 'error, item not found: ' + i.item;
-                return `${itemdata.icon} ${itemdata.name}\n${emojis_1.default.BIG_SPACE} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
+                return `${itemdata.icon} ${tudeapi_1.default.clubLang['item_' + itemdata.id]}\n${emojis_1.default.BIG_SPACE} \`${i.item}\` • ${i.discount ? `~~${i.price}~~ **${i.discount}**` : i.price} ${this.getCurrencyIcon(i.currency)}`;
             }).join('\n\n')
         };
-    }
-    getItem(i) {
-        switch (i.item) {
-            case 'cookie':
-            // return DEFAULT_ITEMS.cookie;
-            case 'key':
-            // return DEFAULT_ITEMS.key;
-            default:
-                // return TudeApi.items.find(item => item.id == i.item);
-                return null; // TODO
-        }
     }
     getShelfColor(category) {
         switch (category) {

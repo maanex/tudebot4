@@ -1,7 +1,7 @@
 import { User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import { Command, CommandExecEvent, ReplyFunction } from "../types";
-import { ItemList, findItem } from "../thirdparty/tudeapi/itemlist";
+import { ItemList, findItem } from "../content/itemlist";
 import ParseArgs from "../util/parseArgs";
 
 
@@ -10,6 +10,7 @@ export default class ItemInfoCommand extends Command {
   constructor() {
     super({
       name: 'iteminfo',
+      aliases: [ 'ii', 'finditem', 'itemsearch' ],
       description: 'Get generic information about any item',
       groups: [ 'club', 'info' ],
     });
@@ -30,8 +31,8 @@ export default class ItemInfoCommand extends Command {
     }
 
     if (!item) {
-      repl(`No item by the name ${args.join(' ')} found!`, 'bad');
-      return;
+      repl(`No item by the name **${args.join(' ')}** found!`, 'bad');
+      return false;
     }
 
     const name = TudeApi.clubLang['item_'+item.id];
@@ -40,6 +41,10 @@ export default class ItemInfoCommand extends Command {
       title: `${item.icon} ${name}`,
       description: `\`${item.id}\``,
       fields: [
+        {
+          name: 'Description',
+          value: TudeApi.clubLang['itemdesc_'+item.id] || 'No description found!'
+        },
         {
           name: 'Properties',
           value: [
@@ -65,7 +70,7 @@ export default class ItemInfoCommand extends Command {
       footer: { text: `@${user.tag}` }
     }});
 
-    return !!item;
+    return true;
   }
 
 }

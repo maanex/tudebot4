@@ -13,7 +13,7 @@ const wcp_1 = require("../../thirdparty/wcp/wcp");
 const __1 = require("../..");
 const badgelist_1 = require("./badgelist");
 const item_1 = require("./item");
-const itemlist_1 = require("./itemlist");
+const itemlist_1 = require("../../content/itemlist");
 const fetch = require('node-fetch');
 const settings = require('../../../config/settings.json').thirdparty;
 class TudeApi {

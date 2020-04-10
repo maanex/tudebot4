@@ -1,6 +1,8 @@
-import { Item, ItemCategory, ItemGroup, StackableItem, ItemPrefab, ExpandedItem } from "./item";
-import Emojis from "../../int/emojis";
-import TudeApi from "./tudeapi";
+import { Item, ItemCategory, ItemGroup, StackableItem, ItemPrefab, ExpandedItem } from "../thirdparty/tudeapi/item";
+import Emojis from "../int/emojis";
+import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
+import Letter from "./items/Letter";
+import GenericFish from "./items/GenericFish";
 
 export const defaultItemIcon = '❔';
 
@@ -15,6 +17,7 @@ export const Items = {
     tradeable: false,
     sellable: false,
     purchaseable: false,
+    useable: false,
     icon: defaultItemIcon,
     class: class Test extends ExpandedItem { },
     create: (id: string, meta: any) => new Items.Test.class(Items.Test, id, meta)
@@ -28,6 +31,8 @@ export const Items = {
     tradeable: true,
     sellable: false,
     purchaseable: false,
+    useable: true,
+    useText: 'Yo, head over to the shop to spend your cookies!',
     icon: Emojis.COOKIES,
     class: class Cookie extends StackableItem { },
     create: (amount: number) => new Items.Cookie.class(Items.Cookie, amount),
@@ -42,6 +47,8 @@ export const Items = {
     tradeable: false,
     sellable: false,
     purchaseable: false,
+    useable: true,
+    useText: 'Yo, head over to the shop to spend your gems!',
     icon: Emojis.GEMS,
     class: class Gem extends StackableItem { },
     create: (amount: number) => new Items.Gem.class(Items.Gem, amount),
@@ -56,6 +63,8 @@ export const Items = {
     tradeable: false,
     sellable: false,
     purchaseable: false,
+    useable: true,
+    useText: 'Do `use <lootbox>` but with <lootbox> being a lootbox that you own to open it. This will cost one key!',
     icon: Emojis.KEYS,
     class: class Key extends StackableItem { },
     create: (amount: number) => new Items.Key.class(Items.Key, amount),
@@ -69,6 +78,8 @@ export const Items = {
     tradeable: true,
     sellable: false,
     purchaseable: false,
+    useable: true,
+    useText: '🐢',
     icon: '🐢',
     class: class Turtle extends StackableItem { },
     create: (amount: number) => new Items.Turtle.class(Items.Turtle, amount)
@@ -81,6 +92,7 @@ export const Items = {
     tradeable: true,
     sellable: true,
     purchaseable: true,
+    useable: false,
     icon: '<:use_regular_bait:667784099037052931>',
     class: class FishingLure extends StackableItem { },
     create: (amount: number) => new Items.FishingLure.class(Items.FishingLure, amount)
@@ -93,6 +105,7 @@ export const Items = {
     tradeable: true,
     sellable: true,
     purchaseable: true,
+    useable: false,
     icon: '<:use_gold_bait:667786302674042901>',
     class: class GoldFishingLure extends StackableItem { },
     create: (amount: number) => new Items.GoldFishingLure.class(Items.GoldFishingLure, amount)
@@ -105,6 +118,7 @@ export const Items = {
     tradeable: true,
     sellable: true,
     purchaseable: true,
+    useable: false,
     icon: '<:use_mystic_bait:667786936395759646>',
     class: class MysticFishingLure extends StackableItem { },
     create: (amount: number) => new Items.MysticFishingLure.class(Items.MysticFishingLure, amount)
@@ -117,6 +131,7 @@ export const Items = {
     tradeable: true,
     sellable: true,
     purchaseable: true,
+    useable: false,
     icon: '<:use_treasure_bait:667807893290090516>',
     class: class TreasureFishingLure extends StackableItem { },
     create: (amount: number) => new Items.TreasureFishingLure.class(Items.TreasureFishingLure, amount)
@@ -129,9 +144,38 @@ export const Items = {
     tradeable: false,
     sellable: false,
     purchaseable: false,
+    useable: false,
     icon: 'TODO',
     class: class WelcomeGiftLootbox extends StackableItem { },
     create: (amount: number) => new Items.WelcomeGiftLootbox.class(Items.WelcomeGiftLootbox, amount)
+  },
+  Letter: {
+    id: 'letter',
+    category: ItemCategory.UNDEFINED,
+    group: ItemGroup.UNDEFINED,
+    expanded: true,
+    tradeable: true,
+    sellable: true,
+    purchaseable: true,
+    useable: true,
+    icon: '✉️',
+    class: Letter,
+    create: (title?: string, text?: string, author?: ClubUser) => new Items.Letter.class(Items.Letter, Items.Letter.id, title, text, author ? author.id : ''),
+    parse: (data: any) => new Items.Letter.class(Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author),
+  },
+  Carp: {
+    id: 'carp',
+    category: ItemCategory.COLLECTABLE,
+    group: ItemGroup.COLLECTABLE,
+    expanded: true,
+    tradeable: true,
+    sellable: true,
+    purchaseable: false,
+    useable: false,
+    icon: '🐟',
+    class: GenericFish,
+    create: (size: number, caughtAt: Date, stuffed: boolean) => new Items.Carp.class(Items.Carp, Items.Carp.id, size, caughtAt, stuffed),
+    parse: (data: any) => new Items.Carp.class(Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
   },
 };
 

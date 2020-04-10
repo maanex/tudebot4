@@ -1,4 +1,6 @@
-import TudeApi from "./tudeapi";
+import TudeApi, { ClubUser } from "./tudeapi";
+import { MessageEmbedField, Message } from "discord.js";
+import { ReplyFunction } from "types";
 
 export class ItemCategory {
   
@@ -35,7 +37,7 @@ export class ItemGroup {
   public static CURRENCY = new ItemGroup('currency');
   public static LOOTBOX = new ItemGroup('lootbox');
   public static COLLECTABLE = new ItemGroup('collectable');
-  public static GAME_ASSET = new ItemGroup('gameasset');
+  public static GAME_ASSET = new ItemGroup('game_asset');
 
 }
 
@@ -48,10 +50,12 @@ export interface ItemPrefab {
   tradeable: boolean;
   sellable: boolean;
   purchaseable: boolean;
+  useable: boolean;
   icon: string;
   class: any;
   create: any;
   parse?: any;
+  useText?: string;
   _isDef?: boolean;
 }
 
@@ -76,6 +80,17 @@ export abstract class Item {
     return TudeApi.clubLang[(this.amount==1?'item_':'itempl_')+this.prefab.id];
   }
 
+  public get description(): string {
+    return TudeApi.clubLang['itemdesc_'+this.prefab.id];
+  }
+
+  public abstract renderMetadata(): Promise<MessageEmbedField[]>;
+
+  public use(message: Message, repl: ReplyFunction, executor: ClubUser) {
+    if (this.prefab.useText) repl(this.prefab.useText);
+    else repl('Okay this is weird', 'bad', 'See, someone told me this item is something you can use but like... idk how to use it. Hmmm.');
+  }
+
 }
 
 export abstract class StackableItem extends Item {
@@ -88,6 +103,8 @@ export abstract class StackableItem extends Item {
     console.trace(`Attempted to change meta on a non-extended item. ${this.prefab.id}`);
   }
   public get meta() { return undefined }
+
+  async renderMetadata() { return []; }
 
 }
 
@@ -102,5 +119,7 @@ export abstract class ExpandedItem extends Item {
     else this._amount = 1;
   }
   public get amount() { return this._amount; }
+
+  async renderMetadata() { return []; }
 
 }

@@ -209,7 +209,7 @@ class CommandsModule extends types_1.Module {
                 title: description ? `${text}` : '',
                 description: description ? `${description || ''}` : `${text}`,
                 footer: {
-                    text: '@' + author.username + (type == 'bad' ? ' • not successful' : '')
+                    text: '@' + author.username + (type == 'bad' ? ' • not successful' : '') + (settings && settings.footer ? ` • ${settings.footer}` : '')
                 },
                 thumbnail: { url: settings && settings.image },
                 image: { url: settings && settings.banner }
