@@ -9,6 +9,7 @@ import { logVersionDetails } from "./util/gitParser";
 import * as chalk from "chalk";
 import ParseArgs from './util/parseArgs';
 import { Items } from './thirdparty/tudeapi/itemlist';
+import BadoszAPI from './thirdparty/badoszapi/badoszApi';
 
 const settings = require('../config/settings.json');
 
@@ -21,6 +22,8 @@ export class TudeBotClient extends Client {
   public modlog: modlogFunction;
   public modules: Map<string, Module> = null;
   public guildSettings: Map<string, GuildSettings> = null;
+
+  public badoszApi: BadoszAPI = null;
 
   constructor(props: any, flags: {[key: string]: string | boolean}) {
     super(props);
@@ -53,6 +56,8 @@ export class TudeBotClient extends Client {
 
         await TudeApi.init(settings.lang);
         await Database.init();
+
+        this.badoszApi = new BadoszAPI(settings.thirdparty.badoszapi.token);
 
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));

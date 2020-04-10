@@ -18,6 +18,7 @@ const util_1 = require("./util/util");
 const gitParser_1 = require("./util/gitParser");
 const chalk = require("chalk");
 const parseArgs_1 = require("./util/parseArgs");
+const badoszApi_1 = require("./thirdparty/badoszapi/badoszApi");
 const settings = require('../config/settings.json');
 class TudeBotClient extends discord_js_1.Client {
     constructor(props, flags) {
@@ -25,6 +26,7 @@ class TudeBotClient extends discord_js_1.Client {
         this.config = settings;
         this.modules = null;
         this.guildSettings = null;
+        this.badoszApi = null;
         this.devMode = !!flags['dev'];
         this.modlog = null;
         this.modules = new Map();
@@ -46,6 +48,7 @@ class TudeBotClient extends discord_js_1.Client {
             wcp_1.default.send({ status_mongodb: '+Connected' });
             yield tudeapi_1.default.init(settings.lang);
             yield database_1.default.init();
+            this.badoszApi = new badoszApi_1.default(settings.thirdparty.badoszapi.token);
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });

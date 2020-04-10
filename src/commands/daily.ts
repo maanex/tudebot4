@@ -21,7 +21,7 @@ export default class DailyCommand extends Command {
       TudeApi.clubUserByDiscordId(user.id, user)
         .then(u => {
           if (!u || u.error) {
-            repl('User not found!', 'message', 'Or internal error, idk');
+            repl('Oopsie!', 'bad', 'Please try that again, thank you');
             resolve(false);
             return;
           }
