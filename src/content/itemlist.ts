@@ -1,8 +1,8 @@
 import { Item, ItemCategory, ItemGroup, StackableItem, ItemPrefab, ExpandedItem } from "../thirdparty/tudeapi/item";
 import Emojis from "../int/emojis";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
-import Letter from "../content/items/Letter";
-import GenericFish from "../content/items/GenericFish";
+import Letter from "./items/Letter";
+import GenericFish from "./items/GenericFish";
 
 export const defaultItemIcon = '❔';
 
@@ -149,34 +149,34 @@ export const Items = {
     class: class WelcomeGiftLootbox extends StackableItem { },
     create: (amount: number) => new Items.WelcomeGiftLootbox.class(Items.WelcomeGiftLootbox, amount)
   },
-  Letter: {
-    id: 'letter',
-    category: ItemCategory.UNDEFINED,
-    group: ItemGroup.UNDEFINED,
-    expanded: true,
-    tradeable: true,
-    sellable: true,
-    purchaseable: true,
-    useable: true,
-    icon: '✉️',
-    class: Letter,
-    create: (title?: string, text?: string, author?: ClubUser) => new Items.Letter.class(Items.Letter, Items.Letter.id, title, text, author ? author.id : ''),
-    parse: (data: any) => new Items.Letter.class(Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author),
-  },
-  Carp: {
-    id: 'carp',
-    category: ItemCategory.COLLECTABLE,
-    group: ItemGroup.COLLECTABLE,
-    expanded: true,
-    tradeable: true,
-    sellable: true,
-    purchaseable: false,
-    useable: false,
-    icon: '🐟',
-    class: GenericFish,
-    create: (size: number, caughtAt: Date, stuffed: boolean) => new Items.Carp.class(Items.Carp, Items.Carp.id, size, caughtAt, stuffed),
-    parse: (data: any) => new Items.Carp.class(Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
-  },
+  // Letter: {
+  //   id: 'letter',
+  //   category: ItemCategory.UNDEFINED,
+  //   group: ItemGroup.UNDEFINED,
+  //   expanded: true,
+  //   tradeable: true,
+  //   sellable: true,
+  //   purchaseable: true,
+  //   useable: true,
+  //   icon: '✉️',
+  //   class: Letter,
+  //   create: (title?: string, text?: string, author?: ClubUser) => new Items.Letter.class(Items.Letter, Items.Letter.id, title, text, author ? author.id : ''),
+  //   parse: (data: any) => new Items.Letter.class(Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author),
+  // },
+  // Carp: {
+  //   id: 'carp',
+  //   category: ItemCategory.COLLECTABLE,
+  //   group: ItemGroup.COLLECTABLE,
+  //   expanded: true,
+  //   tradeable: true,
+  //   sellable: true,
+  //   purchaseable: false,
+  //   useable: false,
+  //   icon: '🐟',
+  //   class: GenericFish,
+  //   create: (size: number, caughtAt: Date, stuffed: boolean) => new Items.Carp.class(Items.Carp, Items.Carp.id, size, caughtAt, stuffed),
+  //   parse: (data: any) => new Items.Carp.class(Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
+  // },
 };
 
 export const ItemList: ItemPrefab[] = Object.values(Items);
