@@ -35,18 +35,16 @@ The Tude API is core to the "Social" / "Economy" part of the bot. The api will h
 *Yup, that's it. If you want to contribute, feel free to reach out to me via discord*
 
 
+### Ew, why is the build folder included?
+Because of the build / deploy process. Can't give any further details but it's on purpose.
 
-### Libraries used
-chalk
 
-cron
+### Libraries and Third-party services used
 
 discord.js
 
 mongodb
 
-node-fetch
+wit.ai
 
-typescript
-
-> *See package.json*
+api.badosz.com

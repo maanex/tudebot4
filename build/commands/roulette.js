@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
+const emojis_1 = require("../int/emojis");
 class RouletteCommand extends types_1.Command {
     constructor() {
         super({
@@ -136,7 +137,7 @@ class RouletteCommand extends types_1.Command {
                 if (cookies > u.cookies) {
                     if (Math.random() < .05) {
                         // @ts-ignore
-                        repl(`${hidethepain} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
+                        repl(`${emojis_1.default.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
                     }
                     else {
                         // @ts-ignore

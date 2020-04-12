@@ -25,6 +25,11 @@ class GiveCommand extends types_1.Command {
                     resolve(false);
                     return;
                 }
+                if (u.level < 3) {
+                    repl(`I'm sorry, but you're not allowed to do that!`, 'bad', 'You need to be at least level 3 to trade with other players!');
+                    resolve(false);
+                    return;
+                }
                 if (args.length < 2) {
                     repl('give <@someone> <amount> [itemname]', 'bad', 'Don\'t provide an item name in order to send them your cookies');
                     resolve(false);
@@ -37,7 +42,7 @@ class GiveCommand extends types_1.Command {
                     return;
                 }
                 if (otherPerson.bot) {
-                    repl('Nah he no wants ya garbage, boy!', 'bad', `aka ${otherPerson.username} is a bot and thus can't recieve items`);
+                    repl(`${otherPerson.username} doesn't want your stuff!`, 'bad', `In other words: they're a bot and cannot recieve items.`);
                     resolve(false);
                     return;
                 }
@@ -52,90 +57,95 @@ class GiveCommand extends types_1.Command {
                     resolve(false);
                     return;
                 }
-                args.splice(0, 1);
-                const force = cmdl.f || cmdl.force;
-                let amountSet = false;
-                let typeSet = false;
-                let amount = 1;
-                let type = 'cookie';
-                let dispName = 'cookie';
-                let dispNamePl = 'cookies';
-                let item = null;
-                for (let arg of args) {
-                    if (arg.toLowerCase() == 'a' || arg.toLowerCase() == 'all') {
-                        amount = -42;
-                        amountSet = true;
+                tudeapi_1.default.clubUserByDiscordId(otherPerson.id, otherPerson).then(rec => {
+                    if (rec.level < 3) {
+                        repl(`Oh no, you cannot trade with ${otherPerson.username}!`, 'bad', 'They need to be at least level 3 in order to recieve items!');
+                        resolve(false);
+                        return;
                     }
-                    else if (!isNaN(parseInt(arg))) {
-                        amount = parseInt(arg);
-                        amountSet = true;
-                    }
-                    else {
-                        item = u.inventory.get(arg.toLowerCase());
-                        if (!item) {
-                            const listItem = itemlist_1.ItemList.find(i => i.id == arg.toLowerCase());
-                            if (!listItem) {
-                                repl(`Item ${arg} not found!`, 'bad');
-                                resolve(false);
-                                return;
-                            }
-                            else {
-                                repl(`You don't have any ${tudeapi_1.default.clubLang['itempl_' + listItem.id]}!`, 'bad');
-                                resolve(false);
-                                return;
-                            }
+                    args.splice(0, 1);
+                    const force = cmdl.f || cmdl.force;
+                    let amountSet = false;
+                    let typeSet = false;
+                    let amount = 1;
+                    let type = 'cookie';
+                    let dispName = 'cookie';
+                    let dispNamePl = 'cookies';
+                    let item = null;
+                    for (let arg of args) {
+                        if (arg.toLowerCase() == 'a' || arg.toLowerCase() == 'all') {
+                            amount = -42;
+                            amountSet = true;
                         }
-                        const itemPrefab = itemlist_1.ItemList.find(i => i.id == item.prefab.id);
-                        dispName = tudeapi_1.default.clubLang['item_' + itemPrefab.id];
-                        dispNamePl = tudeapi_1.default.clubLang['itempl_' + itemPrefab.id];
-                        type = arg.toLowerCase();
-                        typeSet = true;
+                        else if (!isNaN(parseInt(arg))) {
+                            amount = parseInt(arg);
+                            amountSet = true;
+                        }
+                        else {
+                            item = u.inventory.get(arg.toLowerCase());
+                            if (!item) {
+                                const listItem = itemlist_1.ItemList.find(i => i.id == arg.toLowerCase());
+                                if (!listItem) {
+                                    repl(`Item ${arg} not found!`, 'bad');
+                                    resolve(false);
+                                    return;
+                                }
+                                else {
+                                    repl(`You don't have any ${tudeapi_1.default.clubLang['itempl_' + listItem.id]}!`, 'bad');
+                                    resolve(false);
+                                    return;
+                                }
+                            }
+                            const itemPrefab = itemlist_1.ItemList.find(i => i.id == item.prefab.id);
+                            dispName = tudeapi_1.default.clubLang['item_' + itemPrefab.id];
+                            dispNamePl = tudeapi_1.default.clubLang['itempl_' + itemPrefab.id];
+                            type = arg.toLowerCase();
+                            typeSet = true;
+                        }
                     }
-                }
-                if (args.length > 1) {
-                    if (!amountSet) {
-                        repl(`${args[1]} is not a valid amount!`, 'bad');
-                        resolve(false);
-                        return;
+                    if (args.length > 1) {
+                        if (!amountSet) {
+                            repl(`${args[1]} is not a valid amount!`, 'bad');
+                            resolve(false);
+                            return;
+                        }
+                        if (!typeSet) {
+                            repl(`Item ${args[1]} not found!`, 'bad');
+                            resolve(false);
+                            return;
+                        }
                     }
-                    if (!typeSet) {
-                        repl(`Item ${args[1]} not found!`, 'bad');
-                        resolve(false);
-                        return;
-                    }
-                }
-                if (item) {
-                    if (!item.prefab.tradeable) {
-                        repl(`${dispNamePl} are unfortunately not tradeable!`, 'bad');
-                        resolve(false);
-                        return;
-                    }
-                }
-                if (amount == -42) {
                     if (item) {
-                        amount = item.amount;
+                        if (!item.prefab.tradeable) {
+                            repl(`${dispNamePl} are unfortunately not tradeable!`, 'bad');
+                            resolve(false);
+                            return;
+                        }
                     }
-                    else {
-                        amount = u.cookies;
+                    if (amount == -42) {
+                        if (item) {
+                            amount = item.amount;
+                        }
+                        else {
+                            amount = u.cookies;
+                        }
+                        if (amount <= 0) {
+                            repl(`You don't have any ${dispNamePl}!`, 'bad');
+                            resolve(false);
+                            return;
+                        }
                     }
                     if (amount <= 0) {
-                        repl(`You don't have any ${dispNamePl}!`, 'bad');
+                        repl(`You cannot send 0 or less ${dispNamePl}!`, 'bad');
                         resolve(false);
                         return;
                     }
-                }
-                if (amount <= 0) {
-                    repl(`You cannot send 0 or less ${dispNamePl}!`, 'bad');
-                    resolve(false);
-                    return;
-                }
-                const haveAmount = (item ? item.amount : u.cookies);
-                if (amount > haveAmount) {
-                    repl(`You cannot give away ${amount} ${dispNamePl}! You only have ${haveAmount}!`, 'bad');
-                    resolve(false);
-                    return;
-                }
-                tudeapi_1.default.clubUserByDiscordId(otherPerson.id, otherPerson).then(rec => {
+                    const haveAmount = (item ? item.amount : u.cookies);
+                    if (amount > haveAmount) {
+                        repl(`You cannot give away ${amount} ${dispNamePl}! You only have ${haveAmount}!`, 'bad');
+                        resolve(false);
+                        return;
+                    }
                     tudeapi_1.default.performClubUserAction(u, { id: 'transaction', amount: amount, type: type, reciever: rec.id }).then(o => {
                         channel.send({
                             embed: {
