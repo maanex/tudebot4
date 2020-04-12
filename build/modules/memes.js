@@ -149,7 +149,6 @@ class MemesModule extends types_1.Module {
         }
     }
     onBotReady() {
-        this.electMemeOfTheMonth(); // TODO REMOVE
         //                           m h d m dw
         this.cronjobs.push(cron.job('0 6 1 * *', () => this.electMemeOfTheMonth()));
     }

@@ -174,8 +174,8 @@ exports.Items = {
     },
     Carp: {
         id: 'carp',
-        category: item_1.ItemCategory.FISHING_EQUIPMENT,
-        group: item_1.ItemGroup.GAME_ASSET,
+        category: item_1.ItemCategory.COLLECTABLE,
+        group: item_1.ItemGroup.COLLECTABLE,
         expanded: true,
         tradeable: true,
         sellable: true,

@@ -25,6 +25,7 @@ export default class InventoryCommand extends Command {
       let user = orgUser;
       if (event.message.mentions.users.size)
         user = event.message.mentions.users.first();
+      else if (event.label == 'i' && args.length) return;
       TudeApi.clubUserByDiscordId(user.id, user)
         .then(u => {
           if (!u || u.error) {

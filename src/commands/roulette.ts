@@ -1,8 +1,9 @@
 import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
+import { Message, Channel, User, TextChannel, Emoji } from "discord.js";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
 import CommandsModule from "modules/commands";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import Emojis from "../int/emojis";
 
 
 interface Digit {
@@ -162,7 +163,7 @@ export default class RouletteCommand extends Command {
         if (cookies > u.cookies) {
           if (Math.random() < .05) {
             // @ts-ignore
-            repl(`${hidethepain} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
+            repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
           } else {
             // @ts-ignore
             repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
