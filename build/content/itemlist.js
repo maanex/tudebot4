@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("../thirdparty/tudeapi/item");
 const emojis_1 = require("../int/emojis");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const Letter_1 = require("./items/Letter");
-const GenericFish_1 = require("./items/GenericFish");
+const Letter_1 = require("../content/items/Letter");
+const GenericFish_1 = require("../content/items/GenericFish");
 exports.defaultItemIcon = '❔';
 //
 exports.Items = {
