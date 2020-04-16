@@ -30,7 +30,6 @@ export default class CocktailCommand extends Command {
         .then(o => o.json())
         .then(o => {
           if (!o || !o.drinks || !o.drinks.length) {
-            console.log(url)
             if (search) repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad');
             else repl('Couldn\'t load the cocktail list!', 'bad', 'Maybe just get yourself a glass of water or something.');
             reject();

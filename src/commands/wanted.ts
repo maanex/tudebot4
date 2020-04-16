@@ -25,6 +25,7 @@ export default class WantedCommand extends Command {
         const embed = new RichEmbed()
           .attachFile(file)
           .setColor(0x2f3136)
+          .setFooter(`@${user.tag} • api.badosz.com`)
           .setImage('attachment://wanted.png');
         channel.send('', { embed });
         resolve(true);

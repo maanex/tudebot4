@@ -25,6 +25,7 @@ export default class WastedCommand extends Command {
         const embed = new RichEmbed()
           .attachFile(file)
           .setColor(0x2f3136)
+          .setFooter(`@${user.tag} • api.badosz.com`)
           .setImage('attachment://wasted.png');
         channel.send('', { embed });
         resolve(true);
