@@ -10,18 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const wcp_1 = require("../../thirdparty/wcp/wcp");
-const __1 = require("../..");
+const index_1 = require("../../index");
 const badgelist_1 = require("./badgelist");
 const item_1 = require("./item");
 const itemlist_1 = require("../../content/itemlist");
-const fetch = require('node-fetch');
-const settings = require('../../../config/settings.json').thirdparty;
+const node_fetch_1 = require("node-fetch");
 class TudeApi {
     static get baseurl() {
-        return settings.tudeapi.baseurl;
+        return index_1.TudeBot.config.thirdparty.tudeapi.baseurl;
     }
     static get key() {
-        return settings.tudeapi.key;
+        return index_1.TudeBot.config.thirdparty.tudeapi.key;
     }
     static get endpoints() {
         return {
@@ -40,7 +39,7 @@ class TudeApi {
     //
     static init(language) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            fetch(this.baseurl + this.endpoints.club.badges, {
+            node_fetch_1.default(this.baseurl + this.endpoints.club.badges, {
                 method: 'get',
                 headers: { 'auth': this.key }
             })
@@ -106,7 +105,7 @@ class TudeApi {
                 resolve();
             };
             //
-            yield fetch(this.baseurl + this.endpoints.club.lang + language, {
+            yield node_fetch_1.default(this.baseurl + this.endpoints.club.lang + language, {
                 method: 'get',
                 headers: { 'auth': this.key }
             })
@@ -129,7 +128,7 @@ class TudeApi {
     //
     static userById(id) {
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.users + id, {
+            node_fetch_1.default(this.baseurl + this.endpoints.users + id, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
@@ -141,7 +140,7 @@ class TudeApi {
     static userByDiscordId(id, orCreate) {
         let status;
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.users + 'find?discord=' + id, {
+            node_fetch_1.default(this.baseurl + this.endpoints.users + 'find?discord=' + id, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
@@ -168,7 +167,7 @@ class TudeApi {
     static createNewUser(options) {
         let status;
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.users, {
+            node_fetch_1.default(this.baseurl + this.endpoints.users, {
                 method: 'post',
                 body: JSON.stringify(options),
                 headers: { 'auth': this.key, 'Content-Type': 'application/json' },
@@ -188,7 +187,7 @@ class TudeApi {
     }
     static clubUserById(id) {
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.club.users + id, {
+            node_fetch_1.default(this.baseurl + this.endpoints.club.users + id, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
@@ -215,7 +214,7 @@ class TudeApi {
     static clubUserByDiscordId(id, orCreate) {
         let status;
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.club.users + 'find?discord=' + id, {
+            node_fetch_1.default(this.baseurl + this.endpoints.club.users + 'find?discord=' + id, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
@@ -282,7 +281,7 @@ class TudeApi {
     }
     static clubLeaderboard() {
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.club.leaderboard, {
+            node_fetch_1.default(this.baseurl + this.endpoints.club.leaderboard, {
                 method: 'get',
                 headers: { 'auth': this.key },
             })
@@ -292,7 +291,7 @@ class TudeApi {
         });
     }
     static updateUser(user) {
-        fetch(this.baseurl + this.endpoints.users + user.id, {
+        node_fetch_1.default(this.baseurl + this.endpoints.users + user.id, {
             method: 'put',
             body: JSON.stringify(user),
             headers: { 'auth': this.key, 'Content-Type': 'application/json' },
@@ -360,7 +359,7 @@ class TudeApi {
             if (!ichanges)
                 delete u.inventory;
         }
-        fetch(this.baseurl + this.endpoints.club.users + user.id, {
+        node_fetch_1.default(this.baseurl + this.endpoints.club.users + user.id, {
             method: 'put',
             body: JSON.stringify(u),
             headers: { 'auth': this.key, 'Content-Type': 'application/json' },
@@ -373,7 +372,7 @@ class TudeApi {
             user['_org_keys'] += u.keys ? u.keys.add : 0;
             user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
             if (o['levelup'] != undefined)
-                __1.TudeBot.getModule('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
+                index_1.TudeBot.getModule('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
             if (o['items']) {
                 for (const id of o['items']) {
                     if (!updatedItems.length)
@@ -386,9 +385,12 @@ class TudeApi {
             .catch(console.error);
     }
     static performClubUserAction(user, action) {
+        return this.performClubUserActionRaw(user.id, action);
+    }
+    static performClubUserActionRaw(query, action) {
         let status;
         return new Promise((resolve, reject) => {
-            fetch(this.baseurl + this.endpoints.club.users + user.id, {
+            node_fetch_1.default(this.baseurl + this.endpoints.club.users + query, {
                 method: 'post',
                 body: JSON.stringify(action),
                 headers: { 'auth': this.key, 'Content-Type': 'application/json' },
@@ -403,7 +405,11 @@ class TudeApi {
                 else
                     reject(o);
             })
-                .catch(err => reject());
+                .catch(err => {
+                if (process.env.NODE_ENV !== 'production')
+                    console.error(err);
+                reject();
+            });
         });
     }
     static parseItem(ref, item) {

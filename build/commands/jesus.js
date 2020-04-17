@@ -29,6 +29,7 @@ class JesusCommand extends types_1.Command {
                 const embed = new discord_js_1.RichEmbed()
                     .attachFile(file)
                     .setColor(0x2f3136)
+                    .setFooter(`@${user.tag} • api.badosz.com`)
                     .setImage('attachment://AMEN.png');
                 channel.send('', { embed });
                 resolve(true);

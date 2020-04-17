@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("../thirdparty/tudeapi/item");
 const emojis_1 = require("../int/emojis");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
+const Letter_1 = require("./items/Letter");
+const GenericFish_1 = require("./items/GenericFish");
 exports.defaultItemIcon = '❔';
 //
 exports.Items = {
@@ -155,6 +157,34 @@ exports.Items = {
         class: class WelcomeGiftLootbox extends item_1.StackableItem {
         },
         create: (amount) => new exports.Items.WelcomeGiftLootbox.class(exports.Items.WelcomeGiftLootbox, amount)
+    },
+    Letter: {
+        id: 'letter',
+        category: item_1.ItemCategory.UNDEFINED,
+        group: item_1.ItemGroup.UNDEFINED,
+        expanded: true,
+        tradeable: true,
+        sellable: true,
+        purchaseable: true,
+        useable: true,
+        icon: '✉️',
+        class: Letter_1.default,
+        create: (title, text, author) => new exports.Items.Letter.class(exports.Items.Letter, exports.Items.Letter.id, title, text, author ? author.id : ''),
+        parse: (data) => new exports.Items.Letter.class(exports.Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author),
+    },
+    Carp: {
+        id: 'carp',
+        category: item_1.ItemCategory.COLLECTABLE,
+        group: item_1.ItemGroup.COLLECTABLE,
+        expanded: true,
+        tradeable: true,
+        sellable: true,
+        purchaseable: false,
+        useable: false,
+        icon: '🐟',
+        class: GenericFish_1.default,
+        create: (size, caughtAt, stuffed) => new exports.Items.Carp.class(exports.Items.Carp, exports.Items.Carp.id, size, caughtAt, stuffed),
+        parse: (data) => new exports.Items.Carp.class(exports.Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
     },
 };
 exports.ItemList = Object.values(exports.Items);

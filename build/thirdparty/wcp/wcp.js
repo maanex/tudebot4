@@ -1,20 +1,31 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const stdutils_1 = require("./stdutils");
-const __1 = require("../..");
+const index_1 = require("../../index");
 const database_1 = require("../../database/database");
-const freestuffCmd = require("../../commands/freestuff");
-const fetch = require('node-fetch');
-const chalk = require('chalk');
-const settings = require('../../../config/settings.json').thirdparty;
+const node_fetch_1 = require("node-fetch");
+const chalk = require("chalk");
+const config = require('../../../config.js');
 class WCP {
     static get endpoint() {
-        return settings.wcp.endpoint;
+        return config.thirdparty.wcp.endpoint;
     }
     static get secret() {
-        return settings.wcp.secret;
+        return config.thirdparty.wcp.secret;
     }
     static init(offlineMode) {
+        console.log(chalk.green(offlineMode
+            ? 'Initialized WCP in offline mode'
+            : 'Initialized WCP in online mode'));
         this.offlineMode = offlineMode;
         if (this.offlineMode)
             return;
@@ -32,15 +43,18 @@ class WCP {
             config_commands: '',
         });
         let c = 0;
-        setInterval(() => {
+        setInterval(() => __awaiter(this, void 0, void 0, function* () {
             if (c++ >= 5)
                 c = 0;
-            if (this.sysout.length)
-                WCP.send({ sysout: this.sysout.join('\n') });
-            else if (c == 0)
+            if (this.sysout.length && !this.connectionLost) {
+                const connected = WCP.send({ sysout: this.sysout.join('\n') });
+                if (connected)
+                    this.sysout = [];
+            }
+            else if (c == 0) {
                 WCP.send({ ping: true });
-            this.sysout = [];
-        }, 1000);
+            }
+        }), 1000);
         stdutils_1.hook_std((o) => WCP.sysout.push(o), process.stdout);
         stdutils_1.hook_std((o) => WCP.sysout.push(chalk.bold.redBright(o)), process.stderr);
     }
@@ -49,23 +63,37 @@ class WCP {
     }
     //
     static send(data) {
-        if (this.offlineMode)
-            return;
-        fetch(this.endpoint, {
-            method: 'post',
-            headers: { 'authorization': this.secret, 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-            .then(o => o.json())
-            .then(this.handleBack)
-            .catch(console.error);
+        return new Promise((resolve, reject) => {
+            node_fetch_1.default(this.endpoint, {
+                method: 'post',
+                headers: { 'authorization': this.secret, 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(o => o.json())
+                .then(data => {
+                if (!data.success) {
+                    resolve(false);
+                    return;
+                }
+                if (this.connectionLost) {
+                    console.log(chalk.gray('WCP reconnected!'));
+                    this.connectionLost = false;
+                }
+                this.handleBack(data);
+                resolve(true);
+            })
+                .catch(err => {
+                if (!this.connectionLost) {
+                    console.log(chalk.gray('WCP connection lost!'));
+                    this.connectionLost = true;
+                }
+                resolve(false);
+            });
+        });
     }
     static handleBack(data) {
         if (!data.success)
             return;
-        if (data.new_freestuff) {
-            freestuffCmd.announce(__1.TudeBot.guilds.get('432899162150010901'), data.new_freestuff);
-        }
         if (data.configure_modules) {
             let obj = JSON.parse(data.configure_modules);
             if (obj) {
@@ -74,7 +102,7 @@ class WCP {
                     .updateOne({ _id: 'modules' }, { '$set': { data: obj } });
                 console.log(chalk.blue('Module settings got updated remotely. Reloading.'));
                 if (!data.reload)
-                    __1.TudeBot.reload();
+                    index_1.TudeBot.reload();
             }
         }
         if (data.configure_commands) {
@@ -85,16 +113,17 @@ class WCP {
                     .updateOne({ _id: 'commands' }, { '$set': { data: obj } });
                 console.log(chalk.blue('Command settings got updated remotely. Reloading.'));
                 if (!data.reload)
-                    __1.TudeBot.reload();
+                    index_1.TudeBot.reload();
             }
         }
         if (data.reload) {
-            __1.TudeBot.reload();
+            index_1.TudeBot.reload();
         }
     }
 }
 exports.default = WCP;
 //
 WCP.offlineMode = false;
+WCP.connectionLost = false;
 WCP.sysout = [];
 //# sourceMappingURL=wcp.js.map

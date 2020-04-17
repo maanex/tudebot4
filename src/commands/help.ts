@@ -29,7 +29,7 @@ export default class HelpCommand extends Command {
   constructor() {
     super({
       name: 'help',
-      aliases: [...('.?!/%-+=~&,:'.split('').map(p => p + 'help')),'commands','commandlist'],
+      aliases: [...('.?!/%-+=~&,:*_$'.split('').map(p => p + 'help')),'commands','commandlist'],
       description: 'Help!',
       groups: ['info'],
       hideOnHelp: true,

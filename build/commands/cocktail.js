@@ -25,7 +25,6 @@ class CocktailCommand extends types_1.Command {
                 .then(o => o.json())
                 .then(o => {
                 if (!o || !o.drinks || !o.drinks.length) {
-                    console.log(url);
                     if (search)
                         repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad');
                     else

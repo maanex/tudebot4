@@ -1,0 +1,30 @@
+{
+    "bot": {
+        "token": "NDg2MjcxMzQ1NTc1OTg1MTU0.XhpbyA.JwClZGxkk-q2ZH3dJlIHmWWPsfE",
+        "tokenp": "NTkxOTgyMTQ2MTY0MzU5MTc1.Xhpb5A.t91198nWo8j0eab6j4Bf3dmFgBY"
+    },
+    "mongodb": {
+        "url": "mongodb://127.0.0.1:27017/admin",
+        "urlp": "mongodb+srv://tudebot:8WqErqrrJowGvtdU@cluster0-99txk.mongodb.net/test?authSource=admin&replicaSet=Cluster0-shard-0&readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=true"
+    },
+    "thirdparty": {
+        "tudeapi": {
+            "key": "NHjdi3kma882jHdUmk488jHd93m4jfJda",
+            "baseurl": "http://localhost:8080/"
+        },
+        "wcp": {
+            "secret": "6UT-3DzBojVFeUyc3",
+            "endpoint": "http://localhost:9009/api/tudebot"
+        },
+        "wit": {
+            "token": "MWDUCECSLDGRWNFSRFDQ6WRBJ3HNRHTM"
+        },
+        "badoszapi": {
+            "token": "I8RDWWDPTWIXEC1KMY8K"
+        }
+    },
+    "server": {
+        "port": 5041
+    },
+    "lang": "en"
+}

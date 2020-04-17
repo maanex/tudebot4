@@ -4,3 +4,5 @@
 /tmp
 
 config/settings.json
+config.js
+.env

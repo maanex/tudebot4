@@ -1,16 +1,12 @@
-
 import { User as DiscordUser } from "discord.js";
 import { hook_std } from "./stdutils";
-import { TudeBot } from "../..";
+import { TudeBot } from "../../index";
 import Database from "../../database/database";
+import fetch from "node-fetch";
+import * as chalk from "chalk";
 
+const config = require('../../../config.js');
 
-const freestuffCmd = require("../../commands/freestuff");
-
-const fetch = require('node-fetch');
-const chalk = require('chalk');
-
-const settings = require('../../../config/settings.json').thirdparty;
 
 export interface WcpData {
   ping?: boolean;
@@ -32,11 +28,11 @@ export interface WcpData {
 export default class WCP {
 
   public static get endpoint() {
-    return settings.wcp.endpoint;
+    return config.thirdparty.wcp.endpoint;
   }
 
   public static get secret() {
-    return settings.wcp.secret;
+    return config.thirdparty.wcp.secret;
   }
 
   //

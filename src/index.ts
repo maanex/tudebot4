@@ -10,26 +10,27 @@ import * as chalk from "chalk";
 import ParseArgs from './util/parseArgs';
 import { Items } from './content/itemlist';
 import BadoszAPI from './thirdparty/badoszapi/badoszApi';
-
-const settings = require('../config/settings.json');
+import Server from './server/server';
+import { config as loadDotenv } from 'dotenv';
 
 
 export class TudeBotClient extends Client {
 
   public readonly devMode;
 
-  public config = settings;
+  public config: any = null;
   public modlog: modlogFunction;
   public modules: Map<string, Module> = null;
   public guildSettings: Map<string, GuildSettings> = null;
 
   public badoszApi: BadoszAPI = null;
 
-  constructor(props: any, flags: {[key: string]: string | boolean}) {
+  constructor(props: any, config: any) {
     super(props);
 
-    this.devMode = !!flags['dev'];
+    this.devMode = process.env.NODE_ENV !== 'production';
     
+    this.config = config;
     this.modlog = null;
     this.modules = new Map();
     this.guildSettings = new Map();
@@ -45,7 +46,7 @@ export class TudeBotClient extends Client {
     Util.init();
     WCP.init(false /* this.devMode */);
 
-    MongoAdapter.connect(settings.mongodb.url)
+    MongoAdapter.connect(this.config.mongodb.url)
       .catch(err => {
         console.error(err);
         WCP.send({ status_mongodb: '-Connection failed' });
@@ -54,10 +55,11 @@ export class TudeBotClient extends Client {
         console.log('Connected to Mongo');
         WCP.send({ status_mongodb: '+Connected' });
 
-        await TudeApi.init(settings.lang);
+        await TudeApi.init(this.config.lang);
         await Database.init();
+        await Server.start(this.config.server.port);
 
-        this.badoszApi = new BadoszAPI(settings.thirdparty.badoszapi.token);
+        this.badoszApi = new BadoszAPI(this.config.thirdparty.badoszapi.token);
 
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
@@ -70,7 +72,7 @@ export class TudeBotClient extends Client {
     
         await this.loadGuilds(false);
         await this.loadModules(false);
-        this.login(settings.bot.token);
+        this.login(this.config.bot.token);
       });
   }
 
@@ -157,7 +159,7 @@ export class TudeBotClient extends Client {
     });
   }
 
-  lang(key: string, params?: { [key: string]: string }): string {
+  public lang(key: string, params?: { [key: string]: string }): string {
     let res = require(`../config/lang.json`)[key];
     if (!res) return key;
     if (res.push !== undefined) res = res[Math.floor(Math.random() * res.length)];
@@ -166,7 +168,14 @@ export class TudeBotClient extends Client {
     return res;
   }
 
-  reload(): Promise<void> {
+  public optionalLang(key: string, params?: { [key: string]: string }): string {
+    if (key.startsWith('lang:')) return this.lang(key.substr(5), params);
+    for (const param in params)
+      key = key.split(`{${param}}`).join(params[param]);
+    return key;
+  }
+
+  public reload(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       this.removeAllListeners();
       fixReactionEvent(this);
@@ -177,15 +186,17 @@ export class TudeBotClient extends Client {
     });
   }
 
-  getModule<T extends Module>(name: string): T {
+  public getModule<T extends Module>(name: string): T {
     return this.modules.get(name) as T;
   }
 
 }
 
 
+loadDotenv();
 const flags = ParseArgs.parse(process.argv);
-export const TudeBot = new TudeBotClient ({ }, flags);
+const config = require('../config.js');
+export const TudeBot = new TudeBotClient({ }, config);
 
 
 function fixReactionEvent(bot: TudeBotClient) {

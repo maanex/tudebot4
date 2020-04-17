@@ -15,6 +15,8 @@ class AutoSupportModule extends types_1.Module {
                 return;
             if (!this.guildData(mes.guild).channels[mes.channel.id])
                 return;
+            if (mes.content.length > 280)
+                return; // Api cannot process text longer than that
             this.witClient.message(mes.content)
                 .then((data) => {
                 if (!data.entities.intent)

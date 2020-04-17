@@ -117,6 +117,11 @@ class AdminCommand extends types_1.Command {
                     const module = index_1.TudeBot.modules.get('getpoints');
                     module.assignLevelRoles(event.message.member, { level: parseInt(args[1]) });
                     break;
+                case 'testperks':
+                    tudeapi_1.default.clubUserByDiscordId(user.id, user).then(u => {
+                        tudeapi_1.default.performClubUserAction(u, { id: 'obtain_perks', perks: 'club.cookies:[100-200]' }).then(console.log).catch(console.error);
+                    });
+                    break;
             }
             return true;
         }

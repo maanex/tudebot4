@@ -54,5 +54,14 @@
     "meme_month_8": "September",
     "meme_month_9": "October <:doot:496770649562415115>",
     "meme_month_10": "No Nut November",
-    "meme_month_11": "Destroy Dick December"
+    "meme_month_11": "Destroy Dick December",
+    "freestuffbot_upvote_reward": [
+        "Yikes, {username} upvoted the FreeStuff Bot on top.gg|Here you have {cookies} cookies and {gems} gems as a thank you.\n[Click here to do the same]({topgg_url})",
+        "Thanks {username} for the upvote!|+{cookies} {cookies_emoji} {big_space} +{gems} {gems_emoji}\n\n[Click here to vote for the FreeStuff Bot on top.gg]({topgg_url})",
+        "{username} gave the FreeStuff bot an upvote on top.gg,|as a reward, here's {cookies} cookies and {gems} gems!\nAnyone else wanna upvote? [Click here]({topgg_url})",
+        "FREE MONEY!|{user} upvoted the FreeStuff Bot on top.gg,\nso here's {cookies} cookies and {gems} gems for that! *Muah*\n[*Anyone else? :eyes:*]({topgg_url})",
+        "Millionares hate him!|Here's how {user} made {cookies} cookies and {gems} gems in under 1 minute.\n[Click here for free money.]({topgg_url})",
+        "Doot doot {username}|+{cookies} {cookies_emoji} {big_space} +{gems} {gems_emoji}\n\nThat's for [upvoting the FreeStuff Bot]({topgg_url}), thanks <3",
+        ":money_with_wings: {username} :money_with_wings:|+{cookies} {cookies_emoji} {big_space} +{gems} {gems_emoji}\n\n[:money_with_wings: :money_with_wings: :money_with_wings: :money_with_wings: :money_with_wings:]({topgg_url})"
+    ]
 }

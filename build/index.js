@@ -19,15 +19,17 @@ const gitParser_1 = require("./util/gitParser");
 const chalk = require("chalk");
 const parseArgs_1 = require("./util/parseArgs");
 const badoszApi_1 = require("./thirdparty/badoszapi/badoszApi");
-const settings = require('../config/settings.json');
+const server_1 = require("./server/server");
+const dotenv_1 = require("dotenv");
 class TudeBotClient extends discord_js_1.Client {
-    constructor(props, flags) {
+    constructor(props, config) {
         super(props);
-        this.config = settings;
+        this.config = null;
         this.modules = null;
         this.guildSettings = null;
         this.badoszApi = null;
-        this.devMode = !!flags['dev'];
+        this.devMode = process.env.NODE_ENV !== 'production';
+        this.config = config;
         this.modlog = null;
         this.modules = new Map();
         this.guildSettings = new Map();
@@ -38,7 +40,7 @@ class TudeBotClient extends discord_js_1.Client {
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init(false /* this.devMode */);
-        mongo_adapter_1.default.connect(settings.mongodb.url)
+        mongo_adapter_1.default.connect(this.config.mongodb.url)
             .catch(err => {
             console.error(err);
             wcp_1.default.send({ status_mongodb: '-Connection failed' });
@@ -46,9 +48,10 @@ class TudeBotClient extends discord_js_1.Client {
             .then(() => __awaiter(this, void 0, void 0, function* () {
             console.log('Connected to Mongo');
             wcp_1.default.send({ status_mongodb: '+Connected' });
-            yield tudeapi_1.default.init(settings.lang);
+            yield tudeapi_1.default.init(this.config.lang);
             yield database_1.default.init();
-            this.badoszApi = new badoszApi_1.default(settings.thirdparty.badoszapi.token);
+            yield server_1.default.start(this.config.server.port);
+            this.badoszApi = new badoszApi_1.default(this.config.thirdparty.badoszapi.token);
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
@@ -58,7 +61,7 @@ class TudeBotClient extends discord_js_1.Client {
             });
             yield this.loadGuilds(false);
             yield this.loadModules(false);
-            this.login(settings.bot.token);
+            this.login(this.config.bot.token);
         }));
     }
     loadGuilds(isReload) {
@@ -145,6 +148,13 @@ class TudeBotClient extends discord_js_1.Client {
             res = res.split(`{${key}}`).join(params[key]);
         return res;
     }
+    optionalLang(key, params) {
+        if (key.startsWith('lang:'))
+            return this.lang(key.substr(5), params);
+        for (const param in params)
+            key = key.split(`{${param}}`).join(params[param]);
+        return key;
+    }
     reload() {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             this.removeAllListeners();
@@ -160,8 +170,10 @@ class TudeBotClient extends discord_js_1.Client {
     }
 }
 exports.TudeBotClient = TudeBotClient;
+dotenv_1.config();
 const flags = parseArgs_1.default.parse(process.argv);
-exports.TudeBot = new TudeBotClient({}, flags);
+const config = require('../config.js');
+exports.TudeBot = new TudeBotClient({}, config);
 function fixReactionEvent(bot) {
     const events = {
         MESSAGE_REACTION_ADD: 'messageReactionAdd',

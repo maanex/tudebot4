@@ -11,7 +11,7 @@ export default class ItemInfoCommand extends Command {
     super({
       name: 'iteminfo',
       aliases: [ 'ii', 'finditem', 'itemsearch' ],
-      description: 'Get generic information about any item',
+      description: 'Get basic information about any item',
       groups: [ 'club', 'info' ],
     });
   }

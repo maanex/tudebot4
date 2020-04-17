@@ -21,13 +21,7 @@ class SelfrolesModule extends types_1.Module {
                 return;
             let extraRoles = this.guildData(reaction.message.guild).extraRoles || [];
             let member = reaction.message.guild.member(user);
-            if (member.roles.find(r => r.id == role.id)) {
-                member.removeRole(role);
-                const re = reaction;
-                const us = user;
-                setTimeout(() => re.remove(us), 200);
-            }
-            else {
+            if (!member.roles.find(r => r.id == role.id)) {
                 member.addRole(role);
                 for (let rid of extraRoles)
                     member.addRole(member.guild.roles.find(r => r.id == rid));

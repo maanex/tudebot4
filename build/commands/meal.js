@@ -26,7 +26,6 @@ class MealCommand extends types_1.Command {
                 .then(o => o.json())
                 .then(o => {
                 if (!o || !o.meals || !o.meals.length) {
-                    console.log(url);
                     if (search)
                         repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad');
                     else

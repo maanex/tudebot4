@@ -358,17 +358,17 @@ class BlackJackCommand extends types_1.Command {
             if (removeEmojis) {
                 if (addEmojis
                     && this.currentGame.chatMessage.reactions.get(this.hit)
-                    && this.currentGame.chatMessage.reactions.get(this.hit)
-                    && this.currentGame.chatMessage.reactions.get(this.hit).count <= 2
-                    && this.currentGame.chatMessage.reactions.get(this.hit).count <= 2) {
-                    for (let u of this.currentGame.chatMessage.reactions.get(this.stand).users.array())
+                    && this.currentGame.chatMessage.reactions.get(this.stand)
+                    && this.currentGame.chatMessage.reactions.get(this.hit).count <= 3
+                    && this.currentGame.chatMessage.reactions.get(this.stand).count <= 3) {
+                    for (let u of this.currentGame.chatMessage.reactions.get(this.stand).users.array()) {
                         if (!u.bot)
                             yield this.currentGame.chatMessage.reactions.get(this.stand).remove(u.id);
-                    for (let u of this.currentGame.chatMessage.reactions.get(this.hit).users.array())
+                    }
+                    for (let u of this.currentGame.chatMessage.reactions.get(this.hit).users.array()) {
                         if (!u.bot)
                             yield this.currentGame.chatMessage.reactions.get(this.hit).remove(u.id);
-                    // this.currentGame.chatMessage.reactions.get(hit).users.array().filter(u => !u.bot).forEach(this.currentGame.chatMessage.reactions.get(hit).remove);
-                    //  this.currentGame.chatMessage.reactions.get(stand).users.filter(u => !u.bot).forEach(this.currentGame.chatMessage.reactions.get(stand).remove);
+                    }
                 }
                 else {
                     yield this.currentGame.chatMessage.clearReactions();

@@ -22,6 +22,7 @@ export default class SupportCommand extends Command {
       description: 'For the support team to quickly show relevant resources.',
       aliases: [ 'supp', 'sup' ],
       groups: [ 'info' ],
+      hideOnHelp: true,
     });
   }
 
