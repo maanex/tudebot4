@@ -195,7 +195,7 @@ export class TudeBotClient extends Client {
 
 loadDotenv();
 const flags = ParseArgs.parse(process.argv);
-const config = require('../config.js');
+export const config = require('../config.js');
 export const TudeBot = new TudeBotClient({ }, config);
 
 

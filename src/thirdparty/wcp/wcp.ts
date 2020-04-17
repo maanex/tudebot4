@@ -1,11 +1,9 @@
 import { User as DiscordUser } from "discord.js";
 import { hook_std } from "./stdutils";
-import { TudeBot } from "../../index";
+import { TudeBot, config } from "../../index";
 import Database from "../../database/database";
 import fetch from "node-fetch";
 import * as chalk from "chalk";
-
-const config = require('../../../config.js');
 
 
 export interface WcpData {
