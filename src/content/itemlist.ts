@@ -1,8 +1,8 @@
 import { Item, ItemCategory, ItemGroup, StackableItem, ItemPrefab, ExpandedItem } from "../thirdparty/tudeapi/item";
 import Emojis from "../int/emojis";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
-import Letter from "./items/Letter";
-import GenericFish from "./items/GenericFish";
+import Letter from "./items/letter";
+import GenericFish from "./items/genericFish";
 
 export const defaultItemIcon = '❔';
 
