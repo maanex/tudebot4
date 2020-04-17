@@ -6,7 +6,7 @@ const types_1 = require("../types");
 const generateInviteLinkMeme_1 = require("../functions/generateInviteLinkMeme");
 class AutoSupportModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
-        super('Auto Support', 'public', conf, data, guilds, lang);
+        super('CleanChat Automod', 'public', conf, data, guilds, lang);
         /* */
         this.inviteResponseStatus = 0;
     }

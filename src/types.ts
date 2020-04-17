@@ -65,7 +65,7 @@ export interface GuildSettings {
 
 //
 
-export type CommandExecEvent = { message: Message, sudo: boolean, label: string };
+export type CommandExecEvent = { message: Message, sudo: boolean, label: string, awaitUserResponse: AwaitUserResponseFunction };
 
 export type CommandGroup = 'fun' | 'images' | 'apiwrapper' | 'rng' | 'internal' | 'club' | 'easteregg' | 'casino' | 'info';
 
@@ -110,6 +110,17 @@ export abstract class Command {
 
 }
 
+export interface UserResponseWaiting {
+  user: User;
+  channel: TextChannel;
+  callback: UserResponseCallback;
+  timeout: NodeJS.Timeout;
+}
+
+export type UserResponseCallback = (mes: Message) => void;
+
+export type AwaitUserResponseFunction = (user: User, channel: TextChannel, timeout: number, callback: UserResponseCallback) => void;
+
 //
 
-export type modlogFunction = (guild: Guild, type: modlogType, text: string) => void;
+export type ModlogFunction = (guild: Guild, type: modlogType, text: string) => void;

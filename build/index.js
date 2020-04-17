@@ -172,8 +172,8 @@ class TudeBotClient extends discord_js_1.Client {
 exports.TudeBotClient = TudeBotClient;
 dotenv_1.config();
 const flags = parseArgs_1.default.parse(process.argv);
-const config = require('../config.js');
-exports.TudeBot = new TudeBotClient({}, config);
+exports.config = require('../config.js');
+exports.TudeBot = new TudeBotClient({}, exports.config);
 function fixReactionEvent(bot) {
     const events = {
         MESSAGE_REACTION_ADD: 'messageReactionAdd',

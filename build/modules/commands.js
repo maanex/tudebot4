@@ -8,6 +8,7 @@ const chalk = require("chalk");
 const types_1 = require("../types");
 const _unavailable_1 = require("../commands/_unavailable");
 class CommandsModule extends types_1.Module {
+    //
     constructor(conf, data, guilds, lang) {
         super('Commands', 'public', conf, data, guilds, lang);
         this.ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN = 2 * 60000;
@@ -16,7 +17,9 @@ class CommandsModule extends types_1.Module {
         this.commands = [];
         this.identifierMap = new Map();
         this.cooldown = new Map();
+        this.awaitingResponse = new Map();
     }
+    //
     onEnable() {
         this.loadCommands();
         index_1.TudeBot.on('message', (mes) => {
@@ -24,6 +27,15 @@ class CommandsModule extends types_1.Module {
                 return;
             if (mes.guild.id == "432899162150010901")
                 dbstats_1.DbStats.getUser(mes.author).then(u => u.messagesSent++); // TODO MAKE BETTER
+            if (this.awaitingResponse.has(mes.author.id)) {
+                const object = this.awaitingResponse.get(mes.author.id);
+                if (object.channel.id === mes.channel.id) {
+                    object.callback(mes);
+                    clearTimeout(object.timeout);
+                    this.awaitingResponse.delete(mes.author.id);
+                    return;
+                }
+            }
             const guildInfo = index_1.TudeBot.guildSettings.get(mes.guild.id);
             const guildSettings = this.guilds.get(mes.guild.id);
             let execute = false;
@@ -135,7 +147,8 @@ class CommandsModule extends types_1.Module {
                 });
             }
             const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
-            const event = { message: mes, sudo: sudo, label: cmd };
+            const userRes = (user, channel, timeout, callback) => this.awaitUserResponse(user, channel, timeout, callback);
+            const event = { message: mes, sudo: sudo, label: cmd, awaitUserResponse: userRes };
             const res = command.execute(mes.channel, mes.author, args, event, cmes);
             if (deletemes)
                 mes.delete();
@@ -231,6 +244,22 @@ class CommandsModule extends types_1.Module {
                 delete this.activeInCommandsChannelRemoveTimer[id];
             }, this.ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
         }
+    }
+    awaitUserResponse(user, channel, timeout, callback) {
+        if (this.awaitingResponse.has(user.id))
+            return;
+        const object = {
+            user: user,
+            channel: channel,
+            callback: callback,
+            timeout: undefined
+        };
+        this.awaitingResponse.set(user.id, object);
+        const nodeTimeout = setTimeout(() => {
+            callback(null);
+            this.awaitingResponse.delete(user.id);
+        }, timeout);
+        object.timeout = nodeTimeout;
     }
 }
 exports.default = CommandsModule;

@@ -1,11 +1,11 @@
 import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord.js";
-import { modlogType, cmesType, cmes, Command, ReplyFunction } from "types";
+import { modlogType, cmesType, cmes, Command, ReplyFunction, CommandExecEvent, AwaitUserResponseFunction } from "types";
 import { DbStats } from "../database/dbstats";
 import Database from "../database/database";
 import WCP from "../thirdparty/wcp/wcp";
 import * as chalk from "chalk";
-import { Module } from "../types";
+import { Module, UserResponseCallback, UserResponseWaiting } from "../types";
 import UnavailableCommand from "../commands/_unavailable";
 
 
@@ -21,10 +21,15 @@ export default class CommandsModule extends Module {
 
   private cooldown: Map<string, string[]> = new Map();
 
+  private awaitingResponse: Map<string, UserResponseWaiting> = new Map();
+
+  //
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
     super('Commands', 'public', conf, data, guilds, lang);
   }
+
+  //
 
   public onEnable(): void {
     this.loadCommands();
@@ -32,6 +37,16 @@ export default class CommandsModule extends Module {
     TudeBot.on('message', (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return;
       if (mes.guild.id == "432899162150010901") DbStats.getUser(mes.author).then(u => u.messagesSent++); // TODO MAKE BETTER
+
+      if (this.awaitingResponse.has(mes.author.id)) {
+        const object = this.awaitingResponse.get(mes.author.id);
+        if (object.channel.id === mes.channel.id) {
+          object.callback(mes);
+          clearTimeout(object.timeout);
+          this.awaitingResponse.delete(mes.author.id);
+          return;
+        }
+      }
       
       const guildInfo = TudeBot.guildSettings.get(mes.guild.id);
       const guildSettings = this.guilds.get(mes.guild.id);
@@ -135,7 +150,8 @@ export default class CommandsModule extends Module {
       }
 
       const cmes: ReplyFunction = (text: string, type?: cmesType, desc?: string, settings?: any) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
-      const event = { message: mes, sudo: sudo, label: cmd };
+      const userRes: AwaitUserResponseFunction = (user: User, channel: TextChannel, timeout: number, callback: UserResponseCallback) => this.awaitUserResponse(user, channel, timeout, callback);
+      const event: CommandExecEvent = { message: mes, sudo: sudo, label: cmd, awaitUserResponse: userRes };
       const res = command.execute(mes.channel as TextChannel, mes.author, args, event, cmes);
 
       if (deletemes) mes.delete();
@@ -237,5 +253,21 @@ export default class CommandsModule extends Module {
         delete this.activeInCommandsChannelRemoveTimer[id];
       }, this.ACTIVE_IN_COMMANDS_CHANNEL_COOLDOWN);
     }
+  }
+
+  public awaitUserResponse(user: User, channel: TextChannel, timeout: number, callback: UserResponseCallback) {
+    if (this.awaitingResponse.has(user.id)) return;
+    const object: UserResponseWaiting = {
+      user: user,
+      channel: channel,
+      callback: callback,
+      timeout: undefined
+    }
+    this.awaitingResponse.set(user.id, object);
+    const nodeTimeout = setTimeout(() => {
+      callback(null);
+      this.awaitingResponse.delete(user.id);
+    }, timeout);
+    object.timeout = nodeTimeout;
   }
 }

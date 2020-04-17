@@ -14,13 +14,12 @@ const index_1 = require("../../index");
 const database_1 = require("../../database/database");
 const node_fetch_1 = require("node-fetch");
 const chalk = require("chalk");
-const config = require('../../../config.js');
 class WCP {
     static get endpoint() {
-        return config.thirdparty.wcp.endpoint;
+        return index_1.config.thirdparty.wcp.endpoint;
     }
     static get secret() {
-        return config.thirdparty.wcp.secret;
+        return index_1.config.thirdparty.wcp.secret;
     }
     static init(offlineMode) {
         console.log(chalk.green(offlineMode

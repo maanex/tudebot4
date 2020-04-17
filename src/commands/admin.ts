@@ -127,10 +127,19 @@ export default class AdminCommand extends Command {
             TudeApi.performClubUserAction(u, { id: 'obtain_perks', perks: 'club.cookies:[100-200]' }).then(console.log).catch(console.error);
           });
           break;
+
+        case 'testresponse':
+          repl('You got 10s - send me something nice!');
+          event.awaitUserResponse(user, orgChannel, 1000 * 10, (mes: Message) => {
+            if (!mes) orgChannel.send('Timed out!');
+            else orgChannel.send(`You sent: \`${mes.content}\``);
+          });
+          break;
       }
       return true;
     } catch (ex) {
       repl('Error:', 'bad', '```' + ex + '```');
+      console.error(ex);
       return false;
     }
   }

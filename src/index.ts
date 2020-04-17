@@ -1,4 +1,4 @@
-import { Module, modlogFunction, GuildSettings } from './types';
+import { Module, ModlogFunction, GuildSettings } from './types';
 import { Client, User } from "discord.js";
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
@@ -19,7 +19,7 @@ export class TudeBotClient extends Client {
   public readonly devMode;
 
   public config: any = null;
-  public modlog: modlogFunction;
+  public modlog: ModlogFunction;
   public modules: Map<string, Module> = null;
   public guildSettings: Map<string, GuildSettings> = null;
 

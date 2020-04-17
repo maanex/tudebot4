@@ -8,7 +8,7 @@ import Emojis from "../int/emojis";
 export default class AutoSupportModule extends Module {
   
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Auto Support', 'public', conf, data, guilds, lang);
+    super('CleanChat Automod', 'public', conf, data, guilds, lang);
   }
 
   public onEnable(): void {
