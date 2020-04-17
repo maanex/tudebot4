@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("../thirdparty/tudeapi/item");
 const emojis_1 = require("../int/emojis");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const Letter_1 = require("./items/Letter");
-const GenericFish_1 = require("./items/GenericFish");
+const letter_1 = require("./items/letter");
+const genericFish_1 = require("./items/genericFish");
 exports.defaultItemIcon = '❔';
 //
 exports.Items = {
@@ -168,7 +168,7 @@ exports.Items = {
         purchaseable: true,
         useable: true,
         icon: '✉️',
-        class: Letter_1.default,
+        class: letter_1.default,
         create: (title, text, author) => new exports.Items.Letter.class(exports.Items.Letter, exports.Items.Letter.id, title, text, author ? author.id : ''),
         parse: (data) => new exports.Items.Letter.class(exports.Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author),
     },
@@ -182,7 +182,7 @@ exports.Items = {
         purchaseable: false,
         useable: false,
         icon: '🐟',
-        class: GenericFish_1.default,
+        class: genericFish_1.default,
         create: (size, caughtAt, stuffed) => new exports.Items.Carp.class(exports.Items.Carp, exports.Items.Carp.id, size, caughtAt, stuffed),
         parse: (data) => new exports.Items.Carp.class(exports.Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
     },

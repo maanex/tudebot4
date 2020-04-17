@@ -65,4 +65,4 @@ class GenericFish extends item_1.ExpandedItem {
     }
 }
 exports.default = GenericFish;
-//# sourceMappingURL=GenericFish.js.map
+//# sourceMappingURL=genericFish.js.map
