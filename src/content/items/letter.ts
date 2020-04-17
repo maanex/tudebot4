@@ -1,7 +1,9 @@
 import { ExpandedItem, ItemPrefab } from "../../thirdparty/tudeapi/item"
 import TudeApi, { ClubUser } from "../../thirdparty/tudeapi/tudeapi";
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { ReplyFunction } from "types";
+import { TudeBot } from "../../index";
+import CommandsModule from "../../modules/commands";
 
 
 export default class Letter extends ExpandedItem {
@@ -34,11 +36,33 @@ export default class Letter extends ExpandedItem {
     if (this.written) {
       repl(this.title, 'message', this.text, { footer: `Written by ${(await this.getAuthor()).user.name}` });
     } else {
-      repl('You\'ve written something in this ass book!');
-      this.author = u.id;
-      this.title = 'Ass '.repeat(Math.floor(Math.random() * 10)),
-      this.text = mes.content;
-      TudeApi.updateClubUser(u);
+      const cmdMod = TudeBot.getModule<CommandsModule>('commands');
+      repl('Wanna write something on this letter?', 'message', 'Sure, go ahead. Just type the text in the chat. Write `cancel` if you change your mind!');
+      cmdMod.awaitUserResponse(mes.author, mes.channel as TextChannel, 10 * 60 * 1000, (reply: Message) => {
+        if (!reply) return;
+        if (reply.content.toLowerCase() == 'cancel') {
+          repl('No text, okay :(');
+          return;
+        }
+        const text = reply.content;
+
+        repl('Fabulous!', 'message', 'Now I just need a title for this masterpiece.');
+        cmdMod.awaitUserResponse(mes.author, mes.channel as TextChannel, 10 * 60 * 1000, (reply2: Message) => {
+          if (!reply) return;
+          if (reply.content.toLowerCase() == 'cancel') {
+            repl('Aight, see you later!');
+            return;
+          }
+
+          const title = reply2.content;
+
+          this.author = u.id;
+          this.title = title,
+          this.text = text;
+          TudeApi.updateClubUser(u);
+          repl('Wonderfull!', 'message', 'Your letter is written!');
+        });
+      });
     }
   }
 

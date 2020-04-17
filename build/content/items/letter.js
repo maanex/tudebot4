@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("../../thirdparty/tudeapi/item");
 const tudeapi_1 = require("../../thirdparty/tudeapi/tudeapi");
+const index_1 = require("../../index");
 class Letter extends item_1.ExpandedItem {
     constructor(prefab, id, title, text, author) {
         super(prefab, id, {
@@ -42,11 +43,32 @@ class Letter extends item_1.ExpandedItem {
                 repl(this.title, 'message', this.text, { footer: `Written by ${(yield this.getAuthor()).user.name}` });
             }
             else {
-                repl('You\'ve written something in this ass book!');
-                this.author = u.id;
-                this.title = 'Ass '.repeat(Math.floor(Math.random() * 10)),
-                    this.text = mes.content;
-                tudeapi_1.default.updateClubUser(u);
+                const cmdMod = index_1.TudeBot.getModule('commands');
+                repl('Wanna write something on this letter?', 'message', 'Sure, go ahead. Just type the text in the chat. Write `cancel` if you change your mind!');
+                cmdMod.awaitUserResponse(mes.author, mes.channel, 10 * 60 * 1000, (reply) => {
+                    if (!reply)
+                        return;
+                    if (reply.content.toLowerCase() == 'cancel') {
+                        repl('No text, okay :(');
+                        return;
+                    }
+                    const text = reply.content;
+                    repl('Fabulous!', 'message', 'Now I just need a title for this masterpiece.');
+                    cmdMod.awaitUserResponse(mes.author, mes.channel, 10 * 60 * 1000, (reply2) => {
+                        if (!reply)
+                            return;
+                        if (reply.content.toLowerCase() == 'cancel') {
+                            repl('Aight, see you later!');
+                            return;
+                        }
+                        const title = reply2.content;
+                        this.author = u.id;
+                        this.title = title,
+                            this.text = text;
+                        tudeapi_1.default.updateClubUser(u);
+                        repl('Wonderfull!', 'message', 'Your letter is written!');
+                    });
+                });
             }
         });
     }

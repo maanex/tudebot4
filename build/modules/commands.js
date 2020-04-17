@@ -30,9 +30,9 @@ class CommandsModule extends types_1.Module {
             if (this.awaitingResponse.has(mes.author.id)) {
                 const object = this.awaitingResponse.get(mes.author.id);
                 if (object.channel.id === mes.channel.id) {
-                    object.callback(mes);
                     clearTimeout(object.timeout);
                     this.awaitingResponse.delete(mes.author.id);
+                    object.callback(mes);
                     return;
                 }
             }
@@ -256,8 +256,8 @@ class CommandsModule extends types_1.Module {
         };
         this.awaitingResponse.set(user.id, object);
         const nodeTimeout = setTimeout(() => {
-            callback(null);
             this.awaitingResponse.delete(user.id);
+            callback(null);
         }, timeout);
         object.timeout = nodeTimeout;
     }
