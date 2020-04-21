@@ -70,7 +70,7 @@ export default class AdminCommand extends Command {
           }; run();
           break;
 
-        case 'setupitemshop':
+        case 'setupemptychannel':
           run = async () => {
             let channel = orgChannel.guild.channels.get(args[1]) as TextChannel;
             for (let i = 0; i < 20; i++)

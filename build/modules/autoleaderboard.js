@@ -5,7 +5,7 @@ const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const types_1 = require("../types");
 class QuotesModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
-        super('Auto Leaderboard', 'private', conf, data, guilds, lang);
+        super('Legacy Auto Leaderboard', 'private', conf, data, guilds, lang);
         this.UPDATE_COOLDOWN = 2 * 60000;
         this.UPDATE_EMOJI = '🔄';
         this.channels = [];

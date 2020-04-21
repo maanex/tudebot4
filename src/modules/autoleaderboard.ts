@@ -15,7 +15,7 @@ export default class QuotesModule extends Module {
   
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Auto Leaderboard', 'private', conf, data, guilds, lang);
+    super('Legacy Auto Leaderboard', 'private', conf, data, guilds, lang);
   }
 
   public onEnable(): void {

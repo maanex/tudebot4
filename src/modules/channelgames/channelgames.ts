@@ -1,10 +1,10 @@
-import { TudeBot } from "..";
+import { TudeBot } from "../..";
 import { MessageReaction, User, Role, Message, TextChannel, ClientUserSettings } from "discord.js";
 import { finished } from "stream";
 import { maxHeaderSize } from "http";
-import TudeApi from "../thirdparty/tudeapi/tudeapi";
-import { Module } from "../types";
-import Emojis from "../int/emojis";
+import TudeApi from "../../thirdparty/tudeapi/tudeapi";
+import { Module } from "../../types";
+import Emojis from "../../int/emojis";
 
 
 // TODO ALL OF THIS HERE SHIT

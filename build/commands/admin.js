@@ -73,7 +73,7 @@ class AdminCommand extends types_1.Command {
                     });
                     run();
                     break;
-                case 'setupitemshop':
+                case 'setupemptychannel':
                     run = () => __awaiter(this, void 0, void 0, function* () {
                         let channel = orgChannel.guild.channels.get(args[1]);
                         for (let i = 0; i < 20; i++)

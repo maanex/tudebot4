@@ -136,7 +136,15 @@ export class TudeBotClient extends Client {
             }
 
             try {
-              const ModClass = require(`./modules/${mod}`).default;
+              let ModClass;
+              try {
+                ModClass = require(`./modules/${mod}`).default;
+              } catch(ex) {
+                try {
+                  ModClass = require(`./modules/${mod}/${mod}`).default;
+                } catch(ex) { }
+              }
+              if (!ModClass) continue;
               let module: Module = new ModClass(data[mod], modData, guilds, this.lang);
               this.modules.set(mod, module);
               if (isReload) module.onBotReady();
