@@ -100,9 +100,6 @@ class CommandsModule extends types_1.Module {
                     this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
                 return;
             }
-            console.log(txt);
-            console.log(whitelist);
-            console.log(blacklist);
             if (whitelist) {
                 execute = false;
                 for (let check of whitelist) {
@@ -132,10 +129,13 @@ class CommandsModule extends types_1.Module {
                     }
                 }
             }
-            console.log(execute);
             if (!execute && !sudo)
                 return;
             if (command.sudoOnly && !sudo) {
+                this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
+                return;
+            }
+            if (sudo && !index_1.config.admins.includes(mes.author.id)) {
                 this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
                 return;
             }
