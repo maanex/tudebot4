@@ -24,6 +24,8 @@ class ExternalRewardsModule extends types_1.Module {
     onDisable() {
     }
     reward(name, target, messageParams) {
+        if (!target)
+            return;
         this.guilds.forEach((data, guildid) => __awaiter(this, void 0, void 0, function* () {
             const settings = data.rewards[name];
             if (!settings)

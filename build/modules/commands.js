@@ -100,6 +100,9 @@ class CommandsModule extends types_1.Module {
                     this.cmes(mes.channel, mes.author, 'Command `' + cmd + '` not found!');
                 return;
             }
+            console.log(txt);
+            console.log(whitelist);
+            console.log(blacklist);
             if (whitelist) {
                 execute = false;
                 for (let check of whitelist) {
@@ -129,6 +132,7 @@ class CommandsModule extends types_1.Module {
                     }
                 }
             }
+            console.log(execute);
             if (!execute && !sudo)
                 return;
             if (command.sudoOnly && !sudo) {

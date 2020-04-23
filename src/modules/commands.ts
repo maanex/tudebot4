@@ -1,4 +1,4 @@
-import { TudeBot } from "../index";
+import { TudeBot, config } from "../index";
 import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord.js";
 import { modlogType, cmesType, cmes, Command, ReplyFunction, CommandExecEvent, AwaitUserResponseFunction } from "types";
 import { DbStats } from "../database/dbstats";
@@ -133,6 +133,11 @@ export default class CommandsModule extends Module {
       if (!execute && !sudo) return;
 
       if (command.sudoOnly && !sudo) {
+        this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
+        return;
+      }
+
+      if (sudo && !config.admins.includes(mes.author.id)) {
         this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
         return;
       }

@@ -6,6 +6,7 @@ import { Wit, log} from "node-wit";
 import SupportCommand from "../../commands/support";
 
 
+/** This is some wild sh*t */
 export default class TheBrainModule extends Module {
 
   private timeouts = [];

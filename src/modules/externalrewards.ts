@@ -22,6 +22,7 @@ export default class ExternalRewardsModule extends Module {
   }
 
   public reward(name: string, target: User, messageParams?: any) {
+    if (!target) return;
     this.guilds.forEach(async (data, guildid) => {
       const settings = data.rewards[name];
       if (!settings) return;

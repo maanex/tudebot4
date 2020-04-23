@@ -4,6 +4,7 @@ const index_1 = require("../../index");
 const nreq = require("request");
 const types_1 = require("../../types");
 const node_wit_1 = require("node-wit");
+/** This is some wild sh*t */
 class TheBrainModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('The Brain', 'public', conf, data, guilds, lang);
