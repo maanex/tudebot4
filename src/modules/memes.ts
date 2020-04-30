@@ -188,7 +188,7 @@ export default class MemesModule extends Module {
 
         const now = new Date();
         channel.send({ embed: {
-          title: `Meme Of The Month • ${this.lang('meme_month_' + now.getMonth())} ${now.getFullYear()}`,
+          title: `Meme Of The Month • ${this.lang('meme_month_' + ((now.getMonth()+11) % 12))} ${now.getFullYear()}`,
           description: `by ${top5[0].message.author} (▲${top5[0].rating})` + (top5[0].caption ? `\n\n**${top5[0].caption}**` : ''),
           image: { url: top5[0].image },
           color: 0x2f3136
