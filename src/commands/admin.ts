@@ -6,7 +6,8 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
 import ParseArgs from "../util/parseArgs";
 import Database from "../database/database";
 import * as Items from "../content/itemlist";
-import GetPointsModule from "modules/getpoints";
+import GetPointsModule from "../modules/getpoints";
+import MemesModule from "../modules/memes";
 
 
 export default class AdminCommand extends Command {
@@ -126,6 +127,10 @@ export default class AdminCommand extends Command {
           TudeApi.clubUserByDiscordId(user.id, user).then(u => {
             TudeApi.performClubUserAction(u, { id: 'obtain_perks', perks: 'club.cookies:[100-200]' }).then(console.log).catch(console.error);
           });
+          break;
+
+        case 'manualmemeofthemonth':
+          TudeBot.getModule<MemesModule>('memes').electMemeOfTheMonth();
           break;
 
         case 'testresponse':

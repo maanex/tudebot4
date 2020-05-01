@@ -157,7 +157,7 @@ export default class MemesModule extends Module {
     this.cronjobs = [];
   }
 
-  private async electMemeOfTheMonth() {
+  public async electMemeOfTheMonth() {
     const top5: {
       _id: string,
       author: string,

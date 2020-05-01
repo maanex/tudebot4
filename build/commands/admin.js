@@ -122,6 +122,9 @@ class AdminCommand extends types_1.Command {
                         tudeapi_1.default.performClubUserAction(u, { id: 'obtain_perks', perks: 'club.cookies:[100-200]' }).then(console.log).catch(console.error);
                     });
                     break;
+                case 'manualmemeofthemonth':
+                    index_1.TudeBot.getModule('memes').electMemeOfTheMonth();
+                    break;
                 case 'testresponse':
                     repl('You got 10s - send me something nice!');
                     event.awaitUserResponse(user, orgChannel, 1000 * 10, (mes) => {
