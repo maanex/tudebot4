@@ -10,6 +10,7 @@ export default class Emojis {
   public static readonly DETRIOIT_BECOME_HUMAN = '<:DetroitBecomeHuman:497137159350779904>';
   public static readonly                 ALARM = '<a:ALARM:531531710903615518>';
   public static readonly              SOCKPING = '<a:sockangry:531531711163531274>';
+  public static readonly               LOADING = '<a:loading:706146454531473479>';
 
   public static readonly COOKIES_MONOCHROME = '<:cookies:681503976192999437>';
   public static readonly            COOKIES = '<:ccookies:681503976197586944>';

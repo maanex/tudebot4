@@ -21,6 +21,7 @@ const parseArgs_1 = require("./util/parseArgs");
 const badoszApi_1 = require("./thirdparty/badoszapi/badoszApi");
 const server_1 = require("./server/server");
 const dotenv_1 = require("dotenv");
+const moment = require("moment");
 class TudeBotClient extends discord_js_1.Client {
     constructor(props, config) {
         super(props);
@@ -40,6 +41,7 @@ class TudeBotClient extends discord_js_1.Client {
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init(false /* this.devMode */);
+        moment.locale('en-gb');
         mongo_adapter_1.default.connect(this.config.mongodb.url)
             .catch(err => {
             console.error(err);

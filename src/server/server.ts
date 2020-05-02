@@ -7,6 +7,7 @@ import * as helmet from "helmet";
 import * as chalk from "chalk";
 
 import { router as apiWebhooksRouter } from "./routes/api/webhooks";
+import { router as apiFreestuffRouter } from "./routes/api/freestuff";
 
 
 
@@ -26,7 +27,8 @@ export default class Server {
 
     app.set('trust proxy', 1);
 
-    app.use(apiWebhooksRouter);
+    app.use('/api', apiWebhooksRouter);
+    app.use('/api', apiFreestuffRouter);
 
     const server = http.createServer(app);
 

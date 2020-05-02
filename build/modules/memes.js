@@ -187,7 +187,7 @@ class MemesModule extends types_1.Module {
                             image: { url: top5[0].image },
                             color: 0x2f3136
                         } }).then(mes => {
-                        top5.splice(0, 1);
+                        const top1 = top5.splice(0, 1)[0];
                         channel.send({ embed: {
                                 fields: [{
                                         name: 'Honorable Mentions',
@@ -195,8 +195,8 @@ class MemesModule extends types_1.Module {
                                     }],
                                 color: 0x2f3136
                             } }).then(mes2 => {
-                            if (!top5[0].message.pinned && top5[0].message.pinnable)
-                                top5[0].message.pin();
+                            if (!top1.message.pinned && top1.message.pinnable)
+                                top1.message.pin();
                             database_1.default
                                 .collection('memes')
                                 .deleteMany({});

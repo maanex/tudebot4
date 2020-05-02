@@ -165,8 +165,10 @@ class CommandsModule extends types_1.Module {
             else {
                 update(res);
             }
-            this.cooldown.get(command.name).push(mes.author.id);
-            setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
+            if (!mes.member.hasPermission('MANAGE_MESSAGES')) {
+                this.cooldown.get(command.name).push(mes.author.id);
+                setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
+            }
         });
     }
     onBotReady() {
@@ -204,6 +206,8 @@ class CommandsModule extends types_1.Module {
                 }
                 catch (err) {
                     console.error(chalk.bold.red(`Class for command "${commandName}" not found!`));
+                    if (process.env.NODE_ENV !== 'production')
+                        console.error(err);
                 }
             }
         })

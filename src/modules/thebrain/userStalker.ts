@@ -1,5 +1,5 @@
 import { User } from "discord.js";
-import { TudeBot } from "index";
+import { TudeBot } from "../../index";
 import fetch, { Response } from "node-fetch";
 
 
@@ -12,28 +12,33 @@ export interface UserInfo {
         age: number;
         flags: number;
       },
-      discordbio: {
-        found: boolean;
-        verified: boolean;
-        upvotes: number;
-        location: string;
-        gener: string;
-        birthday: string;
-        email: string;
-        occupation: string;
-        bannerImage: string;
-        staff: string;
-      },
-      ksoftsi: {
-        currentlyBanned: boolean;
-        previouslyBanned: boolean;
-        moderator: boolean;
-        reason: boolean;
-        proofImage: string;
-        timestamp: Date;
-      }
+      discordbio: DiscordBioData,
+      ksoftsi: KsoftSiData
     }
   }
+}
+
+interface DiscordBioData {
+  found: boolean;
+  url: string;
+  verified: boolean;
+  upvotes: number;
+  location: string;
+  gener: string;
+  birthday: string;
+  email: string;
+  occupation: string;
+  bannerImage: string;
+  staff: string;
+}
+
+interface KsoftSiData {
+  currentlyBanned: boolean;
+  previouslyBanned: boolean;
+  moderator: boolean;
+  reason: boolean;
+  proofImage: string;
+  timestamp: Date;
 }
 
 export default class UserStalker {
@@ -42,8 +47,21 @@ export default class UserStalker {
 
   //
 
-  public static getInfo(user: User): UserInfo {
-    return null;
+  public static async getInfo(user: User): Promise<UserInfo> {
+    return {
+      userInstance: user,
+      trustworthiness: {
+        score: 1,
+        sources: {
+          account: {
+            age: new Date().getMilliseconds() - user.createdTimestamp,
+            flags: 0 // TODO
+          },
+          discordbio: await this.fetchDiscordBio(user.id),
+          ksoftsi: await this.fetchKsoftSi(user.id)
+        }
+      }
+    };
   }
 
   //
@@ -52,6 +70,14 @@ export default class UserStalker {
     return await fetch(`https://discordapp.com/api/v7/users/${userid}`, {
       headers: { 'Authorization': `Bot ${TudeBot.token}`}
     }).then((res: Response) => res.json());
+  }
+
+  private static async fetchDiscordBio(userid: string): Promise<DiscordBioData> {
+    return null;
+  }
+
+  private static async fetchKsoftSi(userid: string): Promise<KsoftSiData> {
+    return null;
   }
 
 }

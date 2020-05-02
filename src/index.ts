@@ -1,5 +1,5 @@
 import { Module, ModlogFunction, GuildSettings } from './types';
-import { Client, User } from "discord.js";
+import { Client, User } from 'discord.js';
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';
 import Database from './database/database';
@@ -12,6 +12,7 @@ import { Items } from './content/itemlist';
 import BadoszAPI from './thirdparty/badoszapi/badoszApi';
 import Server from './server/server';
 import { config as loadDotenv } from 'dotenv';
+import * as moment from 'moment';
 
 
 export class TudeBotClient extends Client {
@@ -45,6 +46,7 @@ export class TudeBotClient extends Client {
 
     Util.init();
     WCP.init(false /* this.devMode */);
+    moment.locale('en-gb');
 
     MongoAdapter.connect(this.config.mongodb.url)
       .catch(err => {

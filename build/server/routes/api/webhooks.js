@@ -4,7 +4,7 @@ const express_1 = require("express");
 const rateLimiter_1 = require("../../rateLimiter");
 const index_1 = require("../../../index");
 exports.router = express_1.Router();
-exports.router.post("/api/webhooks", rateLimiter_1.default.limit(20, 1), (req, res, next) => {
+exports.router.post("/webhooks", rateLimiter_1.default.limit(100, 1), (req, res, next) => {
     const auth = req.headers ? (req.headers.authorization || req.headers["proxy-authorization"]) : undefined;
     if (!auth || !index_1.TudeBot.config.thirdparty.topgg.webhookauth.includes(auth)) {
         res.status(401).send('401 Unauthorized');

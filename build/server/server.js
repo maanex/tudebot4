@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const chalk = require("chalk");
 const webhooks_1 = require("./routes/api/webhooks");
+const freestuff_1 = require("./routes/api/freestuff");
 class Server {
     constructor() { }
     //
@@ -17,7 +18,8 @@ class Server {
         app.use(express.json());
         app.use(this.nonJsonBodyErrorHandler());
         app.set('trust proxy', 1);
-        app.use(webhooks_1.router);
+        app.use('/api', webhooks_1.router);
+        app.use('/api', freestuff_1.router);
         const server = http.createServer(app);
         server.listen(port || 8128, () => {
             console.log(`Server listening on port ${chalk.yellowBright(port || 8128)}`);
