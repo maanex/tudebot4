@@ -13,6 +13,7 @@ import BadoszAPI from './thirdparty/badoszapi/badoszApi';
 import Server from './server/server';
 import { config as loadDotenv } from 'dotenv';
 import * as moment from 'moment';
+import PerspectiveAPI from './thirdparty/googleapis/perspectiveApi';
 
 
 export class TudeBotClient extends Client {
@@ -25,12 +26,13 @@ export class TudeBotClient extends Client {
   public guildSettings: Map<string, GuildSettings> = null;
 
   public badoszApi: BadoszAPI = null;
+  public perspectiveApi: PerspectiveAPI = null;
 
   constructor(props: any, config: any) {
     super(props);
 
     this.devMode = process.env.NODE_ENV !== 'production';
-    
+
     this.config = config;
     this.modlog = null;
     this.modules = new Map();
@@ -62,16 +64,17 @@ export class TudeBotClient extends Client {
         await Server.start(this.config.server.port);
 
         this.badoszApi = new BadoszAPI(this.config.thirdparty.badoszapi.token);
+        this.perspectiveApi = new PerspectiveAPI(this.config.thirdparty.googleapis.key);
 
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
           WCP.send({ status_discord: '+Connected' });
-          
+
           for (let mod of this.modules.values()) {
             mod.onBotReady();
           }
         });
-    
+
         await this.loadGuilds(false);
         await this.loadModules(false);
         this.login(this.config.bot.token);
@@ -97,7 +100,7 @@ export class TudeBotClient extends Client {
             };
             this.guildSettings.set(guild._id, setting);
           }
-          
+
           resolve();
         })
         .catch(err => {
@@ -117,11 +120,11 @@ export class TudeBotClient extends Client {
           data = data.data;
 
           WCP.send({ config_modules: JSON.stringify(data) });
-          
+
           for (let mod of this.modules.values()) {
             mod.onDisable();
           }
-          
+
           this.modules = new Map();
           this.modlog = undefined;
 
@@ -141,10 +144,10 @@ export class TudeBotClient extends Client {
               let ModClass;
               try {
                 ModClass = require(`./modules/${mod}`).default;
-              } catch(ex) {
+              } catch (ex) {
                 try {
                   ModClass = require(`./modules/${mod}/${mod}`).default;
-                } catch(ex) { }
+                } catch (ex) { }
               }
               if (!ModClass) continue;
               let module: Module = new ModClass(data[mod], modData, guilds, this.lang);
@@ -158,7 +161,7 @@ export class TudeBotClient extends Client {
           for (let module of this.modules.values()) {
             module.onEnable();
           }
-          
+
           resolve();
         })
         .catch(err => {
@@ -206,25 +209,25 @@ export class TudeBotClient extends Client {
 loadDotenv();
 const flags = ParseArgs.parse(process.argv);
 export const config = require('../config.js');
-export const TudeBot = new TudeBotClient({ }, config);
+export const TudeBot = new TudeBotClient({}, config);
 
 
 function fixReactionEvent(bot: TudeBotClient) {
   const events = {
-      MESSAGE_REACTION_ADD: 'messageReactionAdd',
-      MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+    MESSAGE_REACTION_ADD: 'messageReactionAdd',
+    MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
   }
 
   bot.on('raw', async (event: Event) => {
-      const ev: any = event;
-      if (!events.hasOwnProperty(ev.t)) return
-      const data = ev.d;
-      const user: User = bot.users.get(data.user_id);
-      const channel: any = bot.channels.get(data.channel_id) || await user.createDM();
-      if (channel.messages.has(data.message_id)) return;
-      const message = await channel.fetchMessage(data.message_id);
-      const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
-      const reaction = message.reactions.get(emojiKey);
-      bot.emit(events[ev.t], reaction, user);
+    const ev: any = event;
+    if (!events.hasOwnProperty(ev.t)) return
+    const data = ev.d;
+    const user: User = bot.users.get(data.user_id);
+    const channel: any = bot.channels.get(data.channel_id) || await user.createDM();
+    if (channel.messages.has(data.message_id)) return;
+    const message = await channel.fetchMessage(data.message_id);
+    const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
+    const reaction = message.reactions.get(emojiKey);
+    bot.emit(events[ev.t], reaction, user);
   });
 }

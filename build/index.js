@@ -22,6 +22,7 @@ const badoszApi_1 = require("./thirdparty/badoszapi/badoszApi");
 const server_1 = require("./server/server");
 const dotenv_1 = require("dotenv");
 const moment = require("moment");
+const perspectiveApi_1 = require("./thirdparty/googleapis/perspectiveApi");
 class TudeBotClient extends discord_js_1.Client {
     constructor(props, config) {
         super(props);
@@ -29,6 +30,7 @@ class TudeBotClient extends discord_js_1.Client {
         this.modules = null;
         this.guildSettings = null;
         this.badoszApi = null;
+        this.perspectiveApi = null;
         this.devMode = process.env.NODE_ENV !== 'production';
         this.config = config;
         this.modlog = null;
@@ -54,6 +56,7 @@ class TudeBotClient extends discord_js_1.Client {
             yield database_1.default.init();
             yield server_1.default.start(this.config.server.port);
             this.badoszApi = new badoszApi_1.default(this.config.thirdparty.badoszapi.token);
+            this.perspectiveApi = new perspectiveApi_1.default(this.config.thirdparty.googleapis.key);
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
