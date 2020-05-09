@@ -89,7 +89,7 @@ export default class FreestuffAssistantModule extends Module {
             }],
             color: 0xAB3231,
             title: 'Done.',
-            description: '[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})',
+            description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`,
             message: undefined
           }});
           break;
@@ -105,7 +105,7 @@ export default class FreestuffAssistantModule extends Module {
             }],
             color: 0x59AB31,
             title: 'Done.',
-            description: '[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})',
+            description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`,
             message: undefined
           }});
           break;

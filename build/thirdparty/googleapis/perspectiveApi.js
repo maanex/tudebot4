@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
+const chalk = require("chalk");
 /**
  * API wrapper for perspectiveapi.com
  * @author Maanex (maanex.tk)
@@ -73,6 +74,15 @@ class PerspectiveAPI {
                 }
             }));
         });
+    }
+    log(res) {
+        console.log(chalk `
+{gray >>} {white ${res.input}}
+{gray  Flirt:} {${res.flirtation < .5 ? 'white' : (res.flirtation > .8 ? 'red' : 'yellow')} ${res.flirtation.toFixed(4)} ${'░'.repeat(Math.floor(res.flirtation * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.flirtation * 10))}}
+{gray Attack:} {${res.identityAttack < .5 ? 'white' : (res.identityAttack > .8 ? 'red' : 'yellow')} ${res.identityAttack.toFixed(4)} ${'░'.repeat(Math.floor(res.identityAttack * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.identityAttack * 10))}}
+{gray Insult:} {${res.insult < .5 ? 'white' : (res.insult > .8 ? 'red' : 'yellow')} ${res.insult.toFixed(4)} ${'░'.repeat(Math.floor(res.insult * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.insult * 10))}}
+{gray  Toxic:} {${res.toxicity < .5 ? 'white' : (res.toxicity > .8 ? 'red' : 'yellow')} ${res.toxicity.toFixed(4)} ${'░'.repeat(Math.floor(res.toxicity * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.toxicity * 10))}}
+`);
     }
 }
 exports.default = PerspectiveAPI;

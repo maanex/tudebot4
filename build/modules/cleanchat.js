@@ -4,7 +4,6 @@ const index_1 = require("../index");
 const discord_js_1 = require("discord.js");
 const types_1 = require("../types");
 const generateInviteLinkMeme_1 = require("../functions/generateInviteLinkMeme");
-const chalk = require("chalk");
 class AutoSupportModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('ChatGuard Automod', 'public', conf, data, guilds, lang);
@@ -20,13 +19,6 @@ class AutoSupportModule extends types_1.Module {
             if (this.checkInviteLinks(mes))
                 return;
             index_1.TudeBot.perspectiveApi.analyze(mes.content).then(res => {
-                console.log(chalk `{gray >>} {white ${res.input}}
-{gray  Flirt:} {${res.flirtation < .5 ? 'white' : (res.flirtation > .8 ? 'red' : 'yellow')} ${res.flirtation.toFixed(4)} ${'░'.repeat(Math.floor(res.flirtation * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.flirtation * 10))}}
-{gray Attack:} {${res.identityAttack < .5 ? 'white' : (res.identityAttack > .8 ? 'red' : 'yellow')} ${res.identityAttack.toFixed(4)} ${'░'.repeat(Math.floor(res.identityAttack * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.identityAttack * 10))}}
-{gray Insult:} {${res.insult < .5 ? 'white' : (res.insult > .8 ? 'red' : 'yellow')} ${res.insult.toFixed(4)} ${'░'.repeat(Math.floor(res.insult * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.insult * 10))}}
-{gray  Toxic:} {${res.toxicity < .5 ? 'white' : (res.toxicity > .8 ? 'red' : 'yellow')} ${res.toxicity.toFixed(4)} ${'░'.repeat(Math.floor(res.toxicity * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.toxicity * 10))}}
-
-`);
                 if (res.toxicity > .95) {
                     mes.reply('Dude, chill!');
                 }

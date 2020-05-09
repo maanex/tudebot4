@@ -3,7 +3,6 @@ import { GuildMember, Message, Emoji, TextChannel, Channel, Attachment, RichEmbe
 import { Module } from "../types";
 import generateInviteLinkMeme from "../functions/generateInviteLinkMeme";
 import Emojis from "../int/emojis";
-import chalk = require("chalk");
 
 
 export default class AutoSupportModule extends Module {
@@ -20,14 +19,7 @@ export default class AutoSupportModule extends Module {
       if (this.checkInviteLinks(mes)) return;
 
       TudeBot.perspectiveApi.analyze(mes.content).then(res => {
-        console.log(
-chalk`{gray >>} {white ${res.input}}
-{gray  Flirt:} {${res.flirtation < .5 ? 'white' : (res.flirtation > .8 ? 'red' : 'yellow')} ${res.flirtation.toFixed(4)} ${'░'.repeat(Math.floor(res.flirtation * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.flirtation * 10))}}
-{gray Attack:} {${res.identityAttack < .5 ? 'white' : (res.identityAttack > .8 ? 'red' : 'yellow')} ${res.identityAttack.toFixed(4)} ${'░'.repeat(Math.floor(res.identityAttack * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.identityAttack * 10))}}
-{gray Insult:} {${res.insult < .5 ? 'white' : (res.insult > .8 ? 'red' : 'yellow')} ${res.insult.toFixed(4)} ${'░'.repeat(Math.floor(res.insult * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.insult * 10))}}
-{gray  Toxic:} {${res.toxicity < .5 ? 'white' : (res.toxicity > .8 ? 'red' : 'yellow')} ${res.toxicity.toFixed(4)} ${'░'.repeat(Math.floor(res.toxicity * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.toxicity * 10))}}
-
-`);
+        
 
         if (res.toxicity > .95) {
           mes.reply('Dude, chill!');
