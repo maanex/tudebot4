@@ -49,36 +49,14 @@ export default class CommandsModule extends Module {
       }
       
       const guildInfo = TudeBot.guildSettings.get(mes.guild.id);
-      const guildSettings = this.guilds.get(mes.guild.id);
-      
-      let execute = false;
-      let prefix = '';
-      let whitelist, blacklist;
-      let deletemes = false;
-
-      if (guildSettings.global) {
-        if (guildSettings.global.enabled) execute = true;
-        if (guildSettings.global.prefix) prefix = guildSettings.global.prefix;
-        if (guildSettings.global.whitelist) whitelist = guildSettings.global.whitelist;
-        if (guildSettings.global.blacklist) blacklist = guildSettings.global.blacklist;
-        if (guildSettings.global.delete) deletemes = true;
-      }
-      if (guildSettings.channels && guildSettings.channels[mes.channel.id]) {
-        const conf = guildSettings.channels[mes.channel.id];
-        execute = conf.enabled;
-        if (conf.prefix !== undefined) prefix = conf.prefix;
-        if (conf.whitelist !== undefined) whitelist = conf.whitelist || [];
-        if (conf.blacklist !== undefined) blacklist = conf.blacklist || [];
-        if (guildSettings.delete !== undefined) deletemes = guildSettings.delete;
-      }
-
+      const channelConfig = this.getCommandChannelConfig(mes.channel as TextChannel);
       if (guildInfo.club) this.updateActiveInCommandsChannel(mes.author.id);
 
       let txt = mes.content;
 
-      if (prefix) {
-        if (!txt.startsWith(prefix)) return;
-        txt = txt.substr(prefix.length);
+      if (channelConfig.prefix) {
+        if (!txt.startsWith(channelConfig.prefix)) return;
+        txt = txt.substr(channelConfig.prefix.length);
       }
 
       const args = txt.split(' ');
@@ -99,7 +77,7 @@ export default class CommandsModule extends Module {
         }
       }
 
-      if (!sudo && !execute) return;
+      if (!sudo && !channelConfig.execute) return;
 
       const command = this.identifierMap.get(cmd);
 
@@ -108,29 +86,9 @@ export default class CommandsModule extends Module {
         return;
       }
 
-      if (whitelist) {
-        execute = false;
-        for (let check of whitelist) {
-          if (check.startsWith('#')) {
-            if (check == '#all') execute = true;
-            else if (command.groups.includes(check.substr(1))) execute = true;
-          } else {
-            if (command.name == check) execute = true;
-          }
-        }
-      }
-      if (blacklist && execute) {
-        for (let check of blacklist) {
-          if (check.startsWith('#')){
-            if (check == '#all') execute = false;
-            else if (command.groups.includes(check.substr(1))) execute = false;
-          } else {
-            if (command.name == check) execute = false;
-          }
-        }
-      }
+      this.doExecuteCommand(channelConfig, command);
 
-      if (!execute && !sudo) return;
+      if (!channelConfig.execute && !sudo) return;
 
       if (command.sudoOnly && !sudo) {
         this.cmes(mes.channel, mes.author, ':x: Not allowed!', 'bad');
@@ -159,7 +117,7 @@ export default class CommandsModule extends Module {
       const event: CommandExecEvent = { message: mes, sudo: sudo, label: cmd, awaitUserResponse: userRes };
       const res = command.execute(mes.channel as TextChannel, mes.author, args, event, cmes);
 
-      if (deletemes) mes.delete();
+      if (channelConfig.deletemes) mes.delete();
 
       if (res === undefined || res === null) {
         update(false);
@@ -174,6 +132,58 @@ export default class CommandsModule extends Module {
         setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
       }
     });
+  }
+
+  public getCommandChannelConfig(channel: TextChannel): { execute: boolean, prefix: string, blacklist?: string[], whitelist?: string[], deletemes: boolean } {
+    const guildSettings = this.guilds.get(channel.guild.id);
+    
+    let execute = false;
+    let prefix = '';
+    let whitelist, blacklist;
+    let deletemes = false;
+
+    if (guildSettings.global) {
+      if (guildSettings.global.enabled) execute = true;
+      if (guildSettings.global.prefix) prefix = guildSettings.global.prefix;
+      if (guildSettings.global.whitelist) whitelist = guildSettings.global.whitelist;
+      if (guildSettings.global.blacklist) blacklist = guildSettings.global.blacklist;
+      if (guildSettings.global.delete) deletemes = true;
+    }
+    if (guildSettings.channels && guildSettings.channels[channel.id]) {
+      const conf = guildSettings.channels[channel.id];
+      execute = conf.enabled;
+      if (conf.prefix !== undefined) prefix = conf.prefix;
+      if (conf.whitelist !== undefined) whitelist = conf.whitelist || [];
+      if (conf.blacklist !== undefined) blacklist = conf.blacklist || [];
+      if (guildSettings.delete !== undefined) deletemes = guildSettings.delete;
+    }
+
+    return { execute, prefix, whitelist, blacklist, deletemes };
+  }
+
+  public doExecuteCommand(channelConfig: { execute: boolean, prefix: string, blacklist?: string[], whitelist?: string[], deletemes: boolean }, command: Command): boolean {
+    if (channelConfig.whitelist) {
+      channelConfig.execute = false;
+      for (let check of channelConfig.whitelist) {
+        if (check.startsWith('#')) {
+          if (check == '#all') channelConfig.execute = true;
+          else if (command.groups.includes(check.substr(1))) channelConfig.execute = true;
+        } else {
+          if (command.name == check) channelConfig.execute = true;
+        }
+      }
+    }
+    if (channelConfig.blacklist && channelConfig.execute) {
+      for (let check of channelConfig.blacklist) {
+        if (check.startsWith('#')){
+          if (check == '#all') channelConfig.execute = false;
+          else if (command.groups.includes(check.substr(1))) channelConfig.execute = false;
+        } else {
+          if (command.name == check) channelConfig.execute = false;
+        }
+      }
+    }
+    return channelConfig.execute;
   }
 
   public onBotReady(): void {

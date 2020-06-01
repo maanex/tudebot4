@@ -77,7 +77,7 @@ class FreestuffAssistantModule extends types_1.Module {
                     mes.edit({ embed: Object.assign(Object.assign({}, mes.embeds[0]), { fields: [{
                                     name: 'Activity',
                                     value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${_h = (_g = user) === null || _g === void 0 ? void 0 : _g.username, (_h !== null && _h !== void 0 ? _h : '*Someone*')} declined this game.`
-                                }], color: 0xAB3231, title: 'Done.', description: '[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})', message: undefined }) });
+                                }], color: 0xAB3231, title: 'Done.', description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`, message: undefined }) });
                     break;
                 case 'game_accept':
                     if (!this.gameMessages.has(data.game))
@@ -86,7 +86,7 @@ class FreestuffAssistantModule extends types_1.Module {
                     mes.edit({ embed: Object.assign(Object.assign({}, mes.embeds[0]), { fields: [{
                                     name: 'Activity',
                                     value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${_k = (_j = user) === null || _j === void 0 ? void 0 : _j.username, (_k !== null && _k !== void 0 ? _k : '*Someone*')} approved this game.`
-                                }], color: 0x59AB31, title: 'Done.', description: '[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})', message: undefined }) });
+                                }], color: 0x59AB31, title: 'Done.', description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`, message: undefined }) });
                     break;
                 case 'manual_store_scrape':
                     channel.send({ embed: {

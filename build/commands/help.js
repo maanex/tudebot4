@@ -43,9 +43,15 @@ class HelpCommand extends types_1.Command {
     execute(channel, user, args, event, repl) {
         if (args.length < 1) {
             let text = '';
-            let cmds = index_1.TudeBot.getModule('commands').getCommands().sort();
+            const cmdmodule = index_1.TudeBot.getModule('commands');
+            let cmds = cmdmodule.getCommands().sort();
             if (!event.sudo) {
-                cmds = cmds.filter(c => !c.sudoOnly && !c.hideOnHelp);
+                const channelConfig = cmdmodule.getCommandChannelConfig(channel);
+                cmds = cmds.filter(c => !c.sudoOnly && !c.hideOnHelp && channelConfig.execute);
+                cmds = cmds.filter(c => {
+                    channelConfig.execute = true;
+                    return cmdmodule.doExecuteCommand(channelConfig, c);
+                });
             }
             let longest = 0;
             for (let cmd of cmds) {

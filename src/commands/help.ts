@@ -39,10 +39,16 @@ export default class HelpCommand extends Command {
   public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
     if (args.length < 1) {
       let text = '';
-      let cmds = TudeBot.getModule<CommandsModule>('commands').getCommands().sort();
+      const cmdmodule = TudeBot.getModule<CommandsModule>('commands');
+      let cmds = cmdmodule.getCommands().sort();
 
       if (!event.sudo) {
-        cmds = cmds.filter(c => !c.sudoOnly && !c.hideOnHelp);
+        const channelConfig = cmdmodule.getCommandChannelConfig(channel);
+        cmds = cmds.filter(c => !c.sudoOnly && !c.hideOnHelp && channelConfig.execute);
+        cmds = cmds.filter(c => {
+          channelConfig.execute = true;
+          return cmdmodule.doExecuteCommand(channelConfig, c);
+        });
       }
 
       let longest = 0;

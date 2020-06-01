@@ -78,7 +78,7 @@ function sendMessage(channel, user, member, clubUser, badges, itemCount, detaile
                         ? `${user.username} gained ${kFormatter(clubUser.points)} points, ${kFormatter(clubUser.points_month)} of them last month.
              They are level ${clubUser.level} and have ${badges.length} badges.
              ${clubUser.daily.last.getFullYear() < 2020 ? 'They never claimed their daily reward' : `They last claimed their daily reward ${moment(clubUser.daily.last).fromNow()}`}.
-             In possesion of ${kFormatter(clubUser.cookies)} cookies, ${kFormatter(clubUser.gems)} gems, ${kFormatter(clubUser.keys)} keys and ${kFormatter(itemCount)} items.`
+             In possession of ${kFormatter(clubUser.cookies)} cookies, ${kFormatter(clubUser.gems)} gems, ${kFormatter(clubUser.keys)} keys and ${kFormatter(itemCount)} items.`
                         : `${user.username} did not participate in any Tude Club activities.`
                 }
             ],
