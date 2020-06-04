@@ -1,16 +1,27 @@
 {
     "birthday_message": [
-        "Happy Birthday {}! :tada:",
-        "Happy Cakeday {}! :tada:",
-        "Alles Gute zum Geburtstag {}!",
-        "{} ist heute älter als gestern! Herzlichen Glückwunsch!",
-        "{} hat heute Geburtstag, alles Gute! :tada:"
+        "Happy Birthday {user}! :tada:",
+        "Happy Cakeday {user}! :tada:",
+        "Alles Gute zum Geburtstag {user}!",
+        "{user} ist heute älter als gestern! Herzlichen Glückwunsch!",
+        "{user} hat heute Geburtstag, alles Gute! :tada:"
     ],
     "birthday_message_mult": [
-        "Happy Birthday {}! :tada:",
-        "{} haben Geburtstag! Alles Gute! :tada:",
-        "Happy Cakeday {}! :tada:",
-        "Alles Gute zum Geburtstag {}!"
+        "Happy Birthday {user}! :tada:",
+        "{user} haben Geburtstag! Alles Gute! :tada:",
+        "Happy Cakeday {user}! :tada:",
+        "Alles Gute zum Geburtstag {user}!"
+    ],
+    "birthday_message_en": [
+        "Happy Birthday {user}! :tada:",
+        "Happy Cakeday {user}! :tada:",
+        "It's {user}'s birthday today! UwU",
+        "{user} is now old than yesterday! Happy Birthday!",
+        "You are now old, {user}! Happy Birthday!"
+    ],
+    "birthday_message_mult_en": [
+        "Happy Birthday {user}! :tada:",
+        "Double Party! Happy birthday {user}! :tada:"
     ],
     "give_dm_title": [
         "UwU a gift",

@@ -18,28 +18,29 @@ class HappyBirthdayModule extends types_1.Module {
         this.interval = undefined;
     }
     check() {
-        let date = new Date();
-        let dstr = date.getDate() + '-' + (date.getMonth() + 1);
+        const date = new Date();
+        const dstr = date.getDate() + '-' + (date.getMonth() + 1);
         if (this.lastDay == dstr)
             return;
         this.lastDay = dstr;
-        let maxdelay = 1000 * 60 * 60 * 5; // 5h
+        const maxdelay = 0; //1000 * 60 * 60 * 5; // 5h
         setTimeout((daystr, guilds, data) => {
-            let users = [];
-            for (let user in data) {
-                if (data[user] == daystr)
-                    users.push(user);
-            }
-            if (!users.length)
-                return;
-            let msg = this.lang(users.length > 1 ? 'birthday_message_mult' : 'birthday_message');
-            let usrstr = users.map(u => `<@${u}>`).join(' & ');
-            msg = msg.split('{}').join(usrstr);
             for (let g of guilds.keys()) {
-                let guild = index_1.TudeBot.guilds.get(g);
+                const users = [];
+                for (const user in data[g]) {
+                    if (data[g][user] == daystr)
+                        users.push(user);
+                }
+                if (!users.length)
+                    return;
+                const usrstr = users.map(u => `<@${u}>`).join(' & ');
+                const msg = this.lang(users.length > 1
+                    ? data[g].lang_mult
+                    : data[g].lang_one, { user: usrstr });
+                const guild = index_1.TudeBot.guilds.get(g);
                 if (!guild)
                     continue;
-                let channel = guild.channels.get(guilds.get(g).channel);
+                const channel = guild.channels.get(guilds.get(g).channel);
                 if (!channel || channel.type !== 'text')
                     continue;
                 channel.send(`@everyone ${msg}`);
