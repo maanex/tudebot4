@@ -2,7 +2,7 @@ import { TudeBot } from "../index";
 import { Message, TextChannel, Guild, GuildMember, User, MessageReaction, MessageEmbed, RichEmbed, RichEmbedOptions } from "discord.js";
 import TudeApi, { ClubUser, DeprItem } from "../thirdparty/tudeapi/tudeapi";
 import Database from "../database/database";
-import { Module } from "../types";
+import { Module } from "../types/types";
 import Emojis from "../int/emojis";
 import { Items, findItem, ItemList } from "../content/itemlist";
 import { Item } from "thirdparty/tudeapi/item";
@@ -115,35 +115,7 @@ export default class ClubItemShopModule extends Module {
                   return;
                 }
 
-                let itemi: Item = undefined;
-                if (item._isDef) {
-                  switch(item.id) {
-                    case 'cookie':
-                      u.cookies += amount;
-                      itemi = item.create(u.cookies);
-                      break;
-                    case 'gem':
-                      u.gems += amount;
-                      itemi = item.create(u.gems);
-                      break;
-                    case 'key':
-                      u.keys += amount;
-                      itemi = item.create(u.keys);
-                      break;
-                    default: return;
-                  }
-                } else if (u.inventory.has(item.id)) {
-                  if (item.expanded) {
-                    repl('An error occured!', 'Try again later!');
-                    return;
-                  }
-                  itemi = u.inventory.get(item.id);
-                  itemi.amount += amount;
-                } else {
-                  const itemInstance: Item = item.expanded ? new item.class(item, item.id, {}) : new item.class(item, amount);
-                  u.inventory.set(item.id, itemInstance);
-                  itemi = itemInstance;
-                }
+                let itemi: Item = u.addItem(item);
                 if (!itemi) return;
                 
                 repl(`You purchased ${amount} ${TudeApi.clubLang[(amount==1?'item_':'itempl_') + itemi.id]} for ${price} ${currencyEmoji}`

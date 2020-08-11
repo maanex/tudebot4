@@ -3,7 +3,7 @@ import WCP from "../../thirdparty/wcp/wcp";
 import { TudeBot } from "../../index";
 import { badgeEmojiList } from "./badgelist";
 import GetPointsModule from "../../modules/getpoints";
-import { Item, StackableItem, ItemCategory, ItemGroup, ExpandedItem } from "./item";
+import { Item, StackableItem, ItemCategory, ItemGroup, ExpandedItem, ItemPrefab } from "./item";
 import { ItemList } from "../../content/itemlist";
 import * as chalk from "chalk";
 import fetch from "node-fetch";
@@ -42,6 +42,7 @@ export interface ClubUser {
     disp_badge: number;
   };
   user: User;
+  addItem(item: ItemPrefab, amount?: number, meta?: any): Item | null;
 }
 
 export interface Badge {
@@ -289,6 +290,7 @@ export default class TudeApi {
 
             o['_raw_daily'] = o.daily;
             o.daily = this.parseClubUserDailyData(o.daily);
+            this.mountClubUserFunctions(o);
 
             o['_org_points'] = o['points'] || 0;
             o['_org_cookies'] = o['cookies'] || 0;
@@ -332,6 +334,8 @@ export default class TudeApi {
               o['_raw_daily'] = o.daily;
               o.daily = this.parseClubUserDailyData(o.daily);
 
+              this.mountClubUserFunctions(o);
+
               o['_org_points'] = o['points'] || 0;
               o['_org_cookies'] = o['cookies'] || 0;
               o['_org_gems'] = o['gems'] || 0;
@@ -358,6 +362,41 @@ export default class TudeApi {
       claimable: !today,
       streak: (today || yesterday) ? rawDaily.streak : 0
     }
+  }
+
+  private static mountClubUserFunctions(u: ClubUser) {
+    u.addItem = (item: ItemPrefab, amount?: number, meta?: any) => {
+      if (amount == undefined) amount = 1;
+      let itemi: Item = null;
+      if (item._isDef) {
+        switch(item.id) {
+          case 'cookie':
+            u.cookies += amount;
+            itemi = item.create(u.cookies);
+            break;
+          case 'gem':
+            u.gems += amount;
+            itemi = item.create(u.gems);
+            break;
+          case 'key':
+            u.keys += amount;
+            itemi = item.create(u.keys);
+            break;
+          default: return null;
+        }
+      } else if (u.inventory.has(item.id)) {
+        if (item.expanded) {
+          return null;
+        }
+        itemi = u.inventory.get(item.id);
+        itemi.amount += amount;
+      } else {
+        const itemInstance: Item = item.expanded ? new item.class(item, item.id, meta || {}) : new item.class(item, amount);
+        u.inventory.set(item.id, itemInstance);
+        itemi = itemInstance;
+      }
+      return itemi;
+    };
   }
 
   public static badgeById(id: number): Badge {

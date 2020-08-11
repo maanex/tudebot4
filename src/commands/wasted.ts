@@ -1,5 +1,5 @@
 import { Message, Channel, User, TextChannel, Emoji, Attachment, RichEmbed } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import Emojis from "../int/emojis";
 import * as Jimp from 'jimp';
 import { TudeBot } from "../index";

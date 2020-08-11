@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { Message, TextChannel, Guild, GuildMember, User, MessageReaction } from "discord.js";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
-import { Module } from "../types";
+import { Module } from "../types/types";
 
 
 export default class QuotesModule extends Module {

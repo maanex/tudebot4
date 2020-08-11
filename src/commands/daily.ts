@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import Emojis from "../int/emojis";
 
 

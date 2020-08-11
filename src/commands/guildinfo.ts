@@ -1,5 +1,5 @@
 import { Message, Channel, User, TextChannel } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import { TudeBot } from "../index";
 
 

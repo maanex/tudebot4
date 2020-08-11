@@ -1,4 +1,4 @@
-import { Module, ModlogFunction, GuildSettings } from './types';
+import { Module, ModlogFunction, GuildSettings } from './types/types';
 import { Client, User } from 'discord.js';
 import TudeApi from './thirdparty/tudeapi/tudeapi';
 import WCP from './thirdparty/wcp/wcp';

@@ -2,7 +2,7 @@ import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import ParseArgs from "../util/parseArgs";
 import Database from "../database/database";
 import * as Items from "../content/itemlist";
@@ -140,6 +140,24 @@ export default class AdminCommand extends Command {
             else orgChannel.send(`You sent: \`${mes.content}\``);
           });
           break;
+
+        case 'giveitem': {
+          if (args.length < 2) {
+            repl('Which one?');
+            return false;
+          }
+
+          const item = Items.findItem(args[1]);
+          if (!item) {
+            repl('Not found!');
+            return false;
+          }
+
+          TudeApi.clubUserByDiscordId(user.id, user).then(u => {
+            u.addItem() // TODO
+          });
+          return true;
+        }
       }
       return true;
     } catch (ex) {

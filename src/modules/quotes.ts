@@ -1,6 +1,6 @@
 import { TudeBot } from "../index";
 import { Message } from "discord.js";
-import { Module } from "../types";
+import { Module } from "../types/types";
 
 
 export default class QuotesModule extends Module {

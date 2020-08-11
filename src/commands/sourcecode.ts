@@ -1,6 +1,6 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 
 
 export default class SourcecodeCommand extends Command {

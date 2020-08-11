@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji } from "discord.js";
 import * as util from "../util/util";
-import { Module } from "../types";
+import { Module } from "../types/types";
 
 
 export default class CountingModule extends Module {

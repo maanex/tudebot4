@@ -2,7 +2,7 @@ import { TudeBot } from '..';
 import { Message, MessageReaction, User as DiscordUser, Guild, VoiceChannel, GuildMember } from 'discord.js';
 import * as cron from 'cron';
 import TudeApi, { User, ClubUser } from '../thirdparty/tudeapi/tudeapi';
-import { Module } from "../types";
+import { Module } from "../types/types";
 import Emojis from '../int/emojis';
 
 

@@ -1,7 +1,7 @@
 import { TudeBot } from "../../index";
 import { GuildMember, Message, Emoji, TextChannel } from "discord.js";
 import * as nreq from "request";
-import { Module } from "../../types";
+import { Module } from "../../types/types";
 import { Wit, log} from "node-wit";
 import SupportCommand from "../../commands/support";
 

@@ -2,7 +2,7 @@ import { TudeBot } from "../index";
 import { Message, TextChannel, Guild, GuildMember, User, MessageReaction, MessageEmbed, RichEmbed, RichEmbedOptions } from "discord.js";
 import TudeApi, { ClubUser, DeprItem } from "../thirdparty/tudeapi/tudeapi";
 import Database from "../database/database";
-import { Module } from "../types";
+import { Module } from "../types/types";
 import Emojis from "../int/emojis";
 import { Items, findItem, ItemList } from "../content/itemlist";
 import { Item } from "thirdparty/tudeapi/item";

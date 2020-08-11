@@ -1,6 +1,6 @@
 import { TudeBot } from '../index';
 import { Message, MessageReaction, User, TextChannel } from 'discord.js';
-import { Module } from "../types";
+import { Module } from "../types/types";
 import { DbStats } from '../database/dbstats';
 import Emojis from '../int/emojis';
 import Database from '../database/database';

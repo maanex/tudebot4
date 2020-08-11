@@ -1,9 +1,10 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
 import Emojis from "../int/emojis";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import * as md5 from "../util/md5";
+import { ProfileSkin } from "content/profileskins";
 
 
 export default class ProfileCommand extends Command {
@@ -31,21 +32,24 @@ export default class ProfileCommand extends Command {
             return;
           }
 
+          const profileSkin = ProfileSkin.BLUE;
+          const emblemsUsed = Emojis.PROFILE_EMBLEMS[profileSkin.emblemSet];
+
           let footer = `${u.points}pt`;
           let icon = undefined;
           let xpbar = '';
           let stats = `${Emojis.BIG_SPACE}`;
-          let statItems = [`${Emojis.COOKIES} ${u.cookies}`, `${Emojis.GEMS} ${u.gems}`];
-          if (u.keys > 0) statItems.push(`${Emojis.KEYS} ${u.keys}`);
+          let statItems = [`${Emojis.COOKIES} ${u.cookies}`, `${emblemsUsed.GEMS} ${u.gems}`];
+          if (u.keys > 0) statItems.push(`${emblemsUsed.KEYS} ${u.keys}`);
           // @ts-ignore
           if (u.inventory.size > 0) {
             let amount = 0;
             for (let item of u.inventory.values())
               amount += item.amount;
-            statItems.push(`${Emojis.ITEMS} ${amount}`);
+            statItems.push(`${emblemsUsed.ITEMS} ${amount}`);
           }
           if (u.daily.streak >= 7) {
-            statItems.push(`:flame: ${u.daily.streak}`);
+            statItems.push(`${emblemsUsed.STREAK} ${u.daily.streak}`);
           }
 
           let c = 0;

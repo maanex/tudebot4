@@ -2,7 +2,7 @@ import { TudeBot, TudeBotClient } from "../index";
 import { Message, Channel, User, TextChannel, Emoji } from "discord.js";
 import TudeApi, { Badge, ClubUser } from "../thirdparty/tudeapi/tudeapi";
 import { WSAEISCONN } from "constants";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import Emojis from "../int/emojis";
 
 

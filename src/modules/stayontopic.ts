@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, TextChannel, User } from "discord.js";
 import * as util from "../util/util";
-import { Module } from "../types";
+import { Module } from "../types/types";
 
 
 export default class StayOnTopicModule extends Module {

@@ -177,11 +177,24 @@ export const Items = {
     create: (size: number, caughtAt: Date, stuffed: boolean) => new Items.Carp.class(Items.Carp, Items.Carp.id, size, caughtAt, stuffed),
     parse: (data: any) => new Items.Carp.class(Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
   },
+  ProfileSkinBlue: {
+    id: 'profile_skin_blue',
+    category: ItemCategory.PROFILE_SKIN,
+    group: ItemGroup.COLLECTABLE,
+    expanded: false,
+    tradeable: true,
+    sellable: true,
+    purchaseable: true,
+    useable: false,
+    icon: '🔵',
+    class: class ProfileSkinBlue extends StackableItem { },
+    create: (amount: number) => new Items.ProfileSkinBlue.class(Items.ProfileSkinBlue, amount),
+  },
 };
 
 export const ItemList: ItemPrefab[] = Object.values(Items);
 
-export function findItem(query: string) {
+export function findItem(query: string): ItemPrefab {
   query = query.toLowerCase();
   let item = ItemList.find(i => {
     if (i.id.toLowerCase() == query) return true;

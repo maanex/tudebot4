@@ -2,7 +2,7 @@ import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import ParseArgs from "../util/parseArgs";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types";
+import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import { Item } from "thirdparty/tudeapi/item";
 
 const AsciiTable = require('ascii-table');

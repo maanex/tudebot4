@@ -1,6 +1,6 @@
 import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, TextChannel, Channel, Attachment, RichEmbed } from "discord.js";
-import { Module } from "../types";
+import { Module } from "../types/types";
 import generateInviteLinkMeme from "../functions/generateInviteLinkMeme";
 import Emojis from "../int/emojis";
 

@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, TextChannel } from "discord.js";
 import * as util from "../util/util";
-import { Module } from "../types";
+import { Module } from "../types/types";
 import TheBrainModule from "./thebrain/thebrain";
 import SupportCommand from "../commands/support";
 

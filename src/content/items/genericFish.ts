@@ -1,7 +1,7 @@
 import { ExpandedItem, ItemPrefab } from "../../thirdparty/tudeapi/item"
 import TudeApi, { ClubUser } from "../../thirdparty/tudeapi/tudeapi";
 import { Message } from "discord.js";
-import { ReplyFunction } from "types";
+import { ReplyFunction } from "types/types";
 
 
 export default class GenericFish extends ExpandedItem {

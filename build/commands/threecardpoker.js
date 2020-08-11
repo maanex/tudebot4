@@ -13,17 +13,17 @@ const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
 const types_1 = require("../types");
-class BlackJackCommand extends types_1.Command {
+class ThreeCardPokerCommand extends types_1.Command {
     constructor() {
         super({
-            name: 'blackjack',
-            aliases: ['bj'],
-            description: 'A sweet game of Black Jack',
+            name: 'threecardpoker',
+            aliases: ['tcp', '3cp'],
+            description: 'Three card poker. Arguments: <ante> <pairplus?>',
             cooldown: 5,
             groups: ['club', 'casino'],
         });
-        this.hit = '✅';
-        this.stand = '⏸️';
+        this.raise = '✅';
+        this.fold = '⏸️';
         this.hearts = '<:hearts:661657523878625295>';
         this.diamonds = '<:diamonds:661657523820036106>';
         this.spades = '<:spades:661657523333496854>';
@@ -61,6 +61,7 @@ class BlackJackCommand extends types_1.Command {
         this.currentGame = {
             entries: [],
             dealer: [],
+            dealerFold: false,
             allowNewEntries: true,
             started: false,
             startIn: 0,
@@ -68,27 +69,38 @@ class BlackJackCommand extends types_1.Command {
             deck: []
         };
         this.currentGameTimer = null;
-        this.gameloopTimeoutTimer = undefined;
+        this.phase1TimeoutTimer = undefined;
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {
             if (args.length < 1) {
-                repl('blackjack <stake>', 'bad', 'Maximum stake: 2000');
+                repl('tcp <ante>', 'bad', 'Maximum stake: 2000');
                 resolve(false);
                 return;
             }
-            let cookies = args[0] == 'a' ? -42 : parseInt(args[0]);
-            if (isNaN(cookies)) {
+            let ante = args[0] == 'a' ? -42 : parseInt(args[0]);
+            let pairplus = (args.length > 1) ? (args[1] == 'a' ? -42 : parseInt(args[1])) : 0;
+            if (isNaN(ante)) {
                 repl(args[0] + ' is not a valid amount of cookies!', 'bad');
                 resolve(false);
                 return;
             }
-            if (cookies > Math.random() * 1000000 + 100000) {
+            if (isNaN(pairplus)) {
+                repl(args[1] + ' is not a valid amount of cookies!', 'bad');
+                resolve(false);
+                return;
+            }
+            if (ante + pairplus > Math.random() * 1000000 + 100000) {
                 repl('That is insane!', 'bad', `I've never been provoked that much, LEAVE THIS CASINO RIGHT NOW!`);
                 resolve(false);
                 return;
             }
-            if (cookies > 2000) {
+            if (ante > 2000) {
+                repl(args[0] + ' cookies is over the casino\'s maximum stake of 2000!', 'bad');
+                resolve(false);
+                return;
+            }
+            if (pairplus > 2000) {
                 repl(args[0] + ' cookies is over the casino\'s maximum stake of 2000!', 'bad');
                 resolve(false);
                 return;
@@ -99,28 +111,38 @@ class BlackJackCommand extends types_1.Command {
                     resolve(false);
                     return;
                 }
-                if (cookies > u.cookies) {
+                if (ante + pairplus > u.cookies) {
                     if (Math.random() < .05) {
                         // @ts-ignore
-                        repl(`${hidethepain} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
+                        repl(`${hidethepain} Your total bet of ${ante + pairplus} cookies is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
                     }
                     else {
                         // @ts-ignore
-                        repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
+                        repl(`Your total bet of ${ante + pairplus} cookies is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
                     }
                     resolve(false);
                     return;
                 }
-                if (cookies == -42) {
-                    if (u.cookies == 0) {
-                        repl('You don\'t have any money to play with!', 'bad');
-                        resolve(false);
-                        return;
-                    }
-                    cookies = Math.min(2000, u.cookies);
+                if (u.cookies == 0) {
+                    repl('You don\'t have any money to play with!', 'bad');
+                    resolve(false);
+                    return;
                 }
-                if (cookies <= 0) {
-                    repl('You cannot bet on 0 or less cookies!', 'bad');
+                if (ante == -42) {
+                    if (pairplus == -42) {
+                        const give = Math.min(4000, u.cookies);
+                        ante = Math.floor(give / 2);
+                        pairplus = Math.ceil(give / 2);
+                    }
+                    else {
+                        ante = Math.min(2000, u.cookies);
+                    }
+                }
+                else if (pairplus == -42) {
+                    ante = Math.min(2000, u.cookies);
+                }
+                if (ante < 0 || pairplus < 0 || (ante + pairplus < 0)) {
+                    repl('You need to place at least one bet!', 'bad');
                     resolve(false);
                     return;
                 }
@@ -137,32 +159,32 @@ class BlackJackCommand extends types_1.Command {
                             return;
                         }
                     }
-                    u.cookies -= cookies;
+                    u.cookies -= ante;
                     tudeapi_1.default.updateClubUser(u);
                     this.currentGame.entries.push({
                         by: user,
                         clubuser: u,
-                        amount: cookies,
+                        ante: ante,
+                        pairplus: pairplus,
                         cards: [],
-                        canDraw: true,
                         balance: 0
                     });
                     // this.currentGame.startIn = 5;
                     // if (TudeBot.m.commands.getActiveInCommandsChannel().length > this.currentGame.entries.length)
                     // this.currentGame.startIn = 10;
-                    this.currentGame.startIn = 5;
+                    this.currentGame.startIn = channel.typingCount ? 10 : 5;
                     resolve(true);
                 }
                 else {
                     this.currentGame.started = true;
-                    u.cookies -= cookies;
+                    u.cookies -= ante;
                     tudeapi_1.default.updateClubUser(u);
                     this.currentGame.entries.push({
                         by: user,
                         clubuser: u,
-                        amount: cookies,
+                        ante: ante,
+                        pairplus: pairplus,
                         cards: [],
-                        canDraw: true,
                         balance: 0
                     });
                     // this.currentGame.startIn = 3;
@@ -172,7 +194,7 @@ class BlackJackCommand extends types_1.Command {
                     channel.send({
                         embed: {
                             color: 0x2f3136,
-                            title: 'Black Jack',
+                            title: 'Three Card Poker',
                             description: 'Preparing...'
                         }
                     }).then(mes => this.currentGame.chatMessage = mes).catch();
@@ -182,9 +204,9 @@ class BlackJackCommand extends types_1.Command {
                                 this.currentGame.chatMessage.edit('', {
                                     embed: {
                                         color: 0x2f3136,
-                                        title: 'Black Jack',
+                                        title: 'Three Card Poker',
                                         description: 'Starting in ' + this.currentGame.startIn + '```js\n'
-                                            + this.currentGame.entries.map(b => `${b.by.username}: ${b.amount}c`).join('\n')
+                                            + this.currentGame.entries.map(b => `${b.by.username}: ${b.ante}c • (+${b.pairplus}c)`).join('\n')
                                             + '```',
                                     }
                                 });
@@ -221,17 +243,17 @@ class BlackJackCommand extends types_1.Command {
             if (!playing)
                 return;
             switch (reaction.emoji.name) {
-                case this.hit:
-                    playing.choosenAction = 'hit';
+                case this.raise:
+                    playing.choosenAction = 'raise';
                     break;
-                case this.stand:
-                    playing.choosenAction = 'stand';
+                case this.fold:
+                    playing.choosenAction = 'fold';
                     break;
             }
             for (let e of this.currentGame.entries)
-                if (e.canDraw && !e.choosenAction)
+                if (!e.choosenAction)
                     return;
-            this.gameloop();
+            this.phase1();
         });
     }
     startGame() {
@@ -244,82 +266,53 @@ class BlackJackCommand extends types_1.Command {
                 for (let i = 0; i < 6; i++)
                     // @ts-ignore
                     this.currentGame.deck.push({ color: type, number: value });
-        this.currentGame.dealer.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
         for (let entry of this.currentGame.entries) {
             entry.cards.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
             entry.cards.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
-            if (Math.abs(this.countValue(entry.cards)) == 21)
-                entry.canDraw = false;
+            entry.cards.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
         }
-        this.gameloop(true);
+        this.updateMessage(true, true, false);
+        this.phase1TimeoutTimer = setTimeout(() => this.phase1(), 15000);
     }
-    gameloop(firstRound = false) {
-        if (this.gameloopTimeoutTimer)
-            clearTimeout(this.gameloopTimeoutTimer);
-        this.gameloopTimeoutTimer = setTimeout(() => this.gameloop(), 15000);
-        if (firstRound) {
-            for (let e of this.currentGame.entries)
-                if (e.canDraw) {
-                    this.updateMessage();
-                    return;
-                }
-            this.gameOver();
-            return;
-        }
+    phase1() {
+        if (this.phase1TimeoutTimer)
+            clearTimeout(this.phase1TimeoutTimer);
         for (let e of this.currentGame.entries)
-            e.choosenAction = e.choosenAction || 'stand';
-        for (let e of this.currentGame.entries) {
-            if (!e.canDraw)
-                continue;
-            switch (e.choosenAction) {
-                case 'hit':
-                    e.cards.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
-                    let value = this.countValue(e.cards);
-                    if (Math.abs(value) >= 21)
-                        e.canDraw = false;
-                    break;
-                case 'stand':
-                    e.canDraw = false;
-                    break;
-            }
-        }
-        let done = true;
-        for (let e of this.currentGame.entries) {
-            e.choosenAction = undefined;
-            if (e.canDraw)
-                done = false;
-        }
-        if (!done)
-            this.updateMessage();
+            e.choosenAction = e.choosenAction || 'fold';
+        this.updateMessage(true, false, false);
+        setTimeout(() => this.phase2(), 3000);
+    }
+    phase2(cardNr = 0) {
+        this.currentGame.dealer.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
+        cardNr++;
+        this.updateMessage(true, false, false);
+        if (cardNr < 3)
+            setTimeout(() => this.phase2(cardNr), 1500);
         else
-            this.gameOver();
+            setTimeout(() => this.phase3(), 1500);
+    }
+    phase3() {
+        const highCard = this.highestCard(this.currentGame.dealer);
+        if (!(['Q', 'K', 'A'].includes(highCard.number + '')))
+            this.currentGame.dealerFold = true;
+        this.gameOver();
     }
     gameOver() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.gameloopTimeoutTimer)
-                clearTimeout(this.gameloopTimeoutTimer);
-            do
-                this.currentGame.dealer.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
-            while (this.countValue(this.currentGame.dealer) < 17);
-            let dealerVal = Math.abs(this.countValue(this.currentGame.dealer));
-            for (let e of this.currentGame.entries) {
-                let val = Math.abs(this.countValue(e.cards));
-                if (val > 21)
-                    e.balance = -e.amount;
-                else if (val == 21 && e.cards.length == 2)
-                    e.balance = e.amount * 3 / 2;
-                else if (dealerVal > 21)
-                    e.balance = e.amount;
-                else if (val > dealerVal)
-                    e.balance = e.amount;
-                else if (val == dealerVal)
-                    e.balance = 0;
-                else if (val < dealerVal)
-                    e.balance = -e.amount;
-                e.clubuser.cookies += Math.ceil(e.amount + e.balance);
-                if ((e.amount + e.balance) != 0)
-                    tudeapi_1.default.updateClubUser(e.clubuser);
-            }
+            // do this.currentGame.dealer.push(this.currentGame.deck.splice(Math.floor(Math.random() * this.currentGame.deck.length), 1)[0]);
+            // while (this.countValue(this.currentGame.dealer) < 17);
+            // let dealerVal = Math.abs(this.countValue(this.currentGame.dealer));
+            // for (let e of this.currentGame.entries) {
+            //   let val = Math.abs(this.countValue(e.cards));
+            //   if (val > 21) e.balance = -e.amount;
+            //   else if (val == 21 && e.cards.length == 2) e.balance = e.amount * 3 / 2;
+            //   else if (dealerVal > 21) e.balance = e.amount
+            //   else if (val > dealerVal) e.balance = e.amount;
+            //   else if (val == dealerVal) e.balance = 0;
+            //   else if (val < dealerVal) e.balance = -e.amount;
+            //   e.clubuser.cookies += Math.ceil(e.amount + e.balance);
+            //   if ((e.amount + e.balance) != 0) TudeApi.updateClubUser(e.clubuser);
+            // }
             yield this.updateMessage(true, false, true);
             this.resetGame();
         });
@@ -349,7 +342,16 @@ class BlackJackCommand extends types_1.Command {
             }
             aces--;
         }
-        return soft ? -num : num;
+        return [soft ? -num : num, 'GOOD'];
+    }
+    highestCard(cards) {
+        const num = cards.map(card => [card, (typeof card.number == 'number') ? (card.number - 2) : { J: 8, Q: 9, K: 10, A: 11 }[card.number]]);
+        let highest = num.splice(0, 1)[0];
+        for (const toup of num) {
+            if (toup[1] > highest[1])
+                highest = toup;
+        }
+        return highest[0];
     }
     updateMessage(removeEmojis = true, addEmojis = true, end = false) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -357,17 +359,17 @@ class BlackJackCommand extends types_1.Command {
                 return;
             if (removeEmojis) {
                 if (addEmojis
-                    && this.currentGame.chatMessage.reactions.get(this.hit)
-                    && this.currentGame.chatMessage.reactions.get(this.stand)
-                    && this.currentGame.chatMessage.reactions.get(this.hit).count <= 3
-                    && this.currentGame.chatMessage.reactions.get(this.stand).count <= 3) {
-                    for (let u of this.currentGame.chatMessage.reactions.get(this.stand).users.array()) {
+                    && this.currentGame.chatMessage.reactions.get(this.raise)
+                    && this.currentGame.chatMessage.reactions.get(this.fold)
+                    && this.currentGame.chatMessage.reactions.get(this.raise).count <= 3
+                    && this.currentGame.chatMessage.reactions.get(this.fold).count <= 3) {
+                    for (let u of this.currentGame.chatMessage.reactions.get(this.fold).users.array()) {
                         if (!u.bot)
-                            yield this.currentGame.chatMessage.reactions.get(this.stand).remove(u.id);
+                            yield this.currentGame.chatMessage.reactions.get(this.fold).remove(u.id);
                     }
-                    for (let u of this.currentGame.chatMessage.reactions.get(this.hit).users.array()) {
+                    for (let u of this.currentGame.chatMessage.reactions.get(this.raise).users.array()) {
                         if (!u.bot)
-                            yield this.currentGame.chatMessage.reactions.get(this.hit).remove(u.id);
+                            yield this.currentGame.chatMessage.reactions.get(this.raise).remove(u.id);
                     }
                 }
                 else {
@@ -375,14 +377,14 @@ class BlackJackCommand extends types_1.Command {
                 }
                 if (addEmojis) {
                     let mes = this.currentGame.chatMessage;
-                    this.currentGame.chatMessage.react(this.hit).then(() => mes.react(this.stand)).catch();
+                    this.currentGame.chatMessage.react(this.raise).then(() => mes.react(this.fold)).catch();
                 }
             }
             this.currentGame.chatMessage.edit('', {
                 embed: {
                     color: 0x2f3136,
-                    title: 'Black Jack',
-                    description: (end ? 'Game Over' : `${this.hit} hit • ${this.stand} stand`) + `\n${emojis_1.default.BIG_SPACE}`,
+                    title: 'Three Card Poker',
+                    description: (end ? 'Game Over' : `${this.raise} raise • ${this.fold} fold`) + `\n${emojis_1.default.BIG_SPACE}`,
                     fields: this.embedFields(end)
                 }
             });
@@ -396,63 +398,54 @@ class BlackJackCommand extends types_1.Command {
             startIn: 0,
             chatMessage: null,
             deck: [],
-            dealer: []
+            dealer: [],
+            dealerFold: false
         };
     }
     embedFields(end) {
-        let dealerVal = this.countValue(this.currentGame.dealer);
-        if (dealerVal == -21 && this.currentGame.dealer.length == 2)
-            dealerVal = 'BLACK JACK';
-        if (dealerVal > 21)
-            dealerVal = 'BUST ' + dealerVal;
-        if (dealerVal == 21 && this.currentGame.dealer.length == 2)
-            dealerVal = 'BLACK JACK';
-        if (typeof dealerVal == 'number' && dealerVal < 0)
-            dealerVal *= -1;
-        // @ts-ignore
-        let len = this.currentGame.entries.map(e => e.by.username.length).iterate((e, curr) => { curr > (e || 0) ? curr : (e || 0); }) + 2;
-        let out = this.currentGame.entries
+        const dealerValRaw = this.countValue(this.currentGame.dealer);
+        const dealerVal = end
+            ? this.currentGame.dealerFold
+                ? '~~FOLDED~~'
+                : dealerValRaw[1]
+            : (this.currentGame.dealer.length
+                ? ''
+                : '[ hidden ]');
+        const out = this.currentGame.entries
             .map(e => {
-            let yourVal = this.countValue(e.cards);
-            if (yourVal == -21 && e.cards.length == 2)
-                yourVal = 'BLACK JACK';
-            if (yourVal < 0)
-                yourVal = 'Soft' + -yourVal;
-            if (yourVal > 21)
-                yourVal = 'BUST ' + yourVal;
-            if (typeof yourVal == 'number' && yourVal < 0)
-                yourVal *= -1;
-            // return `\`${(' '.repeat(len) + e.by.username).substring(-len)}:\` **${yourVal}** ${e.cards.map(cardToEmoji).join(' ') + (e.canDraw ? '' : ' **/**')}`;
+            const yourValRaw = this.countValue(e.cards);
+            const yourVal = (e.choosenAction == 'fold') ? '~~FOLDED~~' : `**${yourValRaw[1]}**`;
             let endtext = '';
             if (end) {
                 endtext += '\n';
-                if (e.balance == 0)
+                const delta = yourValRaw[0] - dealerValRaw[0];
+                if (delta == 0)
                     endtext += '**STAND OFF**';
-                else if (e.balance < 0)
+                else if (delta < 0)
                     endtext += '**LOOSE**';
-                else if (e.balance > 0)
+                else if (delta > 0)
                     endtext += '**WIN**';
                 endtext += emojis_1.default.BIG_SPACE;
                 endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c • ' + e.clubuser.cookies + 'c total';
             }
             return {
                 name: e.by.username,
-                value: `**${yourVal}** ${e.cards.map(c => this.cardToEmoji(c)).join(' ') + (e.canDraw ? '' : ' **/**') + endtext}`
+                value: `${e.cards.map(c => this.cardToEmoji(c)).join(' ')} ** ** ${yourVal + endtext}`
             };
         });
         return [
             {
                 name: '`  Dealer  `',
-                value: `**${dealerVal}** ${this.currentGame.dealer.map(c => this.cardToEmoji(c)).join(' ')}`
+                value: `${this.currentGame.dealer.map(c => this.cardToEmoji(c)).join(' ')} ** ** ${dealerVal}`
             }, ...out
         ];
     }
     cardToEmoji(card) {
-        let type = (card.color == 'hearts' || card.color == 'diamonds') ? 'red' : 'black';
-        let typeEm = { hearts: this.hearts, diamonds: this.diamonds, spades: this.spades, clubs: this.clubs }[card.color];
-        let num = (typeof card.number == 'number') ? (card.number - 2) : { J: 8, Q: 9, K: 10, A: 11 }[card.number];
+        const type = (card.color == 'hearts' || card.color == 'diamonds') ? 'red' : 'black';
+        const typeEm = { hearts: this.hearts, diamonds: this.diamonds, spades: this.spades, clubs: this.clubs }[card.color];
+        const num = (typeof card.number == 'number') ? (card.number - 2) : { J: 8, Q: 9, K: 10, A: 11 }[card.number];
         return typeEm + this.cvalues[type][num];
     }
 }
-exports.default = BlackJackCommand;
-//# sourceMappingURL=blackjack.js.map
+exports.default = ThreeCardPokerCommand;
+//# sourceMappingURL=threecardpoker.js.map

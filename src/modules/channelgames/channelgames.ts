@@ -3,7 +3,7 @@ import { MessageReaction, User, Role, Message, TextChannel, ClientUserSettings }
 import { finished } from "stream";
 import { maxHeaderSize } from "http";
 import TudeApi from "../../thirdparty/tudeapi/tudeapi";
-import { Module } from "../../types";
+import { Module } from "../../types/types";
 import Emojis from "../../int/emojis";
 
 

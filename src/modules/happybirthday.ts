@@ -1,7 +1,7 @@
-import { modlogType } from '../types';
+import { modlogType } from '../types/types';
 import { TudeBot } from "../index";
 import { GuildMember, TextChannel } from "discord.js";
-import { Module } from "../types";
+import { Module } from "../types/types";
 
 
 export default class HappyBirthdayModule extends Module {

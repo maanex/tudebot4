@@ -1,6 +1,6 @@
 import { TudeBot } from "../index";
 import { MessageReaction, User, Role } from "discord.js";
-import { Module } from "../types";
+import { Module } from "../types/types";
 
 
 export default class SelfrolesModule extends Module {

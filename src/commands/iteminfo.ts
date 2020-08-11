@@ -1,6 +1,6 @@
 import { User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
-import { Command, CommandExecEvent, ReplyFunction } from "../types";
+import { Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import { ItemList, findItem } from "../content/itemlist";
 import ParseArgs from "../util/parseArgs";
 

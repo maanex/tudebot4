@@ -1,6 +1,6 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
-import { Command, CommandExecEvent, ReplyFunction } from "../types";
+import { Command, CommandExecEvent, ReplyFunction } from "../types/types";
 
 
 export default class GamemodeCommand extends Command {

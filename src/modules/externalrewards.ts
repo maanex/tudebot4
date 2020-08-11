@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { GuildMember, Message, Emoji, User, TextChannel } from "discord.js";
 import * as util from "../util/util";
-import { Module } from "../types";
+import { Module } from "../types/types";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
 

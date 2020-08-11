@@ -1,6 +1,6 @@
 import TudeApi, { ClubUser } from "./tudeapi";
 import { MessageEmbedField, Message } from "discord.js";
-import { ReplyFunction } from "types";
+import { ReplyFunction } from "types/types";
 
 export class ItemCategory {
   
@@ -18,6 +18,7 @@ export class ItemCategory {
   public static SYSTEM = new ItemCategory('system');
   public static FISHING_EQUIPMENT = new ItemCategory('fishing_assets');
   public static COLLECTABLE = new ItemCategory('collectable');
+  public static PROFILE_SKIN = new ItemCategory('profile_skin');
 
 }
 

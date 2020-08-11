@@ -1,7 +1,7 @@
 import { ExpandedItem, ItemPrefab } from "../../thirdparty/tudeapi/item"
 import TudeApi, { ClubUser } from "../../thirdparty/tudeapi/tudeapi";
 import { Message, TextChannel } from "discord.js";
-import { ReplyFunction } from "types";
+import { ReplyFunction } from "types/types";
 import { TudeBot } from "../../index";
 import CommandsModule from "../../modules/commands";
 

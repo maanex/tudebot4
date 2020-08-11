@@ -1,4 +1,29 @@
 
+export type ProfileEmblemSet = 'DEFAULT' | 'MONOCHROME';
+export interface ProfileEmblems {
+  readonly COOKIES: string;
+  readonly GEMS: string;
+  readonly KEYS: string;
+  readonly ITEMS: string;
+  readonly POINTS: string;
+  readonly STREAK: string;
+}
+
+export type ProfileBarSet = 'DEFAULT' | 'BLUE';
+export interface ProfileBars {
+  readonly LEFT_EMPTY: string;
+  readonly LEFT_HALF: string;
+  readonly LEFT_FULL: string;
+  readonly MIDDLE_EMPTY: string;
+  readonly MIDDLE_1: string;
+  readonly MIDDLE_2: string;
+  readonly MIDDLE_3: string;
+  readonly RIGHT_EMPTY: string;
+  readonly RIGHT_HALF: string;
+  readonly RIGHT_FULL: string;
+}
+
+
 export default class Emojis {
 
   public static readonly             BIG_SPACE = '<:nothing:409254826938204171>';
@@ -22,18 +47,53 @@ export default class Emojis {
   public static readonly              ITEMS = '<:citems:681509921136836623>';
   public static readonly  POINTS_MONOCHROME = '<:mpoints:681782061295599637>';
   public static readonly             POINTS = '<:points:681782061312638976>';
+  public static readonly  STREAK_MONOCHROME = ':flame:';
+  public static readonly             STREAK = ':flame:';
 
-  public static readonly XPBAR = {
-      left_empty: '<:xpbarleftempty:654357985845575716>',
-       left_half: '<:xpbarlefthalf:654353598301339668>',
-       left_full: '<:xpbarleftfull:654353598603460609>',
-    middle_empty: '<:xpbarmiddleempty:654353598087430174>',
-        middle_1: '<:xpbarmiddle1:654353598288887840>',
-        middle_2: '<:xpbarmiddle2:654353598230167574>',
-        middle_3: '<:xpbarmiddle3:654353597819256843>',
-     right_empty: '<:xpbarrightempty:654353598263853066>',
-      right_half: '<:xpbarrighthalf:654353597999611908>',
-      right_full: '<:xpbarrightfull:654353598204870656>'
+  public static readonly PROFILE_EMBLEMS: { [name: string]: ProfileEmblems } = {
+    DEFAULT: {
+      COOKIES: Emojis.COOKIES,
+      GEMS: Emojis.GEMS,
+      KEYS: Emojis.KEYS,
+      ITEMS: Emojis.ITEMS,
+      POINTS: Emojis.POINTS,
+      STREAK: Emojis.STREAK,
+    },
+    MONOCHROME: {
+      COOKIES: Emojis.COOKIES_MONOCHROME,
+      GEMS: Emojis.GEMS_MONOCHROME,
+      KEYS: Emojis.KEYS_MONOCHROME,
+      ITEMS: Emojis.ITEMS_MONOCHROME,
+      POINTS: Emojis.POINTS_MONOCHROME,
+      STREAK: Emojis.STREAK_MONOCHROME,
+    }
+  }
+
+  public static readonly PROFILE_BARS: { [name: string]: ProfileBars } = {
+    DEFAULT: {
+        LEFT_EMPTY: '<:xpbarleftempty:654357985845575716>',
+         LEFT_HALF: '<:xpbarlefthalf:654353598301339668>',
+         LEFT_FULL: '<:xpbarleftfull:654353598603460609>',
+      MIDDLE_EMPTY: '<:xpbarmiddleempty:654353598087430174>',
+          MIDDLE_1: '<:xpbarmiddle1:654353598288887840>',
+          MIDDLE_2: '<:xpbarmiddle2:654353598230167574>',
+          MIDDLE_3: '<:xpbarmiddle3:654353597819256843>',
+       RIGHT_EMPTY: '<:xpbarrightempty:654353598263853066>',
+        RIGHT_HALF: '<:xpbarrighthalf:654353597999611908>',
+        RIGHT_FULL: '<:xpbarrightfull:654353598204870656>'
+    },
+    BLUE: { // TODO
+        LEFT_EMPTY: '<:xpbarleftempty:654357985845575716>',
+         LEFT_HALF: '<:xpbarlefthalf:654353598301339668>',
+         LEFT_FULL: '<:xpbarleftfull:654353598603460609>',
+      MIDDLE_EMPTY: '<:xpbarmiddleempty:654353598087430174>',
+          MIDDLE_1: '<:xpbarmiddle1:654353598288887840>',
+          MIDDLE_2: '<:xpbarmiddle2:654353598230167574>',
+          MIDDLE_3: '<:xpbarmiddle3:654353597819256843>',
+       RIGHT_EMPTY: '<:xpbarrightempty:654353598263853066>',
+        RIGHT_HALF: '<:xpbarrighthalf:654353597999611908>',
+        RIGHT_FULL: '<:xpbarrightfull:654353598204870656>'
+    }
   }
 
   public static readonly MODLOG = {

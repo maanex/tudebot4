@@ -1,11 +1,11 @@
 import { TudeBot, config } from "../index";
 import { GuildMember, Message, Emoji, Channel, User, TextChannel } from "discord.js";
-import { modlogType, cmesType, cmes, Command, ReplyFunction, CommandExecEvent, AwaitUserResponseFunction } from "types";
+import { modlogType, cmesType, cmes, Command, ReplyFunction, CommandExecEvent, AwaitUserResponseFunction } from "types/types";
 import { DbStats } from "../database/dbstats";
 import Database from "../database/database";
 import WCP from "../thirdparty/wcp/wcp";
 import * as chalk from "chalk";
-import { Module, UserResponseCallback, UserResponseWaiting } from "../types";
+import { Module, UserResponseCallback, UserResponseWaiting } from "../types/types";
 import UnavailableCommand from "../commands/_unavailable";
 
 
