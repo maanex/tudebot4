@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Command = exports.Module = void 0;
 class Module {
     constructor(dispName, usageScope, conf, data, guilds, lang) {
         this.dispName = dispName;

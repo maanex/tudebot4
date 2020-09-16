@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TudeBot = exports.config = exports.TudeBotClient = void 0;
 const discord_js_1 = require("discord.js");
 const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const wcp_1 = require("./thirdparty/wcp/wcp");
@@ -60,8 +61,14 @@ class TudeBotClient extends discord_js_1.Client {
             this.badoszApi = new badosz_api_1.default(this.config.thirdparty.badoszapi.token);
             this.perspectiveApi = new perspective_api_1.default(this.config.thirdparty.googleapis.key);
             this.alexaAPI = new alexa_api_1.default(this.config.thirdparty.alexa.key);
+            // TODO find an actual fix for this instead of this garbage lol
+            const manualConnectTimer = setTimeout(() => {
+                // @ts-ignore
+                this.ws.connection.triggerReady();
+            }, 30000);
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
+                clearTimeout(manualConnectTimer);
                 wcp_1.default.send({ status_discord: '+Connected' });
                 for (let mod of this.modules.values()) {
                     mod.onBotReady();
