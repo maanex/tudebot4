@@ -65,7 +65,7 @@ export default class MemesModule extends Module {
         });
       }
 
-      if (this.guildData(mes.guild).motm) {
+      if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] == mes.channel.id) {
         Database
           .collection('memes')
           .insertOne({
@@ -129,7 +129,7 @@ export default class MemesModule extends Module {
   }
 
   updateMemeRating(mes: Message) {
-    if (this.guildData(mes.guild).motm) {
+    if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] == mes.channel.id) {
       let rating = -Object.values(this.RATINGS)['stack']();
       for (const reaction of mes.reactions.array()) {
         if (this.RATINGS[reaction.emoji.name])
@@ -176,7 +176,7 @@ export default class MemesModule extends Module {
     if (!top5.length) return;
     
     this.guilds.forEach(async (data, gid) => {
-      if (data.motm) {
+      if (data.motm && data.channels[0] == gid) {
         const guild = TudeBot.guilds.get(gid);
         if (!guild) return;
         const channel = guild.channels.get(data.channels[0]) as TextChannel;

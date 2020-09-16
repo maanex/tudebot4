@@ -64,7 +64,7 @@ class MemesModule extends types_1.Module {
                     }
                 });
             }
-            if (this.guildData(mes.guild).motm) {
+            if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] == mes.channel.id) {
                 database_1.default
                     .collection('memes')
                     .insertOne({
@@ -133,7 +133,7 @@ class MemesModule extends types_1.Module {
         });
     }
     updateMemeRating(mes) {
-        if (this.guildData(mes.guild).motm) {
+        if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] == mes.channel.id) {
             let rating = -Object.values(this.RATINGS)['stack']();
             for (const reaction of mes.reactions.array()) {
                 if (this.RATINGS[reaction.emoji.name])
@@ -168,7 +168,7 @@ class MemesModule extends types_1.Module {
             if (!top5.length)
                 return;
             this.guilds.forEach((data, gid) => __awaiter(this, void 0, void 0, function* () {
-                if (data.motm) {
+                if (data.motm && data.channels[0] == gid) {
                     const guild = index_1.TudeBot.guilds.get(gid);
                     if (!guild)
                         return;

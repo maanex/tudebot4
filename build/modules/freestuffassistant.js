@@ -24,7 +24,7 @@ class FreestuffAssistantModule extends types_1.Module {
     }
     on(event, data) {
         this.guilds.forEach((settings, guildid) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
             if (!settings)
                 return;
             if (!index_1.TudeBot || !index_1.TudeBot.readyAt)
@@ -48,7 +48,7 @@ class FreestuffAssistantModule extends types_1.Module {
                 case 'new_scratch':
                     mes = (yield channel.send({ embed: {
                             color: 0x3190AB,
-                            title: `${(_a = user === null || user === void 0 ? void 0 : user.username) !== null && _a !== void 0 ? _a : '*Someone*'} created a new announcement`,
+                            title: `${_b = (_a = user) === null || _a === void 0 ? void 0 : _a.username, (_b !== null && _b !== void 0 ? _b : '*Someone*')} created a new announcement`,
                             description: `No data provided yet\n[Click here to view.](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
                         } }));
                     this.gameMessages.set(data.game, mes);
@@ -56,7 +56,7 @@ class FreestuffAssistantModule extends types_1.Module {
                 case 'new_url':
                     mes = (yield channel.send({ embed: {
                             color: 0x3190AB,
-                            title: `${(_b = user === null || user === void 0 ? void 0 : user.username) !== null && _b !== void 0 ? _b : '*Someone*'} created a new announcement`,
+                            title: `${_d = (_c = user) === null || _c === void 0 ? void 0 : _c.username, (_d !== null && _d !== void 0 ? _d : '*Someone*')} created a new announcement`,
                             description: `Automatically fetched data from ${data.url}\n[Click here to view.](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
                         } }));
                     this.gameMessages.set(data.game, mes);
@@ -67,7 +67,7 @@ class FreestuffAssistantModule extends types_1.Module {
                     mes = this.gameMessages.get(data.game);
                     mes.edit({ embed: Object.assign(Object.assign({}, mes.embeds[0]), { fields: [{
                                     name: 'Activity',
-                                    value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${(_c = user === null || user === void 0 ? void 0 : user.username) !== null && _c !== void 0 ? _c : '*Someone*'} saved changes`
+                                    value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${_f = (_e = user) === null || _e === void 0 ? void 0 : _e.username, (_f !== null && _f !== void 0 ? _f : '*Someone*')} saved changes`
                                 }], message: undefined }) });
                     break;
                 case 'game_decline':
@@ -76,7 +76,7 @@ class FreestuffAssistantModule extends types_1.Module {
                     mes = this.gameMessages.get(data.game);
                     mes.edit({ embed: Object.assign(Object.assign({}, mes.embeds[0]), { fields: [{
                                     name: 'Activity',
-                                    value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${(_d = user === null || user === void 0 ? void 0 : user.username) !== null && _d !== void 0 ? _d : '*Someone*'} declined this game.`
+                                    value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${_h = (_g = user) === null || _g === void 0 ? void 0 : _g.username, (_h !== null && _h !== void 0 ? _h : '*Someone*')} declined this game.`
                                 }], color: 0xAB3231, title: 'Done.', description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`, message: undefined }) });
                     break;
                 case 'game_accept':
@@ -85,13 +85,13 @@ class FreestuffAssistantModule extends types_1.Module {
                     mes = this.gameMessages.get(data.game);
                     mes.edit({ embed: Object.assign(Object.assign({}, mes.embeds[0]), { fields: [{
                                     name: 'Activity',
-                                    value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${(_e = user === null || user === void 0 ? void 0 : user.username) !== null && _e !== void 0 ? _e : '*Someone*'} approved this game.`
+                                    value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${_k = (_j = user) === null || _j === void 0 ? void 0 : _j.username, (_k !== null && _k !== void 0 ? _k : '*Someone*')} approved this game.`
                                 }], color: 0x59AB31, title: 'Done.', description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`, message: undefined }) });
                     break;
                 case 'manual_store_scrape':
                     channel.send({ embed: {
                             color: 0x2f3136,
-                            title: `${(_f = user === null || user === void 0 ? void 0 : user.username) !== null && _f !== void 0 ? _f : '*Someone*'} initiated manual store scraping. Target: ${data.store}`
+                            title: `${_m = (_l = user) === null || _l === void 0 ? void 0 : _l.username, (_m !== null && _m !== void 0 ? _m : '*Someone*')} initiated manual store scraping. Target: ${data.store}`
                         } });
                     break;
             }

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.badgeEmojiList = void 0;
 exports.badgeEmojiList = {
     "1": [
         "<:badge_totm_all:656545161597288458>",

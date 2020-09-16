@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TudeBot = exports.config = exports.TudeBotClient = void 0;
 const discord_js_1 = require("discord.js");
 const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const wcp_1 = require("./thirdparty/wcp/wcp");
