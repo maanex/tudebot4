@@ -69,8 +69,16 @@ export class TudeBotClient extends Client {
         this.perspectiveApi = new PerspectiveAPI(this.config.thirdparty.googleapis.key);
         this.alexaAPI = new AlexaAPI(this.config.thirdparty.alexa.key);
 
+        // TODO find an actual fix for this instead of this garbage lol
+        const manualConnectTimer = setTimeout(() => {
+          // @ts-ignore
+          this.ws.connection.triggerReady();
+        }, 30000);
+
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
+          
+          clearTimeout(manualConnectTimer);
           WCP.send({ status_discord: '+Connected' });
 
           for (let mod of this.modules.values()) {
