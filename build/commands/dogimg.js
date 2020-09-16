@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const fetch = require('node-fetch');
 class DogCommand extends types_1.Command {
     constructor() {

@@ -9,20 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TudeBot = exports.config = exports.TudeBotClient = void 0;
 const discord_js_1 = require("discord.js");
 const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const wcp_1 = require("./thirdparty/wcp/wcp");
 const database_1 = require("./database/database");
 const mongo_adapter_1 = require("./database/mongo.adapter");
 const util_1 = require("./util/util");
-const gitParser_1 = require("./util/gitParser");
+const git_parser_1 = require("./util/git-parser");
 const chalk = require("chalk");
-const parseArgs_1 = require("./util/parseArgs");
-const badoszApi_1 = require("./thirdparty/badoszapi/badoszApi");
+const parse_args_1 = require("./util/parse-args");
+const badosz_api_1 = require("./thirdparty/badoszapi/badosz-api");
 const server_1 = require("./server/server");
 const dotenv_1 = require("dotenv");
 const moment = require("moment");
-const perspectiveApi_1 = require("./thirdparty/googleapis/perspectiveApi");
+const perspective_api_1 = require("./thirdparty/googleapis/perspective-api");
+const alexa_api_1 = require("./thirdparty/alexa/alexa-api");
 class TudeBotClient extends discord_js_1.Client {
     constructor(props, config) {
         super(props);
@@ -31,6 +33,7 @@ class TudeBotClient extends discord_js_1.Client {
         this.guildSettings = null;
         this.badoszApi = null;
         this.perspectiveApi = null;
+        this.alexaAPI = null;
         this.devMode = process.env.NODE_ENV !== 'production';
         this.config = config;
         this.modlog = null;
@@ -39,7 +42,7 @@ class TudeBotClient extends discord_js_1.Client {
         if (this.devMode) {
             console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
         }
-        gitParser_1.logVersionDetails();
+        git_parser_1.logVersionDetails();
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init(false /* this.devMode */);
@@ -55,8 +58,9 @@ class TudeBotClient extends discord_js_1.Client {
             yield tudeapi_1.default.init(this.config.lang);
             yield database_1.default.init();
             yield server_1.default.start(this.config.server.port);
-            this.badoszApi = new badoszApi_1.default(this.config.thirdparty.badoszapi.token);
-            this.perspectiveApi = new perspectiveApi_1.default(this.config.thirdparty.googleapis.key);
+            this.badoszApi = new badosz_api_1.default(this.config.thirdparty.badoszapi.token);
+            this.perspectiveApi = new perspective_api_1.default(this.config.thirdparty.googleapis.key);
+            this.alexaAPI = new alexa_api_1.default(this.config.thirdparty.alexa.key);
             this.on('ready', () => {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 wcp_1.default.send({ status_discord: '+Connected' });
@@ -126,13 +130,16 @@ class TudeBotClient extends discord_js_1.Client {
                             ModClass = require(`./modules/${mod}`).default;
                         }
                         catch (ex) {
+                            throw ex;
                             try {
                                 ModClass = require(`./modules/${mod}/${mod}`).default;
                             }
                             catch (ex) { }
                         }
-                        if (!ModClass)
+                        if (!ModClass) {
+                            console.error(`Module ${mod} not found!`);
                             continue;
+                        }
                         let module = new ModClass(data[mod], modData, guilds, this.lang);
                         this.modules.set(mod, module);
                         if (isReload)
@@ -187,7 +194,7 @@ class TudeBotClient extends discord_js_1.Client {
 }
 exports.TudeBotClient = TudeBotClient;
 dotenv_1.config();
-const flags = parseArgs_1.default.parse(process.argv);
+const flags = parse_args_1.default.parse(process.argv);
 exports.config = require('../config.js');
 exports.TudeBot = new TudeBotClient({}, exports.config);
 function fixReactionEvent(bot) {

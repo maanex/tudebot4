@@ -5,15 +5,16 @@ import WCP from './thirdparty/wcp/wcp';
 import Database from './database/database';
 import MongoAdapter from './database/mongo.adapter';
 import { Util } from './util/util';
-import { logVersionDetails } from "./util/gitParser";
+import { logVersionDetails } from "./util/git-parser";
 import * as chalk from "chalk";
-import ParseArgs from './util/parseArgs';
+import ParseArgs from './util/parse-args';
 import { Items } from './content/itemlist';
-import BadoszAPI from './thirdparty/badoszapi/badoszApi';
+import BadoszAPI from './thirdparty/badoszapi/badosz-api';
 import Server from './server/server';
 import { config as loadDotenv } from 'dotenv';
 import * as moment from 'moment';
-import PerspectiveAPI from './thirdparty/googleapis/perspectiveApi';
+import PerspectiveAPI from './thirdparty/googleapis/perspective-api';
+import AlexaAPI from './thirdparty/alexa/alexa-api';
 
 
 export class TudeBotClient extends Client {
@@ -27,6 +28,7 @@ export class TudeBotClient extends Client {
 
   public badoszApi: BadoszAPI = null;
   public perspectiveApi: PerspectiveAPI = null;
+  public alexaAPI: AlexaAPI = null;
 
   constructor(props: any, config: any) {
     super(props);
@@ -65,6 +67,7 @@ export class TudeBotClient extends Client {
 
         this.badoszApi = new BadoszAPI(this.config.thirdparty.badoszapi.token);
         this.perspectiveApi = new PerspectiveAPI(this.config.thirdparty.googleapis.key);
+        this.alexaAPI = new AlexaAPI(this.config.thirdparty.alexa.key);
 
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
@@ -145,11 +148,15 @@ export class TudeBotClient extends Client {
               try {
                 ModClass = require(`./modules/${mod}`).default;
               } catch (ex) {
+                throw ex;
                 try {
                   ModClass = require(`./modules/${mod}/${mod}`).default;
                 } catch (ex) { }
               }
-              if (!ModClass) continue;
+              if (!ModClass) {
+                console.error(`Module ${mod} not found!`);
+                continue;
+              }
               let module: Module = new ModClass(data[mod], modData, guilds, this.lang);
               this.modules.set(mod, module);
               if (isReload) module.onBotReady();

@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const index_1 = require("../index");
 class WantedCommand extends types_1.Command {
     constructor() {

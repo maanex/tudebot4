@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const database_1 = require("../database/database");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
 const itemlist_1 = require("../content/itemlist");
 class ClubItemShopModule extends types_1.Module {
@@ -103,37 +103,7 @@ class ClubItemShopModule extends types_1.Module {
                                     repl('Huh? Not implemented. Ping @Maanex, thx');
                                     return;
                                 }
-                                let itemi = undefined;
-                                if (item._isDef) {
-                                    switch (item.id) {
-                                        case 'cookie':
-                                            u.cookies += amount;
-                                            itemi = item.create(u.cookies);
-                                            break;
-                                        case 'gem':
-                                            u.gems += amount;
-                                            itemi = item.create(u.gems);
-                                            break;
-                                        case 'key':
-                                            u.keys += amount;
-                                            itemi = item.create(u.keys);
-                                            break;
-                                        default: return;
-                                    }
-                                }
-                                else if (u.inventory.has(item.id)) {
-                                    if (item.expanded) {
-                                        repl('An error occured!', 'Try again later!');
-                                        return;
-                                    }
-                                    itemi = u.inventory.get(item.id);
-                                    itemi.amount += amount;
-                                }
-                                else {
-                                    const itemInstance = item.expanded ? new item.class(item, item.id, {}) : new item.class(item, amount);
-                                    u.inventory.set(item.id, itemInstance);
-                                    itemi = itemInstance;
-                                }
+                                let itemi = u.addItem(item);
                                 if (!itemi)
                                     return;
                                 repl(`You purchased ${amount} ${tudeapi_1.default.clubLang[(amount == 1 ? 'item_' : 'itempl_') + itemi.id]} for ${price} ${currencyEmoji}`, `You now have ${itemi.amount} ${itemi.name} and ${currencyLeft} ${currencyEmoji} left!`);

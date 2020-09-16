@@ -3,7 +3,7 @@ import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/typ
 import Emojis from "../int/emojis";
 import * as moment from "moment";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
-import UserStalker, { UserInfo } from "../modules/thebrain/userStalker";
+import UserStalker, { UserInfo } from "../modules/thebrain/user-stalker";
 
 
 export default class WastedCommand extends Command {

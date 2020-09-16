@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const parseArgs_1 = require("../util/parseArgs");
-const types_1 = require("../types");
+const parse_args_1 = require("../util/parse-args");
+const types_1 = require("../types/types");
 const fetch = require('node-fetch');
 class MealCommand extends types_1.Command {
     constructor() {
@@ -14,7 +14,7 @@ class MealCommand extends types_1.Command {
         });
     }
     execute(channel, user, args, event, repl) {
-        let cmdl = parseArgs_1.default.parse(args);
+        let cmdl = parse_args_1.default.parse(args);
         let url = 'https://www.themealdb.com/api/json/v1/1/random.php';
         let search = '';
         if (cmdl._) {

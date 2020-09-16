@@ -1,6 +1,6 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
-import ParseArgs from "../util/parseArgs";
+import ParseArgs from "../util/parse-args";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 
 const fetch = require('node-fetch');

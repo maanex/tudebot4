@@ -5,7 +5,7 @@ const dbstats_1 = require("../database/dbstats");
 const database_1 = require("../database/database");
 const wcp_1 = require("../thirdparty/wcp/wcp");
 const chalk = require("chalk");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const _unavailable_1 = require("../commands/_unavailable");
 class CommandsModule extends types_1.Module {
     //

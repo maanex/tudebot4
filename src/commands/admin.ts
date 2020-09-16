@@ -3,7 +3,7 @@ import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi, { ClubUser } from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
-import ParseArgs from "../util/parseArgs";
+import ParseArgs from "../util/parse-args";
 import Database from "../database/database";
 import * as Items from "../content/itemlist";
 import GetPointsModule from "../modules/getpoints";
@@ -154,7 +154,7 @@ export default class AdminCommand extends Command {
           }
 
           TudeApi.clubUserByDiscordId(user.id, user).then(u => {
-            u.addItem() // TODO
+            // u.addItem() // TODO
           });
           return true;
         }

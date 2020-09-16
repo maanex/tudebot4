@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const parseArgs_1 = require("../util/parseArgs");
-const types_1 = require("../types");
+const parse_args_1 = require("../util/parse-args");
+const types_1 = require("../types/types");
 const itemlist_1 = require("../content/itemlist");
 class GiveCommand extends types_1.Command {
     constructor() {
@@ -17,7 +17,7 @@ class GiveCommand extends types_1.Command {
     }
     execute(channel, user, args, event, repl) {
         return new Promise((resolve, reject) => {
-            const cmdl = parseArgs_1.default.parse(args);
+            const cmdl = parse_args_1.default.parse(args);
             tudeapi_1.default.clubUserByDiscordId(user.id, user)
                 .then(u => {
                 if (!u || u.error) {

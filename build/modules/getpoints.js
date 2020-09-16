@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("..");
 const cron = require("cron");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
 class GetPointsModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {

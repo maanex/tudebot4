@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const discord_js_1 = require("discord.js");
-const types_1 = require("../types");
-const generateInviteLinkMeme_1 = require("../functions/generateInviteLinkMeme");
-class AutoSupportModule extends types_1.Module {
+const types_1 = require("../types/types");
+const generate_invite_link_meme_1 = require("../functions/generate-invite-link-meme");
+const link_analyzer_1 = require("./thebrain/link-analyzer");
+class ChatGuard extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('ChatGuard Automod', 'public', conf, data, guilds, lang);
         /* */
@@ -14,15 +15,43 @@ class AutoSupportModule extends types_1.Module {
         index_1.TudeBot.on('message', (mes) => {
             if (!this.isMessageEventValid(mes))
                 return;
+            if (mes.member.hasPermission('MANAGE_MESSAGES'))
+                return; //
             if (mes.member.highestRole.comparePositionTo(mes.guild.me.highestRole) > 0)
                 return; // TODO REENABLE, DISABLED FOR EASIER TESTING
             if (this.checkInviteLinks(mes))
                 return;
             index_1.TudeBot.perspectiveApi.analyze(mes.content).then(res => {
+                // TudeBot.perspectiveApi.logFull(res, true);
+                const oneOf = (list) => list[Math.floor(Math.random() * list.length)];
+                if (res.threat > .95) {
+                    mes.channel.send(oneOf(['That was too much %!', 'Stop this right now %!', 'You better shut your mouth %', 'Shut up %', 'You took it too far %!']).split('%').join(mes.author.toString()));
+                    mes.delete();
+                    return;
+                }
+                if (res.severeToxicity > .98) {
+                    mes.channel.send(oneOf(['Pretty rude %!', 'That was too much %!', 'Calm the fuck down %!', 'Shut up %', 'Watch your mouth %']).split('%').join(mes.author.toString()));
+                    mes.delete();
+                    return;
+                }
+                if (res.insult > .95) {
+                    mes.channel.send(oneOf(['Damn %', 'Oh wow %', 'I\'ll have to remove that %', 'Pretty rude %', 'That was pretty rude %!', 'Oh come on, don\'t be like that %!']).split('%').join(mes.author.toString()));
+                    mes.delete();
+                    return;
+                }
                 if (res.toxicity > .95) {
-                    mes.reply('Dude, chill!');
+                    mes.channel.send(oneOf(['% dude. Chill!', '% chill!', 'Yo % calm down', 'No reason to rage out %!', 'Chill %', 'Calm down %']).split('%').join(mes.author.toString()));
+                    return;
+                }
+                if (res.sexuallyExplicit > .95) {
+                    mes.channel.send(oneOf(['Please keep things kid friendly %', 'No nsfw here %', 'A bit more kids friendly please %', 'That ain\'t sfw %', 'Watch your mouth %']).split('%').join(mes.author.toString()));
+                    return;
+                }
+                if (res.flirtation > .95) {
+                    mes.react(oneOf(['😉', '😏']));
                 }
             });
+            link_analyzer_1.default.rawMessage(mes);
         });
     }
     onBotReady() {
@@ -43,7 +72,7 @@ class AutoSupportModule extends types_1.Module {
         if (!/discord.gg\/.+/i.test(mes.content) && !/discordapp.com\/invite\/.+/i.test(mes.content))
             return false;
         if (this.inviteResponseStatus == 0) {
-            generateInviteLinkMeme_1.default(mes.author.username)
+            generate_invite_link_meme_1.default(mes.author.username)
                 .then(img => {
                 const file = new discord_js_1.Attachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`);
                 const embed = new discord_js_1.RichEmbed()
@@ -70,5 +99,5 @@ class AutoSupportModule extends types_1.Module {
         return true;
     }
 }
-exports.default = AutoSupportModule;
-//# sourceMappingURL=cleanchat.js.map
+exports.default = ChatGuard;
+//# sourceMappingURL=chatguard.js.map

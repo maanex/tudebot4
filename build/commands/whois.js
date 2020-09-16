@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
 const moment = require("moment");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const userStalker_1 = require("../modules/thebrain/userStalker");
+const user_stalker_1 = require("../modules/thebrain/user-stalker");
 class WastedCommand extends types_1.Command {
     constructor() {
         super({
@@ -49,7 +49,7 @@ class WastedCommand extends types_1.Command {
             }
             try {
                 const out = sendMessage(channel, user, member, clubUser, badges, itemCount);
-                const details = userStalker_1.default.getInfo(user);
+                const details = user_stalker_1.default.getInfo(user);
                 sendMessage(channel, user, member, clubUser, badges, itemCount, yield details, yield out);
                 resolve(true);
             }

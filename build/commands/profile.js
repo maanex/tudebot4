@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const emojis_1 = require("../int/emojis");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
+const profileskins_1 = require("../content/profileskins");
 class ProfileCommand extends types_1.Command {
     constructor() {
         super({
@@ -25,22 +26,24 @@ class ProfileCommand extends types_1.Command {
                     resolve(false);
                     return;
                 }
+                const profileSkin = profileskins_1.ProfileSkin.BLUE;
+                const emblemsUsed = emojis_1.default.PROFILE_EMBLEMS[profileSkin.emblemSet];
                 let footer = `${u.points}pt`;
                 let icon = undefined;
                 let xpbar = '';
                 let stats = `${emojis_1.default.BIG_SPACE}`;
-                let statItems = [`${emojis_1.default.COOKIES} ${u.cookies}`, `${emojis_1.default.GEMS} ${u.gems}`];
+                let statItems = [`${emblemsUsed.COOKIES} ${u.cookies}`, `${emblemsUsed.GEMS} ${u.gems}`];
                 if (u.keys > 0)
-                    statItems.push(`${emojis_1.default.KEYS} ${u.keys}`);
+                    statItems.push(`${emblemsUsed.KEYS} ${u.keys}`);
                 // @ts-ignore
                 if (u.inventory.size > 0) {
                     let amount = 0;
                     for (let item of u.inventory.values())
                         amount += item.amount;
-                    statItems.push(`${emojis_1.default.ITEMS} ${amount}`);
+                    statItems.push(`${emblemsUsed.ITEMS} ${amount}`);
                 }
                 if (u.daily.streak >= 7) {
-                    statItems.push(`:flame: ${u.daily.streak}`);
+                    statItems.push(`${emblemsUsed.STREAK} ${u.daily.streak}`);
                 }
                 let c = 0;
                 for (let si of statItems)
@@ -49,28 +52,28 @@ class ProfileCommand extends types_1.Command {
                     stats += '\n\n**You haven\'t claimed\nyour daily reward yet!**';
                 let prog12 = Math.floor(u.level_progress * 12);
                 if (prog12 == 0)
-                    xpbar += emojis_1.default.XPBAR.left_empty;
+                    xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.LEFT_EMPTY;
                 else if (prog12 == 1)
-                    xpbar += emojis_1.default.XPBAR.left_half;
+                    xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.LEFT_HALF;
                 else
-                    xpbar += emojis_1.default.XPBAR.left_full;
+                    xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.LEFT_FULL;
                 for (let i = 1; i <= 4; i++) {
                     let relative = prog12 - i * 2;
                     if (relative < 0)
-                        xpbar += emojis_1.default.XPBAR.middle_empty;
+                        xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.MIDDLE_EMPTY;
                     else if (relative == 0)
-                        xpbar += emojis_1.default.XPBAR.middle_1;
+                        xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.MIDDLE_1;
                     else if (relative == 1)
-                        xpbar += emojis_1.default.XPBAR.middle_2;
+                        xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.MIDDLE_2;
                     else
-                        xpbar += emojis_1.default.XPBAR.middle_3;
+                        xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.MIDDLE_3;
                 }
                 if (prog12 >= 11)
-                    xpbar += emojis_1.default.XPBAR.right_full;
+                    xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.RIGHT_FULL;
                 else if (prog12 == 10)
-                    xpbar += emojis_1.default.XPBAR.right_half;
+                    xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.RIGHT_HALF;
                 else
-                    xpbar += emojis_1.default.XPBAR.right_empty;
+                    xpbar += emojis_1.default.PROFILE_BARS.DEFAULT.RIGHT_EMPTY;
                 xpbar += ` **${Math.floor(u.level_progress * 100)}%**`;
                 if (u.profile && u.profile.disp_badge) {
                     let badge = tudeapi_1.default.badgeById(u.profile.disp_badge);

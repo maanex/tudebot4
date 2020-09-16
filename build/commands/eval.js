@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 class EvalCommand extends types_1.Command {
     constructor() {
         super({

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../..");
 const tudeapi_1 = require("../../thirdparty/tudeapi/tudeapi");
-const types_1 = require("../../types");
+const types_1 = require("../../types/types");
 const emojis_1 = require("../../int/emojis");
 // TODO ALL OF THIS HERE SHIT
 class QuotesModule extends types_1.Module {

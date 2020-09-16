@@ -1,7 +1,7 @@
 import { TudeBot } from "../index";
 import { Message, Channel, User, TextChannel } from "discord.js";
 import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
-import ParseArgs from "../util/parseArgs";
+import ParseArgs from "../util/parse-args";
 import CommandsModule from "../modules/commands";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import { ItemList } from "../content/itemlist";

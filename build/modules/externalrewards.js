@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
 class ExternalRewardsModule extends types_1.Module {

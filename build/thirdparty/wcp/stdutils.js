@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.hook_std = void 0;
 function hook_std(callback, std) {
     var old_write = std.write;
     // @ts-ignore

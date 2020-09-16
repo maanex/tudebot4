@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const support_1 = require("../commands/support");
 class AutoSupportModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {

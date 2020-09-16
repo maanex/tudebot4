@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const parseArgs_1 = require("../util/parseArgs");
-const types_1 = require("../types");
+const parse_args_1 = require("../util/parse-args");
+const types_1 = require("../types/types");
 const AsciiTable = require('ascii-table');
 class InventoryCommand extends types_1.Command {
     constructor() {
@@ -15,7 +15,7 @@ class InventoryCommand extends types_1.Command {
     }
     execute(channel, orgUser, args, event, repl) {
         return new Promise((resolve, reject) => {
-            let cmdl = parseArgs_1.default.parse(args);
+            let cmdl = parse_args_1.default.parse(args);
             let user = orgUser;
             if (event.message.mentions.users.size)
                 user = event.message.mentions.users.first();

@@ -26,8 +26,7 @@ class Letter extends item_1.ExpandedItem {
                 ? [{
                         name: 'Author',
                         value: (yield this.getAuthor()).user.name
-                    },
-                    {
+                    }, {
                         name: 'Text',
                         value: this.text
                     }]

@@ -4,7 +4,7 @@ import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import CommandsModule from "../modules/commands";
-import ParseArgs from "../util/parseArgs";
+import ParseArgs from "../util/parse-args";
 
 
 export default class HelpCommand extends Command {

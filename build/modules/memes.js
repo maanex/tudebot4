@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const dbstats_1 = require("../database/dbstats");
 const emojis_1 = require("../int/emojis");
 const database_1 = require("../database/database");

@@ -2,7 +2,7 @@ import { User, TextChannel } from "discord.js";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import { Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import { ItemList, findItem } from "../content/itemlist";
-import ParseArgs from "../util/parseArgs";
+import ParseArgs from "../util/parse-args";
 
 
 export default class ItemInfoCommand extends Command {

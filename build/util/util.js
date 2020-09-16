@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.rand = exports.Util = void 0;
 class Util {
     constructor() { }
     static init() {

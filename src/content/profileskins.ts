@@ -5,7 +5,7 @@ import { ProfileEmblemSet } from "int/emojis";
 export class ProfileSkin {
 
   public static readonly DEFAULT = new ProfileSkin(null);
-  public static readonly BLUE = new ProfileSkin(Items.ProfileSkinBlue);
+  public static readonly BLUE = new ProfileSkin(Items.ProfileSkinBlue, { emblemSet: 'MONOCHROME' });
 
   //
 

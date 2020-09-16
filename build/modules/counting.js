@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const util = require("../util/util");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 class CountingModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Counting', 'public', conf, data, guilds, lang);

@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const types_1 = require("../types");
-const parseArgs_1 = require("../util/parseArgs");
+const types_1 = require("../types/types");
+const parse_args_1 = require("../util/parse-args");
 class ItemCommand extends types_1.Command {
     constructor() {
         super({
@@ -26,7 +26,7 @@ class ItemCommand extends types_1.Command {
                 repl('What item are you looking for?', 'bad', 'Type `item <name>` and replace <name> with the item\'s name!');
                 return false;
             }
-            let cmdl = parseArgs_1.default.parse(args);
+            let cmdl = parse_args_1.default.parse(args);
             tudeapi_1.default.clubUserByDiscordId(user.id, user).then((u) => __awaiter(this, void 0, void 0, function* () {
                 if (!u || u.error) {
                     repl('An error occured!', 'error');

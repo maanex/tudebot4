@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 class QuotesModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Legacy Auto Leaderboard', 'private', conf, data, guilds, lang);

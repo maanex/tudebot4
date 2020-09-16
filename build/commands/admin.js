@@ -12,9 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
-const types_1 = require("../types");
-const parseArgs_1 = require("../util/parseArgs");
+const types_1 = require("../types/types");
+const parse_args_1 = require("../util/parse-args");
 const database_1 = require("../database/database");
+const Items = require("../content/itemlist");
 class AdminCommand extends types_1.Command {
     constructor() {
         super({
@@ -40,7 +41,7 @@ class AdminCommand extends types_1.Command {
                 return false;
             }
             let run = undefined;
-            let cmdl = parseArgs_1.default.parse(args);
+            let cmdl = parse_args_1.default.parse(args);
             switch (args[0]) {
                 case 'setupchannelgames':
                     run = () => __awaiter(this, void 0, void 0, function* () {
@@ -134,6 +135,21 @@ class AdminCommand extends types_1.Command {
                             orgChannel.send(`You sent: \`${mes.content}\``);
                     });
                     break;
+                case 'giveitem': {
+                    if (args.length < 2) {
+                        repl('Which one?');
+                        return false;
+                    }
+                    const item = Items.findItem(args[1]);
+                    if (!item) {
+                        repl('Not found!');
+                        return false;
+                    }
+                    tudeapi_1.default.clubUserByDiscordId(user.id, user).then(u => {
+                        // u.addItem() // TODO
+                    });
+                    return true;
+                }
             }
             return true;
         }

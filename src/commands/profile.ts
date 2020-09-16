@@ -4,7 +4,7 @@ import Emojis from "../int/emojis";
 import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
 import TudeApi from "../thirdparty/tudeapi/tudeapi";
 import * as md5 from "../util/md5";
-import { ProfileSkin } from "content/profileskins";
+import { ProfileSkin } from "../content/profileskins";
 
 
 export default class ProfileCommand extends Command {
@@ -39,7 +39,7 @@ export default class ProfileCommand extends Command {
           let icon = undefined;
           let xpbar = '';
           let stats = `${Emojis.BIG_SPACE}`;
-          let statItems = [`${Emojis.COOKIES} ${u.cookies}`, `${emblemsUsed.GEMS} ${u.gems}`];
+          let statItems = [`${emblemsUsed.COOKIES} ${u.cookies}`, `${emblemsUsed.GEMS} ${u.gems}`];
           if (u.keys > 0) statItems.push(`${emblemsUsed.KEYS} ${u.keys}`);
           // @ts-ignore
           if (u.inventory.size > 0) {
@@ -60,19 +60,19 @@ export default class ProfileCommand extends Command {
             stats += '\n\n**You haven\'t claimed\nyour daily reward yet!**';
 
           let prog12 = Math.floor(u.level_progress * 12);
-          if (prog12 == 0) xpbar += Emojis.XPBAR.left_empty;
-          else if (prog12 == 1) xpbar += Emojis.XPBAR.left_half;
-          else xpbar += Emojis.XPBAR.left_full;
+          if (prog12 == 0) xpbar += Emojis.PROFILE_BARS.DEFAULT.LEFT_EMPTY;
+          else if (prog12 == 1) xpbar += Emojis.PROFILE_BARS.DEFAULT.LEFT_HALF;
+          else xpbar += Emojis.PROFILE_BARS.DEFAULT.LEFT_FULL;
           for (let i = 1; i <= 4; i++) {
             let relative = prog12 - i * 2;
-            if (relative < 0) xpbar += Emojis.XPBAR.middle_empty;
-            else if (relative == 0) xpbar += Emojis.XPBAR.middle_1;
-            else if (relative == 1) xpbar += Emojis.XPBAR.middle_2;
-            else xpbar += Emojis.XPBAR.middle_3;
+            if (relative < 0) xpbar += Emojis.PROFILE_BARS.DEFAULT.MIDDLE_EMPTY;
+            else if (relative == 0) xpbar += Emojis.PROFILE_BARS.DEFAULT.MIDDLE_1;
+            else if (relative == 1) xpbar += Emojis.PROFILE_BARS.DEFAULT.MIDDLE_2;
+            else xpbar += Emojis.PROFILE_BARS.DEFAULT.MIDDLE_3;
           }
-          if (prog12 >= 11) xpbar += Emojis.XPBAR.right_full;
-          else if (prog12 == 10) xpbar += Emojis.XPBAR.right_half;
-          else xpbar += Emojis.XPBAR.right_empty;
+          if (prog12 >= 11) xpbar += Emojis.PROFILE_BARS.DEFAULT.RIGHT_FULL;
+          else if (prog12 == 10) xpbar += Emojis.PROFILE_BARS.DEFAULT.RIGHT_HALF;
+          else xpbar += Emojis.PROFILE_BARS.DEFAULT.RIGHT_EMPTY;
 
           xpbar += ` **${Math.floor(u.level_progress * 100)}%**`;
 

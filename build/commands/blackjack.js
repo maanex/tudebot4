@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 class BlackJackCommand extends types_1.Command {
     constructor() {
         super({

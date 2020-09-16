@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
 const emojis_1 = require("../int/emojis");
-const types_1 = require("../types");
-const parseArgs_1 = require("../util/parseArgs");
+const types_1 = require("../types/types");
+const parse_args_1 = require("../util/parse-args");
 class HelpCommand extends types_1.Command {
     constructor() {
         super({
@@ -64,7 +64,7 @@ class HelpCommand extends types_1.Command {
             repl('Help', 'message', text);
         }
         else {
-            const cmdline = parseArgs_1.default.parse(args);
+            const cmdline = parse_args_1.default.parse(args);
             let cmd = args[0];
             if (cmdline.groups) {
                 let out = {};

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const itemlist_1 = require("../content/itemlist");
-const parseArgs_1 = require("../util/parseArgs");
+const parse_args_1 = require("../util/parse-args");
 class ItemInfoCommand extends types_1.Command {
     constructor() {
         super({
@@ -18,7 +18,7 @@ class ItemInfoCommand extends types_1.Command {
             repl('What item are you looking for?', 'bad', 'Type `iteminfo <name>` and replace <name> with the item\'s name!');
             return false;
         }
-        let cmdl = parseArgs_1.default.parse(args);
+        let cmdl = parse_args_1.default.parse(args);
         const item = itemlist_1.findItem(args.join(' '));
         if (cmdl.r || cmdl.raw) {
             repl('```json\n' + JSON.stringify(item, null, 2) + '```');

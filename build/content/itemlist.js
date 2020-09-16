@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.findItem = exports.ItemList = exports.Items = exports.defaultItemIcon = void 0;
 const item_1 = require("../thirdparty/tudeapi/item");
 const emojis_1 = require("../int/emojis");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const letter_1 = require("./items/letter");
-const genericFish_1 = require("./items/genericFish");
+const generic_fish_1 = require("./items/generic-fish");
 exports.defaultItemIcon = '❔';
 //
 exports.Items = {
@@ -182,9 +183,23 @@ exports.Items = {
         purchaseable: false,
         useable: false,
         icon: '🐟',
-        class: genericFish_1.default,
+        class: generic_fish_1.default,
         create: (size, caughtAt, stuffed) => new exports.Items.Carp.class(exports.Items.Carp, exports.Items.Carp.id, size, caughtAt, stuffed),
         parse: (data) => new exports.Items.Carp.class(exports.Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
+    },
+    ProfileSkinBlue: {
+        id: 'profile_skin_blue',
+        category: item_1.ItemCategory.PROFILE_SKIN,
+        group: item_1.ItemGroup.COLLECTABLE,
+        expanded: false,
+        tradeable: true,
+        sellable: true,
+        purchaseable: true,
+        useable: false,
+        icon: '🔵',
+        class: class ProfileSkinBlue extends item_1.StackableItem {
+        },
+        create: (amount) => new exports.Items.ProfileSkinBlue.class(exports.Items.ProfileSkinBlue, amount),
     },
 };
 exports.ItemList = Object.values(exports.Items);

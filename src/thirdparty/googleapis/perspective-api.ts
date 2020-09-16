@@ -12,15 +12,18 @@ export interface PerspectiveAPIInitSettings {
 export interface AnalyzerResponse {
   input: string;
   toxicity: number;
+  severeToxicity: number;
   identityAttack: number;
   insult: number;
+  profanity: number;
   threat: number;
+  sexuallyExplicit: number;
   flirtation: number;
 }
 
 /**
  * API wrapper for perspectiveapi.com
- * @author Maanex (maanex.tk)
+ * @author Maanex (maanex.me)
  */
 export default class PerspectiveAPI {
 
@@ -66,12 +69,12 @@ export default class PerspectiveAPI {
             doNotStore: true,
             requestedAttributes: {
               TOXICITY: {},
-              // SEVERE_TOXICITY: {},
+              SEVERE_TOXICITY: {},
               IDENTITY_ATTACK: {},
               INSULT: {},
-              // PROFANITY: {},
+              PROFANITY: {},
               THREAT: {},
-              // SEXUALLY_EXPLICIT: {},
+              SEXUALLY_EXPLICIT: {},
               FLIRTATION: {},
             }
           })
@@ -82,9 +85,12 @@ export default class PerspectiveAPI {
           resolve({
             input: input,
             toxicity: data.attributeScores.TOXICITY.summaryScore.value,
+            severeToxicity: data.attributeScores.SEVERE_TOXICITY.summaryScore.value,
             identityAttack: data.attributeScores.IDENTITY_ATTACK.summaryScore.value,
             insult: data.attributeScores.INSULT.summaryScore.value,
+            profanity: data.attributeScores.PROFANITY.summaryScore.value,
             threat: data.attributeScores.THREAT.summaryScore.value,
+            sexuallyExplicit: data.attributeScores.SEXUALLY_EXPLICIT.summaryScore.value,
             flirtation: data.attributeScores.FLIRTATION.summaryScore.value,
           });
         }
@@ -100,6 +106,37 @@ export default class PerspectiveAPI {
 {gray Insult:} {${res.insult < .5 ? 'white' : (res.insult > .8 ? 'red' : 'yellow')} ${res.insult.toFixed(4)} ${'░'.repeat(Math.floor(res.insult * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.insult * 10))}}
 {gray  Toxic:} {${res.toxicity < .5 ? 'white' : (res.toxicity > .8 ? 'red' : 'yellow')} ${res.toxicity.toFixed(4)} ${'░'.repeat(Math.floor(res.toxicity * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.toxicity * 10))}}
 `);
+  }
+
+  public logFull(res: AnalyzerResponse, extra = false) {
+    const data: ([string, number])[] = [
+      [ 'Toxicity', res.toxicity ],
+      [ 'Severe Toxicity', res.severeToxicity ],
+      [ 'Identity Attack', res.identityAttack ],
+      [ 'Insult', res.insult ],
+      [ 'Profanity', res.profanity ],
+      [ 'Threat', res.threat ],
+      [ 'Sexually Explicit', res.sexuallyExplicit ],
+      [ 'Flirt', res.flirtation ],
+    ];
+    if (extra) {
+      data.push(...(<([string, number])[]> [
+        [ 'Language Offence', Math.min(1, (res.toxicity + res.severeToxicity + res.insult + res.profanity) / 3.5) ],
+      ]));
+    }
+    this.logRaw(data, `{gray >>} {white ${res.input}}`);
+  }
+
+  private logRaw(input: ([string, number])[], title?: string) {
+    const maxlength = input.map(i => i[0].length).reduce((a,b) => Math.max(a,b), 0);
+    const out = `\n${(title+'\n') || ''}${input.map(i => this.buildSingle(i[0].padStart(maxlength),i[1])).join('\n')}`;
+    const print = [out];
+    print['raw'] = [out];
+    console.log(chalk(print));
+  }
+
+  private buildSingle(name: string, value: number): string {
+    return `{gray ${name}} {${value < .5 ? 'white' : (value > .8 ? 'red' : 'yellow')} ${value.toFixed(4)} ${'░'.repeat(Math.floor(value * 10))}}{gray ${'░'.repeat(10 - Math.floor(value * 10))}}`
   }
 
 }

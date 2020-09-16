@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../../index");
 const nreq = require("request");
-const types_1 = require("../../types");
+const types_1 = require("../../types/types");
 const node_wit_1 = require("node-wit");
 /** This is some wild sh*t */
 class TheBrainModule extends types_1.Module {
@@ -10,28 +10,13 @@ class TheBrainModule extends types_1.Module {
         super('The Brain', 'public', conf, data, guilds, lang);
         this.timeouts = [];
         this.witClient = new node_wit_1.Wit({
-            accessToken: index_1.TudeBot.config.thirdparty.wit.token,
+            accessToken: index_1.TudeBot.config.thirdparty.wit.token
         });
     }
     onEnable() {
         index_1.TudeBot.on('message', (mes) => {
             if (mes.author.bot)
                 return;
-            // this.witClient.message(mes.content)
-            //   .then((data) => {
-            //     console.log(JSON.stringify(data,null,2));
-            //     if (!data.entities.intent) return;
-            //     if (data.entities.intent[0].value == 'support') {
-            //       if (!data.entities.target) return;
-            //       if (!data.entities.issue) return;
-            //       if (data.entities.target[0].value.includes('free')) {
-            //         if (SupportCommand.RESOUCES.freestuff[data.entities.issue[0].value]) {
-            //           SupportCommand.sendSupportEmbed(SupportCommand.RESOUCES.freestuff[data.entities.issue[0].value], mes.channel as TextChannel, mes.author);
-            //         }
-            //       }
-            //     }
-            //     // mes.channel.send('```json\n' + JSON.stringify(data,null,2) + '```');
-            //   });
         });
     }
     onBotReady() {

@@ -18,33 +18,13 @@ export default class TheBrainModule extends Module {
     super('The Brain', 'public', conf, data, guilds, lang);
 
     this.witClient = new Wit({
-      accessToken: TudeBot.config.thirdparty.wit.token,
-      // logger: new log.Logger(log.DEBUG)
+      accessToken: TudeBot.config.thirdparty.wit.token
     });
   }
 
   public onEnable(): void {
     TudeBot.on('message', (mes: Message) => {
       if (mes.author.bot) return;
-
-      // this.witClient.message(mes.content)
-      //   .then((data) => {
-      //     console.log(JSON.stringify(data,null,2));
-      //     if (!data.entities.intent) return;
-          
-      //     if (data.entities.intent[0].value == 'support') {
-      //       if (!data.entities.target) return;
-      //       if (!data.entities.issue) return;
-            
-      //       if (data.entities.target[0].value.includes('free')) {
-      //         if (SupportCommand.RESOUCES.freestuff[data.entities.issue[0].value]) {
-      //           SupportCommand.sendSupportEmbed(SupportCommand.RESOUCES.freestuff[data.entities.issue[0].value], mes.channel as TextChannel, mes.author);
-      //         }
-      //       }
-      //     }
-
-      //     // mes.channel.send('```json\n' + JSON.stringify(data,null,2) + '```');
-      //   });
     });
   }
 

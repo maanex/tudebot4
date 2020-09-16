@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const types_1 = require("../types");
+const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
 const Jimp = require("jimp");
 const fetch = require('node-fetch');

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const parseArgs_1 = require("../util/parseArgs");
-const types_1 = require("../types");
+const parse_args_1 = require("../util/parse-args");
+const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
 const fetch = require('node-fetch');
 class TriviaCommand extends types_1.Command {
@@ -15,7 +15,7 @@ class TriviaCommand extends types_1.Command {
         });
     }
     execute(channel, user, args, event, repl) {
-        let cmdl = parseArgs_1.default.parse(args);
+        let cmdl = parse_args_1.default.parse(args);
         let url = 'https://opentdb.com/api.php?amount=1&type=multiple&encode=url3986';
         return new Promise((resolve, reject) => {
             fetch(url)
