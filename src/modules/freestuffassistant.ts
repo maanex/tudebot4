@@ -30,8 +30,9 @@ export default class FreestuffAssistantModule extends Module {
       if (!TudeBot || !TudeBot.readyAt) return;
       const guild = TudeBot.guilds.get(guildid);
 
-      const channel = guild.channels.get(settings.channel) as TextChannel;
-      if (!channel) return;
+      const contentChannel = guild.channels.get(settings.channel_content) as TextChannel;
+      const servicesChannel = guild.channels.get(settings.channel_services) as TextChannel;
+      if (!contentChannel || !servicesChannel) return;
 
       const contentMods = settings.contentMods as string[];
       const user = data.user ? await TudeBot.fetchUser(data.user) : null;
@@ -39,7 +40,7 @@ export default class FreestuffAssistantModule extends Module {
       let mes: Message = null;
       switch (event) {
         case 'game_found':
-          mes = await channel.send({ embed: {
+          mes = await contentChannel.send({ embed: {
             color: 0xAB6B31,
             title: 'Free Game Found!',
             description: `${data.game.info.title} (${data.game.info.store})\n[Outgoing announcement needs approval, please click here](${`https://dashboard.freestuffbot.xyz/content/${data.game._id}`})`
@@ -48,7 +49,7 @@ export default class FreestuffAssistantModule extends Module {
           break;
           
         case 'new_scratch':
-          mes = await channel.send({ embed: {
+          mes = await contentChannel.send({ embed: {
             color: 0x3190AB,
             title: `${user?.username ?? '*Someone*'} created a new announcement`,
             description: `No data provided yet\n[Click here to view.](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
@@ -57,7 +58,7 @@ export default class FreestuffAssistantModule extends Module {
           break;
           
         case 'new_url':
-          mes = await channel.send({ embed: {
+          mes = await contentChannel.send({ embed: {
             color: 0x3190AB,
             title: `${user?.username ?? '*Someone*'} created a new announcement`,
             description: `Automatically fetched data from ${data.url}\n[Click here to view.](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
@@ -111,22 +112,22 @@ export default class FreestuffAssistantModule extends Module {
           break;
 
         case 'manual_store_scrape':
-          channel.send({ embed: {
+          contentChannel.send({ embed: {
             color: 0x2f3136,
             title: `${user?.username ?? '*Someone*'} initiated manual store scraping. Target: ${data.store}`
           }});
           break;
 
         case 'service_status':
-          const colors = { fatal: 0xed1a52, rebooting: 0x42dba6, offline: 0xdb6d42, timeout: 0xdb9c1f, partial: 0xe3e352, ok: 0x52e36f };
-          channel.send({ embed: {
+          const colors = { fatal: 0xed1a52, rebooting: 0x3586e8, offline: 0xdb6d42, timeout: 0xdb9c1f, partial: 0xe3e352, ok: 0x52e36f };
+          servicesChannel.send({ embed: {
             color: colors[data.status] || 0x2f3136,
             title: `Service ${data.service}/${data.suid} is now \`${data.status}\``
           }});
           break;
 
         default:
-          channel.send({ embed: {
+          contentChannel.send({ embed: {
             color: 0x2f3136,
             title: `Unknown raw event: ${event}`
           }});
