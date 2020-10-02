@@ -32,7 +32,7 @@ export default class ProfileCommand extends Command {
             return;
           }
 
-          const profileSkin = ProfileSkin.BLUE;
+          const profileSkin = ProfileSkin.DEFAULT;
           const emblemsUsed = Emojis.PROFILE_EMBLEMS[profileSkin.emblemSet];
 
           let footer = `${u.points}pt`;

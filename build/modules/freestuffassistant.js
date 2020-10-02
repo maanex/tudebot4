@@ -94,6 +94,19 @@ class FreestuffAssistantModule extends types_1.Module {
                             title: `${(_f = user === null || user === void 0 ? void 0 : user.username) !== null && _f !== void 0 ? _f : '*Someone*'} initiated manual store scraping. Target: ${data.store}`
                         } });
                     break;
+                case 'service_status':
+                    const colors = { fatal: 0xed1a52, rebooting: 0x42dba6, offline: 0xdb6d42, timeout: 0xdb9c1f, partial: 0xe3e352, ok: 0x52e36f };
+                    channel.send({ embed: {
+                            color: colors[data.status] || 0x2f3136,
+                            title: `Service ${data.service}/${data.suid} is now \`${data.status}\``
+                        } });
+                    break;
+                default:
+                    channel.send({ embed: {
+                            color: 0x2f3136,
+                            title: `Unknown raw event: ${event}`
+                        } });
+                    break;
             }
         }));
     }

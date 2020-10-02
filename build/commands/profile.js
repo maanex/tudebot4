@@ -26,7 +26,7 @@ class ProfileCommand extends types_1.Command {
                     resolve(false);
                     return;
                 }
-                const profileSkin = profileskins_1.ProfileSkin.BLUE;
+                const profileSkin = profileskins_1.ProfileSkin.DEFAULT;
                 const emblemsUsed = emojis_1.default.PROFILE_EMBLEMS[profileSkin.emblemSet];
                 let footer = `${u.points}pt`;
                 let icon = undefined;
