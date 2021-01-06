@@ -28,7 +28,7 @@
     "@types/open-graph-scraper": "^4.3.0",
     "@types/xml-js": "^1.0.0",
     "ascii-table": "0.0.9",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "chalk": "^3.0.0",
     "cron": "^1.7.2",
     "discord.js": "^11.5.1",
