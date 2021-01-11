@@ -9,44 +9,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExpandedItem = exports.StackableItem = exports.Item = exports.ItemGroup = exports.ItemCategory = void 0;
 const tudeapi_1 = require("./tudeapi");
-let ItemCategory = /** @class */ (() => {
-    class ItemCategory {
-        constructor(id) {
-            this.id = id;
-        }
-        get name() { return tudeapi_1.default.clubLang['itemcat_' + this.id]; }
-        get namepl() { return tudeapi_1.default.clubLang['itemcatpl_' + this.id]; }
-        getName(amount) { return amount == 1 ? this.name : this.namepl; }
+class ItemCategory {
+    constructor(id) {
+        this.id = id;
     }
-    //
-    ItemCategory.UNDEFINED = new ItemCategory('undefined');
-    ItemCategory.SYSTEM = new ItemCategory('system');
-    ItemCategory.FISHING_EQUIPMENT = new ItemCategory('fishing_assets');
-    ItemCategory.COLLECTABLE = new ItemCategory('collectable');
-    ItemCategory.PROFILE_SKIN = new ItemCategory('profile_skin');
-    return ItemCategory;
-})();
+    get name() { return tudeapi_1.default.clubLang['itemcat_' + this.id]; }
+    get namepl() { return tudeapi_1.default.clubLang['itemcatpl_' + this.id]; }
+    getName(amount) { return amount == 1 ? this.name : this.namepl; }
+}
 exports.ItemCategory = ItemCategory;
-let ItemGroup = /** @class */ (() => {
-    class ItemGroup {
-        constructor(id) {
-            this.id = id;
-        }
-        get name() { return tudeapi_1.default.clubLang['itemgroup_' + this.id]; }
-        get namepl() { return tudeapi_1.default.clubLang['itemgrouppl_' + this.id]; }
-        getName(amount) { return amount == 1 ? this.name : this.namepl; }
+//
+ItemCategory.UNDEFINED = new ItemCategory('undefined');
+ItemCategory.SYSTEM = new ItemCategory('system');
+ItemCategory.FISHING_EQUIPMENT = new ItemCategory('fishing_assets');
+ItemCategory.COLLECTABLE = new ItemCategory('collectable');
+ItemCategory.PROFILE_SKIN = new ItemCategory('profile_skin');
+class ItemGroup {
+    constructor(id) {
+        this.id = id;
     }
-    //
-    ItemGroup.UNDEFINED = new ItemGroup('undefined');
-    ItemGroup.CURRENCY = new ItemGroup('currency');
-    ItemGroup.LOOTBOX = new ItemGroup('lootbox');
-    ItemGroup.COLLECTABLE = new ItemGroup('collectable');
-    ItemGroup.GAME_ASSET = new ItemGroup('game_asset');
-    return ItemGroup;
-})();
+    get name() { return tudeapi_1.default.clubLang['itemgroup_' + this.id]; }
+    get namepl() { return tudeapi_1.default.clubLang['itemgrouppl_' + this.id]; }
+    getName(amount) { return amount == 1 ? this.name : this.namepl; }
+}
 exports.ItemGroup = ItemGroup;
+//
+ItemGroup.UNDEFINED = new ItemGroup('undefined');
+ItemGroup.CURRENCY = new ItemGroup('currency');
+ItemGroup.LOOTBOX = new ItemGroup('lootbox');
+ItemGroup.COLLECTABLE = new ItemGroup('collectable');
+ItemGroup.GAME_ASSET = new ItemGroup('game_asset');
 class Item {
     constructor(prefab, id, _amount, _meta = undefined) {
         this.prefab = prefab;

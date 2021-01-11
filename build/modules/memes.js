@@ -168,7 +168,7 @@ class MemesModule extends types_1.Module {
             if (!top5.length)
                 return;
             this.guilds.forEach((data, gid) => __awaiter(this, void 0, void 0, function* () {
-                if (data.motm && data.channels[0] == gid) {
+                if (data.motm) {
                     const guild = index_1.TudeBot.guilds.get(gid);
                     if (!guild)
                         return;

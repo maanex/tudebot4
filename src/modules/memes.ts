@@ -176,7 +176,7 @@ export default class MemesModule extends Module {
     if (!top5.length) return;
     
     this.guilds.forEach(async (data, gid) => {
-      if (data.motm && data.channels[0] == gid) {
+      if (data.motm) {
         const guild = TudeBot.guilds.get(gid);
         if (!guild) return;
         const channel = guild.channels.get(data.channels[0]) as TextChannel;
