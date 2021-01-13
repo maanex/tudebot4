@@ -6,10 +6,10 @@ class SourcecodeCommand extends types_1.Command {
         super({
             name: 'sourcecode',
             description: "A link to the Bot's source code.",
-            groups: ['info'],
+            groups: ['info']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, _args, _event, repl) {
         repl('The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4');
         return true;
     }

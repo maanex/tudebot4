@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
 const types_1 = require("../types/types");
+const index_1 = require("../index");
 class HappyBirthdayModule extends types_1.Module {
     constructor(conf, data, guilds, lang) {
         super('Happy Birthday', 'private', conf, data, guilds, lang);
@@ -20,15 +20,15 @@ class HappyBirthdayModule extends types_1.Module {
     check() {
         const date = new Date();
         const dstr = date.getDate() + '-' + (date.getMonth() + 1);
-        if (this.lastDay == dstr)
+        if (this.lastDay === dstr)
             return;
         this.lastDay = dstr;
-        const maxdelay = 0; //1000 * 60 * 60 * 5; // 5h
+        const maxdelay = 0; // 1000 * 60 * 60 * 5; // 5h
         setTimeout((daystr, guilds, data) => {
-            for (let g of guilds.keys()) {
+            for (const g of guilds.keys()) {
                 const users = [];
                 for (const user in data[g]) {
-                    if (data[g][user] == daystr)
+                    if (data[g][user] === daystr)
                         users.push(user);
                 }
                 if (!users.length)
@@ -37,10 +37,10 @@ class HappyBirthdayModule extends types_1.Module {
                 const msg = this.lang(users.length > 1
                     ? data[g].lang_mult
                     : data[g].lang_one, { user: usrstr });
-                const guild = index_1.TudeBot.guilds.get(g);
+                const guild = index_1.TudeBot.guilds.resolve(g);
                 if (!guild)
                     continue;
-                const channel = guild.channels.get(guilds.get(g).channel);
+                const channel = guild.channels.resolve(guilds.get(g).channel);
                 if (!channel || channel.type !== 'text')
                     continue;
                 channel.send(`@everyone ${msg}`);

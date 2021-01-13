@@ -9,52 +9,55 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable no-new */
+/* eslint-disable no-async-promise-executor */
 const discord_js_1 = require("discord.js");
+const Jimp = require("jimp");
 const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
-const Jimp = require("jimp");
-const fetch = require('node-fetch');
 class TellmeCommand extends types_1.Command {
     constructor() {
         super({
             name: 'tellme',
             aliases: [],
             description: 'Tell me my future',
-            groups: ['fun', 'rng'],
+            groups: ['fun', 'rng']
         });
     }
-    execute(channel, user, args, event, repl) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+    execute(channel, user, _args, _event, _repl) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
                 let num = parseInt(user.id);
                 num /= (10 ** `${num}`.length);
                 const imgBuffer = yield TellmeCommand.run(yield TellmeCommand.getUrl(num));
-                const file = new discord_js_1.Attachment(imgBuffer, user.username.toLowerCase() + '.png');
-                const embed = new discord_js_1.RichEmbed()
-                    .attachFile(file)
-                    .setColor(0x2f3136)
+                const file = new discord_js_1.MessageAttachment(imgBuffer, user.username.toLowerCase() + '.png');
+                const embed = new discord_js_1.MessageEmbed()
+                    .attachFiles([file])
+                    .setColor(0x2F3136)
                     .setImage(`attachment://${user.username.toLowerCase()}.png`);
                 channel.send('', { embed });
-                resolve(true);
+                return true;
             }
             catch (ex) {
-                channel.send({ embed: {
-                        color: 0x2f3136,
+                channel.send({
+                    embed: {
+                        color: 0x2F3136,
                         description: `${emojis_1.default.BIG_SPACE}\n\n${emojis_1.default.BIG_SPACE} ${emojis_1.default.BIG_SPACE} ${emojis_1.default.BIG_SPACE} - ${emojis_1.default.BIG_SPACE} ${emojis_1.default.BIG_SPACE} ${emojis_1.default.BIG_SPACE}\n\n${emojis_1.default.BIG_SPACE}`
-                    } });
-                resolve(false);
+                    }
+                });
+                return false;
             }
-        }));
+        });
     }
     static run(url) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
             const outsize = 256;
             Jimp.read(url)
-                .then(input => {
+                .then((input) => {
                 new Jimp(256, 256, 0x000000, (err, white) => {
                     if (err)
                         throw err;
-                    if (Jimp.distance(input, white) < .3)
+                    if (Jimp.distance(input, white) < 0.3)
                         input.invert();
                     new Jimp(outsize, outsize, (err, out) => {
                         if (err)
@@ -96,21 +99,23 @@ class TellmeCommand extends types_1.Command {
                         // out.write('./tmp/out.png');
                         out.getBuffer(Jimp.MIME_PNG, (err, res) => {
                             if (err)
-                                reject();
+                                reject(err);
                             else
                                 resolve(res);
                         });
                     });
                 });
             })
-                .catch(err => {
-                reject();
-                // if (err) throw err;
+                .catch((err) => {
+                reject(err);
             });
-        }));
+        });
     }
     static colorRamp(input) {
-        let t = input, b = 0, c = 255, d = 255;
+        let t = input;
+        const b = 0;
+        const c = 255;
+        const d = 255;
         if ((t /= d / 2) < 1)
             return c / 2 * t * t * t * t + b;
         return -c / 2 * ((t -= 2) * t * t * t - 2) + b;

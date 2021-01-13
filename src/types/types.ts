@@ -1,4 +1,5 @@
-import { Channel, User, Guild, TextChannel, Message } from "discord.js";
+/* eslint-disable no-undef */
+import { Channel, User, Guild, TextChannel, Message } from 'discord.js'
 
 //
 
@@ -17,7 +18,8 @@ export type ModuleUsageScope = 'private' | 'public';
 
 export abstract class Module {
 
-  constructor (
+  // eslint-disable-next-line no-useless-constructor
+  constructor(
     public readonly dispName: string,
     public readonly usageScope: ModuleUsageScope,
 
@@ -26,29 +28,29 @@ export abstract class Module {
     protected readonly guilds: Map<string, any>,
     protected readonly lang: (key: string, params?: { [key: string]: string }) => string
   ) { }
-  
+
   public abstract onEnable(): void;
-  
+
   public abstract onBotReady(): void;
-  
+
   public abstract onDisable(): void;
-  
+
   //
 
   protected isMessageEventValid(mes: Message): boolean {
-    if (mes.author.bot) return false;
-    if (!mes.guild) return false;
-    if (!this.isEnabledInGuild(mes.guild)) return false;
-    return true;
+    if (mes.author.bot) return false
+    if (!mes.guild) return false
+    if (!this.isEnabledInGuild(mes.guild)) return false
+    return true
   }
 
   protected isEnabledInGuild(guild: Guild): boolean {
-    if (!guild) return false;
-    return this.guilds.has(guild.id);
+    if (!guild) return false
+    return this.guilds.has(guild.id)
   }
 
   protected guildData(guild: Guild): any {
-    return this.isEnabledInGuild(guild) ? this.guilds.get(guild.id) : {};
+    return this.isEnabledInGuild(guild) ? this.guilds.get(guild.id) : {}
   }
 
 }
@@ -64,6 +66,10 @@ export interface GuildSettings {
 }
 
 //
+
+export type UserResponseCallback = (mes: Message) => void
+
+export type AwaitUserResponseFunction = (user: User, channel: TextChannel, timeout: number, callback: UserResponseCallback) => void
 
 export type CommandExecEvent = { message: Message, sudo: boolean, label: string, awaitUserResponse: AwaitUserResponseFunction };
 
@@ -86,14 +92,14 @@ export abstract class Command {
   public lang: (key: string) => string;
   public resetCooldown: (user: User) => void;
 
-  constructor (
+  constructor(
     public readonly settings: CommandSettings
   ) {
-    if (!settings.aliases) settings.aliases = [];
-    if (!settings.cooldown) settings.cooldown = 0;
-    if (!settings.groups) settings.groups = [];
-    if (!settings.hideOnHelp) settings.hideOnHelp = false;
-    if (!settings.sudoOnly) settings.sudoOnly = false;
+    if (!settings.aliases) settings.aliases = []
+    if (!settings.cooldown) settings.cooldown = 0
+    if (!settings.groups) settings.groups = []
+    if (!settings.hideOnHelp) settings.hideOnHelp = false
+    if (!settings.sudoOnly) settings.sudoOnly = false
   }
 
   public get name(): string { return this.settings.name }
@@ -106,21 +112,17 @@ export abstract class Command {
 
   public abstract execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean | Promise<boolean>;
 
-  public init(): void { }
+  public init() { }
 
 }
 
 export interface UserResponseWaiting {
-  user: User;
-  channel: TextChannel;
-  callback: UserResponseCallback;
-  timeout: NodeJS.Timeout;
+  user: User,
+  channel: TextChannel,
+  callback: UserResponseCallback,
+  timeout: NodeJS.Timeout
 }
-
-export type UserResponseCallback = (mes: Message) => void;
-
-export type AwaitUserResponseFunction = (user: User, channel: TextChannel, timeout: number, callback: UserResponseCallback) => void;
 
 //
 
-export type ModlogFunction = (guild: Guild, type: modlogType, text: string) => void;
+export type ModlogFunction = (guild: Guild, type: modlogType, text: string) => void

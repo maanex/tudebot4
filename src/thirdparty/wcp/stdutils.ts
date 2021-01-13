@@ -1,3 +1,4 @@
+/* eslint-disable */
 
 export function hook_std(callback, std) {
     var old_write = std.write

@@ -15,9 +15,9 @@ const index_1 = require("../../index");
 class Letter extends item_1.ExpandedItem {
     constructor(prefab, id, title, text, author) {
         super(prefab, id, {
-            title: title,
-            text: text,
-            author: author
+            title,
+            text,
+            author
         });
     }
     renderMetadata() {
@@ -48,7 +48,7 @@ class Letter extends item_1.ExpandedItem {
                 cmdMod.awaitUserResponse(mes.author, mes.channel, 10 * 60 * 1000, (reply) => {
                     if (!reply)
                         return;
-                    if (reply.content.toLowerCase() == 'cancel') {
+                    if (reply.content.toLowerCase() === 'cancel') {
                         repl('No text, okay :(');
                         return;
                     }
@@ -57,14 +57,14 @@ class Letter extends item_1.ExpandedItem {
                     cmdMod.awaitUserResponse(mes.author, mes.channel, 10 * 60 * 1000, (reply2) => {
                         if (!reply)
                             return;
-                        if (reply.content.toLowerCase() == 'cancel') {
+                        if (reply.content.toLowerCase() === 'cancel') {
                             repl('Aight, see you later!');
                             return;
                         }
                         const title = reply2.content;
                         this.author = u.id;
-                        this.title = title,
-                            this.text = text;
+                        this.title = title;
+                        this.text = text;
                         tudeapi_1.default.updateClubUser(u);
                         repl('Wonderfull!', 'message', 'Your letter is written!');
                     });

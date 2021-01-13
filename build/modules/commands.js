@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const chalk = require("chalk");
 const index_1 = require("../index");
 const dbstats_1 = require("../database/dbstats");
 const database_1 = require("../database/database");
 const wcp_1 = require("../thirdparty/wcp/wcp");
-const chalk = require("chalk");
 const types_1 = require("../types/types");
 const _unavailable_1 = require("../commands/_unavailable");
 class CommandsModule extends types_1.Module {
@@ -25,7 +25,7 @@ class CommandsModule extends types_1.Module {
         index_1.TudeBot.on('message', (mes) => {
             if (!this.isMessageEventValid(mes))
                 return;
-            if (mes.guild.id == "432899162150010901")
+            if (mes.guild.id === '432899162150010901')
                 dbstats_1.DbStats.getUser(mes.author).then(u => u.messagesSent++); // TODO MAKE BETTER
             if (this.awaitingResponse.has(mes.author.id)) {
                 const object = this.awaitingResponse.get(mes.author.id);
@@ -49,9 +49,9 @@ class CommandsModule extends types_1.Module {
             const args = txt.split(' ');
             let cmd = args.splice(0, 1)[0].toLowerCase();
             let sudo = false;
-            if (cmd === 'sudo' || cmd.charAt(0) == '$') {
+            if (cmd === 'sudo' || cmd.charAt(0) === '$') {
                 sudo = true;
-                if (cmd.charAt(0) == '$') {
+                if (cmd.charAt(0) === '$') {
                     cmd = cmd.substring(1);
                     if (!cmd)
                         return;
@@ -88,7 +88,7 @@ class CommandsModule extends types_1.Module {
                 return;
             }
             function update(success) {
-                dbstats_1.DbStats.getCommand(command.name).then(c => {
+                dbstats_1.DbStats.getCommand(command.name).then((c) => {
                     c.calls.updateToday(1);
                     if (success)
                         c.executions.updateToday(1);
@@ -96,19 +96,16 @@ class CommandsModule extends types_1.Module {
             }
             const cmes = (text, type, desc, settings) => this.cmes(mes.channel, mes.author, text, type, desc, settings);
             const userRes = (user, channel, timeout, callback) => this.awaitUserResponse(user, channel, timeout, callback);
-            const event = { message: mes, sudo: sudo, label: cmd, awaitUserResponse: userRes };
+            const event = { message: mes, sudo, label: cmd, awaitUserResponse: userRes };
             const res = command.execute(mes.channel, mes.author, args, event, cmes);
             if (channelConfig.deletemes)
                 mes.delete();
-            if (res === undefined || res === null) {
+            if (res === undefined || res === null)
                 update(false);
-            }
-            else if (res['then']) {
-                res.then(update).catch(() => { });
-            }
-            else {
+            else if (typeof res === 'boolean')
                 update(res);
-            }
+            else
+                res.then(update).catch(() => { });
             if (!mes.member.hasPermission('MANAGE_MESSAGES')) {
                 this.cooldown.get(command.name).push(mes.author.id);
                 setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id);
@@ -150,30 +147,28 @@ class CommandsModule extends types_1.Module {
     doExecuteCommand(channelConfig, command) {
         if (channelConfig.whitelist) {
             channelConfig.execute = false;
-            for (let check of channelConfig.whitelist) {
+            for (const check of channelConfig.whitelist) {
                 if (check.startsWith('#')) {
-                    if (check == '#all')
+                    if (check === '#all')
                         channelConfig.execute = true;
                     else if (command.groups.includes(check.substr(1)))
                         channelConfig.execute = true;
                 }
-                else {
-                    if (command.name == check)
-                        channelConfig.execute = true;
+                else if (command.name === check) {
+                    channelConfig.execute = true;
                 }
             }
         }
         if (channelConfig.blacklist && channelConfig.execute) {
-            for (let check of channelConfig.blacklist) {
+            for (const check of channelConfig.blacklist) {
                 if (check.startsWith('#')) {
-                    if (check == '#all')
+                    if (check === '#all')
                         channelConfig.execute = false;
                     else if (command.groups.includes(check.substr(1)))
                         channelConfig.execute = false;
                 }
-                else {
-                    if (command.name == check)
-                        channelConfig.execute = false;
+                else if (command.name === check) {
+                    channelConfig.execute = false;
                 }
             }
         }
@@ -192,12 +187,12 @@ class CommandsModule extends types_1.Module {
         database_1.default
             .collection('settings')
             .findOne({ _id: 'commands' })
-            .then(obj => {
+            .then((obj) => {
             wcp_1.default.send({ config_commands: JSON.stringify(obj.data) });
             for (const commandName in obj.data) {
                 try {
                     const CmdClass = require(`../commands/${commandName}`).default;
-                    let cmd = new CmdClass();
+                    const cmd = new CmdClass();
                     cmd.lang = this.lang;
                     cmd.resetCooldown = (user) => this.cooldown.get(cmd.name).splice(this.cooldown.get(cmd.name).indexOf(user.id), 1);
                     if (obj.data[commandName]) {
@@ -228,17 +223,17 @@ class CommandsModule extends types_1.Module {
         return this.activeInCommandsChannel;
     }
     cmes(channel, author, text, type, description, settings) {
-        if (type == 'error')
+        if (type === 'error')
             text = ':x: ' + text;
-        if (type == 'success')
+        if (type === 'success')
             text = ':white_check_mark: ' + text;
         channel.send({
             embed: {
-                color: 0x2f3136,
+                color: 0x2F3136,
                 title: description ? `${text}` : '',
                 description: description ? `${description || ''}` : `${text}`,
                 footer: {
-                    text: '@' + author.username + (type == 'bad' ? ' • not successful' : '') + (settings && settings.footer ? ` • ${settings.footer}` : '')
+                    text: '@' + author.username + (type === 'bad' ? ' • not successful' : '') + (settings && settings.footer ? ` • ${settings.footer}` : '')
                 },
                 thumbnail: { url: settings && settings.image },
                 image: { url: settings && settings.banner }
@@ -265,9 +260,9 @@ class CommandsModule extends types_1.Module {
         if (this.awaitingResponse.has(user.id))
             return;
         const object = {
-            user: user,
-            channel: channel,
-            callback: callback,
+            user,
+            channel,
+            callback,
             timeout: undefined
         };
         this.awaitingResponse.set(user.id, object);

@@ -1,9 +1,10 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel, Emoji } from "discord.js";
-import TudeApi, { Badge } from "../thirdparty/tudeapi/tudeapi";
-import CommandsModule from "modules/commands";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
-import Emojis from "../int/emojis";
+/* eslint-disable no-fallthrough */
+import { Message, User, TextChannel } from 'discord.js'
+import CommandsModule from 'modules/commands'
+import { TudeBot } from '../index'
+import TudeApi from '../thirdparty/tudeapi/tudeapi'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
+import Emojis from '../int/emojis'
 
 
 interface Digit {
@@ -51,11 +52,11 @@ export default class RouletteCommand extends Command {
     'https://cdn.discordapp.com/attachments/655354019631333397/655358234223443978/r33.png',
     'https://cdn.discordapp.com/attachments/655354019631333397/655358239398952980/r34.png',
     'https://cdn.discordapp.com/attachments/655354019631333397/655358244314808320/r35.png',
-    'https://cdn.discordapp.com/attachments/655354019631333397/655358248651718656/r36.png',
+    'https://cdn.discordapp.com/attachments/655354019631333397/655358248651718656/r36.png'
   ];
 
   private readonly rollingImages = [
-    'https://cdn.discordapp.com/attachments/655354019631333397/655360131856596998/rRolling1.gif',
+    'https://cdn.discordapp.com/attachments/655354019631333397/655360131856596998/rRolling1.gif'
   ];
 
   private readonly gnomeImage = 'https://cdn.discordapp.com/attachments/655354019631333397/655367018622615552/rGnome.png';
@@ -76,131 +77,131 @@ export default class RouletteCommand extends Command {
       name: 'roulette',
       aliases: [ 'r' ],
       description: 'Sweet game of Roulette',
-      groups: [ 'club', 'casino' ],
-    });
+      groups: [ 'club', 'casino' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+  public execute(channel: TextChannel, user: User, args: string[], _event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
+    return new Promise((resolve) => {
 
       if (args.length < 2) {
-        repl('roulette <bet> <amount>', 'bad', 'bet on: red, black, green, odd, even, 0 - 36');
-        resolve(false);
-        return;
+        repl('roulette <bet> <amount>', 'bad', 'bet on: red, black, green, odd, even, 0 - 36')
+        resolve(false)
+        return
       }
 
-      let wincondition: (digit: Digit) => boolean = null;
-      let wintext: String = '';
-      let winfactor: number = 1;
+      let wincondition: (digit: Digit) => boolean = null
+      let wintext: String = ''
+      let winfactor: number = 1
 
       switch (args[0].toLowerCase()) {
         case 'red':
         case 'r':
-          wincondition = d => d.color == 'red';
-          wintext = 'red';
-          break;
+          wincondition = d => d.color === 'red'
+          wintext = 'red'
+          break
 
         case 'black':
         case 'b':
-          wincondition = d => d.color == 'black';
-          wintext = 'black';
-          break;
+          wincondition = d => d.color === 'black'
+          wintext = 'black'
+          break
 
         case 'even':
         case 'e':
-          wincondition = d => d.number % 2 == 0 && d.number > 0;
-          wintext = 'even';
-          break;
+          wincondition = d => d.number % 2 === 0 && d.number > 0
+          wintext = 'even'
+          break
 
         case 'odd':
         case 'o':
-          wincondition = d => d.number % 2 == 1;
-          wintext = 'odd';
-          break;
+          wincondition = d => d.number % 2 === 1
+          wintext = 'odd'
+          break
 
         case 'green':
         case 'g':
-          args[0] = '0';
+          args[0] = '0'
         default:
-          if (isNaN(parseInt(args[0]))) break;
-          if (parseInt(args[0]) < 0 || parseInt(args[0]) > 36) break;
-          wincondition = d => d.number == parseInt(args[0]);
-          wintext = args[0];
-          winfactor = 36;
+          if (isNaN(parseInt(args[0]))) break
+          if (parseInt(args[0]) < 0 || parseInt(args[0]) > 36) break
+          wincondition = d => d.number === parseInt(args[0])
+          wintext = args[0]
+          winfactor = 36
       }
 
       if (!wincondition) {
-        repl(args[0] + ' is not a valid bet!', 'bad');
-        resolve(false);
-        return;
+        repl(args[0] + ' is not a valid bet!', 'bad')
+        resolve(false)
+        return
       }
 
-      let cookies = args[1] == 'a' ? -42 : parseInt(args[1]);
+      let cookies = args[1] === 'a' ? -42 : parseInt(args[1])
       if (isNaN(cookies)) {
-        repl(args[1] + ' is not a valid amount of cookies!', 'bad');
-        resolve(false);
-        return;
+        repl(args[1] + ' is not a valid amount of cookies!', 'bad')
+        resolve(false)
+        return
       }
 
       if (cookies > Math.random() * 1_000_000 + 100_000) {
-        repl('Come on, don\'t be redicolous!', 'bad', `${cookies} cookies is a bit too much for someone in your league!`);
-        resolve(false);
-        return;
+        repl('Come on, don\'t be redicolous!', 'bad', `${cookies} cookies is a bit too much for someone in your league!`)
+        resolve(false)
+        return
       }
 
       if (cookies > 5000) {
-        repl(args[1] + ' cookies is over the casino\'s maximum bet of 5000!', 'bad');
-        resolve(false);
-        return;
+        repl(args[1] + ' cookies is over the casino\'s maximum bet of 5000!', 'bad')
+        resolve(false)
+        return
       }
 
-      TudeApi.clubUserByDiscordId(user.id, user).then(u => {
+      TudeApi.clubUserByDiscordId(user.id, user).then((u) => {
         if (!u || u.error) {
-          repl('Couldn\'t fetch your userdata!', 'bad', 'That\'s not cool.');
-          resolve(false);
-          return;
+          repl('Couldn\'t fetch your userdata!', 'bad', 'That\'s not cool.')
+          resolve(false)
+          return
         }
         if (cookies > u.cookies) {
-          if (Math.random() < .05) {
+          if (Math.random() < 0.05) {
             // @ts-ignore
-            repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' });
+            repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' })
           } else {
             // @ts-ignore
-            repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' });
+            repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' })
           }
 
-          resolve(false);
-          return;
+          resolve(false)
+          return
         }
-        if (cookies == -42) {
-          if (u.cookies == 0) {
-            repl('You don\'t have any money to play with!', 'bad');
-            resolve(false);
-            return;
+        if (cookies === -42) {
+          if (u.cookies === 0) {
+            repl('You don\'t have any money to play with!', 'bad')
+            resolve(false)
+            return
           }
-          cookies = Math.min(5000, u.cookies);
+          cookies = Math.min(5000, u.cookies)
         }
         if (cookies <= 0) {
-          repl('You cannot bet on 0 or less cookies!', 'bad');
-          resolve(false);
-          return;
+          repl('You cannot bet on 0 or less cookies!', 'bad')
+          resolve(false)
+          return
         }
 
         if (this.currentGame.started) {
           if (!this.currentGame.allowNewBets) {
-            repl('Please wait a moment, a game is still in progress!', 'bad');
-            resolve(false);
-            return;
+            repl('Please wait a moment, a game is still in progress!', 'bad')
+            resolve(false)
+            return
           }
-          for (let bet of this.currentGame.bets) {
-            if (bet.by.id == user.id) {
-              repl('You have already placed your bet on this game!', 'bad');
-              resolve(false);
-              return;
+          for (const bet of this.currentGame.bets) {
+            if (bet.by.id === user.id) {
+              repl('You have already placed your bet on this game!', 'bad')
+              resolve(false)
+              return
             }
           }
-          u.cookies -= cookies;
-          TudeApi.updateClubUser(u);
+          u.cookies -= cookies
+          TudeApi.updateClubUser(u)
           this.currentGame.bets.push({
             by: user,
             clubuser: u,
@@ -208,15 +209,15 @@ export default class RouletteCommand extends Command {
             ontext: wintext,
             prizefactor: winfactor,
             amount: cookies
-          });
-          this.currentGame.resolveIn = 5;
+          })
+          this.currentGame.resolveIn = 5
           if (TudeBot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > this.currentGame.bets.length)
-            this.currentGame.resolveIn = 10;
-          resolve(true);
+            this.currentGame.resolveIn = 10
+          resolve(true)
         } else {
-          this.currentGame.started = true;
-          u.cookies -= cookies;
-          TudeApi.updateClubUser(u);
+          this.currentGame.started = true
+          u.cookies -= cookies
+          TudeApi.updateClubUser(u)
           this.currentGame.bets.push({
             by: user,
             clubuser: u,
@@ -224,100 +225,101 @@ export default class RouletteCommand extends Command {
             ontext: wintext,
             prizefactor: winfactor,
             amount: cookies
-          });
-          this.currentGame.resolveIn = 2;
+          })
+          this.currentGame.resolveIn = 2
           if (TudeBot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > this.currentGame.bets.length)
-            this.currentGame.resolveIn = 10;
-          resolve(true);
+            this.currentGame.resolveIn = 10
+          resolve(true)
           channel.send({
             embed: {
-              color: 0x2f3136,
+              color: 0x2F3136,
               title: 'Roulette',
-              description: 'Preparing...',
+              description: 'Preparing...'
             }
-          }).then(mes => this.currentGame.chatMessage = mes as Message).catch();
+          }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
           this.currentGameTimer = setInterval(() => {
-            if (this.currentGame.resolveIn == 10 || this.currentGame.resolveIn == 5 || this.currentGame.resolveIn <= 2) {
-              if (this.currentGame.chatMessage)
+            if (this.currentGame.resolveIn === 10 || this.currentGame.resolveIn === 5 || this.currentGame.resolveIn <= 2) {
+              if (this.currentGame.chatMessage) {
                 this.currentGame.chatMessage.edit('', {
                   embed: {
-                    color: 0x2f3136,
+                    color: 0x2F3136,
                     title: 'Roulette',
                     description: 'Starting in ' + this.currentGame.resolveIn + '```js\n'
                       + this.currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
-                      + '```',
+                      + '```'
                   }
-                });
+                })
+              }
             }
             if (this.currentGame.resolveIn-- <= 0) {
-              this.currentGame.allowNewBets = false;
-              clearInterval(this.currentGameTimer);
-              this.resolveGame();
+              this.currentGame.allowNewBets = false
+              clearInterval(this.currentGameTimer)
+              this.resolveGame()
             }
-          }, 1000);
+          }, 1000)
         }
 
-      }).catch(err => {
-        console.error(err);
-        repl('An error occured!', 'error');
-      });
-    });
+      }).catch((err) => {
+        console.error(err)
+        repl('An error occured!', 'error')
+      })
+    })
   }
 
   private resolveGame() {
     if (!this.currentGame.chatMessage) {
-      this.resetGame();
-      return;
+      this.resetGame()
+      return
     }
-  
+
     this.currentGame.chatMessage.edit('', {
       embed: {
-        color: 0x2f3136,
+        color: 0x2F3136,
         title: 'Roulette',
         description: 'Rolling...',
         thumbnail: {
           url: this.rollingImages[Math.floor(Math.random() * this.rollingImages.length)]
         }
       }
-    });
-  
+    })
+
     setTimeout(() => {
-      let landedOn = Math.floor(Math.random() * 37);
-      let desc = landedOn + ' • ' + this.getColor(landedOn) + ' • ' + (landedOn == 0 ? 'zero' : (landedOn % 2 == 0 ? 'even' : 'odd'));
-  
-      let gnome = false;
+      let landedOn = Math.floor(Math.random() * 37)
+      let desc = landedOn + ' • ' + this.getColor(landedOn) + ' • ' + (landedOn === 0 ? 'zero' : (landedOn % 2 === 0 ? 'even' : 'odd'))
+
+      let gnome = false
       if (Math.random() < 0.001) { // 0.1%
-        gnome = true;
-        landedOn = -1;
-        desc = '(Everyone wins)';
+        gnome = true
+        landedOn = -1
+        desc = '(Everyone wins)'
       }
-  
-      desc += '```js\n';
-      for (let b of this.currentGame.bets) {
-        let won = gnome || b.on({ number: landedOn, color: this.getColor(landedOn) });
-        let prize = b.amount;
+
+      desc += '```js\n'
+      for (const b of this.currentGame.bets) {
+        const won = gnome || b.on({ number: landedOn, color: this.getColor(landedOn) })
+        let prize = b.amount
         if (won) {
-          b.clubuser.cookies += prize + prize * b.prizefactor;
-          TudeApi.updateClubUser(b.clubuser);
-          prize *= b.prizefactor;
+          b.clubuser.cookies += prize + prize * b.prizefactor
+          TudeApi.updateClubUser(b.clubuser)
+          prize *= b.prizefactor
         }
-        desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies}c total\n`;
+        desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies}c total\n`
       }
-      desc += '```';
-      let color = this.getColor(landedOn) == 'red' ? 0xFE1B40 : 0x181A1C;
-      if (landedOn == 0) color = 0x4DC88A;
+      desc += '```'
+      let color = this.getColor(landedOn) === 'red' ? 0xFE1B40 : 0x181A1C
+      if (landedOn === 0) color = 0x4DC88A
       this.currentGame.chatMessage.edit('', {
         embed: {
-          color: color,
+          color,
           title: gnome ? 'You\'ve been gnomed!' : 'Roulette',
           description: desc,
           thumbnail: {
             url: gnome ? this.gnomeImage : this.images[landedOn]
           }
         }
-      });
-      setTimeout(() => this.resetGame(), 2000);
-    }, 2000 + Math.floor(Math.random() * 4000));
+      })
+      setTimeout(() => this.resetGame(), 2000)
+    }, 2000 + Math.floor(Math.random() * 4000))
   }
 
   private resetGame() {
@@ -329,11 +331,11 @@ export default class RouletteCommand extends Command {
       chatMessage: null as Message
     }
   }
-  
+
   private getColor(number: number): string {
-    if (number == 0) return 'green';
-    if ([2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35].indexOf(number) >= 0) return 'black';
-    return 'red';
+    if (number === 0) return 'green'
+    if ([ 2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35 ].includes(number)) return 'black'
+    return 'red'
   }
 
 }

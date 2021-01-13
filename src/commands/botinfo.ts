@@ -1,6 +1,5 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
+import { User, TextChannel } from 'discord.js'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class BotInfoCommand extends Command {
@@ -12,12 +11,12 @@ export default class BotInfoCommand extends Command {
       description: 'Bot info',
       cooldown: 0,
       groups: [ ],
-      sudoOnly: true,
-    });
+      sudoOnly: true
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
-    return true;
+  public execute(_channel: TextChannel, _user: User, _args: string[], _event: CommandExecEvent, _repl: ReplyFunction): boolean {
+    return true
   }
 
 }

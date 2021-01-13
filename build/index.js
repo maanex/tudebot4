@@ -9,19 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable import/namespace */
 const discord_js_1 = require("discord.js");
+const chalk = require("chalk");
+const dotenv_1 = require("dotenv");
+const moment = require("moment");
 const tudeapi_1 = require("./thirdparty/tudeapi/tudeapi");
 const wcp_1 = require("./thirdparty/wcp/wcp");
 const database_1 = require("./database/database");
 const mongo_adapter_1 = require("./database/mongo.adapter");
 const util_1 = require("./util/util");
 const git_parser_1 = require("./util/git-parser");
-const chalk = require("chalk");
 const parse_args_1 = require("./util/parse-args");
 const badosz_api_1 = require("./thirdparty/badoszapi/badosz-api");
 const server_1 = require("./server/server");
-const dotenv_1 = require("dotenv");
-const moment = require("moment");
 const perspective_api_1 = require("./thirdparty/googleapis/perspective-api");
 const alexa_api_1 = require("./thirdparty/alexa/alexa-api");
 class TudeBotClient extends discord_js_1.Client {
@@ -38,16 +39,15 @@ class TudeBotClient extends discord_js_1.Client {
         this.modlog = null;
         this.modules = new Map();
         this.guildSettings = new Map();
-        if (this.devMode) {
+        if (this.devMode)
             console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '));
-        }
         git_parser_1.logVersionDetails();
         fixReactionEvent(this);
         util_1.Util.init();
         wcp_1.default.init(false /* this.devMode */);
         moment.locale('en-gb');
         mongo_adapter_1.default.connect(this.config.mongodb.url)
-            .catch(err => {
+            .catch((err) => {
             console.error(err);
             wcp_1.default.send({ status_mongodb: '-Connection failed' });
         })
@@ -69,22 +69,21 @@ class TudeBotClient extends discord_js_1.Client {
                 console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag));
                 clearTimeout(manualConnectTimer);
                 wcp_1.default.send({ status_discord: '+Connected' });
-                for (let mod of this.modules.values()) {
+                for (const mod of this.modules.values())
                     mod.onBotReady();
-                }
             });
             yield this.loadGuilds(false);
             yield this.loadModules(false);
             this.login(this.config.bot.token);
         }));
     }
-    loadGuilds(isReload) {
+    loadGuilds(_isReload) {
         return new Promise((resolve, reject) => {
             database_1.default
                 .collection('settings')
                 .find({ guild: true })
                 .toArray()
-                .then(guilds => {
+                .then((guilds) => {
                 this.guildSettings = new Map();
                 for (const guild of guilds) {
                     const setting = {
@@ -98,7 +97,7 @@ class TudeBotClient extends discord_js_1.Client {
                 }
                 resolve();
             })
-                .catch(err => {
+                .catch((err) => {
                 console.error('An error occured while fetching guild configuration data');
                 console.error(err);
                 reject(err);
@@ -110,21 +109,20 @@ class TudeBotClient extends discord_js_1.Client {
             database_1.default
                 .collection('settings')
                 .findOne({ _id: 'modules' })
-                .then(data => {
+                .then((data) => {
                 data = data.data;
                 wcp_1.default.send({ config_modules: JSON.stringify(data) });
-                for (let mod of this.modules.values()) {
+                for (const mod of this.modules.values())
                     mod.onDisable();
-                }
                 this.modules = new Map();
                 this.modlog = undefined;
-                for (let mod in data) {
+                for (const mod in data) {
                     let modData = {};
                     try {
                         modData = require(`../config/moduledata/${mod}.json`);
                     }
                     catch (ex) { }
-                    let guilds = new Map();
+                    const guilds = new Map();
                     for (const guild of this.guildSettings.values()) {
                         if (guild.modules[mod])
                             guilds.set(guild.id, guild.modules[mod]);
@@ -135,7 +133,6 @@ class TudeBotClient extends discord_js_1.Client {
                             ModClass = require(`./modules/${mod}`).default;
                         }
                         catch (ex) {
-                            throw ex;
                             try {
                                 ModClass = require(`./modules/${mod}/${mod}`).default;
                             }
@@ -145,7 +142,7 @@ class TudeBotClient extends discord_js_1.Client {
                             console.error(`Module ${mod} not found!`);
                             continue;
                         }
-                        let module = new ModClass(data[mod], modData, guilds, this.lang);
+                        const module = new ModClass(data[mod], modData, guilds, this.lang);
                         this.modules.set(mod, module);
                         if (isReload)
                             module.onBotReady();
@@ -154,12 +151,11 @@ class TudeBotClient extends discord_js_1.Client {
                         console.error(ex);
                     }
                 }
-                for (let module of this.modules.values()) {
+                for (const module of this.modules.values())
                     module.onEnable();
-                }
                 resolve();
             })
-                .catch(err => {
+                .catch((err) => {
                 console.error('An error occured while fetching module configuration data');
                 console.error(err);
                 reject(err);
@@ -167,7 +163,7 @@ class TudeBotClient extends discord_js_1.Client {
         });
     }
     lang(key, params) {
-        let res = require(`../config/lang.json`)[key];
+        let res = require('../config/lang.json')[key];
         if (!res)
             return key;
         if (res.push !== undefined)
@@ -184,14 +180,13 @@ class TudeBotClient extends discord_js_1.Client {
         return key;
     }
     reload() {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
             this.removeAllListeners();
             fixReactionEvent(this);
             yield this.loadGuilds(true);
             yield this.loadModules(true);
             this.emit('ready');
-            resolve();
-        }));
+        });
     }
     getModule(name) {
         return this.modules.get(name);
@@ -199,24 +194,26 @@ class TudeBotClient extends discord_js_1.Client {
 }
 exports.TudeBotClient = TudeBotClient;
 dotenv_1.config();
-const flags = parse_args_1.default.parse(process.argv);
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+const _flags = parse_args_1.default.parse(process.argv);
 exports.config = require('../config.js');
 exports.TudeBot = new TudeBotClient({}, exports.config);
 function fixReactionEvent(bot) {
     const events = {
         MESSAGE_REACTION_ADD: 'messageReactionAdd',
-        MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+        MESSAGE_REACTION_REMOVE: 'messageReactionRemove'
     };
     bot.on('raw', (event) => __awaiter(this, void 0, void 0, function* () {
         const ev = event;
+        // eslint-disable-next-line no-prototype-builtins
         if (!events.hasOwnProperty(ev.t))
             return;
         const data = ev.d;
-        const user = bot.users.get(data.user_id);
-        const channel = bot.channels.get(data.channel_id) || (yield user.createDM());
-        if (channel.messages.has(data.message_id))
+        const user = yield bot.users.fetch(data.user_id);
+        const channel = (yield bot.channels.fetch(data.channel_id)) || (yield user.createDM());
+        if (channel.messages.resolve(data.message_id))
             return;
-        const message = yield channel.fetchMessage(data.message_id);
+        const message = yield channel.messages.fetch(data.message_id);
         const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
         const reaction = message.reactions.get(emojiKey);
         bot.emit(events[ev.t], reaction, user);

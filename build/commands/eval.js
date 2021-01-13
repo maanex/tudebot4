@@ -8,17 +8,17 @@ class EvalCommand extends types_1.Command {
             name: 'eval',
             description: 'Eval',
             sudoOnly: true,
-            groups: ['internal'],
+            groups: ['internal']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, user, args, _event, repl) {
         if (user.id !== '137258778092503042')
             return false;
         try {
-            let tapi = tudeapi_1.default;
-            tudeapi_1.default.clubUserByDiscordId(user.id).then(self => {
+            const tapi = tudeapi_1.default;
+            tudeapi_1.default.clubUserByDiscordId(user.id).then((self) => {
                 repl(eval(args.join(' ')));
-            }).catch(ex => {
+            }).catch((ex) => {
                 repl(eval(args.join(' ')));
             });
             return true;

@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const node_fetch_1 = require("node-fetch");
 const wcp_1 = require("../../thirdparty/wcp/wcp");
 const index_1 = require("../../index");
+const itemlist_1 = require("../../content/itemlist");
 const badgelist_1 = require("./badgelist");
 const item_1 = require("./item");
-const itemlist_1 = require("../../content/itemlist");
-const node_fetch_1 = require("node-fetch");
 class TudeApi {
     static get baseurl() {
         return index_1.TudeBot.config.thirdparty.tudeapi.baseurl;
@@ -38,19 +38,19 @@ class TudeApi {
     }
     //
     static init(language) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
             node_fetch_1.default(this.baseurl + this.endpoints.club.badges, {
                 method: 'get',
-                headers: { 'auth': this.key }
+                headers: { auth: this.key }
             })
                 .then(o => o.json())
-                .then(o => {
+                .then((o) => {
                 this.badges = o;
-                for (let b of this.badges) {
+                for (const b of this.badges) {
                     b.getAppearance = function (level) {
                         let appearance = b.appearance[0];
                         let appid = -1;
-                        for (let a of b.appearance) {
+                        for (const a of b.appearance) {
                             if (a.from <= level)
                                 appearance = a;
                             else
@@ -68,7 +68,7 @@ class TudeApi {
                 }
                 wcp_1.default.send({ status_tudeapi: '+Connected' });
             })
-                .catch(err => {
+                .catch((err) => {
                 console.error(err);
                 wcp_1.default.send({ status_tudeapi: '-Connection failed' });
             });
@@ -102,25 +102,23 @@ class TudeApi {
                 //         console.error(err);
                 //         reject();
                 //     });
-                resolve();
             };
             //
             yield node_fetch_1.default(this.baseurl + this.endpoints.club.lang + language, {
                 method: 'get',
-                headers: { 'auth': this.key }
+                headers: { auth: this.key }
             })
                 .then(o => o.json())
-                .then(o => {
+                .then((o) => {
                 this.clubLang = o;
                 langLoaded();
             })
-                .catch(err => {
+                .catch((err) => {
                 console.error(err);
                 langLoaded(); // Yes it's not loaded but whatever, they'll have to handle it without a lang file then, I don't care
-                reject();
             });
             //
-        }));
+        });
     }
     static reload() {
         this.init(this.clubLang._id);
@@ -130,7 +128,7 @@ class TudeApi {
         return new Promise((resolve, reject) => {
             node_fetch_1.default(this.baseurl + this.endpoints.users + id, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { auth: this.key }
             })
                 .then(o => o.json())
                 .then(o => resolve(o))
@@ -142,24 +140,25 @@ class TudeApi {
         return new Promise((resolve, reject) => {
             node_fetch_1.default(this.baseurl + this.endpoints.users + 'find?discord=' + id, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { auth: this.key }
             })
-                .then(res => {
+                .then((res) => {
                 status = res.status;
                 return res.json();
             })
-                .then(o => {
-                if (status == 404 && orCreate) { // No user present
+                .then((o) => {
+                if (status === 404 && orCreate) { // No user present
                     TudeApi.createNewUser({
                         type: 2,
                         name: orCreate.username,
                         accounts: { discord: orCreate.id }
                     }).then(() => {
                         resolve(this.userByDiscordId(id));
-                    }).catch(err => resolve(o));
+                    }).catch(_err => resolve(o));
                 }
-                else
+                else {
                     resolve(o);
+                }
             })
                 .catch(err => reject(err));
         });
@@ -170,42 +169,42 @@ class TudeApi {
             node_fetch_1.default(this.baseurl + this.endpoints.users, {
                 method: 'post',
                 body: JSON.stringify(options),
-                headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+                headers: { auth: this.key, 'Content-Type': 'application/json' }
             })
-                .then(res => {
+                .then((res) => {
                 status = res.status;
                 return res.json();
             })
-                .then(o => {
-                if (status == 200)
+                .then((_o) => {
+                if (status === 200)
                     resolve();
                 else
                     reject();
             })
-                .catch(err => reject());
+                .catch(_err => reject());
         });
     }
     static clubUserById(id) {
         return new Promise((resolve, reject) => {
             node_fetch_1.default(this.baseurl + this.endpoints.club.users + id, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { auth: this.key }
             })
                 .then(o => o.json())
-                .then(o => {
+                .then((o) => {
                 if (o) {
-                    o['_raw_inventory'] = o.inventory;
+                    o._raw_inventory = o.inventory;
                     o.inventory = new Map();
-                    for (let ref in o['_raw_inventory'])
-                        o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
-                    o['_raw_daily'] = o.daily;
+                    for (const ref in o._raw_inventory)
+                        o.inventory.set(ref, this.parseItem(ref, o._raw_inventory[ref]));
+                    o._raw_daily = o.daily;
                     o.daily = this.parseClubUserDailyData(o.daily);
                     this.mountClubUserFunctions(o);
-                    o['_org_points'] = o['points'] || 0;
-                    o['_org_cookies'] = o['cookies'] || 0;
-                    o['_org_gems'] = o['gems'] || 0;
-                    o['_org_keys'] = o['keys'] || 0;
-                    o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
+                    o._org_points = o.points || 0;
+                    o._org_cookies = o.cookies || 0;
+                    o._org_gems = o.gems || 0;
+                    o._org_keys = o.keys || 0;
+                    o._org_profile_disp_badge = o.profile && o.profile.disp_badge;
                 }
                 resolve(o);
             })
@@ -217,36 +216,36 @@ class TudeApi {
         return new Promise((resolve, reject) => {
             node_fetch_1.default(this.baseurl + this.endpoints.club.users + 'find?discord=' + id, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { auth: this.key }
             })
-                .then(res => {
+                .then((res) => {
                 status = res.status;
                 return res.json();
             })
-                .then(o => {
-                if (status == 404 && orCreate) { // No user present
+                .then((o) => {
+                if (status === 404 && orCreate) { // No user present
                     TudeApi.createNewUser({
                         type: 2,
                         name: orCreate.username,
                         accounts: { discord: orCreate.id }
                     }).then(() => {
                         resolve(this.clubUserByDiscordId(id));
-                    }).catch(err => resolve(o));
+                    }).catch(_err => resolve(o));
                 }
                 else {
                     if (o) {
-                        o['_raw_inventory'] = o.inventory;
+                        o._raw_inventory = o.inventory;
                         o.inventory = new Map();
-                        for (let ref in o['_raw_inventory'])
-                            o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
-                        o['_raw_daily'] = o.daily;
+                        for (const ref in o._raw_inventory)
+                            o.inventory.set(ref, this.parseItem(ref, o._raw_inventory[ref]));
+                        o._raw_daily = o.daily;
                         o.daily = this.parseClubUserDailyData(o.daily);
                         this.mountClubUserFunctions(o);
-                        o['_org_points'] = o['points'] || 0;
-                        o['_org_cookies'] = o['cookies'] || 0;
-                        o['_org_gems'] = o['gems'] || 0;
-                        o['_org_keys'] = o['keys'] || 0;
-                        o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
+                        o._org_points = o.points || 0;
+                        o._org_cookies = o.cookies || 0;
+                        o._org_gems = o.gems || 0;
+                        o._org_keys = o.keys || 0;
+                        o._org_profile_disp_badge = o.profile && o.profile.disp_badge;
                     }
                     resolve(o);
                 }
@@ -257,11 +256,11 @@ class TudeApi {
     static parseClubUserDailyData(rawDaily) {
         if (!rawDaily)
             return { last: new Date(0), claimable: true, streak: 0 };
-        let daynum = rawDaily.last;
-        let date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111);
-        let delta = new Date().getTime() - date.getTime();
-        let today = delta <= 86400000;
-        let yesterday = delta >= 86400000 && delta <= 86400000 * 2;
+        const daynum = rawDaily.last;
+        const date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111);
+        const delta = new Date().getTime() - date.getTime();
+        const today = delta <= 86400000;
+        const yesterday = delta >= 86400000 && delta <= 86400000 * 2;
         return {
             last: date,
             claimable: !today,
@@ -270,7 +269,7 @@ class TudeApi {
     }
     static mountClubUserFunctions(u) {
         u.addItem = (item, amount, meta) => {
-            if (amount == undefined)
+            if (amount === undefined)
                 amount = 1;
             let itemi = null;
             if (item._isDef) {
@@ -291,14 +290,13 @@ class TudeApi {
                 }
             }
             else if (u.inventory.has(item.id)) {
-                if (item.expanded) {
+                if (item.expanded)
                     return null;
-                }
                 itemi = u.inventory.get(item.id);
                 itemi.amount += amount;
             }
             else {
-                const itemInstance = item.expanded ? new item.class(item, item.id, meta || {}) : new item.class(item, amount);
+                const itemInstance = item.expanded ? new item.Class(item, item.id, meta || {}) : new item.Class(item, amount);
                 u.inventory.set(item.id, itemInstance);
                 itemi = itemInstance;
             }
@@ -306,23 +304,21 @@ class TudeApi {
         };
     }
     static badgeById(id) {
-        return this.badges.find(b => b.id == id);
+        return this.badges.find(b => b.id === id);
     }
     static badgeByKeyword(keyword) {
-        return this.badges.find(b => b.keyword == keyword.toLowerCase());
+        return this.badges.find(b => b.keyword === keyword.toLowerCase());
     }
     static badgeBySearchQuery(search) {
-        return this.badges.find(b => {
-            b.description.includes(search.toLowerCase()) ||
-                b.info.includes(search.toLowerCase()) ||
-                b.getAppearance(0).name.includes(search.toLowerCase());
-        });
+        return this.badges.find((b) => (b.description.includes(search.toLowerCase())
+            || b.info.includes(search.toLowerCase())
+            || b.getAppearance(0).name.includes(search.toLowerCase())));
     }
     static clubLeaderboard() {
         return new Promise((resolve, reject) => {
             node_fetch_1.default(this.baseurl + this.endpoints.club.leaderboard, {
                 method: 'get',
-                headers: { 'auth': this.key },
+                headers: { auth: this.key }
             })
                 .then(o => o.json())
                 .then(o => resolve(o))
@@ -333,31 +329,32 @@ class TudeApi {
         node_fetch_1.default(this.baseurl + this.endpoints.users + user.id, {
             method: 'put',
             body: JSON.stringify(user),
-            headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+            headers: { auth: this.key, 'Content-Type': 'application/json' }
         });
     }
     static updateClubUser(user) {
-        let u = {};
-        u.points = { add: user.points - user['_org_points'] };
+        const userObj = user;
+        const u = {};
+        u.points = { add: userObj.points - userObj._org_points };
         if (!u.points.add)
             delete u.points;
-        u.cookies = { add: user.cookies - user['_org_cookies'] };
+        u.cookies = { add: userObj.cookies - userObj._org_cookies };
         if (!u.cookies.add)
             delete u.cookies;
-        u.gems = { add: user.gems - user['_org_gems'] };
+        u.gems = { add: userObj.gems - userObj._org_gems };
         if (!u.gems.add)
             delete u.gems;
-        u.keys = { add: user.keys - user['_org_keys'] };
+        u.keys = { add: userObj.keys - userObj._org_keys };
         if (!u.keys.add)
             delete u.keys;
-        if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
-            u['profile'] = { disp_badge: user.profile.disp_badge };
+        if (userObj.profile && userObj.profile.disp_badge !== userObj._org_profile_disp_badge)
+            u.profile = { disp_badge: userObj.profile.disp_badge };
         const updatedItems = [];
-        if (user.inventory) {
+        if (userObj.inventory) {
             u.inventory = {};
             let ichanges = false;
-            user.inventory.forEach((item, key) => {
-                const org = user['_raw_inventory'][key];
+            userObj.inventory.forEach((item, key) => {
+                const org = userObj._raw_inventory[key];
                 let out = {};
                 let changes = false;
                 if (!org) {
@@ -368,26 +365,24 @@ class TudeApi {
                     updatedItems.push(item);
                     changes = true;
                 }
-                else {
-                    if (item.prefab.expanded) {
-                        if (item.metaChanges) {
-                            out.meta = item.metaChanges;
-                            updatedItems.push(item);
-                            changes = true;
-                        }
-                        if (item.amount == 0) {
-                            out.amount = 0;
-                            changes = true;
-                        }
+                else if (item.prefab.expanded) {
+                    if (item.metaChanges) {
+                        out.meta = item.metaChanges;
+                        updatedItems.push(item);
+                        changes = true;
                     }
-                    else {
-                        if (!org.amount)
-                            org.amount = 1;
-                        if (org.amount != item.amount) {
-                            out.amount = { add: item.amount - org.amount };
-                            updatedItems.push(item);
-                            changes = true;
-                        }
+                    if (item.amount === 0) {
+                        out.amount = 0;
+                        changes = true;
+                    }
+                }
+                else {
+                    if (!org.amount)
+                        org.amount = 1;
+                    if (org.amount !== item.amount) {
+                        out.amount = { add: item.amount - org.amount };
+                        updatedItems.push(item);
+                        changes = true;
                     }
                 }
                 if (changes) {
@@ -398,22 +393,22 @@ class TudeApi {
             if (!ichanges)
                 delete u.inventory;
         }
-        node_fetch_1.default(this.baseurl + this.endpoints.club.users + user.id, {
+        node_fetch_1.default(this.baseurl + this.endpoints.club.users + userObj.id, {
             method: 'put',
             body: JSON.stringify(u),
-            headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+            headers: { auth: this.key, 'Content-Type': 'application/json' }
         })
             .then(o => o.json())
-            .then(o => {
-            user['_org_points'] += u.points ? u.points.add : 0;
-            user['_org_cookies'] += u.cookies ? u.cookies.add : 0;
-            user['_org_gems'] += u.gems ? u.gems.add : 0;
-            user['_org_keys'] += u.keys ? u.keys.add : 0;
-            user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
-            if (o['levelup'] != undefined)
-                index_1.TudeBot.getModule('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
-            if (o['items']) {
-                for (const id of o['items']) {
+            .then((o) => {
+            userObj._org_points += u.points ? u.points.add : 0;
+            userObj._org_cookies += u.cookies ? u.cookies.add : 0;
+            userObj._org_gems += u.gems ? u.gems.add : 0;
+            userObj._org_keys += u.keys ? u.keys.add : 0;
+            userObj._org_profile_disp_badge = u.profile && u.profile.disp_badge;
+            if (o.levelup !== undefined)
+                index_1.TudeBot.getModule('getpoints').onUserLevelup(userObj, o.levelup.level, o.levelup);
+            if (o.items) {
+                for (const id of o.items) {
                     if (!updatedItems.length)
                         break;
                     updatedItems[0].id = id;
@@ -432,19 +427,19 @@ class TudeApi {
             node_fetch_1.default(this.baseurl + this.endpoints.club.users + query, {
                 method: 'post',
                 body: JSON.stringify(action),
-                headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+                headers: { auth: this.key, 'Content-Type': 'application/json' }
             })
-                .then(res => {
+                .then((res) => {
                 status = res.status;
                 return res.json();
             })
-                .then(o => {
-                if (status == 200)
+                .then((o) => {
+                if (status === 200)
                     resolve(o);
                 else
                     reject(o);
             })
-                .catch(err => {
+                .catch((err) => {
                 if (process.env.NODE_ENV !== 'production')
                     console.error(err);
                 reject();
@@ -452,10 +447,10 @@ class TudeApi {
         });
     }
     static parseItem(ref, item) {
-        let id = item.id || ref;
-        let amount = item.amount == undefined ? 1 : item.amount;
-        let meta = item.meta == undefined ? {} : item.meta;
-        const prefab = itemlist_1.ItemList.find(i => i.id == id);
+        const id = item.id || ref;
+        const amount = item.amount === undefined ? 1 : item.amount;
+        const meta = item.meta === undefined ? {} : item.meta;
+        const prefab = itemlist_1.ItemList.find(i => i.id === id);
         if (!prefab) {
             console.error(`No item prefab found for ${id}!`);
             return undefined;
@@ -463,18 +458,18 @@ class TudeApi {
         let instance = null;
         if (prefab.parse) {
             const nitem = JSON.parse(JSON.stringify(item));
-            nitem['type'] = nitem['id'];
-            nitem['id'] = ref;
+            nitem.type = nitem.id;
+            nitem.id = ref;
             instance = prefab.parse(nitem);
         }
-        else if (prefab.class.prototype instanceof item_1.StackableItem) {
-            instance = new prefab.class(prefab, amount);
+        else if (prefab.Class.prototype instanceof item_1.StackableItem) {
+            instance = new prefab.Class(prefab, amount);
         }
-        else if (prefab.class.prototype instanceof item_1.ExpandedItem) {
-            instance = new prefab.class(prefab, ref, meta);
+        else if (prefab.Class.prototype instanceof item_1.ExpandedItem) {
+            instance = new prefab.Class(prefab, ref, meta);
         }
         else {
-            instance = new prefab.class(prefab, ref, amount, meta);
+            instance = new prefab.Class(prefab, ref, amount, meta);
         }
         return instance;
     }

@@ -10,15 +10,15 @@ class ItemInfoCommand extends types_1.Command {
             name: 'iteminfo',
             aliases: ['ii', 'finditem', 'itemsearch'],
             description: 'Get basic information about any item',
-            groups: ['club', 'info'],
+            groups: ['club', 'info']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(channel, user, args, _event, repl) {
         if (!args[0]) {
             repl('What item are you looking for?', 'bad', 'Type `iteminfo <name>` and replace <name> with the item\'s name!');
             return false;
         }
-        let cmdl = parse_args_1.default.parse(args);
+        const cmdl = parse_args_1.default.parse(args);
         const item = itemlist_1.findItem(args.join(' '));
         if (cmdl.r || cmdl.raw) {
             repl('```json\n' + JSON.stringify(item, null, 2) + '```');
@@ -29,7 +29,8 @@ class ItemInfoCommand extends types_1.Command {
             return false;
         }
         const name = tudeapi_1.default.clubLang['item_' + item.id];
-        channel.send({ embed: {
+        channel.send({
+            embed: {
                 title: `${item.icon} ${name}`,
                 description: `\`${item.id}\``,
                 fields: [
@@ -43,7 +44,7 @@ class ItemInfoCommand extends types_1.Command {
                             ['Stackable', !item.expanded],
                             ['Tradeable', item.tradeable],
                             ['Sellable', item.sellable],
-                            ['Purchaseable', item.purchaseable],
+                            ['Purchaseable', item.purchaseable]
                         ].map(i => `${i[1] ? '🗹' : '☐'} ${i[0]}`).join('\n'),
                         inline: true
                     },
@@ -58,9 +59,10 @@ class ItemInfoCommand extends types_1.Command {
                         inline: true
                     }
                 ],
-                color: 0x2f3136,
+                color: 0x2F3136,
                 footer: { text: `@${user.tag}` }
-            } });
+            }
+        });
         return true;
     }
 }

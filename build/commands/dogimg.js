@@ -1,33 +1,47 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const axios_1 = require("axios");
 const types_1 = require("../types/types");
-const fetch = require('node-fetch');
 class DogCommand extends types_1.Command {
     constructor() {
         super({
             name: 'dog',
             aliases: ['doggo', 'dogimage', 'dogimg'],
             description: 'A random dog image',
-            groups: ['fun', 'images', 'apiwrapper'],
+            groups: ['fun', 'images', 'apiwrapper']
         });
     }
-    execute(channel, user, args, event, repl) {
-        return new Promise((resolve, reject) => {
-            fetch('https://api.thedogapi.com/v1/images/search?format=json')
-                .then(o => o.json())
-                .then(o => channel.send({
-                embed: {
-                    color: 0x2f3136,
-                    image: {
-                        url: o[0].url
-                    },
-                    footer: {
-                        text: user.username,
-                        icon_url: user.avatarURL
+    execute(channel, user, _args, _event, repl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { data: o } = yield axios_1.default.get('https://api.thedogapi.com/v1/images/search?format=json');
+                channel.send({
+                    embed: {
+                        color: 0x2F3136,
+                        image: {
+                            url: o[0].url
+                        },
+                        footer: {
+                            text: user.username,
+                            icon_url: user.avatarURL()
+                        }
                     }
-                }
-            }) && resolve(true))
-                .catch(err => { repl('An error occured!', 'bad'); resolve(false); });
+                });
+                return true;
+            }
+            catch (e) {
+                repl('An error occured!', 'bad');
+                return false;
+            }
         });
     }
 }

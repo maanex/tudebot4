@@ -11,14 +11,14 @@ class StayOnTopicModule extends types_1.Module {
         index_1.TudeBot.on('message', (mes) => {
             if (!this.isMessageEventValid(mes))
                 return;
-            for (let rule of this.guildData(mes.guild).rules) {
+            for (const rule of this.guildData(mes.guild).rules) {
                 const regex = new RegExp(rule.match, 'i');
                 if (regex.test(mes.content)) {
-                    if (rule.target == mes.channel.id)
+                    if (rule.target === mes.channel.id)
                         continue;
                     if (this.sentTo.includes(mes.channel.id))
                         continue;
-                    const channel = mes.guild.channels.get(rule.target);
+                    const channel = mes.guild.channels.resolve(rule.target);
                     if (!channel)
                         continue;
                     this.redirectUser(mes.author, mes.channel, channel, rule.name);
@@ -36,7 +36,7 @@ class StayOnTopicModule extends types_1.Module {
     redirectUser(user, from, to, topic) {
         from.send(this.lang('wrong_channel_topic', {
             user: user.toString(),
-            topic: topic,
+            topic,
             channel: to.toString()
         }));
     }

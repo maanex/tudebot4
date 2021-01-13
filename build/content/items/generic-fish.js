@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable require-await */
 const item_1 = require("../../thirdparty/tudeapi/item");
 class GenericFish extends item_1.ExpandedItem {
     constructor(prefab, id, size, caughtAt, stuffed) {
         super(prefab, id, {
-            size: size,
-            caughtAt: caughtAt,
-            stuffed: stuffed
+            size,
+            caughtAt,
+            stuffed
         });
     }
     renderMetadata() {
@@ -28,7 +29,7 @@ class GenericFish extends item_1.ExpandedItem {
                 {
                     name: 'Caught at',
                     value: this.caughtAt
-                },
+                }
             ];
         });
     }

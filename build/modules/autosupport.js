@@ -21,11 +21,11 @@ class AutoSupportModule extends types_1.Module {
                 .then((data) => {
                 if (!data.entities.intent)
                     return;
-                if (data.entities.intent[0].value != 'support')
+                if (data.entities.intent[0].value !== 'support')
                     return;
                 if (!data.entities.issue)
                     return;
-                if (!data.entities.target || data.entities.target[0].suggested || data.entities.target[0].value == 'bot')
+                if (!data.entities.target || data.entities.target[0].suggested || data.entities.target[0].value === 'bot')
                     data.entities.target = [{ value: this.guildData(mes.guild).channels[mes.channel.id] }];
                 if (data.entities.target[0].value.includes('free')) {
                     if (support_1.default.RESOUCES.freestuff[data.entities.issue[0].value]) {

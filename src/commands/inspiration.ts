@@ -1,8 +1,6 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
-
-const fetch = require('node-fetch');
+import axios from 'axios'
+import { User, TextChannel } from 'discord.js'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class InspirationCommand extends Command {
@@ -12,28 +10,29 @@ export default class InspirationCommand extends Command {
       name: 'inspiration',
       aliases: [ 'inspirational', 'inspirobot', 'randomquote', 'thinkaboutit' ],
       description: 'Random quote from inspirobot.me',
-      groups: [ 'fun', 'apiwrapper' ],
-    });
+      groups: [ 'fun', 'apiwrapper' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      fetch('http://inspirobot.me/api?generate=true')
-        .then(o => o.text())
-        .then(o => channel.send({
-          embed: {
-            color: 0x2f3136,
-            image: {
-              url: o
-            },
-            footer: {
-              text: `${user.username} • inspirobot.me`,
-              icon_url: user.avatarURL
-            }
+  public async execute(channel: TextChannel, user: User, _args: string[], _event: CommandExecEvent, _repl: ReplyFunction): Promise<boolean> {
+    try {
+      const { data: o } = await axios.get('http://inspirobot.me/api?generate=true')
+      channel.send({
+        embed: {
+          color: 0x2F3136,
+          image: {
+            url: o
+          },
+          footer: {
+            text: `${user.username} • inspirobot.me`,
+            icon_url: user.avatarURL()
           }
-        }) && resolve(true))
-        .catch(err => { repl('An error occured!', 'bad'); resolve(false) });
-    });
+        }
+      })
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
 }

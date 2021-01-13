@@ -10,7 +10,7 @@ class SlotmachineCommand extends types_1.Command {
             aliases: ['sm'],
             description: 'Sweet game of Slotmachine',
             cooldown: 7,
-            groups: ['club', 'casino'],
+            groups: ['club', 'casino']
         });
         this.sm1emoji = {
             loading: ['<a:sm1c1:660603142710231060>', '<a:sm1c2:660603131553644554>', '<a:sm1c3:660603123831668787>', '<a:sm1c4:660603113601761299>', '<a:sm1c5:660603103703334912>', '<a:sm1c6:660601810632835114>'],
@@ -30,10 +30,10 @@ class SlotmachineCommand extends types_1.Command {
                 blue: [':blue_square:', ':purple_square:', ':red_square:']
             }
         };
-        this.sm1template = `[ᴄᴏᴏᴋɪᴇᴡʜᴇᴇʟ]\n​ ​ ▽ ​ ​ ​ ​ ​ ▽ ​ ​ ​ ​ ​ ▽\n​ %s ​ ​ ​ %s    ​ ​ ​ %s\n​ ​ △ ​ ​ ​ ​ ​ △ ​ ​ ​ ​ ​ △`;
-        this.sm2template = `|\`🎲 Ｎｉｃｅｒ　Ｄｉｃｅｒ 🎲\`|\n​ ​ ​ ​ ​ ​ ​ ​ ┌ :: :: :: :: :: ┐\n​ ​ ​ ​ ​ ​ ::%s %s %s %s %s\n​ ​ ​ ​ ​ ​ ​ ​ └ :: :: :: :: :: ┘`.split('::').join(emojis_1.default.BIG_SPACE);
-        this.sm3template = `𝘿𝙖𝙣𝙘𝙚𝙢𝙖𝙨𝙩𝙚𝙧\n♫ ★​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ♪\n​  ♪ ​  ​ ​ %s%s%s\n​ ​ ​ ​ ​ ​ ​ %s%s%s​ ​ ♫\n​  ★​  ​ %s%s%s\n​ ​ ​ ​ ♫ ​ ​​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ♪  ★`;
-        this.sm4template = `**ㄒㄩ尺乃ㄖ匚卄卂尺Ꮆ乇尺**\n◢─────────────◣\n​ ◖%s %s %s %s %s %s◗\n◥─────────────◤`;
+        this.sm1template = '[ᴄᴏᴏᴋɪᴇᴡʜᴇᴇʟ]\n​ ​ ▽ ​ ​ ​ ​ ​ ▽ ​ ​ ​ ​ ​ ▽\n​ %s ​ ​ ​ %s    ​ ​ ​ %s\n​ ​ △ ​ ​ ​ ​ ​ △ ​ ​ ​ ​ ​ △';
+        this.sm2template = '|`🎲 Ｎｉｃｅｒ　Ｄｉｃｅｒ 🎲`|\n​ ​ ​ ​ ​ ​ ​ ​ ┌ :: :: :: :: :: ┐\n​ ​ ​ ​ ​ ​ ::%s %s %s %s %s\n​ ​ ​ ​ ​ ​ ​ ​ └ :: :: :: :: :: ┘'.split('::').join(emojis_1.default.BIG_SPACE);
+        this.sm3template = '𝘿𝙖𝙣𝙘𝙚𝙢𝙖𝙨𝙩𝙚𝙧\n♫ ★​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ♪\n​  ♪ ​  ​ ​ %s%s%s\n​ ​ ​ ​ ​ ​ ​ %s%s%s​ ​ ♫\n​  ★​  ​ %s%s%s\n​ ​ ​ ​ ♫ ​ ​​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ♪  ★';
+        this.sm4template = '**ㄒㄩ尺乃ㄖ匚卄卂尺Ꮆ乇尺**\n◢─────────────◣\n​ ◖%s %s %s %s %s %s◗\n◥─────────────◤';
         this.machines = [
             {
                 name: 'Cookiewheel',
@@ -58,32 +58,41 @@ class SlotmachineCommand extends types_1.Command {
                 checkpot: 100000,
                 description: 'Full screen one color: CHECKPOT, 100.000\nOnly two colors on screen: win, 300\nThree in a line: consolation prize, 5 each line',
                 run: (mes, u) => this.runSm3(mes, u)
-            },
+            }
+            // { TODO
+            //     name: 'Turbocharger',
+            //     ids: [ '4', 'tc', 'turbocharger', 'turbo', 'charger' ],
+            //     entry: 90,
+            //     checkpot: 6_000,
+            //     description: 'Each lamp has a 50% chance to turn on. If one stays off, you loose. Winner if all turn on: 6.000',
+            //     run: (mes: Message, u: ClubUser) => this.runSm4(mes, u)
+            // }
         ];
         this.sm3blue = [];
     }
-    execute(channel, user, args, event, repl) {
-        return new Promise((resolve, reject) => {
+    execute(_channel, user, args, event, repl) {
+        return new Promise((resolve) => {
             if (args.length < 1) {
                 repl('slotmachine <machine>', 'bad', 'Available machines:\n1: Cookiewheel\n 2: Nicer Dicer\n 3: Dancemaster\n 4: Turbocharger (currently not available)\n`slotmachine info <machine>` for more info');
                 resolve(false);
                 return;
             }
             let infoOnly = false;
-            if (args[0].toLowerCase() == 'i' || args[0].toLowerCase() == 'info' || args[0].toLowerCase() == 'information')
+            if (args[0].toLowerCase() === 'i' || args[0].toLowerCase() === 'info' || args[0].toLowerCase() === 'information')
                 infoOnly = true;
             if (infoOnly && args.length < 2) {
                 repl('slotmachine info <machine>', 'bad');
                 resolve(false);
                 return;
             }
-            let machine = undefined;
-            out: for (let sm of this.machines) {
-                for (let id of sm.ids)
-                    if (args[infoOnly ? 1 : 0].toLowerCase() == id) {
+            let machine;
+            out: for (const sm of this.machines) {
+                for (const id of sm.ids) {
+                    if (args[infoOnly ? 1 : 0].toLowerCase() === id) {
                         machine = sm;
                         break out;
                     }
+                }
             }
             if (!machine) {
                 repl(`Machine ${args[infoOnly ? 1 : 0]} not found!`, 'bad', 'Available machines:\n1: Cookiewheel\n 2: Nicer Dicer\n 3: Dancemaster\n 4: Turbocharger\n`slotmachine info <machine>` for more info');
@@ -95,8 +104,8 @@ class SlotmachineCommand extends types_1.Command {
                 resolve(false);
                 return;
             }
-            let price = machine.entry;
-            tudeapi_1.default.clubUserByDiscordId(user.id).then(u => {
+            const price = machine.entry;
+            tudeapi_1.default.clubUserByDiscordId(user.id).then((u) => {
                 if (u.cookies < price) {
                     repl(`${machine.name} costs ${machine.entry} to play!`, 'bad', `You only got ${u.cookies} cookies!`);
                     resolve(false);
@@ -106,7 +115,7 @@ class SlotmachineCommand extends types_1.Command {
                 tudeapi_1.default.updateClubUser(u);
                 machine.run(event.message, u);
                 resolve(true);
-            }).catch(err => {
+            }).catch((err) => {
                 repl('An error occured!', 'error');
                 console.error(err);
             });
@@ -114,28 +123,28 @@ class SlotmachineCommand extends types_1.Command {
     }
     runSm1(mes, u) {
         let text = this.sm1template;
-        while (text.indexOf('%s') >= 0)
+        while (text.includes('%s'))
             text = text.replace('%s', this.sm1emoji.loading[Math.floor(Math.random() * 6)]);
         mes.channel.send({
             embed: {
                 title: 'Slotmachine',
-                color: 0x2f3136,
+                color: 0x2F3136,
                 description: text
             }
-        }).then(m => {
+        }).then((m) => {
             setTimeout((m, u) => {
                 text = this.sm1template;
-                let slot1 = Math.floor(Math.random() * 6);
-                let slot2 = Math.floor(Math.random() * 6);
-                let slot3 = Math.floor(Math.random() * 6);
+                const slot1 = Math.floor(Math.random() * 6);
+                const slot2 = Math.floor(Math.random() * 6);
+                const slot3 = Math.floor(Math.random() * 6);
                 let wintext = 'No Luck!';
                 let prize = 0;
-                if (slot1 == slot2 && slot2 == slot3) {
-                    if (slot1 == 0) {
+                if (slot1 === slot2 && slot2 === slot3) {
+                    if (slot1 === 0) {
                         wintext = 'CHECKPOT';
                         prize = 1000;
                     }
-                    else if (slot1 == 1) {
+                    else if (slot1 === 1) {
                         wintext = 'GEMPOT';
                         prize = -5;
                     }
@@ -144,15 +153,15 @@ class SlotmachineCommand extends types_1.Command {
                         prize = 90;
                     }
                 }
-                else if (slot1 == slot2 || slot2 == slot3 || slot3 == slot1) {
+                else if (slot1 === slot2 || slot2 === slot3 || slot3 === slot1) {
                     let slot = slot1;
-                    if (slot2 == slot3)
+                    if (slot2 === slot3)
                         slot = slot2;
-                    if (slot == 0) {
+                    if (slot === 0) {
                         wintext = 'LUCKY';
                         prize = 40;
                     }
-                    else if (slot == 1) {
+                    else if (slot === 1) {
                         wintext = 'LUCKY';
                         prize = -1;
                     }
@@ -173,7 +182,7 @@ class SlotmachineCommand extends types_1.Command {
                 m.edit({
                     embed: {
                         title: 'Slotmachine',
-                        color: 0x2f3136,
+                        color: 0x2F3136,
                         description: text
                     }
                 });
@@ -183,25 +192,25 @@ class SlotmachineCommand extends types_1.Command {
     runSm2(mes, u) {
         let text = this.sm2template;
         let c = 0;
-        while (text.indexOf('%s') >= 0 && c < 5)
+        while (text.includes('%s') && c < 5)
             text = text.replace('%s', this.sm2emoji.loading[c++]);
         mes.channel.send({
             embed: {
                 title: 'Slotmachine',
-                color: 0x2f3136,
+                color: 0x2F3136,
                 description: text
             }
-        }).then(m => {
+        }).then((m) => {
             setTimeout((m, u) => {
                 text = this.sm2template;
-                let slots = [
+                const slots = [
                     Math.floor(Math.random() * 6),
                     Math.floor(Math.random() * 6),
                     Math.floor(Math.random() * 6),
                     Math.floor(Math.random() * 6),
                     Math.floor(Math.random() * 6)
                 ];
-                let slotam = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                const slotam = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
                 slots.forEach(s => slotam[s]++);
                 let wintext = '- all different -';
                 let prize = 100;
@@ -210,16 +219,19 @@ class SlotmachineCommand extends types_1.Command {
                 let tripple = false;
                 let pair = false;
                 let doublePair = false;
-                let straight = slotam[1] == 1 && slotam[2] == 1 && slotam[3] == 1 && slotam[4] == 1;
-                for (let i in slotam) {
-                    if (slotam[i] == 5)
+                const straight = slotam[1] === 1 && slotam[2] === 1 && slotam[3] === 1 && slotam[4] === 1;
+                for (const i in slotam) {
+                    if (slotam[i] === 5) {
                         allSame = true;
-                    else if (slotam[i] == 4)
+                    }
+                    else if (slotam[i] === 4) {
                         fourSame = true;
-                    else if (slotam[i] == 3)
+                    }
+                    else if (slotam[i] === 3) {
                         tripple = true;
-                    else if (slotam[i] == 2) {
-                        if (pair == true)
+                    }
+                    else if (slotam[i] === 2) {
+                        if (pair === true)
                             doublePair = true;
                         pair = true;
                     }
@@ -253,10 +265,10 @@ class SlotmachineCommand extends types_1.Command {
                     }
                 }
                 else if (straight) {
-                    if ((slots[0] == 0 && slots[1] == 1 && slots[2] == 2 && slots[3] == 3 && slots[4] == 4)
-                        || (slots[0] == 1 && slots[1] == 2 && slots[2] == 3 && slots[3] == 4 && slots[4] == 5)
-                        || (slots[0] == 4 && slots[1] == 3 && slots[2] == 2 && slots[3] == 1 && slots[4] == 0)
-                        || (slots[0] == 5 && slots[1] == 4 && slots[2] == 3 && slots[3] == 2 && slots[4] == 1)) {
+                    if ((slots[0] === 0 && slots[1] === 1 && slots[2] === 2 && slots[3] === 3 && slots[4] === 4)
+                        || (slots[0] === 1 && slots[1] === 2 && slots[2] === 3 && slots[3] === 4 && slots[4] === 5)
+                        || (slots[0] === 4 && slots[1] === 3 && slots[2] === 2 && slots[3] === 1 && slots[4] === 0)
+                        || (slots[0] === 5 && slots[1] === 4 && slots[2] === 3 && slots[3] === 2 && slots[4] === 1)) {
                         wintext = '+ CHECKPOT +';
                         prize = 100000;
                     }
@@ -265,7 +277,7 @@ class SlotmachineCommand extends types_1.Command {
                         prize = 1000;
                     }
                 }
-                let sendNudesEasteregg = Math.random() < 0.005; // 0.5%;
+                const sendNudesEasteregg = Math.random() < 0.005; // 0.5%;
                 if (sendNudesEasteregg) {
                     text = text.replace('Ｎｉｃｅｒ　Ｄｉｃｅｒ', 'ｓｅｎｄ');
                     text = text.replace('%s', ':regional_indicator_n:')
@@ -283,7 +295,7 @@ class SlotmachineCommand extends types_1.Command {
                         .replace('%s', this.sm2emoji.static[slots[3]])
                         .replace('%s', this.sm2emoji.static[slots[4]]);
                 }
-                let cap = wintext.startsWith('+') ? '**' : '';
+                const cap = wintext.startsWith('+') ? '**' : '';
                 text += `\n\n|\`${wintext}\`|\n${emojis_1.default.BIG_SPACE} ${cap}+${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g') + cap;
                 if (prize > 0)
                     u.cookies += prize;
@@ -293,7 +305,7 @@ class SlotmachineCommand extends types_1.Command {
                 m.edit({
                     embed: {
                         title: sendNudesEasteregg ? 'Slutmachine' : 'Slotmachine',
-                        color: 0x2f3136,
+                        color: 0x2F3136,
                         description: text
                     }
                 });
@@ -301,20 +313,20 @@ class SlotmachineCommand extends types_1.Command {
         });
     }
     runSm3(mes, u) {
-        let goBlue = this.sm3blue.indexOf(mes.author.id) >= 0;
+        const goBlue = this.sm3blue.includes(mes.author.id);
         let text = this.sm3template;
-        while (text.indexOf('%s') >= 0)
+        while (text.includes('%s'))
             text = text.replace('%s', this.sm3emoji.loading[goBlue ? 'blue' : 'orange'][Math.floor(Math.random() * 6)]);
         mes.channel.send({
             embed: {
                 title: 'Slotmachine',
-                color: 0x2f3136,
+                color: 0x2F3136,
                 description: text
             }
-        }).then(m => {
+        }).then((m) => {
             setTimeout((m, u) => {
                 text = this.sm3template;
-                let slots = [
+                const slots = [
                     Math.floor(Math.random() * 3),
                     Math.floor(Math.random() * 3),
                     Math.floor(Math.random() * 3),
@@ -325,28 +337,28 @@ class SlotmachineCommand extends types_1.Command {
                     Math.floor(Math.random() * 3),
                     Math.floor(Math.random() * 3)
                 ];
-                let slotam = { 0: 0, 1: 0, 2: 0 };
+                const slotam = { 0: 0, 1: 0, 2: 0 };
                 slots.forEach(s => slotam[s]++);
                 let wintext = emojis_1.default.BIG_SPACE + ' 𝒩𝑜 𝓁𝓊𝒸𝓀';
                 let prize = 0;
                 let win = false;
                 let lines = 0;
-                if (slotam[0] == 9 || slotam[1] == 9 || slotam[2] == 9) {
+                if (slotam[0] === 9 || slotam[1] === 9 || slotam[2] === 9) {
                     wintext = emojis_1.default.BIG_SPACE + ' :tada: 𝒞𝒽𝑒𝒸𝓀𝓅𝑜𝓉 :tada:';
                     prize = 100000;
                     win = true;
                 }
-                else if (slotam[0] == 0 || slotam[1] == 0 || slotam[2] == 0) {
+                else if (slotam[0] === 0 || slotam[1] === 0 || slotam[2] === 0) {
                     wintext = '​ ​ ​ ​ :man_dancing: 𝒲𝒾𝓃 :dancer:';
                     prize = 300;
                     win = true;
                 }
                 else {
-                    out: for (let type of [0, 1, 2]) {
-                        let winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-                        conditions: for (let con of winConditions) {
-                            for (let digit of con) {
-                                if (slots[digit] != type)
+                    out: for (const type of [0, 1, 2]) {
+                        const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+                        conditions: for (const con of winConditions) {
+                            for (const digit of con) {
+                                if (slots[digit] !== type)
                                     continue conditions;
                             }
                             lines++;
@@ -359,7 +371,7 @@ class SlotmachineCommand extends types_1.Command {
                         wintext += '𝓈';
                     prize = 5 * lines;
                 }
-                for (let s of slots)
+                for (const s of slots)
                     text = text.replace('%s', this.sm3emoji.static[goBlue ? 'blue' : 'orange'][s]);
                 text += `\n${wintext}\n${emojis_1.default.BIG_SPACE} ${emojis_1.default.BIG_SPACE} +${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g');
                 if (goBlue && prize > 0) {
@@ -380,7 +392,7 @@ class SlotmachineCommand extends types_1.Command {
                 m.edit({
                     embed: {
                         title: 'Slotmachine',
-                        color: 0x2f3136,
+                        color: 0x2F3136,
                         description: text
                     }
                 });
@@ -391,7 +403,7 @@ class SlotmachineCommand extends types_1.Command {
             }, 4000 + Math.floor(Math.random() * 3000), m, u);
         });
     }
-    runSm4(mes, u) {
+    runSm4(mes, _u) {
         mes.reply('This slotmachine is still under construction. Do this again to loose another 90 cookies!');
     }
 }

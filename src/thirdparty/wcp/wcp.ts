@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { User as DiscordUser } from "discord.js";
 import { hook_std } from "./stdutils";
 import { TudeBot, config } from "../../index";

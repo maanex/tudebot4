@@ -11,7 +11,7 @@ class HelpCommand extends types_1.Command {
             aliases: [...('.?!/%-+=~&,:*_$'.split('').map(p => p + 'help')), 'commands', 'commandlist'],
             description: 'Help!',
             groups: ['info'],
-            hideOnHelp: true,
+            hideOnHelp: true
         });
         this._nopes = [
             'nope',
@@ -35,7 +35,7 @@ class HelpCommand extends types_1.Command {
             'T̸̝̔͒h̸͍̋ḙ̸͗ ̶̤͌r̸͈̻̉̑ḛ̷̑̌q̷͕̀ủ̸͉̐ė̵͇s̷̭̠̓̃t̸̖̣̂e̷̦̅d̵̗̗͐ ̷̻͛p̵̞͛͜a̵͍̔ģ̴̱̈́̕é̵̞ ̶̬̘́ḯ̴̯̳͘s̶̼͒̚ ̸̗̊̍n̴͖̠̏o̶̡͊t̵̺̗̏ ̴̛̣̟̆a̷̠͊͝ṿ̶̧̏a̷̜̕i̸̜̙͐͝l̵̗̟̿a̷͓̾b̴̦̺̍ľ̸̪͓̆ë̵̬̼̍',
             'T̴̡̨̛̬̥͕̪͖̜̻̰̮̳̖̣̳͔̻̥̬̟͙͑̓̿̾͊̌̽̀͌͋́̽́͛̈̅̀͆̎̊̆̏̊̌͊͘͜͝h̸̗̗͕̹̺̟̗͙̮̦̱̹͖͍̼͖̺̠̯̤͍̱͗̄̆͌̐̄̏̾͑̏͐̔͒̔̑͜͝͝ͅe̸̡̧͖̩̺̹̟͚̱̠͇̩͇̯̞̳͖̙̲͒͆̓̽̂̏̇̏͌͌̑͂̉̎̇͗͘͠͠ͅ ̴̛̤̝̰̩̳̪̗̝̘͓̬̰̩̊͑̋̇́̏r̸̲̙̪̭̱̪̪̲͖̩̲̮̜̖̭͎̃̑̐͌̈́̌͌͗̚͠͠e̴̡̢̨̧̛͓̫̲̱͖͉̺̞͂̆̈̌͊̀͆́̕͘̕q̴̮͍̠͖̱̼͉̹͎͕̝̝̮̱̻̪͔̦͈̯͈̘̹̟̗͈̜̠̪̼͚̙̝͐̿́͛͗̀͗̈̉̎́̾͂͒̌́̓͐́̓̌͋̑͗̔̅͑͗͌̀͝ͅͅų̶̛̞̺̺̣͖̱̹͔̠̦͇͉̘̐̏́̈́͗̌́͗̊̄̈́̋̐̒̿͆̃̈́͊͘͠è̴̫͉̬͙̀̈́̾̎̀͛̾̑̆̊̈́͐̒̎͆̀̃̉̚͘͠ŝ̶̡̨̧̡̳͓͈̙̖̭͚͚̺̱̩̪̲̣̳̯̭͈͚͚͖̠͇͑̂̀̅́̄̅͌̈̀̄̾͐͛͌̄̿͐̀̂̽̀͜͜͝t̶̢̨̗͖̩̯̹̯̫̠̙̪̠̝̖̼̟̭̠͓̝͍̠̥̙̣͓̟̜̞̩̰͐̾̄̈̑̎̾̑̓͂̒̈́͗͊̎̎̏̌̈́̍͒̋̒͒̈́͘͜͜͠ȩ̵̡̡̛̛͚̘̙͇̞͎̖̟̯̟̼̤̜̣̻̱̮̱͇͕̗͓̮̌͋̈́̽̃̎͐͂̈́͠͠͠͠ͅͅd̴̟͚͕̬͙̞̫͎̱͍̞̻͖̦̦̳͇̟͖͙̠̙̟̩̬̿̏̋̾̓̉̅̍͋ ̴̡̧̛̳̮͈̃̃̃͆͑̅̿̅̿̽̾̓̅͑̈́̈́̏͗͌͆̏͊̈͗̊͗̽̄̌̄̇̕͠͝p̴̨̢̛̛͎͙͔͚͎͍̪̼̞͕̪̈͑͂͋͋̓̒̂̓̿̆͛̄̏́͌̌̀̃́̀̍̂̈͝ͅa̶̧̢̛̳̳̬͇̗̻͉̲̠̭͙͙̦͍̮̲̱̝̭̺̤͚̲͕̫͉̔̈̒̿̎̈́̍̇̾̈́́̽͂̋͛̇̈́̆̿͊͗̄͗̌͜͠ǧ̶̢̢̨͉̗̜̖̗̘͈̠̥͎̖̹̥̪͕̙͚̹̼̣̳̖͊̔̈̾̓̈͑̇̌̂̇͝ȩ̸̢̢̟̼̣̦͓͙̰̰̺̪̜̪̥̩̬̜̬̭̼̞̥̽̅̓̓̄̑̑̉̌̃̌́̅͘̚̕͠ͅͅͅ ̷̢̡̨̢̧̧̧̛̳̫̝͔̗̥̤̖͉̮̘̦͙̣̪͍̮͍̦̥̘̦͖͔̟̮̗͆̏̎̍͂̃̔̈́̊̓͐͋̽̄͒̈́̐̔̀͛̎̋͘̚͠͝͝i̸̧̢̨̢̡̧̺͇̼̗̬̦̯͇͎̞̥̹͎̜͉̰̬̫͙̥̱̠̗͓̼͇͌̑̽̆̀̂͗́̌̆̉͂͌̇̊̄̒͊͊̓̀̅̒̾̈̔͜͝͝͠ͅͅs̶̡̘̘͉͍͔̬̞͓͉̱̺͋̈́̽̓̇͋͛̍̾̎̒͂͝ͅ ̵̡̠͓̞̞̮̻̮̘͙̰̺̼̤̜̜̥̯̣͉̲͍̼͖̙͚̘̫͔͎̥̠̦̦̘̈́̈͑̍̾̿̾̿̋̈́̌̒̿͗͊̑͆̿̆̆̀̈̉̆̓̿͆̌̑͌̓͌͘͝͝ņ̴̨̛̛̼̰͕̯̟̫̞̲̳̲̬̊̎͋̇͑͛̑̀͒̾̈́̍̽̎́̍̈̈́̓́͒̕̕͝͝o̴̭̦̱̜͖̟͍̦̙̺̰̬̙̼̮̬͕͓͗͗̂̋̐̂͒̒̈͘͜͠t̶̛̛͚̫̖̫͖͔̖͙͋̑̐̅̀̔͂̉̽̈͐͗͊̉͌̄̚ ̵̨̢̧̡̢̛͖̠̤̖̣̤̥͎̜̤̭̰̳͍̈́̆̋̂̒͜͝ͅa̸̧̨̨̨̰͉͉̞̩̞͉̹̖̘̫̲̲̭͈̙̖̩̍́͗͝v̷̧͉̞̟̠̺͙̹̪̥͖̞͖̙̮̱̝̝̩̳̪̣̭͖̂͋͋̓̿͛̚͜a̶͍̞͉̟̳̾̿̔͐́́̂̇̋͌̈́͊̌̐̅̐͑i̴̠̩̯̮͙̳̗̜̜̥̘̼͇̭͊̈́̋͜l̴̹̻̫̟͆̀̍̏̆̌̚͝͝ä̵̢̡̨̧̡̡̛͙̖̮̤̙̱̯̥͓͚̪̞͈͚̪͚̩̋̋̈̈̉̐̿̈́̌̎͗͂̃̋͂̈́͂̾͂͛͒͛̚̚͘͜͝͝͠͝b̵̲̮̳̺͓̻̦͍̲͙̝̀̓̎̑͋̏̄̾̍͛̊̈̾̊̑̿͊̏̚̕ͅl̸̨̜̞̪̜̺͍͉̬̜̹̬̤̱͍̘͕͈͓͖̼͙̤̣̰̪̔̏̀͒͒̉͘͠ͅͅe̸̳̦͂̀͒̅͐',
             '',
-            '[◉](https://omega.maanex.tk/)',
+            '[◉](https://omega.maanex.tk/)'
         ];
         this.userQueries = {};
         this.userQueryReset = {};
@@ -48,43 +48,42 @@ class HelpCommand extends types_1.Command {
             if (!event.sudo) {
                 const channelConfig = cmdmodule.getCommandChannelConfig(channel);
                 cmds = cmds.filter(c => !c.sudoOnly && !c.hideOnHelp && channelConfig.execute);
-                cmds = cmds.filter(c => {
+                cmds = cmds.filter((c) => {
                     channelConfig.execute = true;
                     return cmdmodule.doExecuteCommand(channelConfig, c);
                 });
             }
             let longest = 0;
-            for (let cmd of cmds) {
+            for (const cmd of cmds) {
                 if (cmd.name.length > longest)
                     longest = cmd.name.length;
             }
-            for (let cmd of cmds) {
+            for (const cmd of cmds)
                 text += `\`${((cmd.hideOnHelp ? '•' : '') + cmd.name).padStart(longest + 1)}\` ${cmd.sudoOnly ? ('**' + cmd.description + '**') : cmd.description.split('\n')[0]}\n`; // wtf?
-            }
             repl('Help', 'message', text);
         }
         else {
             const cmdline = parse_args_1.default.parse(args);
             let cmd = args[0];
             if (cmdline.groups) {
-                let out = {};
-                for (let c of index_1.TudeBot.getModule('commands').getCommands()) {
-                    for (let g of c.groups) {
+                const out = {};
+                for (const c of index_1.TudeBot.getModule('commands').getCommands()) {
+                    for (const g of c.groups) {
                         if (out[g])
                             out[g]++;
                         else
                             out[g] = 1;
                     }
                 }
-                let mes = [];
-                for (let key in out)
+                const mes = [];
+                for (const key in out)
                     mes.push(`**${key}** (${out[key]})`);
                 repl('Command groups:', 'message', mes.join('\n'));
             }
             else if (cmd.startsWith('#')) {
                 cmd += args.length >= 2 ? args[1] : '';
                 let cmds = [];
-                for (let c of index_1.TudeBot.getModule('commands').getCommands()) {
+                for (const c of index_1.TudeBot.getModule('commands').getCommands()) {
                     if (c.groups.includes(cmd.substr(1)))
                         cmds.push(c);
                 }
@@ -93,16 +92,17 @@ class HelpCommand extends types_1.Command {
             }
             else {
                 let command;
-                out: for (let c of index_1.TudeBot.getModule('commands').getCommands()) {
+                out: for (const c of index_1.TudeBot.getModule('commands').getCommands()) {
                     if (c.name === cmd) {
                         command = c;
                         break out;
                     }
-                    for (let a of c.aliases)
+                    for (const a of c.aliases) {
                         if (a === cmd) {
                             command = c;
                             break out;
                         }
+                    }
                 }
                 if (!command) {
                     switch (cmd.toLowerCase()) {
@@ -113,40 +113,35 @@ class HelpCommand extends types_1.Command {
                             repl('UH...', 'bad', `Command ${cmd} not found!`);
                     }
                 }
+                else if (command.name === 'help' && !event.sudo) {
+                    repl('Help', 'message', this.helphelp(user));
+                }
                 else {
-                    if (command.name == 'help' && !event.sudo) {
-                        repl('Help', 'message', this.helphelp(user));
-                    }
-                    else {
-                        let fields = [];
-                        if (command.cooldown) {
-                            fields.push({ name: 'Cooldown', value: `${command.cooldown}s`, inline: true });
+                    const fields = [];
+                    if (command.cooldown)
+                        fields.push({ name: 'Cooldown', value: `${command.cooldown}s`, inline: true });
+                    if (command.groups)
+                        fields.push({ name: 'In Groups', value: command.groups.join(', '), inline: true });
+                    if (Math.random() < 0.1)
+                        fields.push({ name: 'Hotel', value: 'Trivago', inline: true });
+                    channel.send({
+                        embed: {
+                            title: command.name,
+                            description: command.description,
+                            fields: [
+                                {
+                                    name: 'Aliases',
+                                    value: command.aliases.length ? (command.aliases.join(', ') + emojis_1.default.BIG_SPACE) : `[${emojis_1.default.BIG_SPACE}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
+                                    inline: true
+                                },
+                                {
+                                    name: 'Allowed',
+                                    value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
+                                    inline: true
+                                }, ...fields
+                            ]
                         }
-                        if (command.groups) {
-                            fields.push({ name: 'In Groups', value: command.groups.join(', '), inline: true });
-                        }
-                        if (Math.random() < 0.1) {
-                            fields.push({ name: 'Hotel', value: 'Trivago', inline: true });
-                        }
-                        channel.send({
-                            embed: {
-                                title: command.name,
-                                description: command.description,
-                                fields: [
-                                    {
-                                        name: 'Aliases',
-                                        value: command.aliases.length ? (command.aliases.join(', ') + emojis_1.default.BIG_SPACE) : `[${emojis_1.default.BIG_SPACE}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
-                                        inline: true
-                                    },
-                                    {
-                                        name: 'Allowed',
-                                        value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
-                                        inline: true
-                                    }, ...fields
-                                ]
-                            }
-                        });
-                    }
+                    });
                 }
             }
         }
@@ -162,7 +157,7 @@ class HelpCommand extends types_1.Command {
         }, 10 * 60000);
         let txt = this.helphelpTexts[this.userQueries[user.id]];
         this.userQueries[user.id]++;
-        if (txt == undefined) {
+        if (txt === undefined) {
             let dashes = '⚊⚊';
             while (Math.random() < this.userQueries[user.id] / 20 && dashes.length < 200)
                 dashes += '⚊';

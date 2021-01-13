@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../index");
 const discord_js_1 = require("discord.js");
+const index_1 = require("../index");
 const types_1 = require("../types/types");
 const generate_invite_link_meme_1 = require("../functions/generate-invite-link-meme");
 const link_analyzer_1 = require("./thebrain/link-analyzer");
@@ -17,39 +17,38 @@ class ChatGuard extends types_1.Module {
                 return;
             if (mes.member.hasPermission('MANAGE_MESSAGES'))
                 return; //
-            if (mes.member.highestRole.comparePositionTo(mes.guild.me.highestRole) > 0)
+            if (mes.member.roles.highest.comparePositionTo(mes.guild.me.roles.highest) > 0)
                 return; // TODO REENABLE, DISABLED FOR EASIER TESTING
             if (this.checkInviteLinks(mes))
                 return;
-            index_1.TudeBot.perspectiveApi.analyze(mes.content).then(res => {
+            index_1.TudeBot.perspectiveApi.analyze(mes.content).then((res) => {
                 // TudeBot.perspectiveApi.logFull(res, true);
                 const oneOf = (list) => list[Math.floor(Math.random() * list.length)];
-                if (res.threat > .95) {
+                if (res.threat > 0.95) {
                     mes.channel.send(oneOf(['That was too much %!', 'Stop this right now %!', 'You better shut your mouth %', 'Shut up %', 'You took it too far %!']).split('%').join(mes.author.toString()));
                     mes.delete();
                     return;
                 }
-                if (res.severeToxicity > .98) {
+                if (res.severeToxicity > 0.98) {
                     mes.channel.send(oneOf(['Pretty rude %!', 'That was too much %!', 'Calm the fuck down %!', 'Shut up %', 'Watch your mouth %']).split('%').join(mes.author.toString()));
                     mes.delete();
                     return;
                 }
-                if (res.insult > .95) {
+                if (res.insult > 0.95) {
                     mes.channel.send(oneOf(['Damn %', 'Oh wow %', 'I\'ll have to remove that %', 'Pretty rude %', 'That was pretty rude %!', 'Oh come on, don\'t be like that %!']).split('%').join(mes.author.toString()));
                     mes.delete();
                     return;
                 }
-                if (res.toxicity > .95) {
+                if (res.toxicity > 0.95) {
                     mes.channel.send(oneOf(['% dude. Chill!', '% chill!', 'Yo % calm down', 'No reason to rage out %!', 'Chill %', 'Calm down %']).split('%').join(mes.author.toString()));
                     return;
                 }
-                if (res.sexuallyExplicit > .95) {
+                if (res.sexuallyExplicit > 0.95) {
                     mes.channel.send(oneOf(['Please keep things kid friendly %', 'No nsfw here %', 'A bit more kids friendly please %', 'That ain\'t sfw %', 'Watch your mouth %']).split('%').join(mes.author.toString()));
                     return;
                 }
-                if (res.flirtation > .95) {
+                if (res.flirtation > 0.95)
                     mes.react(oneOf(['😉', '😏']));
-                }
             });
             link_analyzer_1.default.rawMessage(mes);
         });
@@ -61,9 +60,9 @@ class ChatGuard extends types_1.Module {
     repl(message, title, description) {
         message.channel.send({
             embed: {
-                color: 0x2f3136,
-                title: title,
-                description: description,
+                color: 0x2F3136,
+                title,
+                description,
                 footer: { text: 'ChatGuard • Auto Moderator' }
             }
         });
@@ -71,25 +70,25 @@ class ChatGuard extends types_1.Module {
     checkInviteLinks(mes) {
         if (!/discord.gg\/.+/i.test(mes.content) && !/discordapp.com\/invite\/.+/i.test(mes.content))
             return false;
-        if (this.inviteResponseStatus == 0) {
+        if (this.inviteResponseStatus === 0) {
             generate_invite_link_meme_1.default(mes.author.username)
-                .then(img => {
-                const file = new discord_js_1.Attachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`);
-                const embed = new discord_js_1.RichEmbed()
-                    .attachFile(file)
-                    .setColor(0x2f3136)
+                .then((img) => {
+                const file = new discord_js_1.MessageAttachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`);
+                const embed = new discord_js_1.MessageEmbed()
+                    .attachFiles([file])
+                    .setColor(0x2F3136)
                     .setImage(`attachment://shut-up-${mes.author.username.toLowerCase()}.png`);
                 mes.channel.send(embed);
             })
-                .catch(err => {
+                .catch((err) => {
                 console.error(err);
                 this.repl(mes, 'No invite links!', 'Please do not advertise here, thanks!');
             });
         }
-        else if (this.inviteResponseStatus == 1) {
+        else if (this.inviteResponseStatus === 1) {
             this.repl(mes, 'I was not kidding!', 'No advertising here. And no Discord invite links!');
         }
-        else if (this.inviteResponseStatus == 5) {
+        else if (this.inviteResponseStatus === 5) {
             this.repl(mes, 'See, I tried to stay calm but enough is enough!', 'Now would you please shut the fu*** up and stop posting invite links?');
         }
         this.inviteResponseStatus++;

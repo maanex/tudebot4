@@ -6,10 +6,10 @@ class UnavailableCommand extends types_1.Command {
         super({
             name: '_unavailable',
             description: 'Default command for when a command is unavailable.',
-            hideOnHelp: true,
+            hideOnHelp: true
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, _args, _event, repl) {
         repl('This command has been disabled.', 'bad');
         return true;
     }

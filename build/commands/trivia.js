@@ -1,9 +1,17 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const parse_args_1 = require("../util/parse-args");
+const axios_1 = require("axios");
 const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
-const fetch = require('node-fetch');
 class TriviaCommand extends types_1.Command {
     constructor() {
         super({
@@ -11,25 +19,24 @@ class TriviaCommand extends types_1.Command {
             aliases: ['quiz', 'quizz', 'question'],
             description: 'Trivia time!',
             cooldown: 10,
-            groups: ['fun', 'apiwrapper'],
+            groups: ['fun', 'apiwrapper']
         });
     }
-    execute(channel, user, args, event, repl) {
-        let cmdl = parse_args_1.default.parse(args);
-        let url = 'https://opentdb.com/api.php?amount=1&type=multiple&encode=url3986';
-        return new Promise((resolve, reject) => {
-            fetch(url)
-                .then(res => res.json())
-                .then(o => {
-                const res = o.results[0];
+    execute(channel, user, _args, _event, repl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // const cmdl = ParseArgs.parse(args)
+            const url = 'https://opentdb.com/api.php?amount=1&type=multiple&encode=url3986';
+            try {
+                const { data } = yield axios_1.default.get(url);
+                const res = data.results[0];
                 let options = [];
                 options.push(res.correct_answer);
                 options.push(...res.incorrect_answers);
-                options = options.sort(() => Math.random() - .5).map(decodeURIComponent);
-                let correct = options.indexOf(decodeURIComponent(res.correct_answer));
+                options = options.sort(() => Math.random() - 0.5).map(decodeURIComponent);
+                const correct = options.indexOf(decodeURIComponent(res.correct_answer));
                 channel.send({
                     embed: {
-                        color: 0x2f3136,
+                        color: 0x2F3136,
                         title: 'Trivia time!',
                         fields: [
                             {
@@ -42,9 +49,13 @@ class TriviaCommand extends types_1.Command {
                         }
                     }
                 });
-                resolve(true);
-            })
-                .catch(err => { console.error(err); repl('An error occured!', 'bad'); resolve(false); });
+                return true;
+            }
+            catch (err) {
+                console.error(err);
+                repl('An error occured!', 'bad');
+                return false;
+            }
         });
     }
 }

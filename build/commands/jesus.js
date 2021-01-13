@@ -18,26 +18,26 @@ class JesusCommand extends types_1.Command {
             name: 'jesus',
             aliases: ['holy', 'holy shit', 'amen', 'blessed'],
             description: 'Our lord and saviour',
-            groups: ['fun', 'images'],
+            groups: ['fun', 'images']
         });
     }
-    execute(channel, user, args, event, repl) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+    execute(channel, user, _args, _event, _repl) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
                 const imgBuffer = yield index_1.TudeBot.badoszApi.getJesus();
-                const file = new discord_js_1.Attachment(imgBuffer, 'AMEN.png');
-                const embed = new discord_js_1.RichEmbed()
-                    .attachFile(file)
-                    .setColor(0x2f3136)
+                const file = new discord_js_1.MessageAttachment(imgBuffer, 'AMEN.png');
+                const embed = new discord_js_1.MessageEmbed()
+                    .attachFiles([file])
+                    .setColor(0x2F3136)
                     .setFooter(`@${user.tag} • api.badosz.com`)
                     .setImage('attachment://AMEN.png');
                 channel.send('', { embed });
-                resolve(true);
+                return true;
             }
             catch (ex) {
-                resolve(false);
+                return false;
             }
-        }));
+        });
     }
 }
 exports.default = JesusCommand;

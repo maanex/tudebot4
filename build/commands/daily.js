@@ -9,32 +9,32 @@ class DailyCommand extends types_1.Command {
             name: 'daily',
             aliases: ['d'],
             description: 'Get your daily reward',
-            groups: ['club'],
+            groups: ['club']
         });
     }
-    execute(channel, user, args, event, repl) {
-        return new Promise((resolve, reject) => {
+    execute(channel, user, _args, event, repl) {
+        return new Promise((resolve) => {
             tudeapi_1.default.clubUserByDiscordId(user.id, user)
-                .then(u => {
+                .then((u) => {
                 if (!u || u.error) {
                     repl('Oopsie!', 'bad', 'Please try that again, thank you');
                     resolve(false);
                     return;
                 }
-                tudeapi_1.default.performClubUserAction(u, { id: 'claim_daily_reward' }).then(o => {
+                tudeapi_1.default.performClubUserAction(u, { id: 'claim_daily_reward' }).then((o) => {
                     let desc = '';
-                    let reward = o['reward'];
+                    const reward = o.reward;
                     if (reward.points)
-                        desc += `**+${reward.points}** point${reward.points == 1 ? '' : 's'} *${emojis_1.default.POINTS}*\n`;
+                        desc += `**+${reward.points}** point${reward.points === 1 ? '' : 's'} *${emojis_1.default.POINTS}*\n`;
                     if (reward.cookies)
-                        desc += `**+${reward.cookies}** cookie${reward.cookies == 1 ? '' : 's'} *${emojis_1.default.COOKIES}*\n`;
+                        desc += `**+${reward.cookies}** cookie${reward.cookies === 1 ? '' : 's'} *${emojis_1.default.COOKIES}*\n`;
                     if (reward.gems)
-                        desc += `**+${reward.gems}** gem${reward.gems == 1 ? '' : 's'} *${emojis_1.default.GEMS}*\n`;
-                    let streak = o['streak'];
+                        desc += `**+${reward.gems}** gem${reward.gems === 1 ? '' : 's'} *${emojis_1.default.GEMS}*\n`;
+                    const streak = o.streak;
                     if (streak) {
                         let prefix = '';
                         let suffix = '';
-                        let bold = streak > 3;
+                        const bold = streak > 3;
                         if (streak >= 7)
                             suffix = '🔥';
                         if (streak >= 14)
@@ -47,7 +47,7 @@ class DailyCommand extends types_1.Command {
                             prefix = '(╯°□°)╯';
                             suffix = '~(⊙＿⊙\')~';
                         }
-                        if (streak == 69) {
+                        if (streak === 69) {
                             prefix = '';
                             suffix = '- nice';
                         }
@@ -55,22 +55,22 @@ class DailyCommand extends types_1.Command {
                             prefix = '🐢';
                             suffix = '🐢';
                         }
-                        desc += `\n${prefix} ${bold ? '**' : ''}Streak: ${streak} ${streak == 1 ? 'day' : 'days'}${bold ? '**' : ''} ${suffix}`;
+                        desc += `\n${prefix} ${bold ? '**' : ''}Streak: ${streak} ${streak === 1 ? 'day' : 'days'}${bold ? '**' : ''} ${suffix}`;
                     }
                     channel.send({
                         embed: {
-                            color: 0x2f3136,
+                            color: 0x2F3136,
                             title: `${event.message.member.displayName}'s daily reward:`,
                             description: desc
                         }
                     });
                     resolve(true);
-                }).catch(o => {
+                }).catch((o) => {
                     repl(o.message || 'An error occured!');
                     resolve(false);
                 });
             })
-                .catch(err => {
+                .catch((err) => {
                 repl('An error occured!', 'bad');
                 console.error(err);
                 resolve(false);

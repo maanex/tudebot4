@@ -6,10 +6,10 @@ class BetaCommand extends types_1.Command {
         super({
             name: 'beta',
             description: 'Join the TudeBot Beta program',
-            groups: ['info'],
+            groups: ['info']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, _args, _event, repl) {
         repl('Click here to join the TudeBot Beta program', 'message', 'https://discord.gg/UPXM3Yu/');
         return true;
     }

@@ -1,8 +1,6 @@
-import { Message, Channel, User, TextChannel, Emoji, Attachment, RichEmbed } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
-import Emojis from "../int/emojis";
-import * as Jimp from 'jimp';
-import { TudeBot } from "../index";
+import { User, TextChannel, MessageAttachment, MessageEmbed } from 'discord.js'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
+import { TudeBot } from '../index'
 
 
 export default class JesusCommand extends Command {
@@ -12,26 +10,24 @@ export default class JesusCommand extends Command {
       name: 'jesus',
       aliases: [ 'holy', 'holy shit', 'amen', 'blessed' ],
       description: 'Our lord and saviour',
-      groups: [ 'fun', 'images' ],
-    });
+      groups: [ 'fun', 'images' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const imgBuffer = await TudeBot.badoszApi.getJesus();
-        const file = new Attachment(imgBuffer, 'AMEN.png');
-        const embed = new RichEmbed()
-          .attachFile(file)
-          .setColor(0x2f3136)
-          .setFooter(`@${user.tag} • api.badosz.com`)
-          .setImage('attachment://AMEN.png');
-        channel.send('', { embed });
-        resolve(true);
-      } catch (ex) {
-        resolve(false);
-      }
-    });
+  public async execute(channel: TextChannel, user: User, _args: string[], _event: CommandExecEvent, _repl: ReplyFunction): Promise<boolean> {
+    try {
+      const imgBuffer = await TudeBot.badoszApi.getJesus()
+      const file = new MessageAttachment(imgBuffer, 'AMEN.png')
+      const embed = new MessageEmbed()
+        .attachFiles([ file ])
+        .setColor(0x2F3136)
+        .setFooter(`@${user.tag} • api.badosz.com`)
+        .setImage('attachment://AMEN.png')
+      channel.send('', { embed })
+      return true
+    } catch (ex) {
+      return false
+    }
   }
 
 }

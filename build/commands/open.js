@@ -7,10 +7,10 @@ class OpenCommand extends types_1.Command {
             name: 'open',
             aliases: ['o', 'unbox'],
             description: 'Open a lootbox',
-            groups: ['club'],
+            groups: ['club']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, _args, _event, repl) {
         repl('This command is not yet available!', 'message', '~~We\'re~~ **I am** working on it');
         return true;
     }

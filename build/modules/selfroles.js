@@ -16,15 +16,15 @@ class SelfrolesModule extends types_1.Module {
                 return;
             if (!this.guildData(reaction.message.guild).channels.includes(reaction.message.channel.id))
                 return;
-            let role = this.findRole(reaction);
+            const role = this.findRole(reaction);
             if (!role)
                 return;
-            let extraRoles = this.guildData(reaction.message.guild).extraRoles || [];
-            let member = reaction.message.guild.member(user);
-            if (!member.roles.find(r => r.id == role.id)) {
-                member.addRole(role);
-                for (let rid of extraRoles)
-                    member.addRole(member.guild.roles.find(r => r.id == rid));
+            const extraRoles = this.guildData(reaction.message.guild).extraRoles || [];
+            const member = reaction.message.guild.member(user);
+            if (!member.roles.resolve(role.id)) {
+                member.roles.add(role);
+                for (const rid of extraRoles)
+                    member.roles.add(member.guild.roles.resolve(rid));
             }
         });
         index_1.TudeBot.on('messageReactionRemove', (reaction, user) => {
@@ -36,12 +36,12 @@ class SelfrolesModule extends types_1.Module {
                 return;
             if (!this.guildData(reaction.message.guild).channels.includes(reaction.message.channel.id))
                 return;
-            let role = this.findRole(reaction);
+            const role = this.findRole(reaction);
             if (!role)
                 return;
-            let member = reaction.message.guild.member(user);
-            if (member.roles.find(r => r.id == role.id))
-                member.removeRole(role);
+            const member = reaction.message.guild.member(user);
+            if (member.roles.resolve(role.id))
+                member.roles.remove(role);
         });
     }
     onBotReady() {
@@ -49,13 +49,13 @@ class SelfrolesModule extends types_1.Module {
     onDisable() {
     }
     findRole(reaction) {
-        let serverdat = this.guildData(reaction.message.guild);
+        const serverdat = this.guildData(reaction.message.guild);
         if (!serverdat)
             return null;
-        let role = serverdat.roles[reaction.emoji.name];
+        const role = serverdat.roles[reaction.emoji.name];
         if (!role)
             return null;
-        return reaction.message.guild.roles.get(role);
+        return reaction.message.guild.roles.resolve(role);
     }
 }
 exports.default = SelfrolesModule;

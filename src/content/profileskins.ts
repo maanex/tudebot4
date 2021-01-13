@@ -1,6 +1,6 @@
-import { ItemList, Items } from "./itemlist";
-import { Item, ItemPrefab } from "thirdparty/tudeapi/item";
-import { ProfileEmblemSet } from "int/emojis";
+import { ItemPrefab } from 'thirdparty/tudeapi/item'
+import { ProfileEmblemSet } from 'int/emojis'
+import { Items } from './itemlist'
 
 export class ProfileSkin {
 
@@ -17,15 +17,15 @@ export class ProfileSkin {
   public constructor(item: ItemPrefab, settings?: {
     emblemSet?: ProfileEmblemSet
   }) {
-    this._item = item;
-    this._id = item?.id ?? '';
+    this._item = item
+    this._id = item?.id ?? ''
 
-    this.emblemSet = settings?.emblemSet || 'DEFAULT';
+    this.emblemSet = settings?.emblemSet || 'DEFAULT'
   }
 
   //
 
-  public get item(): ItemPrefab { return this._item; }
-  public get id(): string { return this._id; }
+  public get item(): ItemPrefab { return this._item }
+  public get id(): string { return this._id }
 
 }

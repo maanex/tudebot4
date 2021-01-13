@@ -7,10 +7,10 @@ class ShipCommand extends types_1.Command {
         super({
             name: 'ship',
             description: 'Ship two people!',
-            groups: ['fun', 'rng'],
+            groups: ['fun', 'rng']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, args, event, repl) {
         if (args.length < 2) {
             repl('You need to give me two people to ship!', 'bad');
             return false;
@@ -24,19 +24,19 @@ class ShipCommand extends types_1.Command {
         }
         name1 = name1.toLowerCase();
         name2 = name2.toLowerCase();
-        if (name1 == name2) {
+        if (name1 === name2) {
             repl('Approve', 'message', emojis_1.default.BIG_SPACE, { image: 'https://cdn.discordapp.com/attachments/655354019631333397/682339526802538559/unknown.png' });
             return false;
         }
         if (name1.length > name2.length) {
-            let temp = name1;
+            const temp = name1;
             name1 = name2;
             name2 = temp;
         }
         let match = '';
         out: for (let checklength = name1.length; checklength > 0; checklength--) {
             for (let index = 0; index <= (name1.length - checklength); index++) {
-                let check = name1.substr(index, checklength);
+                const check = name1.substr(index, checklength);
                 if (name2.includes(check)) {
                     match = check;
                     break out;
@@ -50,12 +50,15 @@ class ShipCommand extends types_1.Command {
             const option2 = name2.split(match)[0] + match + name1.split(match)[1];
             const option1poor = option1.startsWith(match) || option1.endsWith(match);
             const option2poor = option2.startsWith(match) || option2.endsWith(match);
-            if (option1poor && !option2poor)
+            if (option1poor && !option2poor) {
                 shipName = option2;
-            else if (option2poor && !option1poor)
+            }
+            else if (option2poor && !option1poor) {
                 shipName = option1;
-            else if (option1poor && option2poor)
+            }
+            else if (option1poor && option2poor) {
                 shipName = option1;
+            }
             else {
                 const optimumLength = (name1.length + name2.length) / 2;
                 const option1delta = Math.abs(option1.length - optimumLength);
@@ -67,14 +70,15 @@ class ShipCommand extends types_1.Command {
             }
             let same = 0;
             let one = 0;
-            for (let letter of ('abcdefghijklmnoqrstuvwxyz').split('')) {
+            for (const letter of ('abcdefghijklmnoqrstuvwxyz').split('')) {
                 if (name1.includes(letter)) {
                     if (name2.includes(letter))
                         same++;
                     one++;
                 }
-                else if (name2.includes(letter))
+                else if (name2.includes(letter)) {
                     one++;
+                }
             }
             chances = (one - same) / name2.length;
             chances = Math.abs(Math.round(chances * 100));
@@ -82,9 +86,9 @@ class ShipCommand extends types_1.Command {
                 chances -= 100;
         }
         let heart = '';
-        if (chances == 100)
+        if (chances === 100)
             heart = '💖';
-        else if (chances == 0)
+        else if (chances === 0)
             heart = '🖤';
         else if (chances >= 50)
             heart = '❤️';

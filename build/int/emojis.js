@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable no-multi-spaces,indent */
 Object.defineProperty(exports, "__esModule", { value: true });
 class Emojis {
 }
@@ -32,7 +33,7 @@ Emojis.PROFILE_EMBLEMS = {
         KEYS: Emojis.KEYS,
         ITEMS: Emojis.ITEMS,
         POINTS: Emojis.POINTS,
-        STREAK: Emojis.STREAK,
+        STREAK: Emojis.STREAK
     },
     MONOCHROME: {
         COOKIES: Emojis.COOKIES_MONOCHROME,
@@ -40,7 +41,7 @@ Emojis.PROFILE_EMBLEMS = {
         KEYS: Emojis.KEYS_MONOCHROME,
         ITEMS: Emojis.ITEMS_MONOCHROME,
         POINTS: Emojis.POINTS_MONOCHROME,
-        STREAK: Emojis.STREAK_MONOCHROME,
+        STREAK: Emojis.STREAK_MONOCHROME
     }
 };
 Emojis.PROFILE_BARS = {

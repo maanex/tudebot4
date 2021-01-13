@@ -17,28 +17,28 @@ class WantedCommand extends types_1.Command {
         super({
             name: 'wanted',
             description: 'I want you',
-            groups: ['fun', 'images'],
+            groups: ['fun', 'images']
         });
     }
-    execute(channel, user, args, event, repl) {
-        if (event.message.mentions.members.size)
-            user = event.message.mentions.members.first().user;
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+    execute(channel, user, _args, event, _repl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (event.message.mentions.members.size)
+                user = event.message.mentions.members.first().user;
             try {
-                const imgBuffer = yield index_1.TudeBot.badoszApi.getWanted(user.avatarURL);
-                const file = new discord_js_1.Attachment(imgBuffer, 'wanted.png');
-                const embed = new discord_js_1.RichEmbed()
-                    .attachFile(file)
-                    .setColor(0x2f3136)
+                const imgBuffer = yield index_1.TudeBot.badoszApi.getWanted(user.avatarURL());
+                const file = new discord_js_1.MessageAttachment(imgBuffer, 'wanted.png'); // FIXME
+                const embed = new discord_js_1.MessageEmbed()
+                    .attachFiles([file])
+                    .setColor(0x2F3136)
                     .setFooter(`@${user.tag} • api.badosz.com`)
                     .setImage('attachment://wanted.png');
                 channel.send('', { embed });
-                resolve(true);
+                return true;
             }
             catch (ex) {
-                resolve(false);
+                return false;
             }
-        }));
+        });
     }
 }
 exports.default = WantedCommand;

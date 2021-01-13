@@ -9,10 +9,10 @@ class BotInfoCommand extends types_1.Command {
             description: 'Bot info',
             cooldown: 0,
             groups: [],
-            sudoOnly: true,
+            sudoOnly: true
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, _args, _event, _repl) {
         return true;
     }
 }

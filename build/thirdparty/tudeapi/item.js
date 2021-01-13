@@ -16,7 +16,7 @@ class ItemCategory {
     }
     get name() { return tudeapi_1.default.clubLang['itemcat_' + this.id]; }
     get namepl() { return tudeapi_1.default.clubLang['itemcatpl_' + this.id]; }
-    getName(amount) { return amount == 1 ? this.name : this.namepl; }
+    getName(amount) { return amount === 1 ? this.name : this.namepl; }
 }
 exports.ItemCategory = ItemCategory;
 //
@@ -31,7 +31,7 @@ class ItemGroup {
     }
     get name() { return tudeapi_1.default.clubLang['itemgroup_' + this.id]; }
     get namepl() { return tudeapi_1.default.clubLang['itemgrouppl_' + this.id]; }
-    getName(amount) { return amount == 1 ? this.name : this.namepl; }
+    getName(amount) { return amount === 1 ? this.name : this.namepl; }
 }
 exports.ItemGroup = ItemGroup;
 //
@@ -54,12 +54,12 @@ class Item {
     set meta(meta) { this._meta = meta; this.metaChanges = meta; }
     get meta() { return this._meta; }
     get name() {
-        return tudeapi_1.default.clubLang[(this.amount == 1 ? 'item_' : 'itempl_') + this.prefab.id];
+        return tudeapi_1.default.clubLang[(this.amount === 1 ? 'item_' : 'itempl_') + this.prefab.id];
     }
     get description() {
         return tudeapi_1.default.clubLang['itemdesc_' + this.prefab.id];
     }
-    use(message, repl, executor) {
+    use(_message, repl, _executor) {
         if (this.prefab.useText)
             repl(this.prefab.useText);
         else
@@ -87,7 +87,7 @@ class ExpandedItem extends Item {
     }
     ;
     set amount(amount) {
-        if (amount == 0)
+        if (amount === 0)
             this._amount = 0;
         else
             this._amount = 1;

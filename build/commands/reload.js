@@ -9,10 +9,10 @@ class ReloadCommand extends types_1.Command {
             name: 'reload',
             description: 'Reload',
             sudoOnly: true,
-            groups: ['internal'],
+            groups: ['internal']
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(_channel, _user, _args, event, _repl) {
         tudeapi_1.default.reload();
         index_1.TudeBot.reload().then(() => event.message.react('✅')).catch();
         return true;

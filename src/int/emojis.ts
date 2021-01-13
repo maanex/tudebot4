@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-spaces,indent */
 
 export type ProfileEmblemSet = 'DEFAULT' | 'MONOCHROME';
 export interface ProfileEmblems {
@@ -57,7 +58,7 @@ export default class Emojis {
       KEYS: Emojis.KEYS,
       ITEMS: Emojis.ITEMS,
       POINTS: Emojis.POINTS,
-      STREAK: Emojis.STREAK,
+      STREAK: Emojis.STREAK
     },
     MONOCHROME: {
       COOKIES: Emojis.COOKIES_MONOCHROME,
@@ -65,7 +66,7 @@ export default class Emojis {
       KEYS: Emojis.KEYS_MONOCHROME,
       ITEMS: Emojis.ITEMS_MONOCHROME,
       POINTS: Emojis.POINTS_MONOCHROME,
-      STREAK: Emojis.STREAK_MONOCHROME,
+      STREAK: Emojis.STREAK_MONOCHROME
     }
   }
 

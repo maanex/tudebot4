@@ -11,7 +11,7 @@ class GuildInfoCommand extends types_1.Command {
             hideOnHelp: true
         });
     }
-    execute(channel, user, args, event, repl) {
+    execute(channel, _user, _args, _event, repl) {
         const settings = index_1.TudeBot.guildSettings.get(channel.guild.id);
         if (!settings) {
             repl('No settings found for this guild!', 'bad');
@@ -21,9 +21,10 @@ class GuildInfoCommand extends types_1.Command {
         index_1.TudeBot.modules.forEach((module, id) => {
             moduleData.push((settings.modules[id] ? '🗹 ' : '☐ ') + module.dispName);
         });
-        channel.send({ embed: {
+        channel.send({
+            embed: {
                 title: settings.name,
-                color: 0x2f3136,
+                color: 0x2F3136,
                 fields: [
                     {
                         name: 'Is club guild?',
@@ -40,7 +41,8 @@ class GuildInfoCommand extends types_1.Command {
                         value: moduleData.join('\n')
                     }
                 ]
-            } });
+            }
+        });
         return true;
     }
 }

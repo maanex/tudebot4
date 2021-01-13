@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Module {
+    // eslint-disable-next-line no-useless-constructor
     constructor(dispName, usageScope, conf, data, guilds, lang) {
         this.dispName = dispName;
         this.usageScope = usageScope;

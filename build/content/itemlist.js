@@ -18,9 +18,9 @@ exports.Items = {
         purchaseable: false,
         useable: false,
         icon: exports.defaultItemIcon,
-        class: class Test extends item_1.ExpandedItem {
+        Class: class Test extends item_1.ExpandedItem {
         },
-        create: (id, meta) => new exports.Items.Test.class(exports.Items.Test, id, meta)
+        create: (id, meta) => new exports.Items.Test.Class(exports.Items.Test, id, meta)
     },
     Cookie: {
         id: 'cookie',
@@ -34,9 +34,9 @@ exports.Items = {
         useable: true,
         useText: 'Yo, head over to the shop to spend your cookies!',
         icon: emojis_1.default.COOKIES,
-        class: class Cookie extends item_1.StackableItem {
+        Class: class Cookie extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.Cookie.class(exports.Items.Cookie, amount),
+        create: (amount) => new exports.Items.Cookie.Class(exports.Items.Cookie, amount),
         _isDef: true
     },
     Gem: {
@@ -51,9 +51,9 @@ exports.Items = {
         useable: true,
         useText: 'Yo, head over to the shop to spend your gems!',
         icon: emojis_1.default.GEMS,
-        class: class Gem extends item_1.StackableItem {
+        Class: class Gem extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.Gem.class(exports.Items.Gem, amount),
+        create: (amount) => new exports.Items.Gem.Class(exports.Items.Gem, amount),
         _isDef: true
     },
     Key: {
@@ -68,9 +68,9 @@ exports.Items = {
         useable: true,
         useText: 'Do `use <lootbox>` but with <lootbox> being a lootbox that you own to open it. This will cost one key!',
         icon: emojis_1.default.KEYS,
-        class: class Key extends item_1.StackableItem {
+        Class: class Key extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.Key.class(exports.Items.Key, amount),
+        create: (amount) => new exports.Items.Key.Class(exports.Items.Key, amount),
         _isDef: true
     },
     Turtle: {
@@ -84,9 +84,9 @@ exports.Items = {
         useable: true,
         useText: '🐢',
         icon: '🐢',
-        class: class Turtle extends item_1.StackableItem {
+        Class: class Turtle extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.Turtle.class(exports.Items.Turtle, amount)
+        create: (amount) => new exports.Items.Turtle.Class(exports.Items.Turtle, amount)
     },
     FishingLure: {
         id: 'lure',
@@ -98,9 +98,9 @@ exports.Items = {
         purchaseable: true,
         useable: false,
         icon: '<:use_regular_bait:667784099037052931>',
-        class: class FishingLure extends item_1.StackableItem {
+        Class: class FishingLure extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.FishingLure.class(exports.Items.FishingLure, amount)
+        create: (amount) => new exports.Items.FishingLure.Class(exports.Items.FishingLure, amount)
     },
     GoldFishingLure: {
         id: 'gold_lure',
@@ -112,9 +112,9 @@ exports.Items = {
         purchaseable: true,
         useable: false,
         icon: '<:use_gold_bait:667786302674042901>',
-        class: class GoldFishingLure extends item_1.StackableItem {
+        Class: class GoldFishingLure extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.GoldFishingLure.class(exports.Items.GoldFishingLure, amount)
+        create: (amount) => new exports.Items.GoldFishingLure.Class(exports.Items.GoldFishingLure, amount)
     },
     MysticFishingLure: {
         id: 'mystic_lure',
@@ -126,9 +126,9 @@ exports.Items = {
         purchaseable: true,
         useable: false,
         icon: '<:use_mystic_bait:667786936395759646>',
-        class: class MysticFishingLure extends item_1.StackableItem {
+        Class: class MysticFishingLure extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.MysticFishingLure.class(exports.Items.MysticFishingLure, amount)
+        create: (amount) => new exports.Items.MysticFishingLure.Class(exports.Items.MysticFishingLure, amount)
     },
     TreasureFishingLure: {
         id: 'treasure_lure',
@@ -140,9 +140,9 @@ exports.Items = {
         purchaseable: true,
         useable: false,
         icon: '<:use_treasure_bait:667807893290090516>',
-        class: class TreasureFishingLure extends item_1.StackableItem {
+        Class: class TreasureFishingLure extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.TreasureFishingLure.class(exports.Items.TreasureFishingLure, amount)
+        create: (amount) => new exports.Items.TreasureFishingLure.Class(exports.Items.TreasureFishingLure, amount)
     },
     WelcomeGiftLootbox: {
         id: 'welcome_gift',
@@ -154,9 +154,9 @@ exports.Items = {
         purchaseable: false,
         useable: false,
         icon: 'TODO',
-        class: class WelcomeGiftLootbox extends item_1.StackableItem {
+        Class: class WelcomeGiftLootbox extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.WelcomeGiftLootbox.class(exports.Items.WelcomeGiftLootbox, amount)
+        create: (amount) => new exports.Items.WelcomeGiftLootbox.Class(exports.Items.WelcomeGiftLootbox, amount)
     },
     Letter: {
         id: 'letter',
@@ -168,9 +168,9 @@ exports.Items = {
         purchaseable: true,
         useable: true,
         icon: '✉️',
-        class: letter_1.default,
-        create: (title, text, author) => new exports.Items.Letter.class(exports.Items.Letter, exports.Items.Letter.id, title, text, author ? author.id : ''),
-        parse: (data) => new exports.Items.Letter.class(exports.Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author),
+        Class: letter_1.default,
+        create: (title, text, author) => new exports.Items.Letter.Class(exports.Items.Letter, exports.Items.Letter.id, title, text, author ? author.id : ''),
+        parse: (data) => new exports.Items.Letter.Class(exports.Items.Letter, data.id, data.meta.title, data.meta.text, data.meta.author)
     },
     Carp: {
         id: 'carp',
@@ -182,9 +182,9 @@ exports.Items = {
         purchaseable: false,
         useable: false,
         icon: '🐟',
-        class: generic_fish_1.default,
-        create: (size, caughtAt, stuffed) => new exports.Items.Carp.class(exports.Items.Carp, exports.Items.Carp.id, size, caughtAt, stuffed),
-        parse: (data) => new exports.Items.Carp.class(exports.Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed),
+        Class: generic_fish_1.default,
+        create: (size, caughtAt, stuffed) => new exports.Items.Carp.Class(exports.Items.Carp, exports.Items.Carp.id, size, caughtAt, stuffed),
+        parse: (data) => new exports.Items.Carp.Class(exports.Items.Carp, data.id, data.meta.size, data.meta.caughtAt, data.meta.stuffed)
     },
     ProfileSkinBlue: {
         id: 'profile_skin_blue',
@@ -196,27 +196,27 @@ exports.Items = {
         purchaseable: true,
         useable: false,
         icon: '🔵',
-        class: class ProfileSkinBlue extends item_1.StackableItem {
+        Class: class ProfileSkinBlue extends item_1.StackableItem {
         },
-        create: (amount) => new exports.Items.ProfileSkinBlue.class(exports.Items.ProfileSkinBlue, amount),
-    },
+        create: (amount) => new exports.Items.ProfileSkinBlue.Class(exports.Items.ProfileSkinBlue, amount)
+    }
 };
 exports.ItemList = Object.values(exports.Items);
 function findItem(query) {
     query = query.toLowerCase();
-    let item = exports.ItemList.find(i => {
-        if (i.id.toLowerCase() == query)
+    let item = exports.ItemList.find((i) => {
+        if (i.id.toLowerCase() === query)
             return true;
         if (i.selectionAliases && i.selectionAliases.includes(query))
             return true;
         if (tudeapi_1.default.clubLang['item_' + i.id]) {
-            if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase() == query)
+            if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase() === query)
                 return true;
         }
         return false;
     });
     if (!item) {
-        item = exports.ItemList.find(i => {
+        item = exports.ItemList.find((i) => {
             if (tudeapi_1.default.clubLang['item_' + i.id]) {
                 if ((tudeapi_1.default.clubLang['item_' + i.id]).toLowerCase().includes(query))
                     return true;

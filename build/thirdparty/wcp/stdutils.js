@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
 function hook_std(callback, std) {
     var old_write = std.write;

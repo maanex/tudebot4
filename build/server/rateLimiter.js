@@ -5,8 +5,8 @@ class RateLimiter {
     static limit(max, window, mes) {
         return rateLimit({
             windowMs: window * 60 * 1000,
-            max: max,
-            message: mes ? JSON.stringify(mes) : null,
+            max,
+            message: mes ? JSON.stringify(mes) : null
         });
     }
 }

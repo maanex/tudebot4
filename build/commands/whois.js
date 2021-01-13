@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const moment = require("moment");
 const types_1 = require("../types/types");
 const emojis_1 = require("../int/emojis");
-const moment = require("moment");
 const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const user_stalker_1 = require("../modules/thebrain/user-stalker");
 class WastedCommand extends types_1.Command {
@@ -20,50 +20,52 @@ class WastedCommand extends types_1.Command {
             name: 'whois',
             description: 'Who is that?',
             groups: ['info'],
-            cooldown: 10,
+            cooldown: 10
         });
     }
-    execute(channel, user, args, event, repl) {
-        if (event.message.mentions.members.size)
-            user = event.message.mentions.members.first().user;
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+    execute(channel, user, _args, event, repl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (event.message.mentions.members.size)
+                user = event.message.mentions.members.first().user;
             if (user.bot) {
                 repl('[Click here for more info](https://www.youtube.com/watch?v=cvh0nX08nRw)');
-                resolve(true);
-                return;
-            }
-            const member = yield channel.guild.fetchMember(user);
-            const clubUser = yield tudeapi_1.default.clubUserByDiscordId(user.id);
-            let badges = [];
-            if (clubUser.badges) {
-                for (let b of Object.keys(clubUser.badges)) {
-                    let badge = tudeapi_1.default.badgeById(parseInt(b));
-                    let appearance = badge.getAppearance(clubUser.badges[b]);
-                    badges.push(appearance.emoji);
-                }
-            }
-            let itemCount = 0;
-            if (clubUser.inventory.size > 0) {
-                for (const item of clubUser.inventory.values())
-                    itemCount += item.amount;
+                return true;
             }
             try {
+                const member = yield channel.guild.members.fetch(user);
+                const clubUser = yield tudeapi_1.default.clubUserByDiscordId(user.id);
+                const badges = [];
+                if (clubUser.badges) {
+                    for (const b of Object.keys(clubUser.badges)) {
+                        const badge = tudeapi_1.default.badgeById(parseInt(b));
+                        const appearance = badge.getAppearance(clubUser.badges[b]);
+                        badges.push(appearance.emoji);
+                    }
+                }
+                let itemCount = 0;
+                if (clubUser.inventory.size > 0) {
+                    for (const item of clubUser.inventory.values())
+                        itemCount += item.amount;
+                }
                 const out = sendMessage(channel, user, member, clubUser, badges, itemCount);
                 const details = user_stalker_1.default.getInfo(user);
                 sendMessage(channel, user, member, clubUser, badges, itemCount, yield details, yield out);
-                resolve(true);
+                return true;
             }
             catch (ex) {
-                resolve(false);
+                console.error(ex);
+                repl('An error occured!', 'bad');
+                return false;
             }
-        }));
+        });
     }
 }
 exports.default = WastedCommand;
 function sendMessage(channel, user, member, clubUser, badges, itemCount, detailedInfo, override) {
-    const payload = { embed: {
+    const payload = {
+        embed: {
             author: {
-                name: `About ${user.tag}`,
+                name: `About ${user.tag}`
             },
             fields: [
                 {
@@ -82,8 +84,9 @@ function sendMessage(channel, user, member, clubUser, badges, itemCount, detaile
                         : `${user.username} did not participate in any Tude Club activities.`
                 }
             ],
-            color: 0x2f3136
-        } };
+            color: 0x2F3136
+        }
+    };
     if (detailedInfo) {
         const trust = detailedInfo.trustworthiness;
         const sources = trust.sources;
@@ -134,5 +137,5 @@ MAYBE EVEN MAKE A USER ACCOUNT THAT ACTS LIKE A BOT AND JUST SPIES ON USERS CONN
 MAYBE (NO) MAKE FREESTUFF BOT CHECK USERS GUILDS
  -> NO. no.
 
-*/ 
+*/
 //# sourceMappingURL=whois.js.map

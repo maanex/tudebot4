@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable no-useless-constructor */
 const axios_1 = require("axios");
 const convert = require("xml-js");
 /**
@@ -20,19 +21,18 @@ class AlexaAPI {
         this.key = key;
     }
     awis(url) {
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { data } = yield axios_1.default.get(`https://awis.api.alexa.com/api?Action=UrlInfo&Count=10&ResponseGroup=Rank,LinksInCount&Start=1&Url=${url.host}`, {
                     headers: { 'x-api-key': this.key }
                 });
                 const json = JSON.parse(convert.xml2json(data, { compact: true, spaces: 0 }));
                 console.log(JSON.stringify(json, null, 2));
-                resolve(json);
+                return json;
             }
             catch (ex) {
-                reject(ex);
             }
-        }));
+        });
     }
 }
 exports.default = AlexaAPI;

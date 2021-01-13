@@ -1,7 +1,7 @@
-import { TudeBot } from "../index";
-import { GuildMember, Message, Emoji } from "discord.js";
-import * as util from "../util/util";
-import { Module } from "../types/types";
+import { Message, Emoji } from 'discord.js'
+import { TudeBot } from '../index'
+import * as util from '../util/util'
+import { Module } from '../types/types'
 
 
 export default class CountingModule extends Module {
@@ -9,41 +9,42 @@ export default class CountingModule extends Module {
   private lastUser: string = '';
   private lastNum: number = 0;
 
-  
+
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Counting', 'public', conf, data, guilds, lang);
+    super('Counting', 'public', conf, data, guilds, lang)
   }
 
-  public onEnable(): void {
+  public onEnable() {
     TudeBot.on('message', (mes: Message) => {
-      if (!this.isMessageEventValid(mes)) return;
-      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return;
+      if (!this.isMessageEventValid(mes)) return
+      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
 
-      let content: string = mes.content.split(' ')[0];
+      const content: string = mes.content.split(' ')[0]
 
-      if (this.lastUser != '' && this.lastUser == mes.author.id) {
-        this.react(mes);
-        return;
+      if (this.lastUser !== '' && this.lastUser === mes.author.id) {
+        this.react(mes)
+        return
       }
-      this.lastUser = mes.author.id;
+      this.lastUser = mes.author.id
 
-      let num: number = parseInt(content);
-      if (num == NaN || (this.lastNum != 0 && num - this.lastNum != 1)) this.react(mes);
-      else this.lastNum = num;
-    });
+      const num: number = parseInt(content)
+      if (isNaN(num) || (this.lastNum !== 0 && num - this.lastNum !== 1)) this.react(mes)
+      else this.lastNum = num
+    })
   }
 
-  public onBotReady(): void {
+  public onBotReady() {
   }
 
-  public onDisable(): void {
+  public onDisable() {
   }
 
-  private react(mes: Message): void {
-    this.lastUser = '';
-    this.lastNum = 0;
-    let emojiName: string = this.data[mes.guild.id][util.rand(this.data[mes.guild.id].length)];
-    let emoji: Emoji = mes.guild.emojis.find(e => e.name == emojiName);
-    mes.react(emoji);
+  private react(mes: Message) {
+    this.lastUser = ''
+    this.lastNum = 0
+    const emojiName: string = this.data[mes.guild.id][util.rand(this.data[mes.guild.id].length)]
+    const emoji: Emoji = mes.guild.emojis.cache.find(e => e.name === emojiName)
+    mes.react(emoji.id)
   }
+
 }

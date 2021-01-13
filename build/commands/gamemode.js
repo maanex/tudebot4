@@ -8,11 +8,11 @@ class GamemodeCommand extends types_1.Command {
             aliases: ['/gamemode'],
             description: 'by Mojang',
             hideOnHelp: true,
-            groups: ['fun', 'easteregg'],
+            groups: ['fun', 'easteregg']
         });
     }
-    execute(channel, user, args, event, repl) {
-        if (args.length == 0) {
+    execute(_channel, _user, args, event, _repl) {
+        if (args.length === 0) {
             event.message.reply('/gamemode <gamemode>');
             return false;
         }

@@ -1,9 +1,9 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
-import ParseArgs from "../util/parse-args";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
+/* eslint-disable prefer-promise-reject-errors */
+import { User, TextChannel } from 'discord.js'
+import ParseArgs from '../util/parse-args'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
 
 
 export default class MealCommand extends Command {
@@ -14,45 +14,45 @@ export default class MealCommand extends Command {
       aliases: [ 'food', 'whatshallieat', 'makemefood', 'eat' ],
       description: 'A random meal and how to make it',
       cooldown: 2,
-      groups: [ 'fun', 'apiwrapper' ],
-    });
+      groups: [ 'fun', 'apiwrapper' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
-    let cmdl = ParseArgs.parse(args);
-    let url = 'https://www.themealdb.com/api/json/v1/1/random.php';
-    let search = '';
+  public execute(channel: TextChannel, user: User, args: string[], _event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
+    const cmdl = ParseArgs.parse(args)
+    let url = 'https://www.themealdb.com/api/json/v1/1/random.php'
+    let search = ''
     if (cmdl._) {
-      search = cmdl._ + '';
-      url = 'https://www.themealdb.com/api/json/v1/1/search.php?s=' + encodeURIComponent(search);
+      search = cmdl._ + ''
+      url = 'https://www.themealdb.com/api/json/v1/1/search.php?s=' + encodeURIComponent(search)
     }
     return new Promise((resolve, reject) => {
       fetch(url)
         .then(o => o.json())
-        .then(o => {
+        .then((o) => {
           if (!o || !o.meals || !o.meals.length) {
-            if (search) repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad');
-            else repl('Couldn\'t load the cocktail list!', 'bad', 'Maybe just get yourself a glass of water or something.');
-            reject();
-            return;
+            if (search) repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad')
+            else repl('Couldn\'t load the cocktail list!', 'bad', 'Maybe just get yourself a glass of water or something.')
+            reject()
+            return
           }
-          let meal = o.meals[0];
+          const meal = o.meals[0]
 
           if (cmdl.r || cmdl.raw) {
-            repl('```json\n' + JSON.stringify(meal, null, 2) + '```');
-            reject();
-            return;
+            repl('```json\n' + JSON.stringify(meal, null, 2) + '```')
+            reject()
+            return
           }
 
-          let ingredients = [];
-          let i = 1;
+          const ingredients = []
+          let i = 1
           while (meal['strIngredient' + i]) {
-            ingredients.push(`${meal['strMeasure' + i]} **${meal['strIngredient' + i]}**`);
-            i++;
+            ingredients.push(`${meal['strMeasure' + i]} **${meal['strIngredient' + i]}**`)
+            i++
           }
           channel.send({
             embed: {
-              color: 0x2f3136,
+              color: 0x2F3136,
               title: meal.strMeal,
               thumbnail: {
                 url: meal.strMealThumb
@@ -81,11 +81,11 @@ export default class MealCommand extends Command {
                 text: '@' + user.username + ' • powered by thecocktaildb.com'
               }
             }
-          });
-          resolve(true);
+          })
+          resolve(true)
         })
-        .catch(err => { console.error(err); repl('An error occured!', 'bad'); resolve(false) });
-    });
+        .catch((err) => { console.error(err); repl('An error occured!', 'bad'); resolve(false) })
+    })
   }
 
 }

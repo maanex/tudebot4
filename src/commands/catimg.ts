@@ -1,8 +1,6 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
-
-const fetch = require('node-fetch');
+import axios from 'axios'
+import { User, TextChannel } from 'discord.js'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class CatCommand extends Command {
@@ -12,28 +10,30 @@ export default class CatCommand extends Command {
       name: 'cat',
       aliases: [ 'kitten', 'catimage', 'catimg', 'pussy' ],
       description: 'A random cat image',
-      groups: [ 'fun', 'images', 'apiwrapper' ],
-    });
+      groups: [ 'fun', 'images', 'apiwrapper' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      fetch('https://api.thecatapi.com/v1/images/search?format=json')
-        .then(o => o.json())
-        .then(o => channel.send({
-          embed: {
-            color: 0x2f3136,
-            image: {
-              url: o[0].url
-            },
-            footer: {
-              text: user.username,
-              icon_url: user.avatarURL
-            }
+  public async execute(channel: TextChannel, user: User, _args: string[], _event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
+    try {
+      const { data: o } = await axios.get('https://api.thecatapi.com/v1/images/search?format=json')
+      channel.send({
+        embed: {
+          color: 0x2F3136,
+          image: {
+            url: o[0].url
+          },
+          footer: {
+            text: user.username,
+            icon_url: user.avatarURL()
           }
-        }) && resolve(true))
-        .catch(err => { repl('An error occured!', 'bad'); resolve(false) });
-    });
+        }
+      })
+      return true
+    } catch (e) {
+      repl('An error occured!', 'bad')
+      return false
+    }
   }
 
 }

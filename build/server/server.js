@@ -1,15 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
 const http = require("http");
+const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const chalk = require("chalk");
 const webhooks_1 = require("./routes/api/webhooks");
 const freestuff_1 = require("./routes/api/freestuff");
 class Server {
-    constructor() { }
-    //
     static start(port) {
         const app = express();
         if (process.env.NODE_ENV !== 'production')
@@ -26,13 +24,11 @@ class Server {
         });
     }
     static nonJsonBodyErrorHandler() {
-        return function (error, req, res, next) {
-            if (error instanceof SyntaxError) {
+        return function (error, _req, res, next) {
+            if (error instanceof SyntaxError)
                 res.status(400).send('400 Bad Request');
-            }
-            else {
+            else
                 next();
-            }
         };
     }
 }

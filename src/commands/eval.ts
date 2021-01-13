@@ -1,7 +1,9 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
-import TudeApi from "../thirdparty/tudeapi/tudeapi";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-eval */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { User, TextChannel } from 'discord.js'
+import TudeApi from '../thirdparty/tudeapi/tudeapi'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class EvalCommand extends Command {
@@ -11,24 +13,24 @@ export default class EvalCommand extends Command {
       name: 'eval',
       description: 'Eval',
       sudoOnly: true,
-      groups: [ 'internal' ],
-    });
+      groups: [ 'internal' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
-    if (user.id !== '137258778092503042') return false;
+  public execute(_channel: TextChannel, user: User, args: string[], _event: CommandExecEvent, repl: ReplyFunction): boolean {
+    if (user.id !== '137258778092503042') return false
 
     try {
-      let tapi = TudeApi;
-      TudeApi.clubUserByDiscordId(user.id).then(self => {
-        repl(eval(args.join(' ')));
-      }).catch(ex => {
-        repl(eval(args.join(' ')));
-      });
-      return true;
+      const tapi = TudeApi
+      TudeApi.clubUserByDiscordId(user.id).then((self) => {
+        repl(eval(args.join(' ')))
+      }).catch((ex) => {
+        repl(eval(args.join(' ')))
+      })
+      return true
     } catch (ex) {
-      repl('Error:', 'message', '```' + ex + '```');
-      return false;
+      repl('Error:', 'message', '```' + ex + '```')
+      return false
     }
   }
 

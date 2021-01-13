@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("./database");
 class DbStats {
-    constructor() { }
     static getCommand(name) {
         return new DbStatCommand(name).load();
     }
@@ -27,19 +26,19 @@ class DbStatCommand {
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
-            let c = yield database_1.default
+            const c = yield database_1.default
                 .collection('stats-commands')
                 .findOne({ _id: this.name });
-            for (let temp in c)
+            for (const temp in c)
                 this.raw[temp] = c[temp];
             return this;
         });
     }
     get calls() {
-        return new DbStatGraph('stats-commands', { _id: this.name }, 'calls', this.raw['calls'], this.raw);
+        return new DbStatGraph('stats-commands', { _id: this.name }, 'calls', this.raw.calls, this.raw);
     }
     get executions() {
-        return new DbStatGraph('stats-commands', { _id: this.name }, 'executions', this.raw['executions'], this.raw);
+        return new DbStatGraph('stats-commands', { _id: this.name }, 'executions', this.raw.executions, this.raw);
     }
 }
 exports.DbStatCommand = DbStatCommand;
@@ -50,7 +49,7 @@ class DbStatUser {
     }
     load(secondTry = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let c = yield database_1.default
+            const c = yield database_1.default
                 .collection('stats-users')
                 .findOne({ _id: this.user.id });
             if (!c) {
@@ -66,7 +65,7 @@ class DbStatUser {
                 });
                 return this.load(true);
             }
-            for (let temp in c)
+            for (const temp in c)
                 this.raw[temp] = c[temp];
             return this;
         });
@@ -74,27 +73,27 @@ class DbStatUser {
     setValue(set) {
         database_1.default
             .collection('stats-users')
-            .updateOne({ _id: this.user.id }, { '$set': set });
+            .updateOne({ _id: this.user.id }, { $set: set });
     }
     get messagesSent() {
-        return this.raw['messagesSent'] || 0;
+        return this.raw.messagesSent || 0;
     }
     set messagesSent(number) {
-        this.raw['messagesSent'] = number;
+        this.raw.messagesSent = number;
         this.setValue({ messagesSent: number });
     }
     get memesSent() {
-        return this.raw['memesSent'] || 0;
+        return this.raw.memesSent || 0;
     }
     set memesSent(number) {
-        this.raw['memesSent'] = number;
+        this.raw.memesSent = number;
         this.setValue({ memesSent: number });
     }
     get dailiesClaimed() {
-        return this.raw['dailiesClaimed'] || 0;
+        return this.raw.dailiesClaimed || 0;
     }
     set dailiesClaimed(number) {
-        this.raw['dailiesClaimed'] = number;
+        this.raw.dailiesClaimed = number;
         this.setValue({ dailiesClaimed: number });
     }
 }
@@ -120,22 +119,22 @@ class DbStatGraph {
                 let obj = {};
                 obj[`${this._objectid}.${dayId}`] = value;
                 if (delta)
-                    obj = { '$inc': obj };
+                    obj = { $inc: obj };
                 else
-                    obj = { '$set': obj };
+                    obj = { $set: obj };
                 if (dayId > this.raw.length) {
-                    if (!obj['$set'])
-                        obj['$set'] = {};
+                    if (!obj.$set)
+                        obj.$set = {};
                     while (dayId-- > this.raw.length)
-                        obj['$set'][`${this._objectid}.${dayId}`] = 0;
+                        obj.$set[`${this._objectid}.${dayId}`] = 0;
                 }
                 return yield database_1.default
                     .collection(this._collectionname)
                     .updateOne(this._dbquery, obj);
             }
             else {
-                let parentExists = Object.keys(this._fullraw).length > 0;
-                let obj = parentExists ? {} : this._dbquery;
+                const parentExists = Object.keys(this._fullraw).length > 0;
+                const obj = parentExists ? {} : this._dbquery;
                 obj[this._objectid] = [];
                 for (let i = 0; i < dayId; i++)
                     obj[this._objectid].push(0);
@@ -143,7 +142,7 @@ class DbStatGraph {
                 if (parentExists) {
                     return yield database_1.default
                         .collection(this._collectionname)
-                        .updateOne(this._dbquery, { '$set': obj });
+                        .updateOne(this._dbquery, { $set: obj });
                 }
                 else {
                     this._fullraw[this._objectid] = obj;
@@ -160,11 +159,11 @@ class DbStatGraph {
 }
 exports.DbStatGraph = DbStatGraph;
 function getDayId() {
-    let now = new Date();
-    let start = new Date(2020, 0, 0);
-    let diff = now.getTime() - start.getTime();
-    let oneDay = 1000 * 60 * 60 * 24;
-    let day = Math.floor(diff / oneDay);
+    const now = new Date();
+    const start = new Date(2020, 0, 0);
+    const diff = now.getTime() - start.getTime();
+    const oneDay = 1000 * 60 * 60 * 24;
+    const day = Math.floor(diff / oneDay);
     return day - 1; // index 0 on 1st january
 }
 //# sourceMappingURL=dbstats.js.map

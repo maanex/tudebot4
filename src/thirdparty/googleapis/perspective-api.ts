@@ -1,6 +1,6 @@
 
-import fetch, { Response } from 'node-fetch';
-import * as chalk from 'chalk';
+import fetch from 'node-fetch'
+import * as chalk from 'chalk'
 
 
 export interface PerspectiveAPIInitSettings {
@@ -37,23 +37,23 @@ export default class PerspectiveAPI {
 
   //
 
-  constructor (
+  constructor(
     private key: string,
-    private settings?: PerspectiveAPIInitSettings,
+    private settings?: PerspectiveAPIInitSettings
   ) {
     if (!this.settings) {
-      this.settings = PerspectiveAPI.DEFAULT_SETTINGS;
+      this.settings = PerspectiveAPI.DEFAULT_SETTINGS
     } else {
-      if (!this.settings.discoveryurl) this.settings.discoveryurl = PerspectiveAPI.DEFAULT_SETTINGS.discoveryurl;
-      if (!this.settings.headers) this.settings.headers = PerspectiveAPI.DEFAULT_SETTINGS.headers;
-      if (!this.settings.languages) this.settings.languages = PerspectiveAPI.DEFAULT_SETTINGS.languages;
+      if (!this.settings.discoveryurl) this.settings.discoveryurl = PerspectiveAPI.DEFAULT_SETTINGS.discoveryurl
+      if (!this.settings.headers) this.settings.headers = PerspectiveAPI.DEFAULT_SETTINGS.headers
+      if (!this.settings.languages) this.settings.languages = PerspectiveAPI.DEFAULT_SETTINGS.languages
     }
 
-    this.settings.headers['Content-Type'] = 'application/json';
+    this.settings.headers['Content-Type'] = 'application/json'
 
     if (!PerspectiveAPI.requestQueue) {
-      PerspectiveAPI.requestQueue = [];
-      setInterval(() => PerspectiveAPI.requestQueue.length&&PerspectiveAPI.requestQueue.splice(0, 1)[0](), 1000);
+      PerspectiveAPI.requestQueue = []
+      setInterval(() => PerspectiveAPI.requestQueue.length && PerspectiveAPI.requestQueue.splice(0, 1)[0](), 1000)
     }
   }
 
@@ -65,7 +65,7 @@ export default class PerspectiveAPI {
           headers: this.settings.headers,
           body: JSON.stringify({
             comment: { text: input },
-            languages: languages,// || this.settings.languages,
+            languages, // || this.settings.languages,
             doNotStore: true,
             requestedAttributes: {
               TOXICITY: {},
@@ -75,15 +75,15 @@ export default class PerspectiveAPI {
               PROFANITY: {},
               THREAT: {},
               SEXUALLY_EXPLICIT: {},
-              FLIRTATION: {},
+              FLIRTATION: {}
             }
           })
-        });
-        if (!res.ok) reject(res.status + ' ' + res.statusText);
-        else {
-          const data = await res.json();
+        })
+        // eslint-disable-next-line prefer-promise-reject-errors
+        if (!res.ok) { reject(res.status + ' ' + res.statusText) } else {
+          const data = await res.json()
           resolve({
-            input: input,
+            input,
             toxicity: data.attributeScores.TOXICITY.summaryScore.value,
             severeToxicity: data.attributeScores.SEVERE_TOXICITY.summaryScore.value,
             identityAttack: data.attributeScores.IDENTITY_ATTACK.summaryScore.value,
@@ -91,21 +91,21 @@ export default class PerspectiveAPI {
             profanity: data.attributeScores.PROFANITY.summaryScore.value,
             threat: data.attributeScores.THREAT.summaryScore.value,
             sexuallyExplicit: data.attributeScores.SEXUALLY_EXPLICIT.summaryScore.value,
-            flirtation: data.attributeScores.FLIRTATION.summaryScore.value,
-          });
+            flirtation: data.attributeScores.FLIRTATION.summaryScore.value
+          })
         }
-      });
-    });
+      })
+    })
   }
 
   public log(res: AnalyzerResponse) {
     console.log(chalk`
 {gray >>} {white ${res.input}}
-{gray  Flirt:} {${res.flirtation < .5 ? 'white' : (res.flirtation > .8 ? 'red' : 'yellow')} ${res.flirtation.toFixed(4)} ${'░'.repeat(Math.floor(res.flirtation * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.flirtation * 10))}}
-{gray Attack:} {${res.identityAttack < .5 ? 'white' : (res.identityAttack > .8 ? 'red' : 'yellow')} ${res.identityAttack.toFixed(4)} ${'░'.repeat(Math.floor(res.identityAttack * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.identityAttack * 10))}}
-{gray Insult:} {${res.insult < .5 ? 'white' : (res.insult > .8 ? 'red' : 'yellow')} ${res.insult.toFixed(4)} ${'░'.repeat(Math.floor(res.insult * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.insult * 10))}}
-{gray  Toxic:} {${res.toxicity < .5 ? 'white' : (res.toxicity > .8 ? 'red' : 'yellow')} ${res.toxicity.toFixed(4)} ${'░'.repeat(Math.floor(res.toxicity * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.toxicity * 10))}}
-`);
+{gray  Flirt:} {${res.flirtation < 0.5 ? 'white' : (res.flirtation > 0.8 ? 'red' : 'yellow')} ${res.flirtation.toFixed(4)} ${'░'.repeat(Math.floor(res.flirtation * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.flirtation * 10))}}
+{gray Attack:} {${res.identityAttack < 0.5 ? 'white' : (res.identityAttack > 0.8 ? 'red' : 'yellow')} ${res.identityAttack.toFixed(4)} ${'░'.repeat(Math.floor(res.identityAttack * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.identityAttack * 10))}}
+{gray Insult:} {${res.insult < 0.5 ? 'white' : (res.insult > 0.8 ? 'red' : 'yellow')} ${res.insult.toFixed(4)} ${'░'.repeat(Math.floor(res.insult * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.insult * 10))}}
+{gray  Toxic:} {${res.toxicity < 0.5 ? 'white' : (res.toxicity > 0.8 ? 'red' : 'yellow')} ${res.toxicity.toFixed(4)} ${'░'.repeat(Math.floor(res.toxicity * 10))}}{gray ${'░'.repeat(10 - Math.floor(res.toxicity * 10))}}
+`)
   }
 
   public logFull(res: AnalyzerResponse, extra = false) {
@@ -117,26 +117,26 @@ export default class PerspectiveAPI {
       [ 'Profanity', res.profanity ],
       [ 'Threat', res.threat ],
       [ 'Sexually Explicit', res.sexuallyExplicit ],
-      [ 'Flirt', res.flirtation ],
-    ];
+      [ 'Flirt', res.flirtation ]
+    ]
     if (extra) {
       data.push(...(<([string, number])[]> [
-        [ 'Language Offence', Math.min(1, (res.toxicity + res.severeToxicity + res.insult + res.profanity) / 3.5) ],
-      ]));
+        [ 'Language Offence', Math.min(1, (res.toxicity + res.severeToxicity + res.insult + res.profanity) / 3.5) ]
+      ]))
     }
-    this.logRaw(data, `{gray >>} {white ${res.input}}`);
+    this.logRaw(data, `{gray >>} {white ${res.input}}`)
   }
 
   private logRaw(input: ([string, number])[], title?: string) {
-    const maxlength = input.map(i => i[0].length).reduce((a,b) => Math.max(a,b), 0);
-    const out = `\n${(title+'\n') || ''}${input.map(i => this.buildSingle(i[0].padStart(maxlength),i[1])).join('\n')}`;
-    const print = [out];
-    print['raw'] = [out];
-    console.log(chalk(print));
+    const maxlength = input.map(i => i[0].length).reduce((a, b) => Math.max(a, b), 0)
+    const out = `\n${(title + '\n') || ''}${input.map(i => this.buildSingle(i[0].padStart(maxlength), i[1])).join('\n')}`
+    const print = [ out ] as string[] & { raw: string[] }
+    print.raw = [ out ]
+    console.log(chalk(print))
   }
 
   private buildSingle(name: string, value: number): string {
-    return `{gray ${name}} {${value < .5 ? 'white' : (value > .8 ? 'red' : 'yellow')} ${value.toFixed(4)} ${'░'.repeat(Math.floor(value * 10))}}{gray ${'░'.repeat(10 - Math.floor(value * 10))}}`
+    return `{gray ${name}} {${value < 0.5 ? 'white' : (value > 0.8 ? 'red' : 'yellow')} ${value.toFixed(4)} ${'░'.repeat(Math.floor(value * 10))}}{gray ${'░'.repeat(10 - Math.floor(value * 10))}}`
   }
 
 }

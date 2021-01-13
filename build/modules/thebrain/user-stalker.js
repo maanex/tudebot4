@@ -9,11 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("../../index");
 const node_fetch_1 = require("node-fetch");
+const index_1 = require("../../index");
 class UserStalker {
-    constructor() { }
-    //
     static getInfo(user) {
         return __awaiter(this, void 0, void 0, function* () {
             return {
@@ -36,19 +34,15 @@ class UserStalker {
     static rawDiscordProfile(userid) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield node_fetch_1.default(`https://discordapp.com/api/v7/users/${userid}`, {
-                headers: { 'Authorization': `Bot ${index_1.TudeBot.token}` }
+                headers: { Authorization: `Bot ${index_1.TudeBot.token}` }
             }).then((res) => res.json());
         });
     }
-    static fetchDiscordBio(userid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return null;
-        });
+    static fetchDiscordBio(_userid) {
+        return null;
     }
-    static fetchKsoftSi(userid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return null;
-        });
+    static fetchKsoftSi(_userid) {
+        return null;
     }
 }
 exports.default = UserStalker;

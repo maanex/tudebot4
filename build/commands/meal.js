@@ -10,11 +10,11 @@ class MealCommand extends types_1.Command {
             aliases: ['food', 'whatshallieat', 'makemefood', 'eat'],
             description: 'A random meal and how to make it',
             cooldown: 2,
-            groups: ['fun', 'apiwrapper'],
+            groups: ['fun', 'apiwrapper']
         });
     }
-    execute(channel, user, args, event, repl) {
-        let cmdl = parse_args_1.default.parse(args);
+    execute(channel, user, args, _event, repl) {
+        const cmdl = parse_args_1.default.parse(args);
         let url = 'https://www.themealdb.com/api/json/v1/1/random.php';
         let search = '';
         if (cmdl._) {
@@ -24,7 +24,7 @@ class MealCommand extends types_1.Command {
         return new Promise((resolve, reject) => {
             fetch(url)
                 .then(o => o.json())
-                .then(o => {
+                .then((o) => {
                 if (!o || !o.meals || !o.meals.length) {
                     if (search)
                         repl(`Haven't found any cocktails that go by the name ${search}!`, 'bad');
@@ -33,13 +33,13 @@ class MealCommand extends types_1.Command {
                     reject();
                     return;
                 }
-                let meal = o.meals[0];
+                const meal = o.meals[0];
                 if (cmdl.r || cmdl.raw) {
                     repl('```json\n' + JSON.stringify(meal, null, 2) + '```');
                     reject();
                     return;
                 }
-                let ingredients = [];
+                const ingredients = [];
                 let i = 1;
                 while (meal['strIngredient' + i]) {
                     ingredients.push(`${meal['strMeasure' + i]} **${meal['strIngredient' + i]}**`);
@@ -47,7 +47,7 @@ class MealCommand extends types_1.Command {
                 }
                 channel.send({
                     embed: {
-                        color: 0x2f3136,
+                        color: 0x2F3136,
                         title: meal.strMeal,
                         thumbnail: {
                             url: meal.strMealThumb
@@ -79,7 +79,7 @@ class MealCommand extends types_1.Command {
                 });
                 resolve(true);
             })
-                .catch(err => { console.error(err); repl('An error occured!', 'bad'); resolve(false); });
+                .catch((err) => { console.error(err); repl('An error occured!', 'bad'); resolve(false); });
         });
     }
 }

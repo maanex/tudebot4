@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable camelcase */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -28,17 +29,15 @@ class BadoszAPI {
             if (!this.settings.headers)
                 this.settings.headers = BadoszAPI.DEFAULT_SETTINGS.headers;
         }
-        this.settings.headers['Authorization'] = token;
+        this.settings.headers.Authorization = token;
     }
     makeRequest(endpoint, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const add = [];
-            for (const key in params)
-                add.push(`${key}=${encodeURIComponent(params[key])}`);
-            return node_fetch_1.default(this.settings.baseurl + endpoint + (add.length ? `?${add.join('&')}` : ''), {
-                method: 'GET',
-                headers: this.settings.headers
-            });
+        const add = [];
+        for (const key in params)
+            add.push(`${key}=${encodeURIComponent(params[key])}`);
+        return node_fetch_1.default(this.settings.baseurl + endpoint + (add.length ? `?${add.join('&')}` : ''), {
+            method: 'GET',
+            headers: this.settings.headers
         });
     }
     //
@@ -182,13 +181,13 @@ class BadoszAPI {
     }
     toBase64(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.base64, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.base64, { text });
             return (yield res.json()).formatted;
         });
     }
     toBinary(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.binary, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.binary, { text });
             return (yield res.json()).formatted;
         });
     }
@@ -200,14 +199,14 @@ class BadoszAPI {
     }
     getChangeMyMind(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.changemymind, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.changemymind, { text });
             return res.buffer();
         });
     }
     getColor(color) {
         return __awaiter(this, void 0, void 0, function* () {
             const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.color, {
-                hex: ('number' == typeof color) ? color.toString(16).padStart(6, '0') : color
+                hex: (typeof color === 'number') ? color.toString(16).padStart(6, '0') : color
             });
             return res.buffer();
         });
@@ -216,7 +215,7 @@ class BadoszAPI {
         return __awaiter(this, void 0, void 0, function* () {
             const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.colorify, {
                 url: imageUrl,
-                hex: ('number' == typeof color) ? color.toString(16).padStart(6, '0') : color
+                hex: (typeof color === 'number') ? color.toString(16).padStart(6, '0') : color
             });
             return res.buffer();
         });
@@ -242,19 +241,19 @@ class BadoszAPI {
     }
     getExcuseme(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.excuseme, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.excuseme, { text });
             return res.buffer();
         });
     }
     flipText(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.flip, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.flip, { text });
             return (yield res.json()).formatted;
         });
     }
     toHex(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.hex, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.hex, { text });
             return (yield res.json()).formatted;
         });
     }
@@ -266,19 +265,19 @@ class BadoszAPI {
     }
     toMorseCode(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.morse, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.morse, { text });
             return (yield res.json()).formatted;
         });
     }
     reverseText(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.reverse, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.reverse, { text });
             return (yield res.json()).formatted;
         });
     }
     getSteamUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.steamUser, { id: id });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.steamUser, { id });
             const out = yield res.json();
             out.created = new Date(out.created * 1000);
             out.last_log_off = new Date(out.last_log_off * 1000);
@@ -287,13 +286,13 @@ class BadoszAPI {
     }
     getTrumpTweet(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.trump, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.trump, { text });
             return res.buffer();
         });
     }
     toVaporwave(text) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.vaporwave, { text: text });
+            const res = yield this.makeRequest(BadoszAPI.ENDPOINTS.vaporwave, { text });
             return (yield res.json()).formatted;
         });
     }
@@ -313,7 +312,7 @@ class BadoszAPI {
 exports.default = BadoszAPI;
 BadoszAPI.DEFAULT_SETTINGS = {
     baseurl: 'https://api.badosz.com/',
-    headers: {},
+    headers: {}
 };
 BadoszAPI.ENDPOINTS = {
     ant: 'ant',
@@ -358,6 +357,6 @@ BadoszAPI.ENDPOINTS = {
     trump: 'trump',
     vaporwave: 'vaporwave',
     wanted: 'wanted',
-    wasted: 'wasted',
+    wasted: 'wasted'
 };
 //# sourceMappingURL=badosz-api.js.map

@@ -10,33 +10,33 @@ class InventoryCommand extends types_1.Command {
             name: 'inventory',
             aliases: ['inv', 'items', 'i'],
             description: 'See your inventory (or someone elses)',
-            groups: ['club'],
+            groups: ['club']
         });
     }
     execute(channel, orgUser, args, event, repl) {
-        return new Promise((resolve, reject) => {
-            let cmdl = parse_args_1.default.parse(args);
+        return new Promise((resolve) => {
+            const cmdl = parse_args_1.default.parse(args);
             let user = orgUser;
             if (event.message.mentions.users.size)
                 user = event.message.mentions.users.first();
-            else if (event.label == 'i' && args.length)
+            else if (event.label === 'i' && args.length)
                 return;
             tudeapi_1.default.clubUserByDiscordId(user.id, user)
-                .then(u => {
+                .then((u) => {
                 if (!u || u.error) {
                     repl('User not found!', 'message', 'Or internal error, idk');
                     resolve(false);
                     return;
                 }
                 if (!u.inventory || !u.inventory.size) {
-                    let wow = Math.random() < .1;
+                    const wow = Math.random() < 0.1;
                     channel.send({
                         embed: {
                             author: {
                                 name: `${user.username}'s inventory:`,
-                                icon_url: user.avatarURL
+                                icon_url: user.avatarURL()
                             },
-                            color: 0x2f3136,
+                            color: 0x2F3136,
                             description: wow ? 'Wow, such empty' : '... *Empty*',
                             image: wow ? { url: 'https://cdn.discordapp.com/attachments/655354019631333397/666720051784581155/unknown.png' } : undefined,
                             footer: wow ? { text: 'This inventory is empty' } : undefined
@@ -46,23 +46,23 @@ class InventoryCommand extends types_1.Command {
                     return;
                 }
                 const fields = {};
-                for (let i of u.inventory.values()) {
+                for (const i of u.inventory.values()) {
                     if (fields[i.prefab.category.id])
                         fields[i.prefab.category.id].push(i);
                     else
                         fields[i.prefab.category.id] = [i];
                 }
                 if (cmdl.t || cmdl.table) {
-                    let table = new AsciiTable();
+                    const table = new AsciiTable();
                     table.setHeading('type', 'amount', 'category', 'type', 'id');
                     let from = 1; // start counting with 1 here, I know it's unconventional but whatever it needs(!) to be done
                     let to = 10;
                     if (cmdl.p || cmdl.page) {
-                        from = parseInt(cmdl.p == undefined ? cmdl.page : cmdl.p) * 10 - 9;
+                        from = parseInt(cmdl.p === undefined ? cmdl.page : cmdl.p) * 10 - 9;
                         to = from + 9;
                     }
                     let c = 0;
-                    for (let i of u.inventory.values()) {
+                    for (const i of u.inventory.values()) {
                         if (++c >= from && c <= to)
                             table.addRow(i.prefab.id, i.amount, i.prefab.category.id, i.prefab.group.id, i.id);
                     }
@@ -73,10 +73,10 @@ class InventoryCommand extends types_1.Command {
                         embed: {
                             author: {
                                 name: `${user.username}'s inventory:`,
-                                icon_url: user.avatarURL
+                                icon_url: user.avatarURL()
                             },
-                            color: 0x2f3136,
-                            fields: Object.values(fields).map(v => {
+                            color: 0x2F3136,
+                            fields: Object.values(fields).map((v) => {
                                 return {
                                     name: v[0].prefab.category.namepl || 'Other',
                                     value: v.map(i => `${i.prefab.icon} **${i.prefab.expanded ? ' ' : i.amount + 'x '}**${i.name} *\`${i.id}\`*`).join('\n')
@@ -87,7 +87,7 @@ class InventoryCommand extends types_1.Command {
                 }
                 resolve(true);
             })
-                .catch(err => {
+                .catch((err) => {
                 repl('An error occured!', 'bad');
                 console.error(err);
                 resolve(false);

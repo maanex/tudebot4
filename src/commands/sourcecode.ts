@@ -1,6 +1,5 @@
-import { TudeBot } from "../index";
-import { Message, Channel, User, TextChannel } from "discord.js";
-import { cmesType, Command, CommandExecEvent, ReplyFunction } from "../types/types";
+import { User, TextChannel } from 'discord.js'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class SourcecodeCommand extends Command {
@@ -9,13 +8,13 @@ export default class SourcecodeCommand extends Command {
     super({
       name: 'sourcecode',
       description: "A link to the Bot's source code.",
-      groups: [ 'info' ],
-    });
+      groups: [ 'info' ]
+    })
   }
 
-  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
-    repl('The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4');
-    return true;    
+  public execute(_channel: TextChannel, _user: User, _args: string[], _event: CommandExecEvent, repl: ReplyFunction): boolean {
+    repl('The TudeBot is open source:', 'message', 'https://github.com/Maanex/tudebot4')
+    return true
   }
 
 }

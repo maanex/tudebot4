@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Jimp = require("jimp");
 function generateInviteLinkMeme(username) {
-    return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
         Jimp.read('./assets/img/invite_link_meme_1.png')
             .then((img) => __awaiter(this, void 0, void 0, function* () {
             const font = yield Jimp.loadFont('./assets/fonts/montserrat.fnt');
@@ -23,10 +23,10 @@ function generateInviteLinkMeme(username) {
                     resolve(res);
             });
         }))
-            .catch(err => {
+            .catch((err) => {
             reject(err);
         });
-    }));
+    });
 }
 exports.default = generateInviteLinkMeme;
 //# sourceMappingURL=generate-invite-link-meme.js.map

@@ -9,14 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const git_last_commit_1 = require("git-last-commit");
 const child_process_1 = require("child_process");
-const chalk = require("chalk");
+const git_last_commit_1 = require("git-last-commit");
+const chalk = require('chalk');
 function getGitCommit() {
     return new Promise((resolve, reject) => {
         git_last_commit_1.getLastCommit((err, commit) => {
-            if (err)
+            if (err) {
                 reject(err);
+            }
             else {
                 commit.time = child_process_1.execSync('git log -1 --format=%cd --date=local').toString().trim();
                 resolve(commit);
@@ -27,8 +28,8 @@ function getGitCommit() {
 exports.getGitCommit = getGitCommit;
 function logVersionDetails() {
     return __awaiter(this, void 0, void 0, function* () {
-        let commit = yield getGitCommit();
-        let commitDate = new Date(commit.time);
+        const commit = yield getGitCommit();
+        const commitDate = new Date(commit.time);
         console.log(`Running commit ${chalk.blueBright(commit.shortHash)} ${chalk.gray(`(${commit.subject})`)}`);
         console.log(`From ${chalk.blueBright(commitDate.toLocaleString())}`);
     });

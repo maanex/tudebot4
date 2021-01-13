@@ -1,22 +1,7 @@
-import { User } from "discord.js";
-import { TudeBot } from "../../index";
-import fetch, { Response } from "node-fetch";
+import { User } from 'discord.js'
+import fetch, { Response } from 'node-fetch'
+import { TudeBot } from '../../index'
 
-
-export interface UserInfo {
-  userInstance: User;
-  trustworthiness: {
-    score: number;
-    sources: {
-      account: {
-        age: number;
-        flags: number;
-      },
-      discordbio: DiscordBioData,
-      ksoftsi: KsoftSiData
-    }
-  }
-}
 
 interface DiscordBioData {
   found: boolean;
@@ -40,12 +25,21 @@ interface KsoftSiData {
   proofImage: string;
   timestamp: Date;
 }
-
+export interface UserInfo {
+  userInstance: User;
+  trustworthiness: {
+    score: number;
+    sources: {
+      account: {
+        age: number;
+        flags: number;
+      },
+      discordbio: DiscordBioData,
+      ksoftsi: KsoftSiData
+    }
+  }
+}
 export default class UserStalker {
-
-  private constructor() { }
-
-  //
 
   public static async getInfo(user: User): Promise<UserInfo> {
     return {
@@ -61,23 +55,23 @@ export default class UserStalker {
           ksoftsi: await this.fetchKsoftSi(user.id)
         }
       }
-    };
+    }
   }
 
   //
 
   private static async rawDiscordProfile(userid: string): Promise<any> {
     return await fetch(`https://discordapp.com/api/v7/users/${userid}`, {
-      headers: { 'Authorization': `Bot ${TudeBot.token}`}
-    }).then((res: Response) => res.json());
+      headers: { Authorization: `Bot ${TudeBot.token}` }
+    }).then((res: Response) => res.json())
   }
 
-  private static async fetchDiscordBio(userid: string): Promise<DiscordBioData> {
-    return null;
+  private static fetchDiscordBio(_userid: string): Promise<DiscordBioData> {
+    return null
   }
 
-  private static async fetchKsoftSi(userid: string): Promise<KsoftSiData> {
-    return null;
+  private static fetchKsoftSi(_userid: string): Promise<KsoftSiData> {
+    return null
   }
 
 }

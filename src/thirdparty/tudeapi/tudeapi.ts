@@ -1,12 +1,14 @@
-import { User as DiscordUser } from "discord.js";
-import WCP from "../../thirdparty/wcp/wcp";
-import { TudeBot } from "../../index";
-import { badgeEmojiList } from "./badgelist";
-import GetPointsModule from "../../modules/getpoints";
-import { Item, StackableItem, ItemCategory, ItemGroup, ExpandedItem, ItemPrefab } from "./item";
-import { ItemList } from "../../content/itemlist";
-import * as chalk from "chalk";
-import fetch from "node-fetch";
+/* eslint-disable camelcase */
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable node/handle-callback-err */
+import { User as DiscordUser } from 'discord.js'
+import fetch from 'node-fetch'
+import WCP from '../../thirdparty/wcp/wcp'
+import { TudeBot } from '../../index'
+import GetPointsModule from '../../modules/getpoints'
+import { ItemList } from '../../content/itemlist'
+import { badgeEmojiList } from './badgelist'
+import { Item, StackableItem, ExpandedItem, ItemPrefab } from './item'
 
 
 export interface User {
@@ -15,6 +17,7 @@ export interface User {
   type: number;
   name: string;
   tag: number;
+  accounts?: any;
 }
 
 export interface ClubUser {
@@ -45,6 +48,15 @@ export interface ClubUser {
   addItem(item: ItemPrefab, amount?: number, meta?: any): Item | null;
 }
 
+type ClubUserPrivateProps = {
+  _org_points: number;
+  _org_cookies: number;
+  _org_gems: number;
+  _org_keys: number;
+  _org_profile_disp_badge: number;
+  _raw_inventory: Map<string, Item>;
+}
+
 export interface Badge {
   id: number;
   keyword: string;
@@ -67,6 +79,8 @@ export interface Badge {
 export interface Leaderboard {
   alltime: ClubUser[];
   month: ClubUser[];
+  cookies: ClubUser[];
+  dailystreak: ClubUser[];
   season: number;
   updated: number;
 }
@@ -94,11 +108,11 @@ export type ClubAction = { id: 'claim_daily_reward' }
 export default class TudeApi {
 
   public static get baseurl() {
-    return TudeBot.config.thirdparty.tudeapi.baseurl;
+    return TudeBot.config.thirdparty.tudeapi.baseurl
   }
 
   public static get key() {
-    return TudeBot.config.thirdparty.tudeapi.key;
+    return TudeBot.config.thirdparty.tudeapi.key
   }
 
   public static get endpoints() {
@@ -122,96 +136,91 @@ export default class TudeApi {
 
   //
 
-  public static init(language: 'en' | 'de'): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      fetch(this.baseurl + this.endpoints.club.badges, {
-        method: 'get',
-        headers: { 'auth': this.key }
-      })
-        .then(o => o.json())
-        .then(o => {
-          this.badges = o;
-          for (let b of this.badges) {
-            b.getAppearance = function (level: number): { from: number; name: string; icon: string; id: number; emoji: string; } {
-              let appearance = b.appearance[0];
-              let appid = -1;
-              for (let a of b.appearance) {
-                if (a.from <= level)
-                  appearance = a;
-                else break;
-                appid++;
-              }
-              return {
-                from: appearance.from,
-                name: appearance.name,
-                icon: appearance.icon,
-                id: appid,
-                emoji: badgeEmojiList[b.id][appid]
-              };
-            };
+  public static async init(language: 'en' | 'de'): Promise<void> {
+    fetch(this.baseurl + this.endpoints.club.badges, {
+      method: 'get',
+      headers: { auth: this.key }
+    })
+      .then(o => o.json())
+      .then((o) => {
+        this.badges = o
+        for (const b of this.badges) {
+          b.getAppearance = function (level: number): { from: number; name: string; icon: string; id: number; emoji: string; } {
+            let appearance = b.appearance[0]
+            let appid = -1
+            for (const a of b.appearance) {
+              if (a.from <= level)
+                appearance = a
+              else break
+              appid++
+            }
+            return {
+              from: appearance.from,
+              name: appearance.name,
+              icon: appearance.icon,
+              id: appid,
+              emoji: badgeEmojiList[b.id][appid]
+            }
           }
-          WCP.send({ status_tudeapi: '+Connected' });
-        })
-        .catch(err => {
-          console.error(err);
-          WCP.send({ status_tudeapi: '-Connection failed' });
-        });
-      //
-
-      const langLoaded = () => {
-        // fetch(this.baseurl + this.endpoints.club.items, {
-        //     method: 'get',
-        //     headers: { 'auth': this.key } })
-        //     .then(o => o.json())
-        //     .then(o => {
-        //         for (const i of o) {
-        //             // const item: Item = {
-        //             //     id: i.id,
-        //             //     ref: i.id,
-        //             //     name: this.clubLang['item_' + i.id] || i.id,
-        //             //     category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
-        //             //     type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
-        //             //     amount: 0,
-        //             //     meta: {},
-        //             //     expanded: (i.prop & 0b0001) != 0,
-        //             //     tradeable: (i.prop & 0b0010) != 0,
-        //             //     sellable: (i.prop & 0b0100) != 0,
-        //             //     purchaseable: (i.prop & 0b1000) != 0,
-        //             //     icon: 'TODO'
-        //             // };
-        //             // this.items.push(item);
-        //         }
-        //         resolve();
-        //     })
-        //     .catch(err => {
-        //         console.error(err);
-        //         reject();
-        //     });
-        resolve();
-      }
-      //
-
-      await fetch(this.baseurl + this.endpoints.club.lang + language, {
-        method: 'get',
-        headers: { 'auth': this.key }
+        }
+        WCP.send({ status_tudeapi: '+Connected' })
       })
-        .then(o => o.json())
-        .then(o => {
-          this.clubLang = o;
-          langLoaded();
-        })
-        .catch(err => {
-          console.error(err);
-          langLoaded(); // Yes it's not loaded but whatever, they'll have to handle it without a lang file then, I don't care
-          reject();
-        });
-      //
+      .catch((err) => {
+        console.error(err)
+        WCP.send({ status_tudeapi: '-Connection failed' })
+      })
+    //
 
-    });
+    const langLoaded = () => {
+      // fetch(this.baseurl + this.endpoints.club.items, {
+      //     method: 'get',
+      //     headers: { 'auth': this.key } })
+      //     .then(o => o.json())
+      //     .then(o => {
+      //         for (const i of o) {
+      //             // const item: Item = {
+      //             //     id: i.id,
+      //             //     ref: i.id,
+      //             //     name: this.clubLang['item_' + i.id] || i.id,
+      //             //     category: { id: i.cat, name: this.clubLang['itemcat_' + (i.cat || 'null')] || '', namepl: this.clubLang['itemcatpl_' + (i.cat || 'null')] || '' },
+      //             //     type: { id: i.type, name: this.clubLang['itemtype_' + (i.type || 'null')] || '', namepl: this.clubLang['itemtypepl_' + (i.type || 'null')] || '' },
+      //             //     amount: 0,
+      //             //     meta: {},
+      //             //     expanded: (i.prop & 0b0001) != 0,
+      //             //     tradeable: (i.prop & 0b0010) != 0,
+      //             //     sellable: (i.prop & 0b0100) != 0,
+      //             //     purchaseable: (i.prop & 0b1000) != 0,
+      //             //     icon: 'TODO'
+      //             // };
+      //             // this.items.push(item);
+      //         }
+      //         resolve();
+      //     })
+      //     .catch(err => {
+      //         console.error(err);
+      //         reject();
+      //     });
+    }
+    //
+
+    await fetch(this.baseurl + this.endpoints.club.lang + language, {
+      method: 'get',
+      headers: { auth: this.key }
+    })
+      .then(o => o.json())
+      .then((o) => {
+        this.clubLang = o
+        langLoaded()
+      })
+      .catch((err) => {
+        console.error(err)
+        langLoaded() // Yes it's not loaded but whatever, they'll have to handle it without a lang file then, I don't care
+      })
+    //
   }
 
   public static reload() {
-    this.init(this.clubLang._id);
+    this.init(this.clubLang._id)
   }
 
   //
@@ -220,143 +229,143 @@ export default class TudeApi {
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.users + id, {
         method: 'get',
-        headers: { 'auth': this.key },
+        headers: { auth: this.key }
       })
         .then(o => o.json())
         .then(o => resolve(o))
-        .catch(err => reject(err));
-    });
+        .catch(err => reject(err))
+    })
   }
 
   public static userByDiscordId(id: string, orCreate?: DiscordUser): Promise<User> {
-    let status: number;
+    let status: number
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.users + 'find?discord=' + id, {
         method: 'get',
-        headers: { 'auth': this.key },
+        headers: { auth: this.key }
       })
-        .then(res => {
-          status = res.status;
-          return res.json();
+        .then((res) => {
+          status = res.status
+          return res.json()
         })
-        .then(o => {
-          if (status == 404 && orCreate) { // No user present
+        .then((o) => {
+          if (status === 404 && orCreate) { // No user present
             TudeApi.createNewUser({
               type: 2,
               name: orCreate.username,
               accounts: { discord: orCreate.id }
             }).then(() => {
-              resolve(this.userByDiscordId(id));
-            }).catch(err => resolve(o));
-          } else resolve(o);
+              resolve(this.userByDiscordId(id))
+            }).catch(_err => resolve(o))
+          } else { resolve(o) }
         })
-        .catch(err => reject(err));
-    });
+        .catch(err => reject(err))
+    })
   }
 
   public static createNewUser(options: { type: number, name: string, email?: string, accounts?: { discord: string } }): Promise<void> {
-    let status;
+    let status
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.users, {
         method: 'post',
         body: JSON.stringify(options),
-        headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+        headers: { auth: this.key, 'Content-Type': 'application/json' }
       })
-        .then(res => {
-          status = res.status;
-          return res.json();
+        .then((res) => {
+          status = res.status
+          return res.json()
         })
-        .then(o => {
-          if (status == 200) resolve()
-          else reject();
+        .then((_o) => {
+          if (status === 200) resolve()
+          else reject()
         })
-        .catch(err => reject());
-    });
+        .catch(_err => reject())
+    })
   }
 
   public static clubUserById(id: string): Promise<ClubUser> {
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.club.users + id, {
         method: 'get',
-        headers: { 'auth': this.key },
+        headers: { auth: this.key }
       })
         .then(o => o.json())
-        .then(o => {
+        .then((o) => {
           if (o) {
-            o['_raw_inventory'] = o.inventory;
-            o.inventory = new Map();
-            for (let ref in o['_raw_inventory'])
-              o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
+            o._raw_inventory = o.inventory
+            o.inventory = new Map()
+            for (const ref in o._raw_inventory)
+              o.inventory.set(ref, this.parseItem(ref, o._raw_inventory[ref]))
 
-            o['_raw_daily'] = o.daily;
-            o.daily = this.parseClubUserDailyData(o.daily);
-            this.mountClubUserFunctions(o);
+            o._raw_daily = o.daily
+            o.daily = this.parseClubUserDailyData(o.daily)
+            this.mountClubUserFunctions(o)
 
-            o['_org_points'] = o['points'] || 0;
-            o['_org_cookies'] = o['cookies'] || 0;
-            o['_org_gems'] = o['gems'] || 0;
-            o['_org_keys'] = o['keys'] || 0;
-            o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
+            o._org_points = o.points || 0
+            o._org_cookies = o.cookies || 0
+            o._org_gems = o.gems || 0
+            o._org_keys = o.keys || 0
+            o._org_profile_disp_badge = o.profile && o.profile.disp_badge
           }
-          resolve(o);
+          resolve(o)
         })
-        .catch(err => reject(err));
-    });
+        .catch(err => reject(err))
+    })
   }
 
   public static clubUserByDiscordId(id: string, orCreate?: DiscordUser): Promise<ClubUser> {
-    let status: number;
+    let status: number
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.club.users + 'find?discord=' + id, {
         method: 'get',
-        headers: { 'auth': this.key },
+        headers: { auth: this.key }
       })
-        .then(res => {
-          status = res.status;
-          return res.json();
+        .then((res) => {
+          status = res.status
+          return res.json()
         })
-        .then(o => {
-          if (status == 404 && orCreate) { // No user present
+        .then((o) => {
+          if (status === 404 && orCreate) { // No user present
             TudeApi.createNewUser({
               type: 2,
               name: orCreate.username,
               accounts: { discord: orCreate.id }
             }).then(() => {
-              resolve(this.clubUserByDiscordId(id));
-            }).catch(err => resolve(o));
+              resolve(this.clubUserByDiscordId(id))
+            }).catch(_err => resolve(o))
           } else {
             if (o) {
-              o['_raw_inventory'] = o.inventory;
-              o.inventory = new Map<string, Item>();
-              for (let ref in o['_raw_inventory'])
-                o.inventory.set(ref, this.parseItem(ref, o['_raw_inventory'][ref]));
+              o._raw_inventory = o.inventory
+              o.inventory = new Map<string, Item>()
+              for (const ref in o._raw_inventory)
+                o.inventory.set(ref, this.parseItem(ref, o._raw_inventory[ref]))
 
-              o['_raw_daily'] = o.daily;
-              o.daily = this.parseClubUserDailyData(o.daily);
+              o._raw_daily = o.daily
+              o.daily = this.parseClubUserDailyData(o.daily)
 
-              this.mountClubUserFunctions(o);
+              this.mountClubUserFunctions(o)
 
-              o['_org_points'] = o['points'] || 0;
-              o['_org_cookies'] = o['cookies'] || 0;
-              o['_org_gems'] = o['gems'] || 0;
-              o['_org_keys'] = o['keys'] || 0;
-              o['_org_profile_disp_badge'] = o['profile'] && o['profile']['disp_badge'];
+              o._org_points = o.points || 0
+              o._org_cookies = o.cookies || 0
+              o._org_gems = o.gems || 0
+              o._org_keys = o.keys || 0
+              o._org_profile_disp_badge = o.profile && o.profile.disp_badge
             }
-            resolve(o);
+            resolve(o)
           }
         })
-        .catch(err => reject(err));
-    });
+        .catch(err => reject(err))
+    })
   }
 
   private static parseClubUserDailyData(rawDaily: any): { last: Date, claimable: boolean, streak: number } {
-    if (!rawDaily) return { last: new Date(0), claimable: true, streak: 0 };
+    if (!rawDaily) return { last: new Date(0), claimable: true, streak: 0 }
 
-    let daynum: number = rawDaily.last;
-    let date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111);
-    let delta = new Date().getTime() - date.getTime();
-    let today = delta <= 86400000;
-    let yesterday = delta >= 86400000 && delta <= 86400000 * 2;
+    const daynum: number = rawDaily.last
+    const date = new Date((daynum >> 9) + 2000, (daynum >> 5) & 0b1111, daynum & 0b11111)
+    const delta = new Date().getTime() - date.getTime()
+    const today = delta <= 86400000
+    const yesterday = delta >= 86400000 && delta <= 86400000 * 2
     return {
       last: date,
       claimable: !today,
@@ -366,210 +375,209 @@ export default class TudeApi {
 
   private static mountClubUserFunctions(u: ClubUser) {
     u.addItem = (item: ItemPrefab, amount?: number, meta?: any) => {
-      if (amount == undefined) amount = 1;
-      let itemi: Item = null;
+      if (amount === undefined) amount = 1
+      let itemi: Item = null
       if (item._isDef) {
-        switch(item.id) {
+        switch (item.id) {
           case 'cookie':
-            u.cookies += amount;
-            itemi = item.create(u.cookies);
-            break;
+            u.cookies += amount
+            itemi = item.create(u.cookies)
+            break
           case 'gem':
-            u.gems += amount;
-            itemi = item.create(u.gems);
-            break;
+            u.gems += amount
+            itemi = item.create(u.gems)
+            break
           case 'key':
-            u.keys += amount;
-            itemi = item.create(u.keys);
-            break;
-          default: return null;
+            u.keys += amount
+            itemi = item.create(u.keys)
+            break
+          default: return null
         }
       } else if (u.inventory.has(item.id)) {
-        if (item.expanded) {
-          return null;
-        }
-        itemi = u.inventory.get(item.id);
-        itemi.amount += amount;
+        if (item.expanded)
+          return null
+
+        itemi = u.inventory.get(item.id)
+        itemi.amount += amount
       } else {
-        const itemInstance: Item = item.expanded ? new item.class(item, item.id, meta || {}) : new item.class(item, amount);
-        u.inventory.set(item.id, itemInstance);
-        itemi = itemInstance;
+        const itemInstance: Item = item.expanded ? new item.Class(item, item.id, meta || {}) : new item.Class(item, amount)
+        u.inventory.set(item.id, itemInstance)
+        itemi = itemInstance
       }
-      return itemi;
-    };
+      return itemi
+    }
   }
 
   public static badgeById(id: number): Badge {
-    return this.badges.find(b => b.id == id);
+    return this.badges.find(b => b.id === id)
   }
 
   public static badgeByKeyword(keyword: string): Badge {
-    return this.badges.find(b => b.keyword == keyword.toLowerCase());
+    return this.badges.find(b => b.keyword === keyword.toLowerCase())
   }
 
   public static badgeBySearchQuery(search: string): Badge {
-    return this.badges.find(b => {
-      b.description.includes(search.toLowerCase()) ||
-        b.info.includes(search.toLowerCase()) ||
-        b.getAppearance(0).name.includes(search.toLowerCase())
-    });
+    return this.badges.find((b: Badge) => (
+      b.description.includes(search.toLowerCase())
+        || b.info.includes(search.toLowerCase())
+        || b.getAppearance(0).name.includes(search.toLowerCase())
+    ))
   }
 
   public static clubLeaderboard(): Promise<Leaderboard> {
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.club.leaderboard, {
         method: 'get',
-        headers: { 'auth': this.key },
+        headers: { auth: this.key }
       })
         .then(o => o.json())
         .then(o => resolve(o))
-        .catch(err => reject(err));
-    });
+        .catch(err => reject(err))
+    })
   }
 
-  public static updateUser(user: User): void {
+  public static updateUser(user: User) {
     fetch(this.baseurl + this.endpoints.users + user.id, {
       method: 'put',
       body: JSON.stringify(user),
-      headers: { 'auth': this.key, 'Content-Type': 'application/json' },
-    });
+      headers: { auth: this.key, 'Content-Type': 'application/json' }
+    })
   }
 
-  public static updateClubUser(user: ClubUser): void {
-    let u: any = {};
-    u.points = { add: user.points - user['_org_points'] };
-    if (!u.points.add) delete u.points;
-    u.cookies = { add: user.cookies - user['_org_cookies'] };
-    if (!u.cookies.add) delete u.cookies;
-    u.gems = { add: user.gems - user['_org_gems'] };
-    if (!u.gems.add) delete u.gems;
-    u.keys = { add: user.keys - user['_org_keys'] };
-    if (!u.keys.add) delete u.keys;
+  public static updateClubUser(user: ClubUser) {
+    const userObj = user as ClubUser & ClubUserPrivateProps
+    const u: any = {}
+    u.points = { add: userObj.points - userObj._org_points }
+    if (!u.points.add) delete u.points
+    u.cookies = { add: userObj.cookies - userObj._org_cookies }
+    if (!u.cookies.add) delete u.cookies
+    u.gems = { add: userObj.gems - userObj._org_gems }
+    if (!u.gems.add) delete u.gems
+    u.keys = { add: userObj.keys - userObj._org_keys }
+    if (!u.keys.add) delete u.keys
 
-    if (user.profile && user.profile.disp_badge != user['_org_profile_disp_badge'])
-      u['profile'] = { disp_badge: user.profile.disp_badge };
+    if (userObj.profile && userObj.profile.disp_badge !== userObj._org_profile_disp_badge)
+      u.profile = { disp_badge: userObj.profile.disp_badge }
 
-    const updatedItems: Item[] = [];
-    if (user.inventory) {
-      u.inventory = {};
-      let ichanges = false;
-      user.inventory.forEach((item, key) => {
-        const org = user['_raw_inventory'][key];
-        let out = {} as any;
-        let changes = false;
+    const updatedItems: Item[] = []
+    if (userObj.inventory) {
+      u.inventory = {}
+      let ichanges = false
+      userObj.inventory.forEach((item, key) => {
+        const org = userObj._raw_inventory[key]
+        let out = {} as any
+        let changes = false
         if (!org) {
           out = {
             amount: item.amount,
             meta: item.metaChanges
-          };
-          updatedItems.push(item);
-          changes = true;
+          }
+          updatedItems.push(item)
+          changes = true
+        } else if (item.prefab.expanded) {
+          if (item.metaChanges) {
+            out.meta = item.metaChanges
+            updatedItems.push(item)
+            changes = true
+          }
+          if (item.amount === 0) {
+            out.amount = 0
+            changes = true
+          }
         } else {
-          if (item.prefab.expanded) {
-            if (item.metaChanges) {
-              out.meta = item.metaChanges;
-              updatedItems.push(item);
-              changes = true;
-            }
-            if (item.amount == 0) {
-              out.amount = 0;
-              changes = true;
-            }
-          } else {
-            if (!org.amount) org.amount = 1;
-            if (org.amount != item.amount) {
-              out.amount = { add: item.amount - org.amount };
-              updatedItems.push(item);
-              changes = true;
-            }
+          if (!org.amount) org.amount = 1
+          if (org.amount !== item.amount) {
+            out.amount = { add: item.amount - org.amount }
+            updatedItems.push(item)
+            changes = true
           }
         }
         if (changes) {
-          u.inventory[key] = out;
-          ichanges = true;
+          u.inventory[key] = out
+          ichanges = true
         }
-      });
-      if (!ichanges) delete u.inventory;
+      })
+      if (!ichanges) delete u.inventory
     }
-    fetch(this.baseurl + this.endpoints.club.users + user.id, {
+    fetch(this.baseurl + this.endpoints.club.users + userObj.id, {
       method: 'put',
       body: JSON.stringify(u),
-      headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+      headers: { auth: this.key, 'Content-Type': 'application/json' }
     })
       .then(o => o.json())
-      .then(o => {
-        user['_org_points'] += u.points ? u.points.add : 0;
-        user['_org_cookies'] += u.cookies ? u.cookies.add : 0;
-        user['_org_gems'] += u.gems ? u.gems.add : 0;
-        user['_org_keys'] += u.keys ? u.keys.add : 0;
-        user['_org_profile_disp_badge'] = u.profile && u.profile.disp_badge;
-        if (o['levelup'] != undefined)
-          TudeBot.getModule<GetPointsModule>('getpoints').onUserLevelup(user, o['levelup']['level'], o['levelup']);
-        if (o['items']) {
-          for (const id of o['items']) {
-            if (!updatedItems.length) break;
-            updatedItems[0].id = id;
-            updatedItems.splice(0, 1);
+      .then((o) => {
+        userObj._org_points += u.points ? u.points.add : 0
+        userObj._org_cookies += u.cookies ? u.cookies.add : 0
+        userObj._org_gems += u.gems ? u.gems.add : 0
+        userObj._org_keys += u.keys ? u.keys.add : 0
+        userObj._org_profile_disp_badge = u.profile && u.profile.disp_badge
+        if (o.levelup !== undefined)
+          TudeBot.getModule<GetPointsModule>('getpoints').onUserLevelup(userObj, o.levelup.level, o.levelup)
+        if (o.items) {
+          for (const id of o.items) {
+            if (!updatedItems.length) break
+            updatedItems[0].id = id
+            updatedItems.splice(0, 1)
           }
         }
       })
-      .catch(console.error);
+      .catch(console.error)
   }
 
-  public static performClubUserAction(user: ClubUser, action: ClubAction): Promise<void> {
-    return this.performClubUserActionRaw(user.id, action);
+  public static performClubUserAction(user: ClubUser, action: ClubAction): Promise<any> {
+    return this.performClubUserActionRaw(user.id, action)
   }
 
-  public static performClubUserActionRaw(query: string, action: ClubAction): Promise<void> {
-    let status: number;
+  public static performClubUserActionRaw(query: string, action: ClubAction): Promise<any> {
+    let status: number
     return new Promise((resolve, reject) => {
       fetch(this.baseurl + this.endpoints.club.users + query, {
         method: 'post',
         body: JSON.stringify(action),
-        headers: { 'auth': this.key, 'Content-Type': 'application/json' },
+        headers: { auth: this.key, 'Content-Type': 'application/json' }
       })
-        .then(res => {
-          status = res.status;
-          return res.json();
+        .then((res) => {
+          status = res.status
+          return res.json()
         })
-        .then(o => {
-          if (status == 200) resolve(o);
-          else reject(o);
+        .then((o) => {
+          if (status === 200) resolve(o)
+          else reject(o)
         })
-        .catch(err => {
-          if (process.env.NODE_ENV !== 'production') console.error(err);
-          reject();
-        });
-    });
+        .catch((err) => {
+          if (process.env.NODE_ENV !== 'production') console.error(err)
+          reject()
+        })
+    })
   }
 
   public static parseItem(ref: string, item: any): Item {
-    let id = item.id || ref;
-    let amount = item.amount == undefined ? 1 : item.amount;
-    let meta = item.meta == undefined ? {} : item.meta;
+    const id = item.id || ref
+    const amount = item.amount === undefined ? 1 : item.amount
+    const meta = item.meta === undefined ? {} : item.meta
 
-    const prefab = ItemList.find(i => i.id == id);
+    const prefab = ItemList.find(i => i.id === id)
 
     if (!prefab) {
-      console.error(`No item prefab found for ${id}!`);
-      return undefined;
+      console.error(`No item prefab found for ${id}!`)
+      return undefined
     }
 
-    let instance: Item = null;
+    let instance: Item = null
     if (prefab.parse) {
-      const nitem = JSON.parse(JSON.stringify(item));
-      nitem['type'] = nitem['id'];
-      nitem['id'] = ref;
-      instance = prefab.parse(nitem);
-    } else if (prefab.class.prototype instanceof StackableItem) {
-      instance = new prefab.class(prefab, amount);
-    } else if (prefab.class.prototype instanceof ExpandedItem) {
-      instance = new prefab.class(prefab, ref, meta);
+      const nitem = JSON.parse(JSON.stringify(item))
+      nitem.type = nitem.id
+      nitem.id = ref
+      instance = prefab.parse(nitem)
+    } else if (prefab.Class.prototype instanceof StackableItem) {
+      instance = new prefab.Class(prefab, amount)
+    } else if (prefab.Class.prototype instanceof ExpandedItem) {
+      instance = new prefab.Class(prefab, ref, meta)
     } else {
-      instance = new prefab.class(prefab, ref, amount, meta);
+      instance = new prefab.Class(prefab, ref, amount, meta)
     }
 
-    return instance;
+    return instance
   }
 
 }
