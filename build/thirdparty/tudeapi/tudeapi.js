@@ -310,9 +310,9 @@ class TudeApi {
         return this.badges.find(b => b.keyword === keyword.toLowerCase());
     }
     static badgeBySearchQuery(search) {
-        return this.badges.find((b) => (b.description.includes(search.toLowerCase())
-            || b.info.includes(search.toLowerCase())
-            || b.getAppearance(0).name.includes(search.toLowerCase())));
+        return this.badges.find((b) => (b.description.toLowerCase().includes(search.toLowerCase())
+            || b.info.toLowerCase().includes(search.toLowerCase())
+            || b.getAppearance(0).name.toLowerCase().includes(search.toLowerCase())));
     }
     static clubLeaderboard() {
         return new Promise((resolve, reject) => {

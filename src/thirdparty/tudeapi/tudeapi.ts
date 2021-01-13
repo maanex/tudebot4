@@ -103,7 +103,6 @@ export interface DeprItem {
 export type ClubAction = { id: 'claim_daily_reward' }
   | { id: 'transaction', type: 'cookie' | string, amount: number, reciever: string }
   | { id: 'obtain_perks', perks: string }
-  ;
 
 export default class TudeApi {
 
@@ -418,9 +417,9 @@ export default class TudeApi {
 
   public static badgeBySearchQuery(search: string): Badge {
     return this.badges.find((b: Badge) => (
-      b.description.includes(search.toLowerCase())
-        || b.info.includes(search.toLowerCase())
-        || b.getAppearance(0).name.includes(search.toLowerCase())
+      b.description.toLowerCase().includes(search.toLowerCase())
+        || b.info.toLowerCase().includes(search.toLowerCase())
+        || b.getAppearance(0).name.toLowerCase().includes(search.toLowerCase())
     ))
   }
 

@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("../index");
-const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 const emojis_1 = require("../int/emojis");
 const types_1 = require("../types/types");
 const parse_args_1 = require("../util/parse-args");
 const database_1 = require("../database/database");
 const itemlist_1 = require("../content/itemlist");
+const tudeapi_1 = require("../thirdparty/tudeapi/tudeapi");
 class AdminCommand extends types_1.Command {
     constructor() {
         super({
@@ -124,6 +124,25 @@ class AdminCommand extends types_1.Command {
                     break;
                 case 'manualmemeofthemonth':
                     index_1.TudeBot.getModule('memes').electMemeOfTheMonth();
+                    break;
+                case 'grantbadge':
+                    if (args.length < 2) {
+                        repl('what badge? who?');
+                        return false;
+                    }
+                    {
+                        const user = event.message.mentions.users.first() || event.message.author;
+                        if (!user)
+                            return false;
+                        const badge = tudeapi_1.default.badgeBySearchQuery(args[1]);
+                        if (!badge)
+                            return false;
+                        tudeapi_1.default.clubUserByDiscordId(user.id).then((u) => {
+                            u.badges[badge.id]++;
+                            tudeapi_1.default.updateClubUser(u);
+                            repl('Okie dokie!');
+                        });
+                    }
                     break;
                 case 'testresponse':
                     repl('You got 10s - send me something nice!');

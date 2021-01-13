@@ -60,6 +60,7 @@ export default class BadgesCommand extends Command {
               repl('Displayed badge updated!', 'success', 'Go have a look at your profile with `profile`')
             })
             .catch(() => repl('An error occured!', 'error'))
+          break
         }
 
         default: {

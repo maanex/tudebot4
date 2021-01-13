@@ -1,6 +1,5 @@
 import { Message, User, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
-import TudeApi, { ClubUser } from '../thirdparty/tudeapi/tudeapi'
 import Emojis from '../int/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import ParseArgs from '../util/parse-args'
@@ -8,6 +7,7 @@ import Database from '../database/database'
 import { Items, findItem } from '../content/itemlist'
 import GetPointsModule from '../modules/getpoints'
 import MemesModule from '../modules/memes'
+import TudeApi, { ClubUser } from '../thirdparty/tudeapi/tudeapi'
 
 
 export default class AdminCommand extends Command {
@@ -130,6 +130,25 @@ export default class AdminCommand extends Command {
 
         case 'manualmemeofthemonth':
           TudeBot.getModule<MemesModule>('memes').electMemeOfTheMonth()
+          break
+
+        case 'grantbadge':
+          if (args.length < 2) {
+            repl('what badge? who?')
+            return false
+          }
+
+          {
+            const user = event.message.mentions.users.first() || event.message.author
+            if (!user) return false
+            const badge = TudeApi.badgeBySearchQuery(args[1])
+            if (!badge) return false
+            TudeApi.clubUserByDiscordId(user.id).then((u) => {
+              u.badges[badge.id]++
+              TudeApi.updateClubUser(u)
+              repl('Okie dokie!')
+            })
+          }
           break
 
         case 'testresponse':

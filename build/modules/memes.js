@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cron = require("cron");
+const cron_1 = require("cron");
 const index_1 = require("../index");
 const types_1 = require("../types/types");
 const dbstats_1 = require("../database/dbstats");
@@ -150,7 +150,8 @@ class MemesModule extends types_1.Module {
     }
     onBotReady() {
         //                           m h d m dw
-        this.cronjobs.push(cron.job('0 6 1 * *', () => this.electMemeOfTheMonth()));
+        this.cronjobs.push(new cron_1.CronJob('0 6 1 * *', () => this.electMemeOfTheMonth()));
+        this.cronjobs.forEach(c => c.start());
     }
     onDisable() {
         this.cronjobs.forEach(j => j.stop());

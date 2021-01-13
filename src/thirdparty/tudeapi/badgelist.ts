@@ -28,5 +28,13 @@ export const badgeEmojiList = {
   ],
   4: [
     '<:badge_linjo_beta:693769581986316390>'
+  ],
+  5: [
+    '<:badge_motm_all:799049873495556116>',
+    '<:badge_motm_bronze:799049874372689920>',
+    '<:badge_motm_silver:799049873836081222>',
+    '<:badge_motm_gold:799049873826512906>',
+    '<:badge_motm_platin:799049873873043466>',
+    '<:badge_motm_diamond:799049873860460564>'
   ]
 }

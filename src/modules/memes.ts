@@ -1,5 +1,5 @@
 import { Message, MessageReaction, User, TextChannel } from 'discord.js'
-import * as cron from 'cron'
+import { CronJob } from 'cron'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import { DbStats } from '../database/dbstats'
@@ -145,11 +145,13 @@ export default class MemesModule extends Module {
     }
   }
 
-  private cronjobs: cron.CronJob[] = [];
+  private cronjobs: CronJob[] = [];
 
   public onBotReady() {
     //                           m h d m dw
-    this.cronjobs.push(cron.job('0 6 1 * *', () => this.electMemeOfTheMonth()))
+    this.cronjobs.push(new CronJob('0 6 1 * *', () => this.electMemeOfTheMonth()))
+
+    this.cronjobs.forEach(c => c.start())
   }
 
   public onDisable() {
