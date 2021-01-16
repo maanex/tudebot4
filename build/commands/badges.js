@@ -73,6 +73,7 @@ class BadgesCommand extends types_1.Command {
                             repl('Displayed badge updated!', 'success', 'Go have a look at your profile with `profile`');
                         })
                             .catch(() => repl('An error occured!', 'error'));
+                        break;
                     }
                     default: {
                         const lookup = tudeapi_1.default.badgeByKeyword(args[0])

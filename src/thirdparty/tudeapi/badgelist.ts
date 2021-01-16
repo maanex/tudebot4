@@ -30,11 +30,11 @@ export const badgeEmojiList = {
     '<:badge_linjo_beta:693769581986316390>'
   ],
   5: [
-    '<:badge_motm_all:799049873495556116>',
-    '<:badge_motm_bronze:799049874372689920>',
-    '<:badge_motm_silver:799049873836081222>',
-    '<:badge_motm_gold:799049873826512906>',
-    '<:badge_motm_platin:799049873873043466>',
-    '<:badge_motm_diamond:799049873860460564>'
+    '<:badge_motm_all:799779861442330654>',
+    '<:badge_motm_bronze:799779861467889704>',
+    '<:badge_motm_silver:799779861350187009>',
+    '<:badge_motm_gold:799779861698707456>',
+    '<:badge_motm_platin:799779861673672754>',
+    '<:badge_motm_diamond:799779861589655583>'
   ]
 }
