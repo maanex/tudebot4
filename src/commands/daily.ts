@@ -57,6 +57,10 @@ export default class DailyCommand extends Command {
                 prefix = '🐢'
                 suffix = '🐢'
               }
+              if (streak >= 365) {
+                prefix = '<:menacing:814892820984365157>'
+                suffix = '<:menacing:814892820984365157>'
+              }
 
               desc += `\n${prefix} ${bold ? '**' : ''}Streak: ${streak} ${streak === 1 ? 'day' : 'days'}${bold ? '**' : ''} ${suffix}`
             }
