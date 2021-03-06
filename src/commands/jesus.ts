@@ -16,7 +16,7 @@ export default class JesusCommand extends Command {
 
   public async execute(channel: TextChannel, user: User, _args: string[], _event: CommandExecEvent, _repl: ReplyFunction): Promise<boolean> {
     try {
-      const imgBuffer = await TudeBot.badoszApi.getJesus()
+      const imgBuffer = await TudeBot.obrazium.getJesus()
       const file = new MessageAttachment(imgBuffer, 'AMEN.png')
       const embed = new MessageEmbed()
         .attachFiles([ file ])

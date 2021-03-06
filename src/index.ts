@@ -11,7 +11,7 @@ import MongoAdapter from './database/mongo.adapter'
 import { Util } from './util/util'
 import { logVersionDetails } from './util/git-parser'
 import ParseArgs from './util/parse-args'
-import BadoszAPI from './thirdparty/badoszapi/badosz-api'
+import Obrazium from './thirdparty/obrazium/obrazium'
 import Server from './server/server'
 import PerspectiveAPI from './thirdparty/googleapis/perspective-api'
 import AlexaAPI from './thirdparty/alexa/alexa-api'
@@ -26,7 +26,7 @@ export class TudeBotClient extends Client {
   public modules: Map<string, Module> = null;
   public guildSettings: Map<string, GuildSettings> = null;
 
-  public badoszApi: BadoszAPI = null;
+  public obrazium: Obrazium = null;
   public perspectiveApi: PerspectiveAPI = null;
   public alexaAPI: AlexaAPI = null;
 
@@ -65,7 +65,7 @@ export class TudeBotClient extends Client {
         await Database.init()
         await Server.start(this.config.server.port)
 
-        this.badoszApi = new BadoszAPI(this.config.thirdparty.badoszapi.token)
+        this.obrazium = new Obrazium(this.config.thirdparty.obrazium.token)
         this.perspectiveApi = new PerspectiveAPI(this.config.thirdparty.googleapis.key)
         this.alexaAPI = new AlexaAPI(this.config.thirdparty.alexa.key)
 

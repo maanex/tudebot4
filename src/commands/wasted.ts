@@ -17,7 +17,7 @@ export default class WastedCommand extends Command {
     if (event.message.mentions.members.size)
       user = event.message.mentions.members.first().user
     try {
-      const imgBuffer = await TudeBot.badoszApi.getWasted(user.displayAvatarURL())
+      const imgBuffer = await TudeBot.obrazium.getWasted(user.displayAvatarURL())
       const file = new MessageAttachment(imgBuffer, 'wasted.png') // FIXME
       const embed = new MessageEmbed()
         .attachFiles([ file ])

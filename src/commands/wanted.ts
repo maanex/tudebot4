@@ -17,7 +17,7 @@ export default class WantedCommand extends Command {
     if (event.message.mentions.members.size)
       user = event.message.mentions.members.first().user
     try {
-      const imgBuffer = await TudeBot.badoszApi.getWanted(user.avatarURL())
+      const imgBuffer = await TudeBot.obrazium.getWanted(user.avatarURL())
       const file = new MessageAttachment(imgBuffer, 'wanted.png') // FIXME
       const embed = new MessageEmbed()
         .attachFiles([ file ])
