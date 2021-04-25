@@ -25,12 +25,12 @@ class WantedCommand extends types_1.Command {
             if (event.message.mentions.members.size)
                 user = event.message.mentions.members.first().user;
             try {
-                const imgBuffer = yield index_1.TudeBot.badoszApi.getWanted(user.avatarURL());
-                const file = new discord_js_1.MessageAttachment(imgBuffer, 'wanted.png'); // FIXME
+                const imgBuffer = yield index_1.TudeBot.obrazium.getWanted(user.avatarURL().replace('webp', 'png'));
+                const file = new discord_js_1.MessageAttachment(imgBuffer, 'wanted.png');
                 const embed = new discord_js_1.MessageEmbed()
                     .attachFiles([file])
                     .setColor(0x2F3136)
-                    .setFooter(`@${user.tag} • api.badosz.com`)
+                    .setFooter(`@${user.tag} • obrazium.com`)
                     .setImage('attachment://wanted.png');
                 channel.send('', { embed });
                 return true;

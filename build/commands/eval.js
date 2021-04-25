@@ -11,7 +11,7 @@ class EvalCommand extends types_1.Command {
             groups: ['internal']
         });
     }
-    execute(_channel, user, args, _event, repl) {
+    execute(channel, user, args, event, repl) {
         if (user.id !== '137258778092503042')
             return false;
         try {

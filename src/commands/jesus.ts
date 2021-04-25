@@ -21,7 +21,7 @@ export default class JesusCommand extends Command {
       const embed = new MessageEmbed()
         .attachFiles([ file ])
         .setColor(0x2F3136)
-        .setFooter(`@${user.tag} • api.badosz.com`)
+        .setFooter(`@${user.tag} • obrazium.com`)
         .setImage('attachment://AMEN.png')
       channel.send('', { embed })
       return true

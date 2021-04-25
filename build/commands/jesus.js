@@ -24,12 +24,12 @@ class JesusCommand extends types_1.Command {
     execute(channel, user, _args, _event, _repl) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const imgBuffer = yield index_1.TudeBot.badoszApi.getJesus();
+                const imgBuffer = yield index_1.TudeBot.obrazium.getJesus();
                 const file = new discord_js_1.MessageAttachment(imgBuffer, 'AMEN.png');
                 const embed = new discord_js_1.MessageEmbed()
                     .attachFiles([file])
                     .setColor(0x2F3136)
-                    .setFooter(`@${user.tag} • api.badosz.com`)
+                    .setFooter(`@${user.tag} • obrazium.com`)
                     .setImage('attachment://AMEN.png');
                 channel.send('', { embed });
                 return true;

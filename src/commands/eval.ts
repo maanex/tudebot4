@@ -17,7 +17,7 @@ export default class EvalCommand extends Command {
     })
   }
 
-  public execute(_channel: TextChannel, user: User, args: string[], _event: CommandExecEvent, repl: ReplyFunction): boolean {
+  public execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean {
     if (user.id !== '137258778092503042') return false
 
     try {

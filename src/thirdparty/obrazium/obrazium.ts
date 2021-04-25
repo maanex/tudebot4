@@ -28,13 +28,13 @@ export interface BadoszAPISteamUser {
 }
 
 /**
- * API wrapper for api.badosz.com
+ * API wrapper for obrazium.com
  * @author Maanex (maanex.tk)
  */
 export default class Obrazium {
 
   public static readonly DEFAULT_SETTINGS = {
-    baseurl: 'https://api.badosz.com/',
+    baseurl: 'https://obrazium.com/v1/',
     headers: { }
   }
 
@@ -97,7 +97,7 @@ export default class Obrazium {
       if (!this.settings.headers) this.settings.headers = Obrazium.DEFAULT_SETTINGS.headers
     }
 
-    this.settings.headers.Authorization = token
+    this.settings.headers.Authorization = this.token
   }
 
   private makeRequest(endpoint: string, params?: any): Promise<Response> {

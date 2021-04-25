@@ -21,7 +21,7 @@ const mongo_adapter_1 = require("./database/mongo.adapter");
 const util_1 = require("./util/util");
 const git_parser_1 = require("./util/git-parser");
 const parse_args_1 = require("./util/parse-args");
-const badosz_api_1 = require("./thirdparty/badoszapi/badosz-api");
+const obrazium_1 = require("./thirdparty/obrazium/obrazium");
 const server_1 = require("./server/server");
 const perspective_api_1 = require("./thirdparty/googleapis/perspective-api");
 const alexa_api_1 = require("./thirdparty/alexa/alexa-api");
@@ -31,7 +31,7 @@ class TudeBotClient extends discord_js_1.Client {
         this.config = null;
         this.modules = null;
         this.guildSettings = null;
-        this.badoszApi = null;
+        this.obrazium = null;
         this.perspectiveApi = null;
         this.alexaAPI = null;
         this.devMode = process.env.NODE_ENV !== 'production';
@@ -57,7 +57,7 @@ class TudeBotClient extends discord_js_1.Client {
             yield tudeapi_1.default.init(this.config.lang);
             yield database_1.default.init();
             yield server_1.default.start(this.config.server.port);
-            this.badoszApi = new badosz_api_1.default(this.config.thirdparty.badoszapi.token);
+            this.obrazium = new obrazium_1.default(this.config.thirdparty.obrazium.token);
             this.perspectiveApi = new perspective_api_1.default(this.config.thirdparty.googleapis.key);
             this.alexaAPI = new alexa_api_1.default(this.config.thirdparty.alexa.key);
             // TODO find an actual fix for this instead of this garbage lol
