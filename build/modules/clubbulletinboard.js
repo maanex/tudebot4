@@ -43,10 +43,10 @@ class ClubBulletinBoardModule extends types_1.Module {
                         continue;
             }
             else {
-                index_1.TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupemptychannel ' + channel.id + '`');
+                index_1.TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupemptychannel ' + channel.id + '`', 'medium');
             }
         }).catch((err) => {
-            index_1.TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated! Error: ```' + err + '```');
+            index_1.TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated! Error: ```' + err + '```', 'medium');
         });
     }
 }

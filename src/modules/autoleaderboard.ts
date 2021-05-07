@@ -72,14 +72,14 @@ export default class QuotesModule extends Module {
           channel.send(content).then((mes) => {
             (mes as Message).react(this.UPDATE_EMOJI)
           }).catch((err) => {
-            TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```')
+            TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```', 'medium')
           })
         }
       }).catch((err) => {
-        TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```')
+        TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```', 'medium')
       })
     }).catch((err) => {
-      TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```')
+      TudeBot.modlog(channel.guild, 'warning', 'Leaderboard could not get updated! Error: ```' + err + '```', 'medium')
     })
   }
 

@@ -125,4 +125,6 @@ export interface UserResponseWaiting {
 
 //
 
-export type ModlogFunction = (guild: Guild, type: modlogType, text: string) => void
+export type ModlogPriority = 'lowest' | 'low' | 'medium' | 'high' | 'highest'
+
+export type ModlogFunction = (guild: Guild, type: modlogType, text: string, priority: ModlogPriority) => void

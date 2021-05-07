@@ -93,7 +93,7 @@ class ChatGuard extends types_1.Module {
         }
         this.inviteResponseStatus++;
         setTimeout(i => i.inviteResponoseStatus--, 5 * 60 * 1000, this);
-        index_1.TudeBot.modlog(mes.guild, 'clean_chat', `${mes.author} sent an invite link.`);
+        index_1.TudeBot.modlog(mes.guild, 'clean_chat', `${mes.author} sent an invite link.`, 'medium');
         mes.delete();
         return true;
     }

@@ -38,10 +38,10 @@ export default class ClubBulletinBoardModule extends Module {
         for (const m of mes.array())
           if (m.author.id !== TudeBot.user.id) continue
       } else {
-        TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupemptychannel ' + channel.id + '`')
+        TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated!\nChannel does not contain messages or messages could not get fetched!\nPlease run `admin setupemptychannel ' + channel.id + '`', 'medium')
       }
     }).catch((err) => {
-      TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated! Error: ```' + err + '```')
+      TudeBot.modlog(channel.guild, 'warning', 'Bulletin Board could not get updated! Error: ```' + err + '```', 'medium')
     })
   }
 

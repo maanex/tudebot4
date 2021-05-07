@@ -9,11 +9,12 @@ class ModlogModule extends types_1.Module {
     }
     onEnable() {
         const guilds = this.guilds;
-        index_1.TudeBot.modlog = function (guild, type, text) {
+        index_1.TudeBot.modlog = function (guild, type, text, priority) {
             const id = guild.id;
             if (!guilds.has(id))
                 return;
-            guild.channels.resolve(guilds.get(id).channel).send({
+            const channelId = guilds.get(id)['channel-' + priority] || guilds.get(id).channel;
+            guild.channels.resolve(channelId).send({
                 embed: {
                     color: 0x2F3136,
                     description: `${emojis_1.default.MODLOG[type]} ${text}`
@@ -21,10 +22,10 @@ class ModlogModule extends types_1.Module {
             });
         };
         index_1.TudeBot.on('guildMemberAdd', (mem) => {
-            index_1.TudeBot.modlog(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`);
+            index_1.TudeBot.modlog(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`, 'low');
         });
         index_1.TudeBot.on('guildMemberRemove', (mem) => {
-            index_1.TudeBot.modlog(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`);
+            index_1.TudeBot.modlog(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`, 'low');
         });
     }
     onBotReady() {

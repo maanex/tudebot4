@@ -1,4 +1,4 @@
-import { Message, User, TextChannel } from 'discord.js'
+import { Message, User, TextChannel, MessageAttachment } from 'discord.js'
 import { TudeBot } from '../index'
 import Emojis from '../int/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
@@ -32,7 +32,8 @@ export default class AdminCommand extends Command {
           'setupitemshop <channel>',
           'resetdaily <user> [-c --clearstreak]',
           'testmodlog',
-          'testlevelupreward'
+          'testlevelupreward',
+          'print'
         ]).map(cmd => `• ${cmd}`).join('\n'))
         return false
       }
@@ -111,7 +112,7 @@ export default class AdminCommand extends Command {
           break
 
         case 'testmodlog':
-          TudeBot.modlog(orgChannel.guild, 'message', args.join(' '))
+          TudeBot.modlog(orgChannel.guild, 'message', args.slice(2).join(' '), args[1] as any)
           break
 
         case 'testlevelupreward':
@@ -177,6 +178,13 @@ export default class AdminCommand extends Command {
             TudeApi.updateClubUser(u)
           })
           return true
+        }
+
+        case 'print': {
+          const data = TudeBot.guildSettings.get(orgChannel.guild.id) as Object
+          const file = new MessageAttachment(Buffer.from(JSON.stringify(data, null, 2)), `guild-settings-${orgChannel.guild.id}.json`)
+          orgChannel.send('', file)
+          break
         }
       }
       return true

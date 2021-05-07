@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
 const index_1 = require("../index");
 const emojis_1 = require("../int/emojis");
 const types_1 = require("../types/types");
@@ -36,7 +37,8 @@ class AdminCommand extends types_1.Command {
                     'setupitemshop <channel>',
                     'resetdaily <user> [-c --clearstreak]',
                     'testmodlog',
-                    'testlevelupreward'
+                    'testlevelupreward',
+                    'print'
                 ]).map(cmd => `• ${cmd}`).join('\n'));
                 return false;
             }
@@ -108,7 +110,7 @@ class AdminCommand extends types_1.Command {
                     run();
                     break;
                 case 'testmodlog':
-                    index_1.TudeBot.modlog(orgChannel.guild, 'message', args.join(' '));
+                    index_1.TudeBot.modlog(orgChannel.guild, 'message', args.slice(2).join(' '), args[1]);
                     break;
                 case 'testlevelupreward':
                     if (args.length < 2 || isNaN(parseInt(args[1]))) {
@@ -169,6 +171,12 @@ class AdminCommand extends types_1.Command {
                         tudeapi_1.default.updateClubUser(u);
                     });
                     return true;
+                }
+                case 'print': {
+                    const data = index_1.TudeBot.guildSettings.get(orgChannel.guild.id);
+                    const file = new discord_js_1.MessageAttachment(Buffer.from(JSON.stringify(data, null, 2)), `guild-settings-${orgChannel.guild.id}.json`);
+                    orgChannel.send('', file);
+                    break;
                 }
             }
             return true;
