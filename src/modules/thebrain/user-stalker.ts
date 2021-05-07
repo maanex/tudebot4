@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { User } from 'discord.js'
 import fetch, { Response } from 'node-fetch'
 import { TudeBot } from '../../index'
@@ -8,13 +9,16 @@ interface DiscordBioData {
   url: string;
   verified: boolean;
   upvotes: number;
+  description: string;
   location: string;
-  gener: string;
+  gender: string;
   birthday: string;
   email: string;
   occupation: string;
   bannerImage: string;
   staff: string;
+  connections: { key: string, value: string }[];
+  datapoints: number;
 }
 
 interface KsoftSiData {
@@ -66,8 +70,38 @@ export default class UserStalker {
     }).then((res: Response) => res.json())
   }
 
-  private static fetchDiscordBio(_userid: string): Promise<DiscordBioData> {
-    return null
+  private static async fetchDiscordBio(userid: string): Promise<DiscordBioData> {
+    try {
+      const { data } = await axios.get(`https://api.discord.bio/user/details/${userid}`)
+      const user = data.payload.user
+      const connections = []
+      for (const name in user.userConnections)
+        connections.push({ key: name, value: user.userConnections[name] })
+      for (const conn of (user.discordConnections || []))
+        connections.push({ key: conn.connection_type, value: conn.name })
+      const out: DiscordBioData = {
+        found: true,
+        url: `https://dsc.bio/${user.details.slug || userid}`,
+        verified: user.details.verified === 1,
+        upvotes: user.details.likes,
+        description: user.details.description,
+        location: user.details.location,
+        gender: user.details.gender,
+        birthday: user.details.birthday,
+        email: user.details.email,
+        occupation: user.details.occupation,
+        bannerImage: user.details.bannerImage,
+        staff: user.details.staff,
+        connections,
+        datapoints: connections.length
+      }
+      for (const key of [ 'description', 'location', 'gender', 'birthday', 'email', 'occupation' ])
+        if (out[key]) out.datapoints++
+      return out
+    } catch (ex) {
+      console.log(ex)
+      return null
+    }
   }
 
   private static fetchKsoftSi(_userid: string): Promise<KsoftSiData> {

@@ -92,7 +92,9 @@ function sendMessage(channel, user, member, clubUser, badges, itemCount, detaile
         const sources = trust.sources;
         payload.embed.fields.push({
             name: 'Third Party Services',
-            value: `${(sources.discordbio && sources.discordbio.found) ? `[Public bio found.](${sources.discordbio.url})` : 'No public bio found.'}
+            value: `${(sources.discordbio && sources.discordbio.found)
+                ? `[Public bio found.](${sources.discordbio.url}) ${sources.discordbio.datapoints} ${sources.discordbio.datapoints === 1 ? 'datapoint' : 'datapoints'}.`
+                : 'No public bio found.'}
               ${sources.ksoftsi
                 ? (sources.ksoftsi.currentlyBanned
                     ? `:warn: **Currently globally banned for** ${sources.ksoftsi.reason}!`
