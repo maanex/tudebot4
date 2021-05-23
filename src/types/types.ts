@@ -73,7 +73,7 @@ export type AwaitUserResponseFunction = (user: User, channel: TextChannel, timeo
 
 export type CommandExecEvent = { message: Message, sudo: boolean, label: string, awaitUserResponse: AwaitUserResponseFunction };
 
-export type CommandGroup = 'fun' | 'images' | 'apiwrapper' | 'rng' | 'internal' | 'club' | 'easteregg' | 'casino' | 'info';
+export type CommandGroup = 'fun' | 'images' | 'apiwrapper' | 'rng' | 'internal' | 'club' | 'easteregg' | 'casino' | 'info' | 'moderation';
 
 export interface CommandSettings {
 

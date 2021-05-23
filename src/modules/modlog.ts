@@ -1,4 +1,4 @@
-import { GuildMember, Guild, TextChannel } from 'discord.js'
+import { GuildMember, Guild, TextChannel, User } from 'discord.js'
 import { ModlogPriority, modlogType, Module } from '../types/types'
 import { TudeBot } from '../index'
 
@@ -31,6 +31,17 @@ export default class ModlogModule extends Module {
 
     TudeBot.on('guildMemberRemove', (mem: GuildMember) => {
       TudeBot.modlog(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`, 'low')
+    })
+
+    TudeBot.on('guildBanAdd', (guild: Guild, user: User) => {
+      setTimeout(async () => {
+        const ban = await guild.fetchBan(user)
+        TudeBot.modlog(guild, 'punish', `${user} as ${user.username} was banned by unknown for reason ${ban.reason}`, 'high')
+      }, 1000)
+    })
+
+    TudeBot.on('guildBanRemove', (guild: Guild, user: User) => {
+      TudeBot.modlog(guild, 'punish', `The ban for ${user} as ${user.username} was lifted`, 'high')
     })
   }
 
