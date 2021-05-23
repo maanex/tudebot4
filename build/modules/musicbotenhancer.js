@@ -22,7 +22,6 @@ class MusicBotEnhancer extends types_1.Module {
         index_1.TudeBot.on('message', (mes) => {
             var _a;
             const opts = (_a = this.guildData(mes.guild)) === null || _a === void 0 ? void 0 : _a[mes.author.id];
-            console.log(opts);
             if (!opts)
                 return;
             const parser = this.parserFor[opts.parser];
@@ -31,10 +30,7 @@ class MusicBotEnhancer extends types_1.Module {
             const song = parser(mes);
             if (!song)
                 return;
-            console.log(song);
             const nickname = `${opts.prefix} ${song}`;
-            console.log(nickname);
-            console.log(nickname.length);
             mes.member.setNickname(nickname);
         });
         index_1.TudeBot.on('voiceStateUpdate', (before, after) => __awaiter(this, void 0, void 0, function* () {

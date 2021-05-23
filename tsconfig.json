@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "target": "es2016",
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es2016",
     "outDir": "build",
     "lib": [
-      "es6",
+      "esnext",
       "dom"
     ],
     "sourceMap": true,
