@@ -38,7 +38,8 @@ class GameLinkInfos extends types_1.Module {
             message_reference: {
                 message_id: replyTo.id,
                 channel_id: replyTo.channel.id,
-                guild_id: replyTo.guild.id
+                guild_id: replyTo.guild.id,
+                fail_if_not_exists: false
             }
         });
     }
