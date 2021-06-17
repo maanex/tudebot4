@@ -189,7 +189,7 @@ export default class FreestuffAssistantModule extends Module {
           'known, aware, ontheway, yupp'
         ].join('\n')
       case 'here':
-        return 'Please run the command `@FreeStuff free` in your server. This gives us some insight to help troubleshoot your problem!'
+        return 'Please run the command `@FreeStuff here` in your server. This gives us some insight to help troubleshoot your problem!'
       case 'free':
       case 'freetheme':
       case 'notheme':
