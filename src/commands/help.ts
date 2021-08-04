@@ -89,7 +89,8 @@ export default class HelpCommand extends Command {
         repl(`Commands in group ${cmd}:`, 'message', cmds.join('\n'))
       } else {
         let command: Command
-        out: for (const c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
+        out:
+        for (const c of TudeBot.getModule<CommandsModule>('commands').getCommands()) {
           if (c.name === cmd) {
             command = c
             break out

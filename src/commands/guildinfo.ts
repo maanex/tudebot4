@@ -32,11 +32,6 @@ export default class GuildInfoCommand extends Command {
         color: 0x2F3136,
         fields: [
           {
-            name: 'Is club guild?',
-            value: settings.club ? 'Yes' : 'No',
-            inline: true
-          },
-          {
             name: 'Managers:',
             value: Object.keys(settings.managers).join('\n'),
             inline: true

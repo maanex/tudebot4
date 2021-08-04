@@ -2,7 +2,6 @@ import { Message, User, TextChannel, GuildMember } from 'discord.js'
 import * as moment from 'moment'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import Emojis from '../int/emojis'
-import TudeApi, { ClubUser } from '../thirdparty/tudeapi/tudeapi'
 import UserStalker, { UserInfo } from '../modules/thebrain/user-stalker'
 
 
@@ -27,24 +26,9 @@ export default class WastedCommand extends Command {
 
     try {
       const member = await channel.guild.members.fetch(user)
-      const clubUser = await TudeApi.clubUserByDiscordId(user.id)
-      const badges: string[] = []
-      if (clubUser.badges) {
-        for (const b of Object.keys(clubUser.badges)) {
-          const badge = TudeApi.badgeById(parseInt(b))
-          const appearance = badge.getAppearance(clubUser.badges[b])
-          badges.push(appearance.emoji)
-        }
-      }
-      let itemCount = 0
-      if (clubUser.inventory.size > 0) {
-        for (const item of clubUser.inventory.values())
-          itemCount += item.amount
-      }
-
-      const out = sendMessage(channel, user, member, clubUser, badges, itemCount)
+      const out = sendMessage(channel, user, member)
       const details = UserStalker.getInfo(user)
-      sendMessage(channel, user, member, clubUser, badges, itemCount, await details, await out)
+      sendMessage(channel, user, member, await details, await out)
       return true
     } catch (ex) {
       console.error(ex)
@@ -55,7 +39,7 @@ export default class WastedCommand extends Command {
 
 }
 
-function sendMessage(channel: TextChannel, user: User, member: GuildMember, clubUser: ClubUser, badges: string[], itemCount: number, detailedInfo?: UserInfo, override?: Message): Promise<Message> {
+function sendMessage(channel: TextChannel, user: User, member: GuildMember, detailedInfo?: UserInfo, override?: Message): Promise<Message> {
   const payload = {
     embed: {
       author: {
@@ -67,15 +51,6 @@ function sendMessage(channel: TextChannel, user: User, member: GuildMember, club
           value: `Joined Discord ${moment(user.createdAt).fromNow()} (${moment(user.createdAt).calendar()})
                 Joined this server ${moment(member.joinedAt).fromNow()} (${moment(member.joinedAt).calendar()})
                 ${member.lastMessage ? `Sent their last message ${moment(member.lastMessage.createdAt).fromNow()}` : 'Has not sent any messages in a while, possibly never.'}`
-        },
-        {
-          name: 'Tude Club',
-          value: clubUser
-            ? `${user.username} gained ${kFormatter(clubUser.points)} points, ${kFormatter(clubUser.points_month)} of them last month.
-             They are level ${clubUser.level} and have ${badges.length} badges.
-             ${clubUser.daily.last.getFullYear() < 2020 ? 'They never claimed their daily reward' : `They last claimed their daily reward ${moment(clubUser.daily.last).fromNow()}`}.
-             In possession of ${kFormatter(clubUser.cookies)} cookies, ${kFormatter(clubUser.gems)} gems, ${kFormatter(clubUser.keys)} keys and ${kFormatter(itemCount)} items.`
-            : `${user.username} did not participate in any Tude Club activities.`
         }
       ],
       color: 0x2F3136
@@ -114,9 +89,9 @@ function sendMessage(channel: TextChannel, user: User, member: GuildMember, club
 }
 
 
-function kFormatter(num: number) {
-  return Math.abs(num) > 999 ? Math.sign(num) * (Math.floor(Math.abs(num) / 100) / 10) + 'k' : Math.sign(num) * Math.abs(num)
-}
+// function kFormatter(num: number) {
+//   return Math.abs(num) > 999 ? Math.sign(num) * (Math.floor(Math.abs(num) / 100) / 10) + 'k' : Math.sign(num) * Math.abs(num)
+// }
 
 
 /*

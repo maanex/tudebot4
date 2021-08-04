@@ -42,7 +42,7 @@ export default class DailyTopicModule extends Module {
     }
   }
 
-  private generateTopic(guildid: string): Promise<string> {
+  private generateTopic(_guildid: string): Promise<string> {
     // TODO save last week of topics in an array to not get the same kind of topic too many times in a row
 
     const kind = 'dayfact' // findKind()

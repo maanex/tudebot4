@@ -1,7 +1,6 @@
 /* eslint-disable */
 import { Message, User, MessageReaction, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
-import TudeApi, { ClubUser } from '../thirdparty/tudeapi/tudeapi'
 import Emojis from '../int/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
@@ -13,7 +12,7 @@ interface Card {
 
 interface Entry {
   by: User;
-  clubuser: ClubUser;
+  // clubuser: ClubUser;
   ante: number;
   pairplus: number;
   cards: Card[];

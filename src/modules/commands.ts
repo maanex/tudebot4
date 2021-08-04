@@ -4,7 +4,6 @@ import * as chalk from 'chalk'
 import { TudeBot, config } from '../index'
 import { DbStats } from '../database/dbstats'
 import Database from '../database/database'
-import WCP from '../thirdparty/wcp/wcp'
 import { Module, UserResponseCallback, UserResponseWaiting } from '../types/types'
 import UnavailableCommand from '../commands/_unavailable'
 
@@ -199,8 +198,6 @@ export default class CommandsModule extends Module {
       .collection('settings')
       .findOne({ _id: 'commands' })
       .then((obj) => {
-        WCP.send({ config_commands: JSON.stringify(obj.data) })
-
         for (const commandName in obj.data) {
           try {
             const CmdClass = require(`../commands/${commandName}`).default

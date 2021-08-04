@@ -1,6 +1,5 @@
 /* eslint-disable no-labels */
 import { Message, User, TextChannel } from 'discord.js'
-import TudeApi, { ClubUser } from '../thirdparty/tudeapi/tudeapi'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import Emojis from '../int/emojis'
 
@@ -11,7 +10,8 @@ interface SlotMachine {
   entry: number;
   checkpot: number;
   description: string;
-  run: (mes: Message, u: ClubUser) => void;
+  // run: (mes: Message, u: ClubUser) => void;
+  run: (mes: Message) => void;
 }
 
 
@@ -50,7 +50,8 @@ export default class SlotmachineCommand extends Command {
       entry: 10,
       checkpot: 1000,
       description: 'Get three of a kind to win, get two of a kind for a consolation prize.',
-      run: (mes: Message, u: ClubUser) => this.runSm1(mes, u)
+      // run: (mes: Message, u: ClubUser) => this.runSm1(mes, u)
+      run: (mes: Message) => this.runSm1(mes)
     },
     {
       name: 'Nicer Dicer',
@@ -58,7 +59,8 @@ export default class SlotmachineCommand extends Command {
       entry: 200,
       checkpot: 100_000,
       description: 'Straight in order: CHECKPOT, 100.000\nAll same: BIGPOT, 10.000\n4 of a kind: 1.400\nStraight, not in order: 1.000\nFull House: 999\nTripple: 200\nAll different: 100\nTwo pair: 20\nPair: 10',
-      run: (mes: Message, u: ClubUser) => this.runSm2(mes, u)
+      // run: (mes: Message, u: ClubUser) => this.runSm2(mes, u)
+      run: (mes: Message) => this.runSm2(mes)
     },
     {
       name: 'Dancemaster',
@@ -66,7 +68,8 @@ export default class SlotmachineCommand extends Command {
       entry: 30,
       checkpot: 100_000,
       description: 'Full screen one color: CHECKPOT, 100.000\nOnly two colors on screen: win, 300\nThree in a line: consolation prize, 5 each line',
-      run: (mes: Message, u: ClubUser) => this.runSm3(mes, u)
+      // run: (mes: Message, u: ClubUser) => this.runSm3(mes, u)
+      run: (mes: Message) => this.runSm3(mes)
     }
     // { TODO
     //     name: 'Turbocharger',
@@ -89,7 +92,7 @@ export default class SlotmachineCommand extends Command {
     })
   }
 
-  public execute(_channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
+  public execute(_channel: TextChannel, _user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): Promise<boolean> {
     return new Promise((resolve) => {
 
       if (args.length < 1) {
@@ -131,26 +134,27 @@ export default class SlotmachineCommand extends Command {
         return
       }
 
-      const price = machine.entry
-      TudeApi.clubUserByDiscordId(user.id).then((u) => {
-        if (u.cookies < price) {
-          repl(`${machine.name} costs ${machine.entry} to play!`, 'bad', `You only got ${u.cookies} cookies!`)
-          resolve(false)
-          return
-        }
+      machine.run(event.message)
+      // const price = machine.entry
+      // TudeApi.clubUserByDiscordId(user.id).then((u) => {
+      //   if (u.cookies < price) {
+      //     repl(`${machine.name} costs ${machine.entry} to play!`, 'bad', `You only got ${u.cookies} cookies!`)
+      //     resolve(false)
+      //     return
+      //   }
 
-        u.cookies -= price
-        TudeApi.updateClubUser(u)
-        machine.run(event.message, u)
-        resolve(true)
-      }).catch((err) => {
-        repl('An error occured!', 'error')
-        console.error(err)
-      })
+      //   u.cookies -= price
+      //   TudeApi.updateClubUser(u)
+      //   machine.run(event.message, u)
+      //   resolve(true)
+      // }).catch((err) => {
+      //   repl('An error occured!', 'error')
+      //   console.error(err)
+      // })
     })
   }
 
-  runSm1(mes: Message, u: ClubUser) {
+  runSm1(mes: Message) {
     let text = this.sm1template
     while (text.includes('%s'))
       text = text.replace('%s', this.sm1emoji.loading[Math.floor(Math.random() * 6)])
@@ -161,7 +165,7 @@ export default class SlotmachineCommand extends Command {
         description: text
       }
     }).then((m) => {
-      setTimeout((m: Message, u: ClubUser) => {
+      setTimeout((m: Message) => {
         text = this.sm1template
         const slot1 = Math.floor(Math.random() * 6)
         const slot2 = Math.floor(Math.random() * 6)
@@ -201,9 +205,9 @@ export default class SlotmachineCommand extends Command {
           .replace('%s', this.sm1emoji.static[slot3])
 
         text += `\n**${wintext}:** +${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g')
-        if (prize > 0) u.cookies += prize
-        else u.gems -= prize
-        TudeApi.updateClubUser(u)
+        // if (prize > 0) u.cookies += prize
+        // else u.gems -= prize
+        // TudeApi.updateClubUser(u)
 
         m.edit({
           embed: {
@@ -212,11 +216,11 @@ export default class SlotmachineCommand extends Command {
             description: text
           }
         })
-      }, 4000, m, u)
+      }, 4000, m/*, u */)
     })
   }
 
-  runSm2(mes: Message, u: ClubUser) {
+  runSm2(mes: Message) {
     let text = this.sm2template
     let c = 0
     while (text.includes('%s') && c < 5)
@@ -228,7 +232,7 @@ export default class SlotmachineCommand extends Command {
         description: text
       }
     }).then((m) => {
-      setTimeout((m: Message, u: ClubUser) => {
+      setTimeout((m: Message) => {
         text = this.sm2template
         const slots = [
           Math.floor(Math.random() * 6),
@@ -311,9 +315,9 @@ export default class SlotmachineCommand extends Command {
         }
         const cap = wintext.startsWith('+') ? '**' : ''
         text += `\n\n|\`${wintext}\`|\n${Emojis.BIG_SPACE} ${cap}+${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g') + cap
-        if (prize > 0) u.cookies += prize
-        else u.gems -= prize
-        TudeApi.updateClubUser(u)
+        // if (prize > 0) u.cookies += prize
+        // else u.gems -= prize
+        // TudeApi.updateClubUser(u)
 
         m.edit({
           embed: {
@@ -322,12 +326,12 @@ export default class SlotmachineCommand extends Command {
             description: text
           }
         })
-      }, 5000, m, u)
+      }, 5000, m/*, u */)
     })
   }
 
   private sm3blue = [];
-  private runSm3(mes: Message, u: ClubUser) {
+  private runSm3(mes: Message) {
     const goBlue = this.sm3blue.includes(mes.author.id)
     let text = this.sm3template
     while (text.includes('%s'))
@@ -339,7 +343,7 @@ export default class SlotmachineCommand extends Command {
         description: text
       }
     }).then((m) => {
-      setTimeout((m: Message, u: ClubUser) => {
+      setTimeout((m: Message) => {
         text = this.sm3template
         const slots = [
           Math.floor(Math.random() * 3),
@@ -399,9 +403,9 @@ export default class SlotmachineCommand extends Command {
             prize *= 2
           }
         }
-        if (prize > 0) u.cookies += prize
-        else u.gems -= prize
-        TudeApi.updateClubUser(u)
+        // if (prize > 0) u.cookies += prize
+        // else u.gems -= prize
+        // TudeApi.updateClubUser(u)
 
         m.edit({
           embed: {
@@ -412,11 +416,11 @@ export default class SlotmachineCommand extends Command {
         })
         if (goBlue && !win) this.sm3blue.splice(this.sm3blue.indexOf(mes.author.id), 1)
         else if (!goBlue && win) this.sm3blue.push(mes.author.id)
-      }, 4000 + Math.floor(Math.random() * 3000), m, u)
+      }, 4000 + Math.floor(Math.random() * 3000), m/*, u */)
     })
   }
 
-  private runSm4(mes: Message, _u: ClubUser) {
+  private runSm4(mes: Message) {
     mes.reply('This slotmachine is still under construction. Do this again to loose another 90 cookies!')
   }
 

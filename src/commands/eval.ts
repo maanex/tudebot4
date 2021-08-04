@@ -2,7 +2,7 @@
 /* eslint-disable no-eval */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { User, TextChannel } from 'discord.js'
-import TudeApi from '../thirdparty/tudeapi/tudeapi'
+import { TudeBot } from '..'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
@@ -21,12 +21,17 @@ export default class EvalCommand extends Command {
     if (user.id !== '137258778092503042') return false
 
     try {
-      const tapi = TudeApi
-      TudeApi.clubUserByDiscordId(user.id).then((self) => {
-        repl(eval(args.join(' ')))
-      }).catch((ex) => {
-        repl(eval(args.join(' ')))
-      })
+      const reply = repl
+      const guild = channel.guild
+      const message = event.message
+      const mes = event.message
+      const msg = event.message
+      const member = message.member
+      const bot = TudeBot.user
+      const self = TudeBot.user
+      const core = TudeBot.user
+
+      channel.send(`\`\`\`${eval(args.join(' '))}\`\`\``)
       return true
     } catch (ex) {
       repl('Error:', 'message', '```' + ex + '```')

@@ -2,9 +2,7 @@
 import { Message, User, TextChannel } from 'discord.js'
 import CommandsModule from 'modules/commands'
 import { TudeBot } from '../index'
-import TudeApi from '../thirdparty/tudeapi/tudeapi'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
-import Emojis from '../int/emojis'
 
 
 interface Digit {
@@ -155,114 +153,111 @@ export default class RouletteCommand extends Command {
         return
       }
 
-      TudeApi.clubUserByDiscordId(user.id, user).then((u) => {
-        if (!u || u.error) {
-          repl('Couldn\'t fetch your userdata!', 'bad', 'That\'s not cool.')
-          resolve(false)
-          return
-        }
-        if (cookies > u.cookies) {
-          if (Math.random() < 0.05) {
-            // @ts-ignore
-            repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' })
-          } else {
-            // @ts-ignore
-            repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' })
-          }
+      // if (!u || u.error) {
+      //   repl('Couldn\'t fetch your userdata!', 'bad', 'That\'s not cool.')
+      //   resolve(false)
+      //   return
+      // }
+      // if (cookies > u.cookies) {
+      //   if (Math.random() < 0.05) {
+      //     // @ts-ignore
+      //     repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' })
+      //   } else {
+      //     // @ts-ignore
+      //     repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' })
+      //   }
 
+      //   resolve(false)
+      //   return
+      // }
+      if (cookies === -42) {
+        // if (u.cookies === 0) {
+        //   repl('You don\'t have any money to play with!', 'bad')
+        //   resolve(false)
+        //   return
+        // }
+        // cookies = Math.min(5000, u.cookies)
+        cookies = 5000
+      }
+      if (cookies <= 0) {
+        repl('You cannot bet on 0 or less cookies!', 'bad')
+        resolve(false)
+        return
+      }
+
+      if (this.currentGame.started) {
+        if (!this.currentGame.allowNewBets) {
+          repl('Please wait a moment, a game is still in progress!', 'bad')
           resolve(false)
           return
         }
-        if (cookies === -42) {
-          if (u.cookies === 0) {
-            repl('You don\'t have any money to play with!', 'bad')
+        for (const bet of this.currentGame.bets) {
+          if (bet.by.id === user.id) {
+            repl('You have already placed your bet on this game!', 'bad')
             resolve(false)
             return
           }
-          cookies = Math.min(5000, u.cookies)
         }
-        if (cookies <= 0) {
-          repl('You cannot bet on 0 or less cookies!', 'bad')
-          resolve(false)
-          return
-        }
-
-        if (this.currentGame.started) {
-          if (!this.currentGame.allowNewBets) {
-            repl('Please wait a moment, a game is still in progress!', 'bad')
-            resolve(false)
-            return
+        // u.cookies -= cookies
+        // TudeApi.updateClubUser(u)
+        this.currentGame.bets.push({
+          by: user,
+          // clubuser: u,
+          on: wincondition,
+          ontext: wintext,
+          prizefactor: winfactor,
+          amount: cookies
+        })
+        this.currentGame.resolveIn = 5
+        if (TudeBot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > this.currentGame.bets.length)
+          this.currentGame.resolveIn = 10
+        resolve(true)
+      } else {
+        this.currentGame.started = true
+        // u.cookies -= cookies
+        // TudeApi.updateClubUser(u)
+        this.currentGame.bets.push({
+          by: user,
+          // clubuser: u,
+          on: wincondition,
+          ontext: wintext,
+          prizefactor: winfactor,
+          amount: cookies
+        })
+        this.currentGame.resolveIn = 2
+        if (TudeBot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > this.currentGame.bets.length)
+          this.currentGame.resolveIn = 10
+        resolve(true)
+        channel.send({
+          embed: {
+            color: 0x2F3136,
+            title: 'Roulette',
+            description: 'Preparing...'
           }
-          for (const bet of this.currentGame.bets) {
-            if (bet.by.id === user.id) {
-              repl('You have already placed your bet on this game!', 'bad')
-              resolve(false)
-              return
-            }
-          }
-          u.cookies -= cookies
-          TudeApi.updateClubUser(u)
-          this.currentGame.bets.push({
-            by: user,
-            clubuser: u,
-            on: wincondition,
-            ontext: wintext,
-            prizefactor: winfactor,
-            amount: cookies
-          })
-          this.currentGame.resolveIn = 5
-          if (TudeBot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > this.currentGame.bets.length)
-            this.currentGame.resolveIn = 10
-          resolve(true)
-        } else {
-          this.currentGame.started = true
-          u.cookies -= cookies
-          TudeApi.updateClubUser(u)
-          this.currentGame.bets.push({
-            by: user,
-            clubuser: u,
-            on: wincondition,
-            ontext: wintext,
-            prizefactor: winfactor,
-            amount: cookies
-          })
-          this.currentGame.resolveIn = 2
-          if (TudeBot.getModule<CommandsModule>('commands').getActiveInCommandsChannel().length > this.currentGame.bets.length)
-            this.currentGame.resolveIn = 10
-          resolve(true)
-          channel.send({
-            embed: {
-              color: 0x2F3136,
-              title: 'Roulette',
-              description: 'Preparing...'
-            }
-          }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
-          this.currentGameTimer = setInterval(() => {
-            if (this.currentGame.resolveIn === 10 || this.currentGame.resolveIn === 5 || this.currentGame.resolveIn <= 2) {
-              if (this.currentGame.chatMessage) {
-                this.currentGame.chatMessage.edit('', {
-                  embed: {
-                    color: 0x2F3136,
-                    title: 'Roulette',
-                    description: 'Starting in ' + this.currentGame.resolveIn + '```js\n'
+        }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
+        this.currentGameTimer = setInterval(() => {
+          if (this.currentGame.resolveIn === 10 || this.currentGame.resolveIn === 5 || this.currentGame.resolveIn <= 2) {
+            if (this.currentGame.chatMessage) {
+              this.currentGame.chatMessage.edit('', {
+                embed: {
+                  color: 0x2F3136,
+                  title: 'Roulette',
+                  description: 'Starting in ' + this.currentGame.resolveIn + '```js\n'
                       + this.currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
                       + '```'
-                  }
-                })
-              }
+                }
+              })
             }
-            if (this.currentGame.resolveIn-- <= 0) {
-              this.currentGame.allowNewBets = false
-              clearInterval(this.currentGameTimer)
-              this.resolveGame()
-            }
-          }, 1000)
-        }
+          }
+          if (this.currentGame.resolveIn-- <= 0) {
+            this.currentGame.allowNewBets = false
+            clearInterval(this.currentGameTimer)
+            this.resolveGame()
+          }
+        }, 1000)
+      }
 
-      }).catch((err) => {
-        console.error(err)
-        repl('An error occured!', 'error')
-      })
+
     })
   }
 
@@ -300,7 +295,7 @@ export default class RouletteCommand extends Command {
         let prize = b.amount
         if (won) {
           b.clubuser.cookies += prize + prize * b.prizefactor
-          TudeApi.updateClubUser(b.clubuser)
+          // TudeApi.updateClubUser(b.clubuser)
           prize *= b.prizefactor
         }
         desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies}c total\n`

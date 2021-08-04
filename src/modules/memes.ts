@@ -130,7 +130,7 @@ export default class MemesModule extends Module {
 
   updateMemeRating(mes: Message) {
     if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] === mes.channel.id) {
-      let rating = -Object.values(this.RATINGS).stack()
+      let rating = -Object.values(this.RATINGS).reduce((a, b) => a + b, 0)
       for (const reaction of mes.reactions.cache.array()) {
         if (this.RATINGS[reaction.emoji.name])
           rating += this.RATINGS[reaction.emoji.name] * reaction.count

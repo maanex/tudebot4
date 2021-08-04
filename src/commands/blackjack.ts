@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import { Message, User, MessageReaction, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
-import TudeApi, { ClubUser } from '../thirdparty/tudeapi/tudeapi'
 import Emojis from '../int/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
@@ -13,7 +12,6 @@ interface Card {
 
 interface Entry {
   by: User;
-  clubuser: ClubUser;
   amount: number;
   cards: Card[];
   canDraw: boolean;
@@ -112,115 +110,105 @@ export default class BlackJackCommand extends Command {
         return
       }
 
-      TudeApi.clubUserByDiscordId(user.id, user).then((u) => {
-        if (!u || u.error) {
-          repl('Couldn\'t fetch your userdata!', 'bad', 'That\'s not cool.')
-          resolve(false)
-          return
-        }
-        if (cookies > u.cookies) {
-          if (Math.random() < 0.05) {
-            // @ts-ignore
-            repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' })
-          } else {
-            // @ts-ignore
-            repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' })
-          }
+      // if (cookies > u.cookies) {
+      //   if (Math.random() < 0.05) {
+      //     // @ts-ignore
+      //     repl(`${Emojis.HIDE_THE_PAIN} ${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png', banner: 'https://cdn.discordapp.com/emojis/655169782806609921.png' })
+      //   } else {
+      //     // @ts-ignore
+      //     repl(`${cookies} is more than you have`, 'bad', `You have ${u.cookies} cookies!`, { image: 'https://cdn.discordapp.com/emojis/655169782806609921.png?size=32' })
+      //   }
 
+      //   resolve(false)
+      //   return
+      // }
+      if (cookies === -42) {
+        // if (u.cookies === 0) {
+        //   repl('You don\'t have any money to play with!', 'bad')
+        //   resolve(false)
+        //   return
+        // }
+        // cookies = Math.min(2000, u.cookies)
+        cookies = 2000
+      }
+      if (cookies <= 0) {
+        repl('You cannot bet on 0 or less cookies!', 'bad')
+        resolve(false)
+        return
+      }
+
+      if (this.currentGame.started) {
+        if (!this.currentGame.allowNewEntries) {
+          repl('Please wait a moment, a game is still in progress!', 'bad')
           resolve(false)
           return
         }
-        if (cookies === -42) {
-          if (u.cookies === 0) {
-            repl('You don\'t have any money to play with!', 'bad')
+        for (const entry of this.currentGame.entries) {
+          if (entry.by.id === user.id) {
+            repl('You have already placed your bet on this game!', 'bad')
             resolve(false)
             return
           }
-          cookies = Math.min(2000, u.cookies)
         }
-        if (cookies <= 0) {
-          repl('You cannot bet on 0 or less cookies!', 'bad')
-          resolve(false)
-          return
-        }
+        // u.cookies -= cookies
+        // TudeApi.updateClubUser(u)
+        this.currentGame.entries.push({
+          by: user,
+          // clubuser: u,
+          amount: cookies,
+          cards: [],
+          canDraw: true,
+          balance: 0
+        })
 
-        if (this.currentGame.started) {
-          if (!this.currentGame.allowNewEntries) {
-            repl('Please wait a moment, a game is still in progress!', 'bad')
-            resolve(false)
-            return
+        this.currentGame.startIn = 5
+        resolve(true)
+      } else {
+        this.currentGame.started = true
+        // u.cookies -= cookies
+        // TudeApi.updateClubUser(u)
+        this.currentGame.entries.push({
+          by: user,
+          // clubuser: u,
+          amount: cookies,
+          cards: [],
+          canDraw: true,
+          balance: 0
+        })
+        // this.currentGame.startIn = 3;
+        // if (TudeBot.m.commands.getActiveInCommandsChannel().length > this.currentGame.entries.length)
+        this.currentGame.startIn = 10
+        resolve(true)
+        channel.send({
+          embed: {
+            color: 0x2F3136,
+            title: 'Black Jack',
+            description: 'Preparing...'
           }
-          for (const entry of this.currentGame.entries) {
-            if (entry.by.id === user.id) {
-              repl('You have already placed your bet on this game!', 'bad')
-              resolve(false)
-              return
-            }
-          }
-          u.cookies -= cookies
-          TudeApi.updateClubUser(u)
-          this.currentGame.entries.push({
-            by: user,
-            clubuser: u,
-            amount: cookies,
-            cards: [],
-            canDraw: true,
-            balance: 0
-          })
-          // this.currentGame.startIn = 5;
-          // if (TudeBot.m.commands.getActiveInCommandsChannel().length > this.currentGame.entries.length)
-          // this.currentGame.startIn = 10;
-          this.currentGame.startIn = 5
-          resolve(true)
-        } else {
-          this.currentGame.started = true
-          u.cookies -= cookies
-          TudeApi.updateClubUser(u)
-          this.currentGame.entries.push({
-            by: user,
-            clubuser: u,
-            amount: cookies,
-            cards: [],
-            canDraw: true,
-            balance: 0
-          })
-          // this.currentGame.startIn = 3;
-          // if (TudeBot.m.commands.getActiveInCommandsChannel().length > this.currentGame.entries.length)
-          this.currentGame.startIn = 10
-          resolve(true)
-          channel.send({
-            embed: {
-              color: 0x2F3136,
-              title: 'Black Jack',
-              description: 'Preparing...'
-            }
-          }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
-          this.currentGameTimer = setInterval(() => {
-            if (this.currentGame.startIn === 10 || this.currentGame.startIn === 5 || this.currentGame.startIn <= 2) {
-              if (this.currentGame.chatMessage) {
-                this.currentGame.chatMessage.edit('', {
-                  embed: {
-                    color: 0x2F3136,
-                    title: 'Black Jack',
-                    description: 'Starting in ' + this.currentGame.startIn + '```js\n'
+        }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
+        this.currentGameTimer = setInterval(() => {
+          if (this.currentGame.startIn === 10 || this.currentGame.startIn === 5 || this.currentGame.startIn <= 2) {
+            if (this.currentGame.chatMessage) {
+              this.currentGame.chatMessage.edit('', {
+                embed: {
+                  color: 0x2F3136,
+                  title: 'Black Jack',
+                  description: 'Starting in ' + this.currentGame.startIn + '```js\n'
                       + this.currentGame.entries.map(b => `${b.by.username}: ${b.amount}c`).join('\n')
                       + '```'
-                  }
-                })
-              }
+                }
+              })
             }
-            if (this.currentGame.startIn-- <= 0) {
-              this.currentGame.allowNewEntries = false
-              clearInterval(this.currentGameTimer)
-              this.startGame()
-            }
-          }, 1000)
-        }
+          }
+          if (this.currentGame.startIn-- <= 0) {
+            this.currentGame.allowNewEntries = false
+            clearInterval(this.currentGameTimer)
+            this.startGame()
+          }
+        }, 1000)
+      }
 
-      }).catch((err) => {
-        console.error(err)
-        repl('An error occured!', 'error')
-      })
+
     })
   }
 
@@ -339,8 +327,8 @@ export default class BlackJackCommand extends Command {
       else if (val === dealerVal) e.balance = 0
       else if (val < dealerVal) e.balance = -e.amount
 
-      e.clubuser.cookies += Math.ceil(e.amount + e.balance)
-      if ((e.amount + e.balance) !== 0) TudeApi.updateClubUser(e.clubuser)
+      // e.clubuser.cookies += Math.ceil(e.amount + e.balance)
+      // if ((e.amount + e.balance) !== 0) TudeApi.updateClubUser(e.clubuser)
     }
 
     await this.updateMessage(true, false, true)
@@ -441,7 +429,8 @@ export default class BlackJackCommand extends Command {
           else if (e.balance < 0) endtext += '**LOOSE**'
           else if (e.balance > 0) endtext += '**WIN**'
           endtext += Emojis.BIG_SPACE
-          endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c • ' + e.clubuser.cookies + 'c total'
+          // endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c • ' + e.clubuser.cookies + 'c total'
+          endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c'
         }
         return {
           name: e.by.username,

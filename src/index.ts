@@ -4,11 +4,8 @@ import * as chalk from 'chalk'
 import { config as loadDotenv } from 'dotenv'
 import * as moment from 'moment'
 import { Module, ModlogFunction, GuildSettings } from './types/types'
-import TudeApi from './thirdparty/tudeapi/tudeapi'
-import WCP from './thirdparty/wcp/wcp'
 import Database from './database/database'
 import MongoAdapter from './database/mongo.adapter'
-import { Util } from './util/util'
 import { logVersionDetails } from './util/git-parser'
 import ParseArgs from './util/parse-args'
 import Obrazium from './thirdparty/obrazium/obrazium'
@@ -45,23 +42,16 @@ export class TudeBotClient extends Client {
 
 
     logVersionDetails()
-
     fixReactionEvent(this)
-
-    Util.init()
-    WCP.init(false /* this.devMode */)
     moment.locale('en-gb')
 
     MongoAdapter.connect(this.config.mongodb.url)
       .catch((err) => {
         console.error(err)
-        WCP.send({ status_mongodb: '-Connection failed' })
       })
       .then(async () => {
         console.log('Connected to Mongo')
-        WCP.send({ status_mongodb: '+Connected' })
 
-        await TudeApi.init(this.config.lang)
         await Database.init()
         await Server.start(this.config.server.port)
 
@@ -69,21 +59,11 @@ export class TudeBotClient extends Client {
         this.perspectiveApi = new PerspectiveAPI(this.config.thirdparty.googleapis.key)
         this.alexaAPI = new AlexaAPI(this.config.thirdparty.alexa.key)
 
-        // TODO find an actual fix for this instead of this garbage lol
-        const manualConnectTimer = setTimeout(() => {
-          // @ts-ignore
-          this.ws.connection.triggerReady()
-        }, 30000)
-
         this.on('ready', () => {
           console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag))
 
-          clearTimeout(manualConnectTimer)
-          WCP.send({ status_discord: '+Connected' })
-
           for (const mod of this.modules.values())
             mod.onBotReady()
-
         })
 
         await this.loadGuilds(false)
@@ -130,11 +110,8 @@ export class TudeBotClient extends Client {
         .then((data) => {
           data = data.data
 
-          WCP.send({ config_modules: JSON.stringify(data) })
-
           for (const mod of this.modules.values())
             mod.onDisable()
-
 
           this.modules = new Map()
           this.modlog = undefined
