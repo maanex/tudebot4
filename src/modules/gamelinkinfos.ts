@@ -27,7 +27,7 @@ export default class GameLinkInfos extends Module {
   private sendPlaceholderMessage(replyTo: Message): Promise<Message> {
     return replyTo.channel.send({
       embed: {
-        description: Emojis.LOADING,
+        description: Emojis.loading.string,
         color: 0x2F3136
       },
       message_reference: {

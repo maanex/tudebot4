@@ -1,76 +1,59 @@
+/* eslint-disable camelcase */
 import axios from 'axios'
-import { User } from 'discord.js'
-import fetch, { Response } from 'node-fetch'
-import { TudeBot } from '../../index'
 
 
 interface DiscordBioData {
-  found: boolean;
-  url: string;
-  verified: boolean;
-  upvotes: number;
-  description: string;
-  location: string;
-  gender: string;
-  birthday: string;
-  email: string;
-  occupation: string;
-  bannerImage: string;
-  staff: string;
-  connections: { key: string, value: string }[];
-  datapoints: number;
+  found: boolean
+  url: string
+  verified: boolean
+  upvotes: number
+  description: string
+  location: string
+  gender: string
+  birthday: string
+  email: string
+  occupation: string
+  bannerImage: string
+  staff: string
+  connections: { key: string, value: string }[]
+  datapoints: number
 }
 
 interface KsoftSiData {
-  currentlyBanned: boolean;
-  previouslyBanned: boolean;
-  moderator: boolean;
-  reason: boolean;
-  proofImage: string;
-  timestamp: Date;
+  currentlyBanned: boolean
+  previouslyBanned: boolean
+  moderator: boolean
+  reason: boolean
+  proofImage: string
+  timestamp: Date
 }
-export interface UserInfo {
-  userInstance: User;
-  trustworthiness: {
-    score: number;
-    sources: {
-      account: {
-        age: number;
-        flags: number;
-      },
-      discordbio: DiscordBioData,
-      ksoftsi: KsoftSiData
-    }
-  }
+
+interface BotMeta {
+  rpc: {
+    id: string
+    name: string
+    icon: string
+    description: string
+    summary: string
+    cover_image: string
+    hook: boolean
+    bot_public?: boolean
+    bot_require_code_grant?: boolean
+    terms_of_service_url?: string
+    privacy_policy_url?: string
+    verify_key: string
+    flags: number
+  },
+  assets: {
+    id: string
+    type: number
+    name: string
+  }[]
 }
+
 export default class UserStalker {
 
-  public static async getInfo(user: User): Promise<UserInfo> {
-    return {
-      userInstance: user,
-      trustworthiness: {
-        score: 1,
-        sources: {
-          account: {
-            age: new Date().getMilliseconds() - user.createdTimestamp,
-            flags: 0 // TODO
-          },
-          discordbio: await this.fetchDiscordBio(user.id),
-          ksoftsi: await this.fetchKsoftSi(user.id)
-        }
-      }
-    }
-  }
-
-  //
-
-  private static async rawDiscordProfile(userid: string): Promise<any> {
-    return await fetch(`https://discordapp.com/api/v7/users/${userid}`, {
-      headers: { Authorization: `Bot ${TudeBot.token}` }
-    }).then((res: Response) => res.json())
-  }
-
-  private static async fetchDiscordBio(userid: string): Promise<DiscordBioData> {
+  public static async fetchDiscordBio(userid: string): Promise<DiscordBioData> {
     try {
       const { data } = await axios.get(`https://api.discord.bio/user/details/${userid}`)
       const user = data.payload.user
@@ -104,8 +87,16 @@ export default class UserStalker {
     }
   }
 
-  private static fetchKsoftSi(_userid: string): Promise<KsoftSiData> {
+  public static fetchKsoftSi(_userid: string): Promise<KsoftSiData> {
     return null
+  }
+
+  public static async fetchBotMeta(botid: string): Promise<BotMeta> {
+    const [ rpc, assets ] = await Promise.all([
+      axios.get(`https://discord.com/api/v9/oauth2/applications/${botid}/rpc`, { validateStatus: null }),
+      axios.get(`https://discord.com/api/v9/oauth2/applications/${botid}/assets`, { validateStatus: null })
+    ])
+    return { rpc: rpc.data, assets: assets.data }
   }
 
 }

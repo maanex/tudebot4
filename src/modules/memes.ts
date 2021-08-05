@@ -3,8 +3,8 @@ import { CronJob } from 'cron'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import { DbStats } from '../database/dbstats'
-import Emojis from '../int/emojis'
 import Database from '../database/database'
+import Emojis from '../int/emojis'
 
 
 export default class MemesModule extends Module {
@@ -93,7 +93,7 @@ export default class MemesModule extends Module {
           mes.channel.send(this.lang('meme_upvote_own_post', {
             user: user.toString(),
             username: user.username,
-            not_cool: Emojis.NOT_COOL
+            not_cool: Emojis.notCool.string
           }))
           this.selfUpvoteCooldown.push(mes.author.id)
           setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5)

@@ -19,8 +19,8 @@ export default class DailyTopicModule extends Module {
   public onEnable() {
     // TODO enable below for non debug
     // this.cronjob = cron.job('0 0 * * *', () => this.run())
-    this.cronjob = cron.job('* * * * *', () => this.run())
-    this.cronjob.start()
+    // this.cronjob = cron.job('* * * * *', () => this.run())
+    // this.cronjob.start()
   }
 
   public onBotReady() {

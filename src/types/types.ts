@@ -3,7 +3,7 @@ import { Channel, User, Guild, TextChannel, Message } from 'discord.js'
 
 //
 
-export type modlogType = 'user_join' | 'user_quit' | 'message' | 'clean_chat' | 'diverse' | 'punish' | 'warning' | 'reload';
+export type modlogType = 'userJoin' | 'userQuit' | 'message' | 'cleanChat' | 'diverse' | 'punish' | 'warning' | 'reload';
 
 export type cmesType = modlogType | 'error' | 'bad' | 'title' | 'success';
 

@@ -1,10 +1,10 @@
 /* eslint-disable no-labels */
 import { User, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
-import Emojis from '../int/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import CommandsModule from '../modules/commands'
 import ParseArgs from '../util/parse-args'
+import Emojis from '../int/emojis'
 
 
 export default class HelpCommand extends Command {
@@ -131,7 +131,7 @@ export default class HelpCommand extends Command {
               fields: [
                 {
                   name: 'Aliases',
-                  value: command.aliases.length ? (command.aliases.join(', ') + Emojis.BIG_SPACE) : `[${Emojis.BIG_SPACE}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
+                  value: command.aliases.length ? (command.aliases.join(', ') + Emojis.bigSpace.string) : `[${Emojis.bigSpace.string}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
                   inline: true
                 },
                 {

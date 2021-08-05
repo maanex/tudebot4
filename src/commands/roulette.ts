@@ -294,11 +294,12 @@ export default class RouletteCommand extends Command {
         const won = gnome || b.on({ number: landedOn, color: this.getColor(landedOn) })
         let prize = b.amount
         if (won) {
-          b.clubuser.cookies += prize + prize * b.prizefactor
+          // b.clubuser.cookies += prize + prize * b.prizefactor
           // TudeApi.updateClubUser(b.clubuser)
           prize *= b.prizefactor
         }
-        desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies}c total\n`
+        // desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c • ${b.clubuser.cookies}c total\n`
+        desc += `${b.by.username} (${b.ontext}): ${(won ? '+' : '-') + prize}c\n`
       }
       desc += '```'
       let color = this.getColor(landedOn) === 'red' ? 0xFE1B40 : 0x181A1C

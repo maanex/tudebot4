@@ -1,6 +1,7 @@
 /* eslint-disable import/namespace */
 import { Client, User } from 'discord.js'
 import * as chalk from 'chalk'
+import Cordo from 'cordo'
 import { config as loadDotenv } from 'dotenv'
 import * as moment from 'moment'
 import { Module, ModlogFunction, GuildSettings } from './types/types'
@@ -40,7 +41,6 @@ export class TudeBotClient extends Client {
     if (this.devMode)
       console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '))
 
-
     logVersionDetails()
     fixReactionEvent(this)
     moment.locale('en-gb')
@@ -68,6 +68,8 @@ export class TudeBotClient extends Client {
 
         await this.loadGuilds(false)
         await this.loadModules(false)
+        this.initCordo()
+
         this.login(this.config.bot.token)
       })
   }
@@ -159,6 +161,20 @@ export class TudeBotClient extends Client {
           console.error(err)
           reject(err)
         })
+    })
+  }
+
+  initCordo() {
+    this.on('raw', (ev: any) => {
+      if (ev.t === 'INTERACTION_CREATE')
+        Cordo.emitInteraction(ev.d)
+    })
+
+    Cordo.init({
+      botId: this.config.bot.clientid,
+      contextPath: [ __dirname, 'cordo' ],
+      botClient: this
+      // botAdmins: (id: string) => RemoteConfig.botAdmins.includes(id),
     })
   }
 

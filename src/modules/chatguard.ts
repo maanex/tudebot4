@@ -103,7 +103,7 @@ export default class ChatGuard extends Module {
     this.inviteResponseStatus++
     setTimeout(i => i.inviteResponoseStatus--, 5 * 60 * 1000, this)
 
-    TudeBot.modlog(mes.guild, 'clean_chat', `${mes.author} sent an invite link.`, 'medium')
+    TudeBot.modlog(mes.guild, 'cleanChat', `${mes.author} sent an invite link.`, 'medium')
 
     mes.delete()
     return true

@@ -1,8 +1,8 @@
 import { Message, User, TextChannel, MessageAttachment } from 'discord.js'
 import { TudeBot } from '../index'
-import Emojis from '../int/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import MemesModule from '../modules/memes'
+import Emojis from '../int/emojis'
 
 
 export default class AdminCommand extends Command {
@@ -38,7 +38,7 @@ export default class AdminCommand extends Command {
           (async () => {
             const channel = orgChannel.guild.channels.resolve(args[1]) as TextChannel
             for (let i = 0; i < 20; i++)
-              await channel.send(Emojis.BIG_SPACE)
+              await channel.send(Emojis.bigSpace.string)
             repl('Success!', 'success')
           })()
           break

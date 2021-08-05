@@ -1,7 +1,6 @@
 import { GuildMember, Guild, TextChannel, User } from 'discord.js'
 import { ModlogPriority, modlogType, Module } from '../types/types'
 import { TudeBot } from '../index'
-
 import Emojis from '../int/emojis'
 
 
@@ -20,17 +19,17 @@ export default class ModlogModule extends Module {
       ;(guild.channels.resolve(channelId) as TextChannel).send({
         embed: {
           color: 0x2F3136,
-          description: `${Emojis.MODLOG[type]} ${text}`
+          description: `${Emojis.modlog[type]} ${text}`
         }
       })
     }
 
     TudeBot.on('guildMemberAdd', (mem: GuildMember) => {
-      TudeBot.modlog(mem.guild, 'user_join', `${mem.user} as ${mem.user.username}`, 'low')
+      TudeBot.modlog(mem.guild, 'userJoin', `${mem.user} as ${mem.user.username}`, 'low')
     })
 
     TudeBot.on('guildMemberRemove', (mem: GuildMember) => {
-      TudeBot.modlog(mem.guild, 'user_quit', `${mem.user} as ${mem.user.username}`, 'low')
+      TudeBot.modlog(mem.guild, 'userQuit', `${mem.user} as ${mem.user.username}`, 'low')
     })
 
     TudeBot.on('guildBanAdd', (guild: Guild, user: User) => {

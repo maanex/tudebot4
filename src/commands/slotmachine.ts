@@ -1,7 +1,7 @@
 /* eslint-disable no-labels */
 import { Message, User, TextChannel } from 'discord.js'
-import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import Emojis from '../int/emojis'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 interface SlotMachine {
@@ -39,7 +39,7 @@ export default class SlotmachineCommand extends Command {
   };
 
   private readonly sm1template = '[ᴄᴏᴏᴋɪᴇᴡʜᴇᴇʟ]\n​ ​ ▽ ​ ​ ​ ​ ​ ▽ ​ ​ ​ ​ ​ ▽\n​ %s ​ ​ ​ %s    ​ ​ ​ %s\n​ ​ △ ​ ​ ​ ​ ​ △ ​ ​ ​ ​ ​ △';
-  private readonly sm2template = '|`🎲 Ｎｉｃｅｒ　Ｄｉｃｅｒ 🎲`|\n​ ​ ​ ​ ​ ​ ​ ​ ┌ :: :: :: :: :: ┐\n​ ​ ​ ​ ​ ​ ::%s %s %s %s %s\n​ ​ ​ ​ ​ ​ ​ ​ └ :: :: :: :: :: ┘'.split('::').join(Emojis.BIG_SPACE);
+  private readonly sm2template = '|`🎲 Ｎｉｃｅｒ　Ｄｉｃｅｒ 🎲`|\n​ ​ ​ ​ ​ ​ ​ ​ ┌ :: :: :: :: :: ┐\n​ ​ ​ ​ ​ ​ ::%s %s %s %s %s\n​ ​ ​ ​ ​ ​ ​ ​ └ :: :: :: :: :: ┘'.split('::').join(Emojis.bigSpace.string);
   private readonly sm3template = '𝘿𝙖𝙣𝙘𝙚𝙢𝙖𝙨𝙩𝙚𝙧\n♫ ★​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ♪\n​  ♪ ​  ​ ​ %s%s%s\n​ ​ ​ ​ ​ ​ ​ %s%s%s​ ​ ♫\n​  ★​  ​ %s%s%s\n​ ​ ​ ​ ♫ ​ ​​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ♪  ★';
   private readonly sm4template = '**ㄒㄩ尺乃ㄖ匚卄卂尺Ꮆ乇尺**\n◢─────────────◣\n​ ◖%s %s %s %s %s %s◗\n◥─────────────◤';
 
@@ -314,7 +314,7 @@ export default class SlotmachineCommand extends Command {
             .replace('%s', this.sm2emoji.static[slots[4]])
         }
         const cap = wintext.startsWith('+') ? '**' : ''
-        text += `\n\n|\`${wintext}\`|\n${Emojis.BIG_SPACE} ${cap}+${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g') + cap
+        text += `\n\n|\`${wintext}\`|\n${Emojis.bigSpace.string} ${cap}+${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g') + cap
         // if (prize > 0) u.cookies += prize
         // else u.gems -= prize
         // TudeApi.updateClubUser(u)
@@ -359,13 +359,13 @@ export default class SlotmachineCommand extends Command {
         const slotam = { 0: 0, 1: 0, 2: 0 }
         slots.forEach(s => slotam[s]++)
 
-        let wintext = Emojis.BIG_SPACE + ' 𝒩𝑜 𝓁𝓊𝒸𝓀'
+        let wintext = Emojis.bigSpace.string + ' 𝒩𝑜 𝓁𝓊𝒸𝓀'
         let prize = 0
         let win = false
         let lines = 0
 
         if (slotam[0] === 9 || slotam[1] === 9 || slotam[2] === 9) {
-          wintext = Emojis.BIG_SPACE + ' :tada: 𝒞𝒽𝑒𝒸𝓀𝓅𝑜𝓉 :tada:'
+          wintext = Emojis.bigSpace.string + ' :tada: 𝒞𝒽𝑒𝒸𝓀𝓅𝑜𝓉 :tada:'
           prize = 100_000
           win = true
         } else if (slotam[0] === 0 || slotam[1] === 0 || slotam[2] === 0) {
@@ -385,7 +385,7 @@ export default class SlotmachineCommand extends Command {
           }
         }
         if (lines) {
-          wintext = Emojis.BIG_SPACE + ' ' + lines + ' 𝐿𝒾𝓃𝑒'
+          wintext = Emojis.bigSpace.string + ' ' + lines + ' 𝐿𝒾𝓃𝑒'
           if (lines > 1) wintext += '𝓈'
           prize = 5 * lines
         }
@@ -393,7 +393,7 @@ export default class SlotmachineCommand extends Command {
         for (const s of slots)
           text = text.replace('%s', this.sm3emoji.static[goBlue ? 'blue' : 'orange'][s])
 
-        text += `\n${wintext}\n${Emojis.BIG_SPACE} ${Emojis.BIG_SPACE} +${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g')
+        text += `\n${wintext}\n${Emojis.bigSpace.string} ${Emojis.bigSpace.string} +${Math.abs(prize)}` + (prize >= 0 ? 'c' : 'g')
         if (goBlue && prize > 0) {
           if (win) {
             text += '\n:blue_square: **Bonus: +100 Cookies!**'

@@ -388,7 +388,7 @@ export default class BlackJackCommand extends Command {
       embed: {
         color: 0x2F3136,
         title: 'Black Jack',
-        description: (end ? 'Game Over' : `${this.hit} hit • ${this.stand} stand`) + `\n${Emojis.BIG_SPACE}`,
+        description: (end ? 'Game Over' : `${this.hit} hit • ${this.stand} stand`) + `\n${Emojis.bigSpace.string}`,
         fields: this.embedFields(end)
       }
     })
@@ -428,7 +428,7 @@ export default class BlackJackCommand extends Command {
           if (e.balance === 0) endtext += '**STAND OFF**'
           else if (e.balance < 0) endtext += '**LOOSE**'
           else if (e.balance > 0) endtext += '**WIN**'
-          endtext += Emojis.BIG_SPACE
+          endtext += Emojis.bigSpace.string
           // endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c • ' + e.clubuser.cookies + 'c total'
           endtext += (e.balance < 0 ? '' : '+') + e.balance + 'c'
         }

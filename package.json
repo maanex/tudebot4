@@ -16,6 +16,7 @@
     "ascii-table": "0.0.9",
     "axios": "^0.21.1",
     "chalk": "^3.0.0",
+    "cordo": "^1.2.11",
     "cron": "^1.7.2",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
@@ -34,7 +35,7 @@
     "open-graph-scraper": "^4.5.1",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.0",
-    "sharp": "^0.23.4",
+    "sharp": "^0.28.3",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.4",
     "xml-js": "^1.6.11"

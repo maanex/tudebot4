@@ -2,8 +2,8 @@
 /* eslint-disable no-async-promise-executor */
 import { User, TextChannel, MessageAttachment, MessageEmbed } from 'discord.js'
 import * as Jimp from 'jimp'
-import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import Emojis from '../int/emojis'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class TellmeCommand extends Command {
@@ -34,7 +34,7 @@ export default class TellmeCommand extends Command {
       channel.send({
         embed: {
           color: 0x2F3136,
-          description: `${Emojis.BIG_SPACE}\n\n${Emojis.BIG_SPACE} ${Emojis.BIG_SPACE} ${Emojis.BIG_SPACE} - ${Emojis.BIG_SPACE} ${Emojis.BIG_SPACE} ${Emojis.BIG_SPACE}\n\n${Emojis.BIG_SPACE}`
+          description: `${Emojis.bigSpace.string}\n\n${Emojis.bigSpace.string} ${Emojis.bigSpace.string} ${Emojis.bigSpace.string} - ${Emojis.bigSpace.string} ${Emojis.bigSpace.string} ${Emojis.bigSpace.string}\n\n${Emojis.bigSpace.string}`
         }
       })
       return false

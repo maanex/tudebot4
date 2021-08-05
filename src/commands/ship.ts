@@ -1,7 +1,7 @@
 /* eslint-disable no-labels */
 import { User, TextChannel } from 'discord.js'
-import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import Emojis from '../int/emojis'
+import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 
 export default class ShipCommand extends Command {
@@ -33,7 +33,7 @@ export default class ShipCommand extends Command {
     name2 = name2.toLowerCase()
 
     if (name1 === name2) {
-      repl('Approve', 'message', Emojis.BIG_SPACE, { image: 'https://cdn.discordapp.com/attachments/655354019631333397/682339526802538559/unknown.png' })
+      repl('Approve', 'message', Emojis.bigSpace.string, { image: 'https://cdn.discordapp.com/attachments/655354019631333397/682339526802538559/unknown.png' })
       return false
     }
 
@@ -92,7 +92,7 @@ export default class ShipCommand extends Command {
 
     const line1 = `${this.capitalize(name1)} ${heart} ${this.capitalize(name2)}`
     const line2 = shipName
-      ? `👉 __${this.capitalize(shipName)}__ ${Emojis.BIG_SPACE} ${chances}%`
+      ? `👉 __${this.capitalize(shipName)}__ ${Emojis.bigSpace.string} ${chances}%`
       : 'Really really bad connection between these two!'
 
     repl(line1, 'message', line2)
