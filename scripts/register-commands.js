@@ -19,6 +19,10 @@ const commands = [
         required: false
       }
     ]
+  },
+  {
+    name: 'trivia',
+    description: 'It\'s trivia. What do I write here?'
   }
 ]
 
@@ -45,4 +49,4 @@ async function run(remove = true, add = true, whitelist, guildid) {
     }
   }
 }
-run(false, true, [ 'whois' ], '342620626592464897')
+run(false, true, [ 'trivia' ], '342620626592464897')
