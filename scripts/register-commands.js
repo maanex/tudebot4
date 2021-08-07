@@ -49,6 +49,32 @@ const commands = [
   {
     name: 'iqtest',
     description: 'Test your IQ and a very quick IQ test used to test your IQ.'
+  },
+  {
+    name: 'image',
+    description: 'Get an image of your choice',
+    options: [
+      {
+        type: 3,
+        name: 'kind',
+        description: 'What kind of image would you like to see?',
+        required: true,
+        choices: [
+          { name: '🔀 Random', value: 'random' },
+          { name: '🐈 Cat', value: 'cat' },
+          { name: '🐕 Dog', value: 'dog' },
+          { name: '✨ Inspiration', value: 'inspiration' },
+          { name: '😳 You', value: 'you' }
+          // { name: '🦎 Gecko', value: 'gecko' },
+          // { name: '🐇 Rabbit', value: 'rabbit' },
+          // { name: '🦊 Fox', value: 'fox' },
+          // { name: '🐖 Pig', value: 'pig' },
+          // { name: '🐦 Bird', value: 'bird' },
+          // { name: '🐜 Ant', value: 'ant' },
+          // { name: '🙏 Jesus', value: 'jesus' }
+        ]
+      }
+    ]
   }
 ]
 
@@ -75,4 +101,4 @@ async function run(remove = true, add = true, whitelist, guildid) {
     }
   }
 }
-run(false, true, [ 'iqtest' ], '342620626592464897')
+run(false, true, [ 'image' ], '342620626592464897')
