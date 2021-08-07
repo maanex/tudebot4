@@ -23,6 +23,32 @@ const commands = [
   {
     name: 'trivia',
     description: 'It\'s trivia. What do I write here?'
+  },
+  {
+    name: 'ship',
+    description: 'Get a cute shipping name and get to know how good the chances are :)',
+    options: [
+      {
+        type: 3,
+        name: 'name1',
+        description: 'The first person',
+        required: true
+      },
+      {
+        type: 3,
+        name: 'name2',
+        description: 'The second person',
+        required: true
+      }
+    ]
+  },
+  {
+    name: 'namestylist',
+    description: 'Like a hair stylist but for names! Give your old name a new and fresh look!'
+  },
+  {
+    name: 'iqtest',
+    description: 'Test your IQ and a very quick IQ test used to test your IQ.'
   }
 ]
 
@@ -49,4 +75,4 @@ async function run(remove = true, add = true, whitelist, guildid) {
     }
   }
 }
-run(false, true, [ 'trivia' ], '342620626592464897')
+run(false, true, [ 'iqtest' ], '342620626592464897')

@@ -1,5 +1,5 @@
 import { GuildMember, Guild, TextChannel, User } from 'discord.js'
-import { ModlogPriority, modlogType, Module } from '../types/types'
+import { modlogType, Module } from '../types/types'
 import { TudeBot } from '../index'
 import Emojis from '../int/emojis'
 
@@ -12,35 +12,49 @@ export default class ModlogModule extends Module {
 
   public onEnable() {
     const guilds = this.guilds
-    TudeBot.modlog = function (guild: Guild, type: modlogType, text: string, priority: ModlogPriority) {
+    TudeBot.modlog = function (guild: Guild, type: modlogType, text: string) {
       const id: string = guild.id
       if (!guilds.has(id)) return
-      const channelId: string = guilds.get(id)['channel-' + priority] || guilds.get(id).channel
+      const channelId: string = guilds.get(id)['channel-' + type] || guilds.get(id).channel
       ;(guild.channels.resolve(channelId) as TextChannel).send({
         embed: {
           color: 0x2F3136,
-          description: `${Emojis.modlog[type]} ${text}`
+          description: `${Emojis.modlog[type]} ${text.split('\n').join(`\n${Emojis.bigSpace} `)}`
         }
       })
     }
 
     TudeBot.on('guildMemberAdd', (mem: GuildMember) => {
-      TudeBot.modlog(mem.guild, 'userJoin', `${mem.user} as ${mem.user.username}`, 'low')
+      const flags = mem.user.flags
+        .toArray()
+        .filter(f => !f.includes('HOUSE') && !f.includes('SUPPORTER') && !f.includes('BOT'))
+        .map(f => f.toLocaleLowerCase())
+        .map(f => `\`${f}\``)
+
+      TudeBot.modlog(mem.guild, 'userJoin', [
+        `${mem.user} as ${mem.user.username}`,
+        `Account age: <t:${~~(mem.user.createdTimestamp / 1000)}:D>`,
+        flags.length ? `Flags: ${flags.join(', ')}` : ''
+      ].filter(a => !!a).join('\n'))
     })
 
     TudeBot.on('guildMemberRemove', (mem: GuildMember) => {
-      TudeBot.modlog(mem.guild, 'userQuit', `${mem.user} as ${mem.user.username}`, 'low')
+      TudeBot.modlog(mem.guild, 'userQuit', [
+        `${mem.user} as ${mem.user.username}`,
+        `Joined <t:${~~(mem.joinedTimestamp / 1000)}:R>`,
+        (mem.roles?.highest && !mem.roles?.highest.equals(mem.guild.roles.everyone)) ? `Highest role: ${mem.roles.highest.toString()}` : ''
+      ].filter(a => !!a).join('\n'))
     })
 
     TudeBot.on('guildBanAdd', (guild: Guild, user: User) => {
       setTimeout(async () => {
         const ban = await guild.fetchBan(user)
-        TudeBot.modlog(guild, 'punish', `${user} as ${user.username} was banned by unknown for reason ${ban.reason}`, 'high')
+        TudeBot.modlog(guild, 'punish', `${user} as ${user.username} was banned by unknown for reason ${ban.reason}`)
       }, 1000)
     })
 
     TudeBot.on('guildBanRemove', (guild: Guild, user: User) => {
-      TudeBot.modlog(guild, 'punish', `The ban for ${user} as ${user.username} was lifted`, 'high')
+      TudeBot.modlog(guild, 'punish', `The ban for ${user} as ${user.username} was lifted`)
     })
   }
 

@@ -44,7 +44,7 @@ export default class AdminCommand extends Command {
           break
 
         case 'testmodlog':
-          TudeBot.modlog(orgChannel.guild, 'message', args.slice(2).join(' '), args[1] as any)
+          TudeBot.modlog(orgChannel.guild, 'message', args.slice(1).join(' '))
           break
 
         case 'manualmemeofthemonth':

@@ -75,10 +75,10 @@ export default class Emojis {
   }
 
   public static readonly modlog = {
-    user_join: new Emojis('536593880271814656', 'user_join'),
-    user_quit: new Emojis('536593879940595732', 'user_quit'),
+    userJoin: new Emojis('536593880271814656', 'user_join'),
+    userQuit: new Emojis('536593879940595732', 'user_quit'),
     message: new Emojis('536593879865098251', 'message'),
-    clean_chat: new Emojis('536595613412753419', 'cleanchat'),
+    cleanChat: new Emojis('536595613412753419', 'cleanchat'),
     diverse: new Emojis('536598631394967562', 'diverse'),
     punish: new Emojis('536848046852538368', 'punish'),
     warning: new Emojis('536888614903349258', 'warning'),

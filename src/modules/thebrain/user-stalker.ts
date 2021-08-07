@@ -82,7 +82,6 @@ export default class UserStalker {
         if (out[key]) out.datapoints++
       return out
     } catch (ex) {
-      console.log(ex)
       return null
     }
   }

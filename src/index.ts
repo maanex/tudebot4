@@ -1,5 +1,5 @@
 /* eslint-disable import/namespace */
-import { Client, User } from 'discord.js'
+import { Client, ClientOptions, Intents, User } from 'discord.js'
 import * as chalk from 'chalk'
 import Cordo from 'cordo'
 import { config as loadDotenv } from 'dotenv'
@@ -28,7 +28,7 @@ export class TudeBotClient extends Client {
   public perspectiveApi: PerspectiveAPI = null;
   public alexaAPI: AlexaAPI = null;
 
-  constructor(props: any, config: any) {
+  constructor(props: ClientOptions, config: any) {
     super(props)
 
     this.devMode = process.env.NODE_ENV !== 'production'
@@ -213,7 +213,9 @@ loadDotenv()
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 const _flags = ParseArgs.parse(process.argv)
 export const config = require('../config.js')
-export const TudeBot = new TudeBotClient({}, config)
+export const TudeBot = new TudeBotClient({
+  ws: { intents: Intents.ALL }
+}, config)
 
 
 function fixReactionEvent(bot: TudeBotClient) {

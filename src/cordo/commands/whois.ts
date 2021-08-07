@@ -91,6 +91,7 @@ async function buildMessage(_channel: TextChannel, member: GuildMember): Promise
           // @ts-ignore
           icon_url: member.user.avatarURL()
         },
+        color: 0x2F3136,
         fields
       }
     ]

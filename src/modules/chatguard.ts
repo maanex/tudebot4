@@ -97,13 +97,13 @@ export default class ChatGuard extends Module {
     } else if (this.inviteResponseStatus === 1) {
       this.repl(mes, 'I was not kidding!', 'No advertising here. And no Discord invite links!')
     } else if (this.inviteResponseStatus === 5) {
-      this.repl(mes, 'See, I tried to stay calm but enough is enough!', 'Now would you please shut the fu*** up and stop posting invite links?')
+      this.repl(mes, 'See, I tried to stay calm but enough is enough!', 'Now would you please shut the fuck up and stop posting invite links?')
     }
 
     this.inviteResponseStatus++
     setTimeout(i => i.inviteResponoseStatus--, 5 * 60 * 1000, this)
 
-    TudeBot.modlog(mes.guild, 'cleanChat', `${mes.author} sent an invite link.`, 'medium')
+    TudeBot.modlog(mes.guild, 'cleanChat', `${mes.author} sent an invite link.`)
 
     mes.delete()
     return true

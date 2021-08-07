@@ -96,7 +96,7 @@ it's your last day on earth, what do you do?
 (random_wikihow_article)
 (reddit_news_headline)
 (random_meme_from_reddit)
-WTF is that? (weird_amazon_article)
+(wtf) is that? (weird_amazon_article)
 
 ---
 
@@ -123,6 +123,16 @@ sort of
 how to
 how do you
 how does one
+
+::wtf
+WTF
+wtf
+what the fuck
+what the fook
+what the hell
+what the heck
+what on earth
+the fuck
 
 ---
 
