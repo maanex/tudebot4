@@ -22,10 +22,10 @@ export abstract class Module {
   constructor(
     public readonly dispName: string,
     public readonly usageScope: ModuleUsageScope,
+    public readonly conf: any,
+    public readonly data: any,
+    public readonly guilds: Map<string, any>,
 
-    protected readonly conf: any,
-    protected readonly data: any,
-    protected readonly guilds: Map<string, any>,
     protected readonly lang: (key: string, params?: { [key: string]: string }) => string
   ) { }
 

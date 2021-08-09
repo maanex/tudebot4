@@ -75,6 +75,95 @@ const commands = [
         ]
       }
     ]
+  },
+  {
+    name: 'ban',
+    description: 'Ban someone',
+    options: [
+      {
+        type: 6,
+        name: 'user',
+        description: 'The person to ban',
+        required: true
+      },
+      {
+        type: 3,
+        name: 'reason',
+        description: 'Why did the person get banned?',
+        required: true,
+        choices: [
+          { name: 'Spam', value: 'spam' },
+          { name: 'Fraud / Scamming', value: 'fraud' },
+          { name: 'Annoying', value: 'annoying' },
+          { name: 'Other', value: 'other' }
+        ]
+      },
+      {
+        type: 3,
+        name: 'clear',
+        description: 'Delete user messages on ban (optional)',
+        required: false,
+        choices: [
+          { name: 'Do not delete', value: '0' },
+          { name: '1 day', value: '1' },
+          { name: '3 days', value: '3' },
+          { name: '1 week', value: '7' }
+        ]
+      },
+      {
+        type: 3,
+        name: 'comment',
+        description: 'Attach a comment to the ban. Could be a more detailed reason or anything else.',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'kick',
+    description: 'Kick someone',
+    options: [
+      {
+        type: 6,
+        name: 'user',
+        description: 'The person to kick',
+        required: true
+      },
+      {
+        type: 3,
+        name: 'reason',
+        description: 'Why did the person get kicked?',
+        required: true,
+        choices: [
+          { name: 'Spam', value: 'spam' },
+          { name: 'Fraud / Scamming', value: 'fraud' },
+          { name: 'Annoying', value: 'annoying' },
+          { name: 'Other', value: 'other' }
+        ]
+      },
+      {
+        type: 3,
+        name: 'comment',
+        description: 'Attach a comment to the kick. Could be a more detailed reason or anything else.',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'showme',
+    description: 'Show me something',
+    options: [
+      {
+        type: 3,
+        name: 'what',
+        description: 'What shall I show you?',
+        required: true,
+        choices: [
+          { name: 'A joke', value: 'joke' },
+          { name: 'A cocktail', value: 'cocktail' },
+          { name: 'A meal', value: 'meal' }
+        ]
+      }
+    ]
   }
 ]
 
@@ -101,4 +190,4 @@ async function run(remove = true, add = true, whitelist, guildid) {
     }
   }
 }
-run(false, true, [ 'image' ], '342620626592464897')
+run(false, true, [ 'showme' ], '342620626592464897')

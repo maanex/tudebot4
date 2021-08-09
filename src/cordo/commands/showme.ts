@@ -1,32 +1,149 @@
-import { User, TextChannel } from 'discord.js'
-import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
+import axios from 'axios'
+import { InteractionApplicationCommandCallbackData, ReplyableCommandInteraction } from 'cordo'
+import { MessageEmbed } from 'discord.js'
 
 
-export default class JokesCommand extends Command {
-
-  constructor() {
-    super({
-      name: 'joke',
-      aliases: [ 'jokes' ],
-      description: 'Jokes on you',
-      groups: [ 'fun', 'rng' ]
-    })
-  }
-
-  public execute(_channel: TextChannel, _user: User, _args: string[], _event: CommandExecEvent, repl: ReplyFunction): boolean {
-    const joke = jokes[Math.floor(Math.random() * jokes.length)]
-    let line1 = joke
-    let line2 = ''
-    if (joke.includes('?')) {
-      line1 = joke.split('?')[0] + '?'
-      line2 = joke.substring(line1.length + 1)
-    }
-    repl(line1, 'message', line2)
-    return true
-  }
-
+const bringers = {
+  none: () => Promise.resolve({ content: 'pfff' } as InteractionApplicationCommandCallbackData),
+  joke,
+  cocktail,
+  meal
 }
 
+export default async function (i: ReplyableCommandInteraction) {
+  const what = (i.data.option.what || 'none') + ''
+  const content = await bringers[what]()
+  i.reply(content)
+}
+
+function joke(): Promise<InteractionApplicationCommandCallbackData> {
+  const joke = jokes[Math.floor(Math.random() * jokes.length)]
+  let title = joke
+  let description = ''
+  if (joke.includes('?')) {
+    title = joke.split('?')[0] + '?'
+    description = joke.substring(title.length + 1)
+  }
+  return Promise.resolve({ title, description })
+}
+
+async function cocktail(): Promise<InteractionApplicationCommandCallbackData> {
+  const url = 'https://www.thecocktaildb.com/api/json/v1/1/random.php'
+  try {
+    const { data: o } = await axios.get(url)
+    if (!o || !o.drinks || !o.drinks.length) {
+      return {
+        title: 'Couldn\'t load the cocktail list!',
+        description: 'Maybe just get yourself a glass of water or something.'
+      }
+    }
+    const drink = o.drinks[0]
+
+    const ingredients = []
+    let i = 1
+    while (drink['strIngredient' + i]) {
+      ingredients.push(`${drink['strMeasure' + i]} **${drink['strIngredient' + i]}**`)
+      i++
+    }
+    const embed: Partial<MessageEmbed> = {
+      color: 0x2F3136,
+      title: drink.strDrink,
+      thumbnail: {
+        url: drink.strDrinkThumb
+      },
+      fields: [
+        {
+          name: 'Category',
+          value: drink.strCategory,
+          inline: true
+        },
+        {
+          name: 'Glass',
+          value: drink.strGlass,
+          inline: true
+        },
+        {
+          name: 'Alcoholic?',
+          value: drink.strAlcoholic,
+          inline: true
+        },
+        {
+          name: 'Ingredients',
+          value: ingredients.join('\n'),
+          inline: false
+        },
+        {
+          name: 'Instructions',
+          value: drink.strInstructions,
+          inline: false
+        }
+      ],
+      footer: { text: 'powered by thecocktaildb.com' }
+    }
+    return { embeds: [ embed ] }
+  } catch (e) {
+    return { content: 'An error occured' }
+  }
+}
+
+async function meal(): Promise<InteractionApplicationCommandCallbackData> {
+  const url = 'https://www.themealdb.com/api/json/v1/1/random.php'
+  try {
+    const { data: o } = await axios.get(url)
+    if (!o || !o.meals || !o.meals.length) {
+      return {
+        title: 'Couldn\'t load the meal list!',
+        description: 'Maybe just get yourself some bread or something.'
+      }
+    }
+    const meal = o.meals[0]
+
+    const ingredients = []
+    let i = 1
+    while (meal['strIngredient' + i]) {
+      ingredients.push(`${meal['strMeasure' + i]} **${meal['strIngredient' + i]}**`)
+      i++
+    }
+    const embed: Partial<MessageEmbed> = {
+      color: 0x2F3136,
+      title: meal.strMeal,
+      thumbnail: {
+        url: meal.strMealThumb
+      },
+      fields: [
+        {
+          name: 'Category',
+          value: meal.strCategory,
+          inline: true
+        },
+        {
+          name: 'Area',
+          value: meal.strArea,
+          inline: true
+        },
+        {
+          name: 'Ingredients',
+          value: ingredients.join('\n').substr(0, 1024),
+          inline: false
+        },
+        {
+          name: 'Instructions',
+          value: meal.strInstructions.substr(0, 1024),
+          inline: false
+        }
+      ],
+      footer: { text: 'powered by themealdb.com' }
+    }
+    return { embeds: [ embed ] }
+  } catch (e) {
+    return { content: 'An error occured' }
+  }
+}
+
+
+/*
+ * DATA
+ */
 
 const jokes = [
   'Why did the opera singer go sailing? She wanted to hit the high Cs.',
@@ -217,5 +334,6 @@ const jokes = [
   'How do snails fight? They slug it out.',
 
   'Joe',
-  'Game of Thrones Season 8'
+  'Game of Thrones Season 8',
+  'ur mom'
 ]
