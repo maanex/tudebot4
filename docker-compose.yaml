@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  bot:
+    image: maanex/tudebot
+    environment:
+      NODE_ENV: "dev"
+    # restart_policy:
+    #   condition: any
+    #   delay: 5s
+    #   max_attempts: 3
+    #   window: 30s
+

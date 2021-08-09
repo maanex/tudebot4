@@ -17,6 +17,7 @@ export default class AlexaAPI {
   ) { }
 
   public async awis(url: URL): Promise<AnalyzerResponse> {
+    if (!this.key) return undefined
     try {
       const { data } = await axios.get(`https://awis.api.alexa.com/api?Action=UrlInfo&Count=10&ResponseGroup=Rank,LinksInCount&Start=1&Url=${url.host}`, {
         headers: { 'x-api-key': this.key }

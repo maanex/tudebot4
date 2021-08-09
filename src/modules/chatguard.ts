@@ -1,5 +1,5 @@
 import { Message, MessageAttachment, MessageEmbed, TextChannel } from 'discord.js'
-import { TudeBot } from '../index'
+import { config, TudeBot } from '../index'
 import { Module } from '../types/types'
 import generateInviteLinkMeme from '../functions/generate-invite-link-meme'
 import LinkAnalyzer from './thebrain/link-analyzer'
@@ -19,38 +19,38 @@ export default class ChatGuard extends Module {
 
       if (this.checkInviteLinks(mes)) return
 
+      if (config.thirdparty.googleapis.key) {
+        TudeBot.perspectiveApi.analyze(mes.content).then((res) => {
+          // TudeBot.perspectiveApi.logFull(res, true);
 
-      TudeBot.perspectiveApi.analyze(mes.content).then((res) => {
-        // TudeBot.perspectiveApi.logFull(res, true);
-
-        const oneOf = (list: string[]) => list[Math.floor(Math.random() * list.length)]
-        if (res.threat > 0.95) {
-          mes.channel.send(oneOf([ 'That was too much %!', 'Stop this right now %!', 'You better shut your mouth %', 'Shut up %', 'You took it too far %!' ]).split('%').join(mes.author.toString()))
-          mes.delete()
-          return
-        }
-        if (res.severeToxicity > 0.98) {
-          mes.channel.send(oneOf([ 'Pretty rude %!', 'That was too much %!', 'Calm the fuck down %!', 'Shut up %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
-          mes.delete()
-          return
-        }
-        if (res.insult > 0.95) {
-          mes.channel.send(oneOf([ 'Damn %', 'Oh wow %', 'I\'ll have to remove that %', 'Pretty rude %', 'That was pretty rude %!', 'Oh come on, don\'t be like that %!' ]).split('%').join(mes.author.toString()))
-          mes.delete()
-          return
-        }
-        if (res.toxicity > 0.95) {
-          mes.channel.send(oneOf([ '% dude. Chill!', '% chill!', 'Yo % calm down', 'No reason to rage out %!', 'Chill %', 'Calm down %' ]).split('%').join(mes.author.toString()))
-          return
-        }
-        if (res.sexuallyExplicit > 0.95) {
-          mes.channel.send(oneOf([ 'Please keep things kid friendly %', 'No nsfw here %', 'A bit more kids friendly please %', 'That ain\'t sfw %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
-          return
-        }
-        if (res.flirtation > 0.95)
-          mes.react(oneOf([ '😉', '😏' ]))
-
-      })
+          const oneOf = (list: string[]) => list[Math.floor(Math.random() * list.length)]
+          if (res.threat > 0.95) {
+            mes.channel.send(oneOf([ 'That was too much %!', 'Stop this right now %!', 'You better shut your mouth %', 'Shut up %', 'You took it too far %!' ]).split('%').join(mes.author.toString()))
+            mes.delete()
+            return
+          }
+          if (res.severeToxicity > 0.98) {
+            mes.channel.send(oneOf([ 'Pretty rude %!', 'That was too much %!', 'Calm the fuck down %!', 'Shut up %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
+            mes.delete()
+            return
+          }
+          if (res.insult > 0.95) {
+            mes.channel.send(oneOf([ 'Damn %', 'Oh wow %', 'I\'ll have to remove that %', 'Pretty rude %', 'That was pretty rude %!', 'Oh come on, don\'t be like that %!' ]).split('%').join(mes.author.toString()))
+            mes.delete()
+            return
+          }
+          if (res.toxicity > 0.95) {
+            mes.channel.send(oneOf([ '% dude. Chill!', '% chill!', 'Yo % calm down', 'No reason to rage out %!', 'Chill %', 'Calm down %' ]).split('%').join(mes.author.toString()))
+            return
+          }
+          if (res.sexuallyExplicit > 0.95) {
+            mes.channel.send(oneOf([ 'Please keep things kid friendly %', 'No nsfw here %', 'A bit more kids friendly please %', 'That ain\'t sfw %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
+            return
+          }
+          if (res.flirtation > 0.95)
+            mes.react(oneOf([ '😉', '😏' ]))
+        })
+      }
 
       LinkAnalyzer.rawMessage(mes)
     })

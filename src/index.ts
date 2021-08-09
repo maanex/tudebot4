@@ -2,7 +2,6 @@
 import { Client, ClientOptions, Intents, User } from 'discord.js'
 import * as chalk from 'chalk'
 import Cordo from 'cordo'
-import { config as loadDotenv } from 'dotenv'
 import * as moment from 'moment'
 import { Module, ModlogFunction, GuildSettings } from './types/types'
 import Database from './database/database'
@@ -209,7 +208,6 @@ export class TudeBotClient extends Client {
 }
 
 
-loadDotenv()
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 const _flags = ParseArgs.parse(process.argv)
 export const config = require('../config.js')
