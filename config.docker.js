@@ -3,12 +3,12 @@
 const fs = require('fs')
 
 console.log('-----------------')
-console.log(JSON.stringify(fs.readdirSync('/run/secret'), null, 2))
+console.log(JSON.stringify(fs.readdirSync('/run/secrets'), null, 2))
 console.log('-----------------')
 
 function secret(name) {
   try {
-    return fs.readFileSync('/run/secret/' + name)
+    return fs.readFileSync('/run/secrets/' + name)
   } catch (ex) {
     return process.env[name]
   }
