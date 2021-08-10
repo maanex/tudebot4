@@ -11,6 +11,8 @@ function secret(name) {
 }
 
 
+console.log(secret('TUDEBOT_MONGO_URL'))
+
 module.exports = {
   bot: {
     token: secret('TUDEBOT_DBOT_TOKEN'),
