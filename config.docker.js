@@ -8,7 +8,7 @@ console.log('-----------------')
 
 function secret(name) {
   try {
-    return fs.readFileSync('/run/secrets/' + name)
+    return fs.readFileSync('/run/secrets/' + name).toString()
   } catch (ex) {
     return process.env[name]
   }
