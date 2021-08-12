@@ -223,16 +223,20 @@ function fixReactionEvent(bot: TudeBotClient) {
   }
 
   bot.on('raw', async (event: Event) => {
-    const ev: any = event
-    // eslint-disable-next-line no-prototype-builtins
-    if (!events.hasOwnProperty(ev.t)) return
-    const data = ev.d
-    const user: User = await bot.users.fetch(data.user_id)
-    const channel: any = await bot.channels.fetch(data.channel_id) || await user.createDM()
-    if (channel.messages.resolve(data.message_id)) return
-    const message = await channel.messages.fetch(data.message_id)
-    const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name
-    const reaction = message.reactions.get(emojiKey)
-    bot.emit(events[ev.t], reaction, user)
+    try {
+      const ev: any = event
+      // eslint-disable-next-line no-prototype-builtins
+      if (!events.hasOwnProperty(ev.t)) return
+      const data = ev.d
+      const user: User = await bot.users.fetch(data.user_id)
+      const channel: any = await bot.channels.fetch(data.channel_id) || await user.createDM()
+      if (channel.messages.resolve(data.message_id)) return
+      const message = await channel.messages.fetch(data.message_id)
+      const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name
+      const reaction = message.reactions.get(emojiKey)
+      bot.emit(events[ev.t], reaction, user)
+    } catch (ex) {
+      console.error(ex)
+    }
   })
 }

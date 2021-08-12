@@ -79,6 +79,7 @@ const commands = [
   {
     name: 'ban',
     description: 'Ban someone',
+    default_permission: false,
     options: [
       {
         type: 6,
@@ -121,6 +122,7 @@ const commands = [
   {
     name: 'kick',
     description: 'Kick someone',
+    default_permission: false,
     options: [
       {
         type: 6,
@@ -164,10 +166,14 @@ const commands = [
         ]
       }
     ]
+  },
+  {
+    name: 'Whois',
+    type: 2
   }
 ]
 
-async function run(remove = true, add = true, whitelist, guildid) {
+async function run(remove = true, add = true, whitelist, guildid, updatePermissions) {
   const opts = {
     headers: { Authorization: `Bot ${token}` }
   }
@@ -189,5 +195,23 @@ async function run(remove = true, add = true, whitelist, guildid) {
         .catch(err => console.error(err.response.status, command.name, JSON.stringify(err.response.data, null, 2)))
     }
   }
+
+  if (updatePermissions) {
+    for (const command of data) {
+      const data = {
+        permissions: [
+          {
+            id: '517015369534406689',
+            type: 1,
+            permission: true
+          }
+        ]
+      }
+      if (whitelist && !whitelist.includes(command.name)) continue
+      axios
+        .put(`https://discord.com/api/v8/applications/${clientid}/guilds/${guildid}/commands/${command.id}/permissions`, data, opts)
+        .catch(err => console.error(err.response.status, command.name, JSON.stringify(err.response.data, null, 2)))
+    }
+  }
 }
-run(false, true, [ 'showme' ], '342620626592464897')
+run(false, true, [ 'Whois' ], '517009303203479572', false)

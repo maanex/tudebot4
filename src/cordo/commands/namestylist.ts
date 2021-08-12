@@ -6,7 +6,7 @@ import { TudeBot } from '../..'
 
 const questions = [
   { id: 'cereal', text: 'What is the correct order?', options: [ 'Cereal, Milk, Spoon', 'Milk, Cereal, Spoon', 'Spoon, Cereal, Milk', 'Cereal, Spoon, Bowl' ] },
-  { id: 'pizza', text: 'What is your favourite pizza topping?', options: [ 'Cheese', 'Pork', 'Vegtables', 'Pineapple' ] },
+  { id: 'pizza', text: 'What is your favourite pizza topping?', options: [ 'Cheese', 'Pork', 'Vegetables', 'Pineapple' ] },
   { id: 'lose', text: 'What do you lose the most often?', options: [ 'Keys', 'Phone', 'Wallet', 'Will to live' ] },
   { id: 'animal', text: 'What is the best animal?', options: [ 'Cat', 'Dog', 'Turtle', 'Fish', 'Broccoli' ] },
   { id: 'color', text: 'Your favourite color?', options: [ 'Red', 'Green', 'Blue', 'Yellow' ] },

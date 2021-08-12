@@ -2,9 +2,6 @@
 
 const fs = require('fs')
 
-console.log('-----------------')
-console.log(JSON.stringify(fs.readdirSync('/run/secrets'), null, 2))
-console.log('-----------------')
 
 function secret(name) {
   try {
@@ -14,8 +11,6 @@ function secret(name) {
   }
 }
 
-
-console.log(secret('TUDEBOT_MONGO_URL'))
 
 module.exports = {
   bot: {
