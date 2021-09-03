@@ -47,13 +47,16 @@ export default function (i: ReplyableCommandInteraction) {
         }
       ]
     })
-    .withTimeout(60e3, (j) => {
-      if (finished) return
-      j.edit({
-        description: 'No answer? Okay well I guess you\'re not interested any more... Just hit me up again if you change your mind!',
-        components: []
-      })
-    }, { onInteraction: 'restartTimeout' }
+    .withTimeout(
+      60e3,
+      (j) => {
+        if (finished) return
+        j.edit({
+          description: 'No answer? Okay well I guess you\'re not interested any more... Just hit me up again if you change your mind!',
+          components: []
+        })
+      },
+      { onInteraction: 'restartTimeout' }
     )
     .on('cancel', h => h.edit({
       description: 'Okie dokie! If you ever change your mind, hit me up!',

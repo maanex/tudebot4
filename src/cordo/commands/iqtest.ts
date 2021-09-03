@@ -36,73 +36,73 @@ function quickTest(i: ReplyableCommandInteraction) {
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_1',
           label: 'Intelligence quota'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_2',
           label: 'Interplanetary quadrant'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_3',
           label: 'Inhuman quadragesimal'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_4',
           label: 'Ichthyological quackishnesses'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_5',
           label: 'Iatrogenicities quadricentenary'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_6',
           label: 'Insane quacking'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_7',
           label: 'Inside Qatar'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_8',
           label: 'Intercourse Quotient'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_9',
           label: 'Intellergence Qotent'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_10',
           label: 'Instant Quoting'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_11',
           label: 'Intense Queue'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'stupid',
+          custom_id: 'stupid_12',
           label: 'Innocent Questions'
         }
       ].sort(() => Math.random() - 0.5) as MessageComponent[]
@@ -117,7 +117,7 @@ function quickTest(i: ReplyableCommandInteraction) {
       description: 'You are officially smart 🤝',
       components: []
     }))
-    .on('stupid', h => h.edit({
+    .on('stupid_$nr', h => h.edit({
       title: 'You are stupid!',
       description: `Your IQ is like below ${inRange(80, 90)}, probably only ${inRange(70, 79)}... but who am I to judge, dummy`,
       components: []
@@ -181,7 +181,7 @@ function greenTest(i: ReplyableCommandInteraction) {
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'green',
+          custom_id: 'green_1',
           emoji: { name: '🟢' }
         },
         {
@@ -193,13 +193,13 @@ function greenTest(i: ReplyableCommandInteraction) {
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'green',
+          custom_id: 'green_2',
           label: 'Green'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SUCCESS,
-          custom_id: 'green',
+          custom_id: 'green_3',
           emoji: { id: Emojis.bigSpace.id }
         }
       ]
@@ -209,7 +209,7 @@ function greenTest(i: ReplyableCommandInteraction) {
       description: 'Yeah yeah it is a difficult task, just try it again when you\'re ready!',
       components: []
     }), { onInteraction: 'removeTimeout' })
-    .on('green', h => h.edit({
+    .on('green_$nr', h => h.edit({
       title: 'Good job!',
       description: `Your IQ is ${inRange(100, 120)}`,
       components: []
@@ -315,10 +315,10 @@ function actualTest(i: ReplyableCommandInteraction) {
       description: 'Complete the following pattern:\n\n`↑.` `→:` `↓ ` `←.` `↑:` `→ `',
       components: [ '↑ ', '↑.', '↑:', '→ ', '→.', '→:', '↓ ', '↓.', '↓:', '← ', '←.', '←:' ]
         .sort(() => Math.random() - 0.5)
-        .map(label => ({
+        .map((label, i) => ({
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: label === '↓.' ? 'correct' : 'incorrect',
+          custom_id: label === '↓.' ? 'correct' : `incorrect_${i}`,
           label
         }))
     })
@@ -332,7 +332,7 @@ function actualTest(i: ReplyableCommandInteraction) {
       description: `You did so well we only need this one question to calculate your IQ. You scored ${inRange(140, 180)} Points! Congratulations!`,
       components: []
     }))
-    .on('incorrect', h => h.edit({
+    .on('incorrect_$nr', h => h.edit({
       title: 'Mhm',
       description: `Yeah nope, that's not the one. I think we better stop here before you embarrass yourself even more. Your IQ is ${inRange(90, 120)}.`,
       components: []
@@ -418,25 +418,25 @@ function mathTest(i: ReplyableCommandInteraction) {
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'yes',
+          custom_id: 'yes_1',
           label: '16'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'yes',
+          custom_id: 'yes_2',
           label: '15'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'yes',
+          custom_id: 'yes_3',
           label: '14'
         },
         {
           type: ComponentType.BUTTON,
           style: ButtonStyle.SECONDARY,
-          custom_id: 'yes',
+          custom_id: 'yes_4',
           label: '13'
         }
       ]
@@ -446,7 +446,7 @@ function mathTest(i: ReplyableCommandInteraction) {
       description: 'https://pbs.twimg.com/media/D0Qb0pAW0AEUQiK.jpg',
       components: []
     }), { onInteraction: 'removeTimeout' })
-    .on('yes', h => h.edit({
+    .on('yes_$nr', h => h.edit({
       title: 'I am not sure whats the right answer',
       description: `But you look smart, I'll give you an IQ score of ${inRange(120, 135)}`,
       components: []
