@@ -266,13 +266,13 @@ function generateEditWidget(reply: Reply): InteractionApplicationCommandCallback
       {
         type: ComponentType.BUTTON,
         style: ButtonStyle.SECONDARY,
-        label: 'Delete reply',
+        label: 'Delete',
         custom_id: 'delete'
       },
       {
         type: ComponentType.BUTTON,
         style: ButtonStyle.SECONDARY,
-        label: 'Cancel',
+        label: 'Done',
         custom_id: 'cancel'
       }
     ]

@@ -51,7 +51,8 @@ export default class QuickRepliesModule extends Module {
     const webhook = await this.allocateWebhook(channel)
     webhook.send(text, {
       avatarURL: member.user.avatarURL(),
-      username: member.nickname || member.user.username
+      username: member.nickname || member.user.username,
+      allowedMentions: { parse: [] }
     })
   }
 
