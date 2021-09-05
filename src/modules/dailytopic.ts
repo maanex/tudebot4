@@ -42,19 +42,44 @@ export default class DailyTopicModule extends Module {
     }
   }
 
-  private generateTopic(_guildid: string): Promise<string> {
+  private generateTopic(guildid: string, maxAttempts = 3): Promise<string> {
     // TODO save last week of topics in an array to not get the same kind of topic too many times in a row
 
-    const kind = 'dayfact' // findKind()
-    return this.topics[kind]()
+    const kind = 'weird' // findKind()
+    try {
+      return this.topics[kind]()
+    } catch (ex) {
+      if (maxAttempts <= 1) return Promise.resolve('nah')
+      return this.generateTopic(guildid, maxAttempts--)
+    }
   }
 
   //
 
-  private topics: { [topic: string]: () => Promise<string> } = {
+  private topics: Record<string, () => Promise<string>> = {
     dayfact: async () => {
       const { data } = await axios.get(`http://numbersapi.com/${new Date().getMonth() + 1}/${new Date().getDate()}/date`)
       return data
+    },
+    emoji: () => {
+      const emojis = this.data.emojis.split(' ')
+      const emoji = emojis[Math.floor(Math.random() * emojis.length)]
+      return Promise.resolve(emoji)
+    },
+    news: async () => {
+      const { data } = await axios.get('https://www.reddit.com/r/worldnews/top.json')
+      const post = data.data.children[Math.floor(Math.random() * 5)].data.title
+      return post
+    },
+    website: () => {
+      const websites = this.data.websites
+      const website = websites[Math.floor(Math.random() * websites.length)]
+      return Promise.resolve(website)
+    },
+    weird: () => {
+      const weirds = this.data.weirds
+      const weird = weirds[Math.floor(Math.random() * weirds.length)]
+      return Promise.resolve(weird)
     }
   }
 
@@ -89,12 +114,11 @@ it's your last day on earth, what do you do?
 (how_tos) (doable) while being (personal_condition)
 (how_tos) (doable) while being (personal_condition)?
 
-(emoji)
-(emoji_with_name)
+(x emoji)
 (x fact_about_today)
 (urban_dictionary_word_with_description)
 (random_wikihow_article)
-(reddit_news_headline)
+(x reddit_news_headline)
 (random_meme_from_reddit)
 (wtf) is that? (weird_amazon_article)
 

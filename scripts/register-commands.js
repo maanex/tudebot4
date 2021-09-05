@@ -168,6 +168,11 @@ const commands = [
     ]
   },
   {
+    name: 'quickreplies',
+    description: 'View and edit quick replies'
+  },
+
+  {
     name: 'Whois',
     type: 2
   }
@@ -214,4 +219,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'Whois' ], '517009303203479572', false)
+run(false, true, [ 'quickreplies' ], '342620626592464897', false)

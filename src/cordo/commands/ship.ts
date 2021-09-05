@@ -8,13 +8,17 @@ export default async function (i: ReplyableCommandInteraction) {
   let name1: string = (i.data.option.name1 || i.user.username) + ''
   let name2: string = (i.data.option.name2 || 'tudebot') + ''
 
-  if (/^<@.*>$/.test(name1)) {
-    const person = (await (await TudeBot.guilds.fetch(i.guild_id)).members.fetch(name1.match(/\d+/)[0]))
-    name1 = person.nickname || person.user.username
+  if (/^<@\d+*>$/.test(name1)) {
+    try {
+      const person = (await (await TudeBot.guilds.fetch(i.guild_id)).members.fetch(name1.match(/\d+/)[0]))
+      name1 = person.nickname || person.user.username
+    } catch (_) {}
   }
-  if (/^<@.*>$/.test(name2)) {
-    const person = (await (await TudeBot.guilds.fetch(i.guild_id)).members.fetch(name2.match(/\d+/)[0]))
-    name2 = person.nickname || person.user.username
+  if (/^<@\d+*>$/.test(name2)) {
+    try {
+      const person = (await (await TudeBot.guilds.fetch(i.guild_id)).members.fetch(name2.match(/\d+/)[0]))
+      name2 = person.nickname || person.user.username
+    } catch (_) {}
   }
 
   name1 = name1.toLowerCase()
