@@ -29,6 +29,7 @@ export class TudeBotClient extends Client {
 
   constructor(props: ClientOptions, config: any) {
     super(props)
+    console.log('init')
 
     this.devMode = process.env.NODE_ENV !== 'production'
 
@@ -151,7 +152,6 @@ export class TudeBotClient extends Client {
 
           for (const module of this.modules.values())
             module.onEnable()
-
 
           resolve()
         })
