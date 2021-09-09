@@ -26,7 +26,7 @@ export default function (i: ReplyableCommandInteraction) {
 
   const answers = {}
   // DO NOT CHANGE THE ORDER OF OPTIONS HERE WITHOUT CHANGING THE GENERATOR CODE BELOW!
-  const quests = JSON.parse(JSON.stringify(questions)).sort(() => Math.random() - 0.5)
+  const quests: typeof questions = JSON.parse(JSON.stringify(questions)).sort(() => Math.random() - 0.5)
 
   i
     .replyInteractive({
@@ -94,15 +94,31 @@ export default function (i: ReplyableCommandInteraction) {
     .on('page2_$selection', (h) => {
       type = h.params.selection
       const question = quests[0]
-      h.edit({
-        description: typeTexts[type] + '\nI\'ll be asking you a few questions now to get a feel for what you like an what you dont. Let\'s get started...\n' + question.text,
-        components: question.options.map((o, it) => ({
-          type: ComponentType.BUTTON,
-          style: ButtonStyle.SECONDARY,
-          custom_id: 'page3_' + it.toString(),
-          label: o
-        }))
-      })
+      if (type === 'surprise') {
+        for (let i = 0; i < 3; i++)
+          answers[i] = quests[i].options[~~(Math.random() * quests[i].options.length)]
+        h.edit({
+          description: 'A surprise... Sure! Ready for your new look?',
+          components: [
+            {
+              type: ComponentType.BUTTON,
+              style: ButtonStyle.SUCCESS,
+              custom_id: 'finish',
+              label: 'I was born ready!'
+            }
+          ]
+        })
+      } else {
+        h.edit({
+          description: typeTexts[type] + '\nI\'ll be asking you a few questions now to get a feel for what you like an what you dont. Let\'s get started...\n' + question.text,
+          components: question.options.map((o, it) => ({
+            type: ComponentType.BUTTON,
+            style: ButtonStyle.SECONDARY,
+            custom_id: 'page3_' + it.toString(),
+            label: o
+          }))
+        })
+      }
     })
     .on('page3_$selection', (h) => {
       answers[quests[0].id] = h.params.selection
@@ -164,8 +180,6 @@ export default function (i: ReplyableCommandInteraction) {
 async function generateName(orgName: string, type: string, answers: Record<string, string>, i: CommandInteraction): Promise<string> {
   if (type === 'surprise')
     type = ([ 'small', 'big', 'new' ])[~~(Math.random() * 3)]
-
-  console.log(answers)
 
   if (type === 'small') {
     if (answers.animal && Math.random() < 0.7) {
@@ -273,8 +287,6 @@ function switchFont(text: string, font?: number) {
   ]
   if (font === undefined)
     font = Math.floor(Math.random() * fonts.length)
-
-  console.log(text, text.split('').map(char => base.indexOf(char)), text.split('').map(char => base.indexOf(char)).map(index => (index === -1) ? text[index] : fonts[font][index]).join(''))
 
   return text
     .split('')
