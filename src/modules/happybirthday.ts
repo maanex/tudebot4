@@ -18,8 +18,11 @@ export default class HappyBirthdayModule extends Module {
   }
 
   public onBotReady() {
+    const date = new Date()
+    const dstr = date.getDate() + '-' + (date.getMonth() + 1)
+    this.lastDay = dstr
+
     this.interval = setInterval(() => this.check(), 1000 * 60 * 60)
-    this.check()
   }
 
   public onDisable() {
