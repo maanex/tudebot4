@@ -227,4 +227,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'Whois' ])
+run(false, true, [ 'Whois', 'Encrypt Image', 'Decrypt Image' ])

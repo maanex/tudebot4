@@ -1,4 +1,4 @@
-import { InteractionApplicationCommandCallbackData, ReplyableCommandInteraction } from 'cordo'
+import { InteractionApplicationCommandCallbackData, InteractionCommandType, ReplyableCommandInteraction } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
 import { TudeBot } from '../..'
 import Emojis from '../../int/emojis'
@@ -13,7 +13,7 @@ export default async function (i: ReplyableCommandInteraction) {
     })
   }
 
-  const user = (i.data.option.user || i.user.id) + ''
+  const user = (i.data.option.user || (i.data.type === InteractionCommandType.USER && i.data.target.id) || i.user.id) + ''
 
   i.defer()
 
