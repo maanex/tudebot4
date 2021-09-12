@@ -3,7 +3,7 @@ import { User, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import CommandsModule from '../modules/commands'
-import ParseArgs from '../util/parse-args'
+import ParseArgs from '../lib/parse-args'
 import Emojis from '../int/emojis'
 
 

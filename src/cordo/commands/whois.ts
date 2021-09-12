@@ -15,7 +15,7 @@ export default async function (i: ReplyableCommandInteraction) {
 
   const user = (i.data.option.user || i.user.id) + ''
 
-  i.ack()
+  i.defer()
 
   try {
     const channel = await TudeBot.channels.fetch(i.channel_id) as TextChannel

@@ -175,6 +175,14 @@ const commands = [
   {
     name: 'Whois',
     type: 2
+  },
+  {
+    name: 'Encrypt Image',
+    type: 3
+  },
+  {
+    name: 'Decrypt Image',
+    type: 3
   }
 ]
 
@@ -219,4 +227,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'quickreplies' ], '342620626592464897', false)
+run(false, true, [ 'Whois' ])
