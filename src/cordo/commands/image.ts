@@ -15,7 +15,7 @@ export default async function (i: ReplyableCommandInteraction) {
   i.reply({ content: url })
 }
 
-async function findImage(kind: string, i: ReplyableCommandInteraction): Promise<string> {
+export async function findImage(kind: string, i: ReplyableCommandInteraction): Promise<string> {
   if (kind === 'dog') {
     const { data: o } = await axios.get('https://api.thedogapi.com/v1/images/search?format=json')
     return o[0].url
