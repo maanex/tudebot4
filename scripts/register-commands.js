@@ -171,6 +171,18 @@ const commands = [
     name: 'quickreplies',
     description: 'View and edit quick replies'
   },
+  {
+    name: 'define',
+    description: 'Please elaborate!',
+    options: [
+      {
+        type: 3,
+        name: 'term',
+        description: 'Which term do you want defined?',
+        required: true
+      }
+    ]
+  },
 
   {
     name: 'Whois',
@@ -227,4 +239,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'Whois', 'Encrypt Image', 'Decrypt Image' ])
+run(false, true, [ 'define' ])
