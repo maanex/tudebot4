@@ -42,7 +42,7 @@ module.exports = {
     }
   },
   server: {
-    port: 9005
+    port: 80
   },
   lang: 'en',
   admins: [
