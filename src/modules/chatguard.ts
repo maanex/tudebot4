@@ -1,7 +1,7 @@
 import { Message, MessageAttachment, MessageEmbed, TextChannel } from 'discord.js'
 import { config, TudeBot } from '../index'
 import { Module } from '../types/types'
-import generateInviteLinkMeme from '../functions/generate-invite-link-meme'
+import generateInviteLinkMeme from '../lib/images/generate-invite-link-meme'
 import LinkAnalyzer from './thebrain/link-analyzer'
 
 

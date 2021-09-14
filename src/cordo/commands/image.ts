@@ -2,9 +2,10 @@ import axios from 'axios'
 import { ReplyableCommandInteraction } from 'cordo'
 import Image from 'image-js'
 import { TudeBot } from '../..'
-import generateFunnyImage from '../../functions/generate-funny-image'
+import generateFunnyImage from '../../lib/images/generate-funny-image'
 import { oneInOne } from '../../lib/enc/one-in-one'
 import uploadImageToCdn from '../../lib/img-cdn'
+import { generateTellmeImage } from '../../lib/images/generate-tellme-image'
 
 
 export default async function (i: ReplyableCommandInteraction) {
@@ -25,7 +26,7 @@ export async function findImage(kind: string, i: ReplyableCommandInteraction): P
     return o[0].url
   }
   if (kind === 'random') {
-    const { data: o } = await axios.get('http://pd.tude.ga/imgdb.json')
+    const { data: o } = await axios.get('https://raw.githubusercontent.com/tude-webhost/publicdata/master/imgdb.json')
     const url1 = o[Math.floor(Math.random() * o.length)]
     if (Math.random() < 0.8) return url1
 
@@ -46,6 +47,10 @@ export async function findImage(kind: string, i: ReplyableCommandInteraction): P
     const { data: o } = await axios.get('http://inspirobot.me/api?generate=true')
     return o
   }
+  if (kind === 'jesus') {
+    const buff = await TudeBot.obrazium.getJesus()
+    return uploadImageToCdn(buff)
+  }
   if (kind === 'you') {
     const user = await TudeBot.users.fetch(i.user.id)
     const avatar = user.avatarURL({ format: 'png' })
@@ -55,6 +60,22 @@ export async function findImage(kind: string, i: ReplyableCommandInteraction): P
     const buffer = await generateFunnyImage(avatar)
     const url = await uploadImageToCdn(buffer)
     return url
+  }
+  if (kind === 'tellme') {
+    const { data: urls } = await axios.get('https://raw.githubusercontent.com/tude-webhost/publicdata/master/imgdb.json')
+
+    let attempts = 5
+    let source: string
+    let buffer: Buffer
+    do {
+      try {
+        source = urls[~~(Math.random() * urls.length)]
+        buffer = await generateTellmeImage(source)
+        return uploadImageToCdn(buffer)
+      } catch (ex) { }
+    } while (attempts-- >= 0)
+
+    return ''
   }
   return ''
 }

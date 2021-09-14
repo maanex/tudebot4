@@ -64,7 +64,7 @@ export default function (i: ReplyableCommandInteraction) {
         { onInteraction: 'removeTimeout' }
       )
       .on('use_random', async (h) => {
-        const { data: o } = await axios.get('http://pd.tude.ga/imgdb.json')
+        const { data: o } = await axios.get('https://raw.githubusercontent.com/tude-webhost/publicdata/master/imgdb.json')
         const url = o[Math.floor(Math.random() * o.length)]
         clearTimeout(mem.get(i.user.id).timeout)
         finalize(h, url)

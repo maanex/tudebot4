@@ -64,6 +64,8 @@ const commands = [
           { name: '🐈 Cat', value: 'cat' },
           { name: '🐕 Dog', value: 'dog' },
           { name: '✨ Inspiration', value: 'inspiration' },
+          { name: '🙏 Jesus', value: 'jesus' },
+          { name: '️👁️ Tell Me', value: 'tellme' },
           { name: '😳 You', value: 'you' }
           // { name: '🦎 Gecko', value: 'gecko' },
           // { name: '🐇 Rabbit', value: 'rabbit' },
@@ -71,7 +73,6 @@ const commands = [
           // { name: '🐖 Pig', value: 'pig' },
           // { name: '🐦 Bird', value: 'bird' },
           // { name: '🐜 Ant', value: 'ant' },
-          // { name: '🙏 Jesus', value: 'jesus' }
         ]
       }
     ]
@@ -239,4 +240,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'define' ])
+run(false, true, [ 'image' ], '342620626592464897')
