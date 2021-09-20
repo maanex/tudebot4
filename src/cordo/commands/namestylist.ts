@@ -231,7 +231,7 @@ async function generateName(orgName: string, type: string, answers: Record<strin
     if (Math.random() < 0.3) {
       const anskeys = Object.keys(answers)
       const anskey = anskeys[~~(Math.random() * anskeys.length)]
-      const ansval = questions.find(q => q.id === anskey).options[answers[anskey]]
+      const ansval = questions.find(q => q.id === anskey)?.options[answers[anskey]] ?? i.member?.nick ?? i.user.username ?? 'cringe'
       return generateName(ansval, 'big', answers, i)
     }
 
