@@ -1,5 +1,5 @@
 /* eslint-disable import/namespace */
-import { Client, ClientOptions, Intents, User } from 'discord.js'
+import { Client, ClientOptions, Intents, TextChannel, User } from 'discord.js'
 import * as chalk from 'chalk'
 import Cordo from 'cordo'
 import * as moment from 'moment'
@@ -229,11 +229,10 @@ function fixReactionEvent(bot: TudeBotClient) {
       if (!events.hasOwnProperty(ev.t)) return
       const data = ev.d
       const user: User = await bot.users.fetch(data.user_id)
-      const channel: any = await bot.channels.fetch(data.channel_id) || await user.createDM()
+      const channel = (await bot.channels.fetch(data.channel_id) || await user.createDM()) as TextChannel
       if (channel.messages.resolve(data.message_id)) return
       const message = await channel.messages.fetch(data.message_id)
-      const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name
-      const reaction = message.reactions.get(emojiKey)
+      const reaction = message.reactions.cache.get(data.emoji.id || data.emoji.name)
       bot.emit(events[ev.t], reaction, user)
     } catch (ex) {
       console.error(ex)

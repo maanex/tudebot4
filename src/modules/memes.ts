@@ -24,7 +24,7 @@ export default class MemesModule extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', (mes) => {
+    TudeBot.on('message', async (mes) => {
       if (!this.isMessageEventValid(mes)) return
       if (!mes.attachments.size) return
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
@@ -49,10 +49,6 @@ export default class MemesModule extends Module {
         }
       }
 
-      let counter = 0
-      for (const e of emojis)
-        setTimeout(() => mes.react(e), counter++ * 500)
-
       if (Math.floor(Math.random() * 500) === 0) {
         const gif = ([ 'https://cdn.discordapp.com/attachments/497071913718382604/497071937772847104/giphy.gif',
           'https://cdn.discordapp.com/attachments/497071913718382604/497071942323666945/giphy2.gif',
@@ -76,6 +72,9 @@ export default class MemesModule extends Module {
             rating: 0
           })
       }
+
+      for (const e of emojis)
+        await mes.react(e)
     })
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
