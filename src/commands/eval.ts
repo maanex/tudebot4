@@ -31,7 +31,7 @@ export default class EvalCommand extends Command {
       const mes = event.message
       const msg = event.message
       const member = message.member
-      const bot = TudeBot.user
+      const bot = TudeBot
       const self = TudeBot.user
       const core = TudeBot.user
       const docker = EvalCommand.docker

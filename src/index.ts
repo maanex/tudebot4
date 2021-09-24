@@ -12,6 +12,7 @@ import Obrazium from './thirdparty/obrazium/obrazium'
 import Server from './server/server'
 import PerspectiveAPI from './thirdparty/googleapis/perspective-api'
 import AlexaAPI from './thirdparty/alexa/alexa-api'
+import Metrics from './lib/metrics'
 
 
 export class TudeBotClient extends Client {
@@ -44,6 +45,7 @@ export class TudeBotClient extends Client {
     logVersionDetails()
     fixReactionEvent(this)
     moment.locale('en-gb')
+    Metrics.init()
 
     MongoAdapter.connect(this.config.mongodb.url)
       .catch((err) => {

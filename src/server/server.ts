@@ -3,6 +3,7 @@ import * as express from 'express'
 import * as morgan from 'morgan'
 import * as helmet from 'helmet'
 import * as chalk from 'chalk'
+import Metrics from '../lib/metrics'
 
 
 export default class Server {
@@ -17,16 +18,7 @@ export default class Server {
 
     app.set('trust proxy', 1)
 
-    app.get('/metrics', (_, res) => {
-      res.type('text/plain').send(`# HELP tudebot_test_1 It's a test
-# TYPE tudebot_test_1 counter
-tudebot_test_1 ${~~(Math.random() * 20)}
-`)
-    })
-
-    app.all('/hello', (_, res) => {
-      res.send('world')
-    })
+    app.get('/metrics', Metrics.endpoint())
 
     const server = http.createServer(app)
 
