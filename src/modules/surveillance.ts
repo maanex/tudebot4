@@ -40,8 +40,8 @@ export default class SurveillanceModule extends Module {
       const user = after?.member?.id ?? before?.member?.id
       if (!user) return
 
-      const guilds = this.memberGuildsCache.get(user)
-      if (!guilds) return
+      const guild = this.getGuilds()[after?.guild?.id ?? before?.guild?.id]
+      if (!guild) return
 
       const val = !after?.channel
         ? 0
@@ -50,7 +50,7 @@ export default class SurveillanceModule extends Module {
           : 1
 
       Metrics.gaugeSurveillanceVoice
-        .labels({ user: this.data.users[user] ?? user, guilds })
+        .labels({ user: this.data.users[user] ?? user, guild })
         .set(val)
     })
 
@@ -109,9 +109,9 @@ export default class SurveillanceModule extends Module {
         .labels({ user, guilds })
         .set(SurveillanceModule.presenceLookup[person[1][0]])
 
-      Metrics.gaugeSurveillanceVoice
-        .labels({ user, guilds })
-        .set(person[1][1]?.channel ? (person[1][1].mute ? 0.5 : 1) : 0)
+      // Metrics.gaugeSurveillanceVoice
+      //   .labels({ user, guilds })
+      //   .set(person[1][1]?.channel ? (person[1][1].mute ? 0.5 : 1) : 0)
     }
   }
 

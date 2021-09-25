@@ -21,7 +21,7 @@ export default class Metrics {
   public static gaugeSurveillanceVoice = new Gauge({
     name: 'tb_surveillance_voice',
     help: 'Keeps track of voice connections. Isn\'t that nice?',
-    labelNames: [ 'user', 'guilds' ]
+    labelNames: [ 'user', 'guild' ]
   })
 
   //
