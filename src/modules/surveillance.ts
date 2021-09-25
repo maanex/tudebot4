@@ -53,6 +53,21 @@ export default class SurveillanceModule extends Module {
         .labels({ user: this.data.users[user] ?? user, guilds })
         .set(val)
     })
+
+    TudeBot.on('message', (mes) => {
+      const user = mes.author.id
+      if (!user) return
+
+      if (!this.memberGuildsCache.has(user)) return
+      if (!this.getGuilds()[mes.guild.id]) return
+
+      Metrics.counterSurveillanceMessages
+        .labels({
+          user: this.data.users[user] ?? user,
+          guild: this.getGuilds()[mes.guild.id]
+        })
+        .inc()
+    })
   }
 
   public onBotReady() {

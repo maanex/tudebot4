@@ -1,4 +1,4 @@
-import { Gauge, Registry } from 'prom-client'
+import { Counter, Gauge, Registry } from 'prom-client'
 import { Request, Response } from 'express'
 
 
@@ -6,11 +6,11 @@ export default class Metrics {
 
   private static register = new Registry()
 
-  // public static counterLegacyCommands = new Counter({
-  //   name: 'fsb_legacy_commands',
-  //   help: 'For deciding when to drop legacy commands entirely',
-  //   labelNames: [ 'name' ]
-  // })
+  public static counterSurveillanceMessages = new Counter({
+    name: 'tb_surveillance_messages',
+    help: 'Counting the messages a user sent',
+    labelNames: [ 'user', 'guild' ]
+  })
 
   public static gaugeSurveillanceUsers = new Gauge({
     name: 'tb_surveillance_users',
@@ -33,7 +33,7 @@ export default class Metrics {
   private static registerMetrics() {
     // collectDefaultMetrics({ register: Metrics.register })
 
-    // Metrics.register.registerMetric(Metrics.counterGatewayEvents)
+    Metrics.register.registerMetric(Metrics.counterSurveillanceMessages)
 
     Metrics.register.registerMetric(Metrics.gaugeSurveillanceUsers)
     Metrics.register.registerMetric(Metrics.gaugeSurveillanceVoice)
