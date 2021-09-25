@@ -33,7 +33,6 @@ export default class Server {
         res.status(400).send('400 Bad Request')
       else
         next()
-
     }
   }
 

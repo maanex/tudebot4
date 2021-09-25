@@ -18,6 +18,12 @@ export default class Metrics {
     labelNames: [ 'user', 'guilds' ]
   })
 
+  public static gaugeSurveillanceVoice = new Gauge({
+    name: 'tb_surveillance_voice',
+    help: 'Keeps track of voice connections. Isn\'t that nice?',
+    labelNames: [ 'user', 'guilds' ]
+  })
+
   //
 
   public static init() {
@@ -30,6 +36,7 @@ export default class Metrics {
     // Metrics.register.registerMetric(Metrics.counterGatewayEvents)
 
     Metrics.register.registerMetric(Metrics.gaugeSurveillanceUsers)
+    Metrics.register.registerMetric(Metrics.gaugeSurveillanceVoice)
   }
 
   //
