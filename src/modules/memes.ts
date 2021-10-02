@@ -25,56 +25,60 @@ export default class MemesModule extends Module {
 
   public onEnable() {
     TudeBot.on('message', async (mes) => {
-      if (!this.isMessageEventValid(mes)) return
-      if (!mes.attachments.size) return
-      if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
+      try {
+        if (!this.isMessageEventValid(mes)) return
+        if (!mes.attachments.size) return
+        if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
 
-      DbStats.getUser(mes.author).then(u => u.memesSent++)
+        DbStats.getUser(mes.author).then(u => u.memesSent++)
 
-      const emojis = Object.keys(this.RATINGS)
+        const emojis = Object.keys(this.RATINGS)
 
-      if (` ${mes.content} `.includes(' f '))
-        emojis.push(':pay_respect:496359590087098409')
+        if (` ${mes.content} `.includes(' f '))
+          emojis.push(':pay_respect:496359590087098409')
 
-      if (mes.content.match(/doo+t/i))
-        emojis.push(':doot:496770649562415115')
+        if (mes.content.match(/doo+t/i))
+          emojis.push(':doot:496770649562415115')
 
-      if (mes.content.match(/dank/i))
-        emojis.push('🇩', '🇦', '🇳', '🇰')
+        if (mes.content.match(/dank/i))
+          emojis.push('🇩', '🇦', '🇳', '🇰')
 
-      for (const me of [ 'meirl', 'me irl', 'me_irl', 'ichiel', 'ich_iel', 'ich iel' ]) {
-        if (mes.content.toLowerCase().includes(me)) {
-          emojis.push(':meirl:496357154199044097')
-          break
-        }
-      }
-
-      if (Math.floor(Math.random() * 500) === 0) {
-        const gif = ([ 'https://cdn.discordapp.com/attachments/497071913718382604/497071937772847104/giphy.gif',
-          'https://cdn.discordapp.com/attachments/497071913718382604/497071942323666945/giphy2.gif',
-          'https://cdn.discordapp.com/attachments/497071913718382604/497071959595548683/giphy3.gif' ])[Math.floor(Math.random() * 3)]
-        mes.channel.send({
-          embed: {
-            color: 0x2F3136,
-            image: { url: gif }
+        for (const me of [ 'meirl', 'me irl', 'me_irl', 'ichiel', 'ich_iel', 'ich iel' ]) {
+          if (mes.content.toLowerCase().includes(me)) {
+            emojis.push(':meirl:496357154199044097')
+            break
           }
-        })
-      }
+        }
 
-      if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] === mes.channel.id) {
-        Database
-          .collection('memes')
-          .insertOne({
-            _id: mes.id,
-            author: mes.author.id,
-            caption: mes.content,
-            image: mes.attachments.first().url,
-            rating: 0
+        if (Math.floor(Math.random() * 500) === 0) {
+          const gif = ([ 'https://cdn.discordapp.com/attachments/497071913718382604/497071937772847104/giphy.gif',
+            'https://cdn.discordapp.com/attachments/497071913718382604/497071942323666945/giphy2.gif',
+            'https://cdn.discordapp.com/attachments/497071913718382604/497071959595548683/giphy3.gif' ])[Math.floor(Math.random() * 3)]
+          mes.channel.send({
+            embed: {
+              color: 0x2F3136,
+              image: { url: gif }
+            }
           })
-      }
+        }
 
-      for (const e of emojis)
-        await mes.react(e)
+        if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] === mes.channel.id) {
+          Database
+            .collection('memes')
+            .insertOne({
+              _id: mes.id,
+              author: mes.author.id,
+              caption: mes.content,
+              image: mes.attachments.first().url,
+              rating: 0
+            })
+        }
+
+        for (const e of emojis)
+          await mes.react(e)
+      } catch (ex) {
+        console.error(ex)
+      }
     })
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
