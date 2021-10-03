@@ -4,6 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "build",
+    "skipLibCheck": true,
     "lib": [
       "esnext",
       "dom"
