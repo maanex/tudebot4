@@ -75,8 +75,13 @@ export default class MemesModule extends Module {
         }
 
         console.log('mi1')
-        for (const e of emojis)
-          await mes.react(e).catch(console.error)
+        for (const e of emojis) {
+          try {
+            await mes.react(e)
+          } catch (ex) {
+            console.error(ex)
+          }
+        }
         console.log('mi2')
       } catch (ex) {
         console.error(ex)
