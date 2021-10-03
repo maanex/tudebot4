@@ -75,20 +75,17 @@ export default class MemesModule extends Module {
             .catch(console.error)
         }
 
-        console.log('mi1')
         for (const e of emojis) {
           console.log('mi1a')
           try {
-            console.log('mi1b')
-            await mes.react(e)
+            console.log('mi1b', e)
+            await mes.react(e).catch(console.error)
             console.log('mi1c')
           } catch (ex) {
             console.log('mi1d')
             console.error(ex)
           }
-          console.log('mi1e')
         }
-        console.log('mi2')
       } catch (ex) {
         console.error(ex)
       }
@@ -96,17 +93,12 @@ export default class MemesModule extends Module {
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       const mes = reaction.message
-      console.log('mr1')
       if (user.bot) return
       if (mes.author.bot) return
       if (!mes.guild) return
-      console.log('mr2')
       if (!this.isEnabledInGuild(mes.guild)) return
-      console.log('mr4')
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
-      console.log('mr4')
       if (!mes.attachments.size) return
-      console.log('mr5')
 
       if (this.RATINGS[reaction.emoji.name]) {
         const rating = this.RATINGS[reaction.emoji.name]

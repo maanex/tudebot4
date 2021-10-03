@@ -229,17 +229,13 @@ function fixReactionEvent(bot: TudeBotClient) {
       const ev: any = event
       // eslint-disable-next-line no-prototype-builtins
       if (!events.hasOwnProperty(ev.t)) return
-      // const data = ev.d
-      // const user: User = await bot.users.fetch(data.user_id)
-      // const channel = (await bot.channels.fetch(data.channel_id) || await user.createDM()) as TextChannel
-      // if (channel.messages.resolve(data.message_id)) return
-      // console.log('fix5')
-      // const message = await channel.messages.fetch(data.message_id)
-      // console.log('fix6')
-      // const reaction = message.reactions.cache.get(data.emoji.id || data.emoji.name)
-      // console.log('fix7')
-      // bot.emit(events[ev.t], reaction, user)
-      // console.log('fix8')
+      const data = ev.d
+      const user: User = await bot.users.fetch(data.user_id)
+      const channel = (await bot.channels.fetch(data.channel_id) || await user.createDM()) as TextChannel
+      if (channel.messages.resolve(data.message_id)) return
+      const message = await channel.messages.fetch(data.message_id)
+      const reaction = message.reactions.cache.get(data.emoji.id || data.emoji.name)
+      bot.emit(events[ev.t], reaction, user)
     } catch (ex) {
       console.error(ex)
     }
