@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "outDir": "build",
     "skipLibCheck": true,
+    "removeComments": true,
     "lib": [
       "esnext",
       "dom"
@@ -23,17 +24,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "paths": {
-      // "@commands/*": [ "commands/*" ],
-      // "@content/*": [ "content/*" ],
-      // "@database/*": [ "database/*" ],
-      // "@functions/*": [ "functions/*" ],
-      // "@int/*": [ "int/*" ],
-      // "@modules/*": [ "modules/*" ],
-      // "@server/*": [ "server/*" ],
-      // "@util/*": [ "util/*" ],
-    }
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "./src/**/*"
   ]
