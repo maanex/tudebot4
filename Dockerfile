@@ -18,8 +18,7 @@ RUN apk add --update --no-cache --virtual .gyp \
 
 COPY package*.json ./
 
-#RUN npm install --only=production
-RUN npm ci
+RUN npm install --production
 
 COPY . .
 COPY config.docker.js config.js
