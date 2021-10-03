@@ -27,21 +27,23 @@ export default class GuildInfoCommand extends Command {
     })
 
     channel.send({
-      embed: {
-        title: settings.name,
-        color: 0x2F3136,
-        fields: [
-          {
-            name: 'Managers:',
-            value: Object.keys(settings.managers).join('\n'),
-            inline: true
-          },
-          {
-            name: 'Modules:',
-            value: moduleData.join('\n')
-          }
-        ]
-      }
+      embeds: [
+        {
+          title: settings.name,
+          color: 0x2F3136,
+          fields: [
+            {
+              name: 'Managers:',
+              value: Object.keys(settings.managers).join('\n'),
+              inline: true
+            },
+            {
+              name: 'Modules:',
+              value: moduleData.join('\n')
+            }
+          ]
+        }
+      ]
     })
 
     return true

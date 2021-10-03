@@ -47,13 +47,13 @@ async function buildMessage(_channel: TextChannel, member: GuildMember): Promise
 
   const generalJoinDiscord = getGeneralJoinDiscord(member)
   const generalJoinServer = getGeneralJoinServer(member)
-  const generalLastMessage = getGeneralLastMessage(member)
+  // const generalLastMessage = getGeneralLastMessage(member)
   fields.push({
     name: 'General',
     value: [
       toText(generalJoinDiscord),
-      toText(generalJoinServer),
-      toText(generalLastMessage)
+      toText(generalJoinServer)
+      // toText(generalLastMessage)
     ].join('\n'),
     inline: false
   })
@@ -122,14 +122,14 @@ function getGeneralJoinServer(member: GuildMember): [ number, string ] {
   ]
 }
 
-function getGeneralLastMessage(member: GuildMember): [ number, string ] {
-  return [
-    0,
-    member.lastMessage
-      ? `Sent their [last message](${member.lastMessage.url}) <t:${~~(member.lastMessage.createdAt.getTime() / 1000)}:R>`
-      : 'Has not sent any messages in a while, possibly never.'
-  ]
-}
+// function getGeneralLastMessage(member: GuildMember): [ number, string ] {
+//   return [
+//     0,
+//     member.lastMessage
+//       ? `Sent their [last message](${member.lastMessage.url}) <t:${~~(member.lastMessage.createdAt.getTime() / 1000)}:R>`
+//       : 'Has not sent any messages in a while, possibly never.'
+//   ]
+// }
 
 async function getThirdpartyDiscordBio(member: GuildMember): Promise<[ number, string ]> {
   const data = await UserStalker.fetchDiscordBio(member.id)

@@ -1,4 +1,4 @@
-import { Message, Channel, User, TextChannel } from 'discord.js'
+import { Message, Channel, User, TextChannel, TextBasedChannels } from 'discord.js'
 import { cmesType, Command, ReplyFunction, CommandExecEvent, AwaitUserResponseFunction } from 'types/types'
 import * as chalk from 'chalk'
 import { TudeBot, config } from '../index'
@@ -126,7 +126,7 @@ export default class CommandsModule extends Module {
         (res as Promise<boolean>).then(update).catch(() => {})
 
 
-      if (!mes.member.hasPermission('MANAGE_MESSAGES')) {
+      if (!mes.member.permissions.has('MANAGE_MESSAGES')) {
         this.cooldown.get(command.name).push(mes.author.id)
         setTimeout(id => this.cooldown.get(command.name).splice(this.cooldown.get(command.name).indexOf(id), 1), command.cooldown * 1000, mes.author.id)
       }
@@ -232,21 +232,23 @@ export default class CommandsModule extends Module {
     return this.activeInCommandsChannel
   }
 
-  private cmes(channel: Channel, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
+  private cmes(channel: Channel | TextBasedChannels, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
     if (type === 'error') text = ':x: ' + text
     if (type === 'success') text = ':white_check_mark: ' + text;
 
     (channel as TextChannel).send({
-      embed: {
-        color: 0x2F3136,
-        title: description ? `${text}` : '',
-        description: description ? `${description || ''}` : `${text}`,
-        footer: {
-          text: '@' + author.username + (type === 'bad' ? ' • not successful' : '') + (settings && settings.footer ? ` • ${settings.footer}` : '')
-        },
-        thumbnail: { url: settings && settings.image },
-        image: { url: settings && settings.banner }
-      }
+      embeds: [
+        {
+          color: 0x2F3136,
+          title: description ? `${text}` : '',
+          description: description ? `${description || ''}` : `${text}`,
+          footer: {
+            text: '@' + author.username + (type === 'bad' ? ' • not successful' : '') + (settings && settings.footer ? ` • ${settings.footer}` : '')
+          },
+          thumbnail: { url: settings && settings.image },
+          image: { url: settings && settings.banner }
+        }
+      ]
     })
   }
 

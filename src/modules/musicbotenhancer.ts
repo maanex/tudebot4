@@ -29,7 +29,7 @@ export default class MusicBotEnhancer extends Module {
     })
 
     TudeBot.on('voiceStateUpdate', async (before: VoiceState, after: VoiceState) => {
-      if (!after?.channelID) {
+      if (!after?.channelId) {
         const opts = this.guildData(before.guild)?.[before.id]
         if (!opts) return
 
@@ -49,7 +49,7 @@ export default class MusicBotEnhancer extends Module {
     const latter = embed.description?.split('](')?.[0]
     if (!latter) return ''
 
-    let name = latter.substr(1)
+    let name = latter.startsWith('(') ? latter.substring(1) : latter
     if (name.length > 26) {
       if (name.includes(' - '))
         name = name.split(' - ')[1]

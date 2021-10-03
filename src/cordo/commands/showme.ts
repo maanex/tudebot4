@@ -1,6 +1,5 @@
 import axios from 'axios'
-import { InteractionApplicationCommandCallbackData, ReplyableCommandInteraction } from 'cordo'
-import { MessageEmbed } from 'discord.js'
+import { InteractionApplicationCommandCallbackData, ReplyableCommandInteraction, MessageEmbed } from 'cordo'
 
 
 const bringers = {
@@ -104,7 +103,7 @@ async function meal(): Promise<InteractionApplicationCommandCallbackData> {
       ingredients.push(`${meal['strMeasure' + i]} **${meal['strIngredient' + i]}**`)
       i++
     }
-    const embed: Partial<MessageEmbed> = {
+    const embed: MessageEmbed = {
       color: 0x2F3136,
       title: meal.strMeal,
       thumbnail: {

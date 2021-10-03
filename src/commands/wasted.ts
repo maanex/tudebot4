@@ -20,11 +20,14 @@ export default class WastedCommand extends Command {
       const imgBuffer = await TudeBot.obrazium.getWasted(user.displayAvatarURL().replace('webp', 'png'))
       const file = new MessageAttachment(imgBuffer, 'wasted.png')
       const embed = new MessageEmbed()
-        .attachFiles([ file ])
         .setColor(0x2F3136)
         .setFooter(`@${user.tag} • obrazium.com`)
         .setImage('attachment://wasted.png')
-      channel.send('', { embed })
+
+      channel.send({
+        embeds: [ embed ],
+        files: [ file ]
+      })
       return true
     } catch (ex) {
       return false

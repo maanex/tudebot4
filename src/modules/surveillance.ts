@@ -25,7 +25,7 @@ export default class SurveillanceModule extends Module {
     this.updateInterval = setInterval(mod => mod.updateAll(), 1000 * 60 * 10, this)
 
     TudeBot.on('presenceUpdate', (before, after) => {
-      const user = after?.userID ?? before?.userID
+      const user = after?.userId ?? before?.userId
       if (!user) return
 
       const guilds = this.memberGuildsCache.get(user)

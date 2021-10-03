@@ -1,5 +1,5 @@
 /* eslint-disable import/namespace */
-import { Client, ClientOptions, Intents, TextChannel, User } from 'discord.js'
+import { Client, ClientOptions, Options, TextChannel, User } from 'discord.js'
 import * as chalk from 'chalk'
 import Cordo from 'cordo'
 import * as moment from 'moment'
@@ -173,8 +173,7 @@ export class TudeBotClient extends Client {
 
     Cordo.init({
       botId: this.config.bot.clientid,
-      contextPath: [ __dirname, 'cordo' ],
-      botClient: this
+      contextPath: [ __dirname, 'cordo' ]
       // botAdmins: (id: string) => RemoteConfig.botAdmins.includes(id),
     })
   }
@@ -200,7 +199,7 @@ export class TudeBotClient extends Client {
     fixReactionEvent(this)
     await this.loadGuilds(true)
     await this.loadModules(true)
-    this.emit('ready')
+    this.emit('ready', this)
   }
 
   public getModule<T extends Module>(name: string): T {
@@ -214,7 +213,25 @@ export class TudeBotClient extends Client {
 const _flags = ParseArgs.parse(process.argv)
 export const config = require('../config.js')
 export const TudeBot = new TudeBotClient({
-  ws: { intents: Intents.ALL }
+  intents: [
+    'GUILDS',
+    'GUILD_MEMBERS',
+    'GUILD_BANS',
+    'GUILD_EMOJIS_AND_STICKERS',
+    'GUILD_INTEGRATIONS',
+    'GUILD_WEBHOOKS',
+    'GUILD_INVITES',
+    'GUILD_VOICE_STATES',
+    'GUILD_PRESENCES',
+    'GUILD_MESSAGES',
+    'GUILD_MESSAGE_REACTIONS',
+    'GUILD_MESSAGE_TYPING',
+    'DIRECT_MESSAGES',
+    'DIRECT_MESSAGE_REACTIONS',
+    'DIRECT_MESSAGE_TYPING'
+  ],
+  makeCache: Options.cacheEverything(),
+  partials: []
 }, config)
 
 

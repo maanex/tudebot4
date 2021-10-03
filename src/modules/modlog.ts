@@ -1,4 +1,4 @@
-import { GuildMember, Guild, TextChannel, User } from 'discord.js'
+import { GuildMember, Guild, TextChannel, GuildBan } from 'discord.js'
 import { modlogType, Module } from '../types/types'
 import { TudeBot } from '../index'
 import Emojis from '../int/emojis'
@@ -17,10 +17,12 @@ export default class ModlogModule extends Module {
       if (!guilds.has(id)) return
       const channelId: string = guilds.get(id)['channel-' + type] || guilds.get(id).channel
       ;(guild.channels.resolve(channelId) as TextChannel).send({
-        embed: {
-          color: 0x2F3136,
-          description: `${Emojis.modlog[type]} ${text.split('\n').join(`\n${Emojis.bigSpace} `)}`
-        }
+        embeds: [
+          {
+            color: 0x2F3136,
+            description: `${Emojis.modlog[type]} ${text.split('\n').join(`\n${Emojis.bigSpace} `)}`
+          }
+        ]
       })
     }
 
@@ -46,15 +48,12 @@ export default class ModlogModule extends Module {
       ].filter(a => !!a).join('\n'))
     })
 
-    TudeBot.on('guildBanAdd', (guild: Guild, user: User) => {
-      setTimeout(async () => {
-        const ban = await guild.fetchBan(user)
-        TudeBot.modlog(guild, 'punish', `${user} as ${user.username} was banned by unknown for reason ${ban.reason}`)
-      }, 1000)
+    TudeBot.on('guildBanAdd', (ban: GuildBan) => {
+      TudeBot.modlog(ban.guild, 'punish', `${ban.user} as ${ban.user.username} was banned by unknown for reason ${ban.reason}`)
     })
 
-    TudeBot.on('guildBanRemove', (guild: Guild, user: User) => {
-      TudeBot.modlog(guild, 'punish', `The ban for ${user} as ${user.username} was lifted`)
+    TudeBot.on('guildBanRemove', (ban: GuildBan) => {
+      TudeBot.modlog(ban.guild, 'punish', `The ban for ${ban.user} as ${ban.user.username} was lifted`)
     })
   }
 

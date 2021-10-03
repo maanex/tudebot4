@@ -62,7 +62,7 @@ export default class AdminCommand extends Command {
         case 'print': {
           const data = TudeBot.guildSettings.get(orgChannel.guild.id) as Object
           const file = new MessageAttachment(Buffer.from(JSON.stringify(data, null, 2)), `guild-settings-${orgChannel.guild.id}.json`)
-          orgChannel.send('', file)
+          orgChannel.send({ files: [ file ] })
           break
         }
       }

@@ -14,7 +14,7 @@ export default class ChatGuard extends Module {
   public onEnable() {
     TudeBot.on('message', (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return
-      if (mes.member.hasPermission('MANAGE_MESSAGES')) return //
+      if (mes.member.permissions.has('MANAGE_MESSAGES')) return //
       if (mes.member.roles.highest.comparePositionTo(mes.guild.me.roles.highest) > 0) return // TODO REENABLE, DISABLED FOR EASIER TESTING
 
       if (this.checkInviteLinks(mes)) return
@@ -64,12 +64,14 @@ export default class ChatGuard extends Module {
 
   public repl(message: Message, title: string, description: string) {
     (message.channel as TextChannel).send({
-      embed: {
-        color: 0x2F3136,
-        title,
-        description,
-        footer: { text: 'ChatGuard • Auto Moderator' }
-      }
+      embeds: [
+        {
+          color: 0x2F3136,
+          title,
+          description,
+          footer: { text: 'ChatGuard • Auto Moderator' }
+        }
+      ]
     })
   }
 
@@ -85,10 +87,13 @@ export default class ChatGuard extends Module {
         .then((img) => {
           const file = new MessageAttachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`)
           const embed = new MessageEmbed()
-            .attachFiles([ file ])
             .setColor(0x2F3136)
             .setImage(`attachment://shut-up-${mes.author.username.toLowerCase()}.png`)
-          mes.channel.send(embed)
+
+          mes.channel.send({
+            embeds: [ embed ],
+            files: [ file ]
+          })
         })
         .catch((err) => {
           console.error(err)

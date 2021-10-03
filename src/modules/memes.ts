@@ -55,10 +55,12 @@ export default class MemesModule extends Module {
             'https://cdn.discordapp.com/attachments/497071913718382604/497071942323666945/giphy2.gif',
             'https://cdn.discordapp.com/attachments/497071913718382604/497071959595548683/giphy3.gif' ])[Math.floor(Math.random() * 3)]
           mes.channel.send({
-            embed: {
-              color: 0x2F3136,
-              image: { url: gif }
-            }
+            embeds: [
+              {
+                color: 0x2F3136,
+                image: { url: gif }
+              }
+            ]
           })
         }
 
@@ -75,23 +77,21 @@ export default class MemesModule extends Module {
             .catch(console.error)
         }
 
-        setTimeout(async () => {
-          for (const e of emojis) {
-            try {
-              const mes2 = await mes.channel.messages.fetch(mes.id)
-              await mes2.react(e).catch(console.error)
-            } catch (ex) {
-              console.error(ex)
-            }
+        for (const e of emojis) {
+          try {
+            const mes2 = await mes.channel.messages.fetch(mes.id)
+            await mes2.react(e).catch(console.error)
+          } catch (ex) {
+            console.error(ex)
           }
-        }, 2000)
+        }
       } catch (ex) {
         console.error(ex)
       }
     })
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
-      const mes = reaction.message
+      const mes = reaction.message as Message
       if (user.bot) return
       if (mes.author.bot) return
       if (!mes.guild) return
@@ -111,27 +111,27 @@ export default class MemesModule extends Module {
           setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5)
         }
       }
-      console.log('mr6')
 
       this.updateMemeRating(mes)
-      console.log('mr7')
 
       if (reaction.emoji.name === '⭐') {
         user.send({
-          embed: {
-            color: 0x2F3136,
-            image: { url: mes.attachments.first().url },
-            description: `[${mes.content || '[link]'}](https://discordapp.com/channels/${mes.guild.id}/${mes.channel.id}/${mes.id})`,
-            footer: { text: `Uploaded by ${mes.author.username}` },
-            timestamp: mes.createdTimestamp
-          }
+          embeds: [
+            {
+              color: 0x2F3136,
+              image: { url: mes.attachments.first().url },
+              description: `[${mes.content || '[link]'}](https://discordapp.com/channels/${mes.guild.id}/${mes.channel.id}/${mes.id})`,
+              footer: { text: `Uploaded by ${mes.author.username}` },
+              timestamp: mes.createdTimestamp
+            }
+          ]
         })
       }
       console.log('mr8')
     })
 
     TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
-      const mes = reaction.message
+      const mes = reaction.message as Message
       if (user.bot) return
       if (mes.author.bot) return
       if (!mes.guild) return
@@ -146,7 +146,7 @@ export default class MemesModule extends Module {
   updateMemeRating(mes: Message) {
     if (this.guildData(mes.guild).motm && this.guildData(mes.guild).channels[0] === mes.channel.id) {
       let rating = -Object.values(this.RATINGS).reduce((a, b) => a + b, 0)
-      for (const reaction of mes.reactions.cache.array()) {
+      for (const reaction of mes.reactions.cache.values()) {
         if (this.RATINGS[reaction.emoji.name])
           rating += this.RATINGS[reaction.emoji.name] * reaction.count
       }
@@ -205,22 +205,26 @@ export default class MemesModule extends Module {
 
         const now = new Date()
         channel.send({
-          embed: {
-            title: `Meme Of The Month • ${this.lang('meme_month_' + ((now.getMonth() + 11) % 12))} ${now.getFullYear()}`,
-            description: `by ${top5[0].message.author} (▲${top5[0].rating})` + (top5[0].caption ? `\n\n**${top5[0].caption}**` : ''),
-            image: { url: top5[0].image },
-            color: 0x2F3136
-          }
+          embeds: [
+            {
+              title: `Meme Of The Month • ${this.lang('meme_month_' + ((now.getMonth() + 11) % 12))} ${now.getFullYear()}`,
+              description: `by ${top5[0].message.author} (▲${top5[0].rating})` + (top5[0].caption ? `\n\n**${top5[0].caption}**` : ''),
+              image: { url: top5[0].image },
+              color: 0x2F3136
+            }
+          ]
         }).then(() => {
           const top1 = top5.splice(0, 1)[0]
           channel.send({
-            embed: {
-              fields: [ {
-                name: 'Honorable Mentions',
-                value: top5.map((v, i) => `[**#${i + 2}**](https://discordapp.com/channels/${gid}/${channel.id}/${v.message.id}) by ${v.message.author} (▲${v.rating})`).join('\n')
-              } ],
-              color: 0x2F3136
-            }
+            embeds: [
+              {
+                fields: [ {
+                  name: 'Honorable Mentions',
+                  value: top5.map((v, i) => `[**#${i + 2}**](https://discordapp.com/channels/${gid}/${channel.id}/${v.message.id}) by ${v.message.author} (▲${v.rating})`).join('\n')
+                } ],
+                color: 0x2F3136
+              }
+            ]
           }).then(() => {
             if (!top1.message.pinned && top1.message.pinnable)
               top1.message.pin()

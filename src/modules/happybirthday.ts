@@ -56,7 +56,7 @@ export default class HappyBirthdayModule extends Module {
         const guild = TudeBot.guilds.resolve(g)
         if (!guild) continue
         const channel = guild.channels.resolve(guilds.get(g).channel)
-        if (!channel || channel.type !== 'text') continue;
+        if (!channel || channel.type !== 'GUILD_TEXT') continue;
         (channel as TextChannel).send(`@everyone ${msg}`)
       }
     }, Math.floor(Math.random() * maxdelay * 0), dstr, this.guilds, this.data)

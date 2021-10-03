@@ -237,7 +237,7 @@ async function generateName(orgName: string, type: string, answers: Record<strin
 
     if (Math.random() < 0.1) {
       const guild = await TudeBot.guilds.fetch(i.guild_id)
-      const members = guild.members.cache.array()
+      const members = [ ...guild.members.cache.values() ]
       const name = members[~~(Math.random() * members.length)]
       return generateName(name.user.username, 'big', answers, i)
     }

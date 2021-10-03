@@ -229,23 +229,27 @@ export default class RouletteCommand extends Command {
           this.currentGame.resolveIn = 10
         resolve(true)
         channel.send({
-          embed: {
-            color: 0x2F3136,
-            title: 'Roulette',
-            description: 'Preparing...'
-          }
+          embeds: [
+            {
+              color: 0x2F3136,
+              title: 'Roulette',
+              description: 'Preparing...'
+            }
+          ]
         }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
         this.currentGameTimer = setInterval(() => {
           if (this.currentGame.resolveIn === 10 || this.currentGame.resolveIn === 5 || this.currentGame.resolveIn <= 2) {
             if (this.currentGame.chatMessage) {
-              this.currentGame.chatMessage.edit('', {
-                embed: {
-                  color: 0x2F3136,
-                  title: 'Roulette',
-                  description: 'Starting in ' + this.currentGame.resolveIn + '```js\n'
-                      + this.currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
-                      + '```'
-                }
+              this.currentGame.chatMessage.edit({
+                embeds: [
+                  {
+                    color: 0x2F3136,
+                    title: 'Roulette',
+                    description: 'Starting in ' + this.currentGame.resolveIn + '```js\n'
+                        + this.currentGame.bets.map(b => `${b.by.username}: ${b.amount}c on ${b.ontext}`).join('\n')
+                        + '```'
+                  }
+                ]
               })
             }
           }
@@ -267,15 +271,17 @@ export default class RouletteCommand extends Command {
       return
     }
 
-    this.currentGame.chatMessage.edit('', {
-      embed: {
-        color: 0x2F3136,
-        title: 'Roulette',
-        description: 'Rolling...',
-        thumbnail: {
-          url: this.rollingImages[Math.floor(Math.random() * this.rollingImages.length)]
+    this.currentGame.chatMessage.edit({
+      embeds: [
+        {
+          color: 0x2F3136,
+          title: 'Roulette',
+          description: 'Rolling...',
+          thumbnail: {
+            url: this.rollingImages[Math.floor(Math.random() * this.rollingImages.length)]
+          }
         }
-      }
+      ]
     })
 
     setTimeout(() => {
@@ -304,15 +310,17 @@ export default class RouletteCommand extends Command {
       desc += '```'
       let color = this.getColor(landedOn) === 'red' ? 0xFE1B40 : 0x181A1C
       if (landedOn === 0) color = 0x4DC88A
-      this.currentGame.chatMessage.edit('', {
-        embed: {
-          color,
-          title: gnome ? 'You\'ve been gnomed!' : 'Roulette',
-          description: desc,
-          thumbnail: {
-            url: gnome ? this.gnomeImage : this.images[landedOn]
+      this.currentGame.chatMessage.edit({
+        embeds: [
+          {
+            color,
+            title: gnome ? 'You\'ve been gnomed!' : 'Roulette',
+            description: desc,
+            thumbnail: {
+              url: gnome ? this.gnomeImage : this.images[landedOn]
+            }
           }
-        }
+        ]
       })
       setTimeout(() => this.resetGame(), 2000)
     }, 2000 + Math.floor(Math.random() * 4000))

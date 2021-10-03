@@ -125,22 +125,24 @@ export default class HelpCommand extends Command {
             fields.push({ name: 'Hotel', value: 'Trivago', inline: true })
 
           channel.send({
-            embed: {
-              title: command.name,
-              description: command.description,
-              fields: [
-                {
-                  name: 'Aliases',
-                  value: command.aliases.length ? (command.aliases.join(', ') + Emojis.bigSpace.string) : `[${Emojis.bigSpace.string}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
-                  inline: true
-                },
-                {
-                  name: 'Allowed',
-                  value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
-                  inline: true
-                }, ...fields
-              ]
-            }
+            embeds: [
+              {
+                title: command.name,
+                description: command.description,
+                fields: [
+                  {
+                    name: 'Aliases',
+                    value: command.aliases.length ? (command.aliases.join(', ') + Emojis.bigSpace.string) : `[${Emojis.bigSpace.string}](https://www.youtube.com/watch?v=cvh0nX08nRw)`,
+                    inline: true
+                  },
+                  {
+                    name: 'Allowed',
+                    value: command.sudoOnly ? this._nopes[Math.floor(Math.random() * this._nopes.length)] : this._yeses[Math.floor(Math.random() * this._yeses.length)],
+                    inline: true
+                  }, ...fields
+                ]
+              }
+            ]
           })
         }
       }

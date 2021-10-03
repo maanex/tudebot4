@@ -21,7 +21,8 @@ export default class FreestuffAssistantModule extends Module {
       const webhook = await this.allocateWebhook(mes.channel as TextChannel)
       if (mes.deletable) mes.delete()
 
-      webhook.send(reply, {
+      webhook.send({
+        content: reply,
         avatarURL: mes.author.avatarURL(),
         username: mes.member.nickname || mes.author.username
       })
@@ -34,133 +35,7 @@ export default class FreestuffAssistantModule extends Module {
   public onDisable() {
   }
 
-  public on(event: string, data: any) {
-    this.guilds.forEach(async (settings, guildid) => {
-      if (!settings) return
-
-      if (!TudeBot || !TudeBot.readyAt) return
-      const guild = await TudeBot.guilds.fetch(guildid)
-
-      const contentChannel = guild.channels.resolve(settings.channel_content) as TextChannel
-      const servicesChannel = guild.channels.resolve(settings.channel_services) as TextChannel
-      if (!contentChannel || !servicesChannel) return
-
-      // const contentMods = settings.contentMods as string[]
-      const user = data.user ? await TudeBot.users.fetch(data.user) : null
-
-      let mes: Message = null
-      switch (event) {
-        case 'game_found':
-          mes = await contentChannel.send({
-            embed: {
-              color: 0xAB6B31,
-              title: 'Free Game Found!',
-              description: `${data.game.info.title} (${data.game.info.store})\n[Outgoing announcement needs approval, please click here](${`https://dashboard.freestuffbot.xyz/content/${data.game._id}`})`
-            }
-          }) as Message
-          this.gameMessages.set(data.game._id, mes)
-          break
-
-        case 'new_scratch':
-          mes = await contentChannel.send({
-            embed: {
-              color: 0x3190AB,
-              title: `${user?.username ?? '*Someone*'} created a new announcement`,
-              description: `No data provided yet\n[Click here to view.](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
-            }
-          }) as Message
-          this.gameMessages.set(data.game, mes)
-          break
-
-        case 'new_url':
-          mes = await contentChannel.send({
-            embed: {
-              color: 0x3190AB,
-              title: `${user?.username ?? '*Someone*'} created a new announcement`,
-              description: `Automatically fetched data from ${data.url}\n[Click here to view.](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
-            }
-          }) as Message
-          this.gameMessages.set(data.game, mes)
-          break
-
-        case 'game_save_draft':
-          if (!this.gameMessages.has(data.game)) break
-          mes = this.gameMessages.get(data.game)
-          mes.edit({
-            embed: {
-              ...mes.embeds[0],
-              fields: [ {
-                name: 'Activity',
-                value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${user?.username ?? '*Someone*'} saved changes`
-              } ]
-            }
-          })
-          break
-
-        case 'game_decline':
-          if (!this.gameMessages.has(data.game)) break
-          mes = this.gameMessages.get(data.game)
-          mes.edit({
-            embed: {
-              ...mes.embeds[0],
-              fields: [ {
-                name: 'Activity',
-                value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${user?.username ?? '*Someone*'} declined this game.`
-              } ],
-              color: 0xAB3231,
-              title: 'Done.',
-              description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
-            }
-          })
-          break
-
-        case 'game_accept':
-          if (!this.gameMessages.has(data.game)) break
-          mes = this.gameMessages.get(data.game)
-          mes.edit({
-            embed: {
-              ...mes.embeds[0],
-              fields: [ {
-                name: 'Activity',
-                value: (mes.embeds[0].fields.length ? `${mes.embeds[0].fields[0].value}\n` : '') + `${user?.username ?? '*Someone*'} approved this game.`
-              } ],
-              color: 0x59AB31,
-              title: 'Done.',
-              description: `[View in CMS](${`https://dashboard.freestuffbot.xyz/content/${data.game}`})`
-            }
-          })
-          break
-
-        case 'manual_store_scrape':
-          contentChannel.send({
-            embed: {
-              color: 0x2F3136,
-              title: `${user?.username ?? '*Someone*'} initiated manual store scraping. Target: ${data.store}`
-            }
-          })
-          break
-
-        case 'service_status':
-          // eslint-disable-next-line no-case-declarations
-          const colors = { fatal: 0xED1A52, rebooting: 0x3586E8, offline: 0xDB6D42, timeout: 0xDB9C1F, partial: 0xE3E352, ok: 0x52E36F }
-          servicesChannel.send({
-            embed: {
-              color: colors[data.status] || 0x2F3136,
-              title: `Service ${data.service}/${data.suid} is now \`${data.status}\``
-            }
-          })
-          break
-
-        default:
-          contentChannel.send({
-            embed: {
-              color: 0x2F3136,
-              title: `Unknown raw event: ${event}`
-            }
-          })
-          break
-      }
-    })
+  public on(_event: string, _data: any) {
   }
 
   private findReply(prompt: string): string {

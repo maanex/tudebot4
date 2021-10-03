@@ -159,11 +159,13 @@ export default class SlotmachineCommand extends Command {
     while (text.includes('%s'))
       text = text.replace('%s', this.sm1emoji.loading[Math.floor(Math.random() * 6)])
     mes.channel.send({
-      embed: {
-        title: 'Slotmachine',
-        color: 0x2F3136,
-        description: text
-      }
+      embeds: [
+        {
+          title: 'Slotmachine',
+          color: 0x2F3136,
+          description: text
+        }
+      ]
     }).then((m) => {
       setTimeout((m: Message) => {
         text = this.sm1template
@@ -210,11 +212,13 @@ export default class SlotmachineCommand extends Command {
         // TudeApi.updateClubUser(u)
 
         m.edit({
-          embed: {
-            title: 'Slotmachine',
-            color: 0x2F3136,
-            description: text
-          }
+          embeds: [
+            {
+              title: 'Slotmachine',
+              color: 0x2F3136,
+              description: text
+            }
+          ]
         })
       }, 4000, m/*, u */)
     })
@@ -226,11 +230,13 @@ export default class SlotmachineCommand extends Command {
     while (text.includes('%s') && c < 5)
       text = text.replace('%s', this.sm2emoji.loading[c++])
     mes.channel.send({
-      embed: {
-        title: 'Slotmachine',
-        color: 0x2F3136,
-        description: text
-      }
+      embeds: [
+        {
+          title: 'Slotmachine',
+          color: 0x2F3136,
+          description: text
+        }
+      ]
     }).then((m) => {
       setTimeout((m: Message) => {
         text = this.sm2template
@@ -320,11 +326,13 @@ export default class SlotmachineCommand extends Command {
         // TudeApi.updateClubUser(u)
 
         m.edit({
-          embed: {
-            title: sendNudesEasteregg ? 'Slutmachine' : 'Slotmachine',
-            color: 0x2F3136,
-            description: text
-          }
+          embeds: [
+            {
+              title: sendNudesEasteregg ? 'Slutmachine' : 'Slotmachine',
+              color: 0x2F3136,
+              description: text
+            }
+          ]
         })
       }, 5000, m/*, u */)
     })
@@ -337,11 +345,13 @@ export default class SlotmachineCommand extends Command {
     while (text.includes('%s'))
       text = text.replace('%s', this.sm3emoji.loading[goBlue ? 'blue' : 'orange'][Math.floor(Math.random() * 6)])
     mes.channel.send({
-      embed: {
-        title: 'Slotmachine',
-        color: 0x2F3136,
-        description: text
-      }
+      embeds: [
+        {
+          title: 'Slotmachine',
+          color: 0x2F3136,
+          description: text
+        }
+      ]
     }).then((m) => {
       setTimeout((m: Message) => {
         text = this.sm3template
@@ -408,11 +418,13 @@ export default class SlotmachineCommand extends Command {
         // TudeApi.updateClubUser(u)
 
         m.edit({
-          embed: {
-            title: 'Slotmachine',
-            color: 0x2F3136,
-            description: text
-          }
+          embeds: [
+            {
+              title: 'Slotmachine',
+              color: 0x2F3136,
+              description: text
+            }
+          ]
         })
         if (goBlue && !win) this.sm3blue.splice(this.sm3blue.indexOf(mes.author.id), 1)
         else if (!goBlue && win) this.sm3blue.push(mes.author.id)

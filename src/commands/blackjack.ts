@@ -180,23 +180,27 @@ export default class BlackJackCommand extends Command {
         this.currentGame.startIn = 10
         resolve(true)
         channel.send({
-          embed: {
-            color: 0x2F3136,
-            title: 'Black Jack',
-            description: 'Preparing...'
-          }
+          embeds: [
+            {
+              color: 0x2F3136,
+              title: 'Black Jack',
+              description: 'Preparing...'
+            }
+          ]
         }).then(mes => (this.currentGame.chatMessage = mes as Message)).catch()
         this.currentGameTimer = setInterval(() => {
           if (this.currentGame.startIn === 10 || this.currentGame.startIn === 5 || this.currentGame.startIn <= 2) {
             if (this.currentGame.chatMessage) {
-              this.currentGame.chatMessage.edit('', {
-                embed: {
-                  color: 0x2F3136,
-                  title: 'Black Jack',
-                  description: 'Starting in ' + this.currentGame.startIn + '```js\n'
-                      + this.currentGame.entries.map(b => `${b.by.username}: ${b.amount}c`).join('\n')
-                      + '```'
-                }
+              this.currentGame.chatMessage.edit({
+                embeds: [
+                  {
+                    color: 0x2F3136,
+                    title: 'Black Jack',
+                    description: 'Starting in ' + this.currentGame.startIn + '```js\n'
+                        + this.currentGame.entries.map(b => `${b.by.username}: ${b.amount}c`).join('\n')
+                        + '```'
+                  }
+                ]
               })
             }
           }
@@ -369,10 +373,10 @@ export default class BlackJackCommand extends Command {
           && this.currentGame.chatMessage.reactions.resolve(this.stand)
           && this.currentGame.chatMessage.reactions.resolve(this.hit).count <= 3
           && this.currentGame.chatMessage.reactions.resolve(this.stand).count <= 3) {
-        for (const u of this.currentGame.chatMessage.reactions.resolve(this.stand).users.cache.array())
+        for (const u of this.currentGame.chatMessage.reactions.resolve(this.stand).users.cache.values())
           if (!u.bot) await this.currentGame.chatMessage.reactions.resolve(this.stand).users.remove(u.id)
 
-        for (const u of this.currentGame.chatMessage.reactions.resolve(this.hit).users.cache.array())
+        for (const u of this.currentGame.chatMessage.reactions.resolve(this.hit).users.cache.values())
           if (!u.bot) await this.currentGame.chatMessage.reactions.resolve(this.hit).users.remove(u.id)
 
       } else {
@@ -384,13 +388,15 @@ export default class BlackJackCommand extends Command {
       }
     }
 
-    this.currentGame.chatMessage.edit('', {
-      embed: {
-        color: 0x2F3136,
-        title: 'Black Jack',
-        description: (end ? 'Game Over' : `${this.hit} hit • ${this.stand} stand`) + `\n${Emojis.bigSpace.string}`,
-        fields: this.embedFields(end)
-      }
+    this.currentGame.chatMessage.edit({
+      embeds: [
+        {
+          color: 0x2F3136,
+          title: 'Black Jack',
+          description: (end ? 'Game Over' : `${this.hit} hit • ${this.stand} stand`) + `\n${Emojis.bigSpace.string}`,
+          fields: this.embedFields(end)
+        }
+      ]
     })
   }
 

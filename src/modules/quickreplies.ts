@@ -49,7 +49,8 @@ export default class QuickRepliesModule extends Module {
 
   private async sendReply(channel: TextChannel, member: GuildMember, text: string) {
     const webhook = await this.allocateWebhook(channel)
-    webhook.send(text, {
+    webhook.send({
+      content: text,
       avatarURL: member.user.avatarURL(),
       username: member.nickname || member.user.username,
       allowedMentions: { parse: [] }

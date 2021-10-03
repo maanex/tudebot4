@@ -1,7 +1,6 @@
-import { Message, TextChannel } from 'discord.js'
+import { Message } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
-import SupportCommand from '../commands/support'
 import TheBrainModule from './thebrain/thebrain'
 
 
@@ -17,9 +16,9 @@ export default class AutoSupportModule extends Module {
   public onEnable() {
     this.witClient = TudeBot.getModule<TheBrainModule>('thebrain').witClient
 
-    TudeBot.on('message', (mes: Message) => {
-      if (!this.isMessageEventValid(mes)) return
-      if (!this.guildData(mes.guild).channels[mes.channel.id]) return
+    TudeBot.on('message', (_mes: Message) => {
+      // if (!this.isMessageEventValid(mes)) return
+      // if (!this.guildData(mes.guild).channels[mes.channel.id]) return
 
       // this.witClient.message(mes.content.substr(0, 260))
       //   .then((data) => {
