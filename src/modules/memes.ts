@@ -72,6 +72,7 @@ export default class MemesModule extends Module {
               image: mes.attachments.first().url,
               rating: 0
             })
+            .catch(console.error)
         }
 
         console.log('mi1')
