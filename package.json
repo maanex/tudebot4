@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "ascii-table": "0.0.9",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "chalk": "^3.0.0",
     "cordo": "^1.8.0",
     "cron": "^1.7.2",
