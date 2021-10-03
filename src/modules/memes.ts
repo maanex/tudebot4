@@ -74,8 +74,10 @@ export default class MemesModule extends Module {
             })
         }
 
+        console.log('mi1')
         for (const e of emojis)
-          await mes.react(e)
+          await mes.react(e).catch(console.error)
+        console.log('mi2')
       } catch (ex) {
         console.error(ex)
       }
@@ -83,12 +85,17 @@ export default class MemesModule extends Module {
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       const mes = reaction.message
+      console.log('mr1')
       if (user.bot) return
       if (mes.author.bot) return
       if (!mes.guild) return
+      console.log('mr2')
       if (!this.isEnabledInGuild(mes.guild)) return
+      console.log('mr4')
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
+      console.log('mr4')
       if (!mes.attachments.size) return
+      console.log('mr5')
 
       if (this.RATINGS[reaction.emoji.name]) {
         const rating = this.RATINGS[reaction.emoji.name]
@@ -102,8 +109,10 @@ export default class MemesModule extends Module {
           setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5)
         }
       }
+      console.log('mr6')
 
       this.updateMemeRating(mes)
+      console.log('mr7')
 
       if (reaction.emoji.name === '⭐') {
         user.send({
@@ -116,6 +125,7 @@ export default class MemesModule extends Module {
           }
         })
       }
+      console.log('mr8')
     })
 
     TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {

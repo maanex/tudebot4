@@ -218,6 +218,7 @@ export default class BlackJackCommand extends Command {
       if (user.bot) return
       if (!this.currentGame || !this.currentGame.chatMessage) return
       if (reaction.message.id !== this.currentGame.chatMessage.id) return
+      console.log('blackjack1')
       let playing: Entry
       for (const e of this.currentGame.entries) {
         if (e.by.id === user.id) {
