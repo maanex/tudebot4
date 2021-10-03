@@ -75,7 +75,7 @@ export default class MemesModule extends Module {
             .catch(console.error)
         }
 
-        const mes2 = mes.channel.messages.fetch(mes.id)
+        const mes2 = await mes.channel.messages.fetch(mes.id)
         for (const e of emojis) {
           try {
             await mes2.react(e).catch(console.error)
