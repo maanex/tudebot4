@@ -201,18 +201,6 @@ export class TudeBotClient extends Client {
     await this.loadGuilds(true)
     await this.loadModules(true)
     this.emit('ready')
-
-    //
-
-    function requestLogger(httpModule) {
-      const original = httpModule.request
-      httpModule.request = function (options, callback) {
-        console.log(options.href || options.proto + '://' + options.host + options.path, options.method)
-        return original(options, callback)
-      }
-    }
-
-    requestLogger(require('http'))
   }
 
   public getModule<T extends Module>(name: string): T {
