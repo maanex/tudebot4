@@ -54,17 +54,6 @@ export default class TheBrainModule extends Module {
     }
   }
 
-  private convertAllImages() {
-    let num = 4611
-    const sharp = require('sharp')
-    while (num >= 0) {
-      sharp(`C:\\Users\\andre\\Desktop\\out\\img_${num}.png`).toFile(`C:\\Users\\andre\\Desktop\\outjpg\\img_${num}.jpg`, (_err, info) => {
-        console.log(info)
-      })
-      num--
-    }
-  }
-
   private setNewIcon(timeoutonly: boolean = true) {
     if (!timeoutonly) {
       // const request = nreq.defaults({ encoding: null })

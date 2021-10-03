@@ -5,16 +5,16 @@ RUN apk add git
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
-RUN apk add --update --no-cache --virtual .gyp \
-    make \
-    g++ \
-    jpeg-dev \
-    cairo-dev \
-    giflib-dev \
-    pango-dev \
-    libtool \
-    autoconf \
-    automake
+# RUN apk add --update --no-cache --virtual .gyp \
+#     make \
+#     g++ \
+#     jpeg-dev \
+#     cairo-dev \
+#     giflib-dev \
+#     pango-dev \
+#     libtool \
+#     autoconf \
+#     automake
 
 COPY package*.json ./
 

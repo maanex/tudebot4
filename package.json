@@ -37,7 +37,6 @@
     "prom-client": "^14.0.0",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.0",
-    "sharp": "^0.28.3",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.4",
     "xml-js": "^1.6.11"
