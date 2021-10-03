@@ -4,7 +4,7 @@
   "description": "",
   "main": "./build/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "start": "node ./build/index.js",
     "dev": "tsc && node ./build/index.js --dev",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
