@@ -184,6 +184,18 @@ const commands = [
       }
     ]
   },
+  {
+    name: 'math',
+    description: 'Solve a math problem',
+    options: [
+      {
+        type: 3,
+        name: 'term',
+        description: 'Your math problem goes here',
+        required: true
+      }
+    ]
+  },
 
   {
     name: 'Whois',
@@ -240,4 +252,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'image' ], '342620626592464897')
+run(false, true, [ 'math' ], '342620626592464897')
