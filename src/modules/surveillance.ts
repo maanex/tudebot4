@@ -91,7 +91,7 @@ export default class SurveillanceModule extends Module {
     const members = guilds
       .flatMap(g => g.members.cache
         .filter(m => !m.user.bot)
-        .map(u => [ u.id, u.presence.status, u.voice, g.id ] as stepOneType)
+        .map(u => [ u.id, u.presence?.status, u.voice, g.id ] as stepOneType)
       )
       .reduce((out, item) => ({
         ...out,
@@ -107,7 +107,7 @@ export default class SurveillanceModule extends Module {
 
       Metrics.gaugeSurveillanceUsers
         .labels({ user, guilds })
-        .set(SurveillanceModule.presenceLookup[person[1][0]])
+        .set(SurveillanceModule.presenceLookup[person[1][0]] ?? -1)
 
       // Metrics.gaugeSurveillanceVoice
       //   .labels({ user, guilds })
