@@ -20,7 +20,7 @@ export default class MemesModule extends Module {
   private selfUpvoteCooldown: string[] = [];
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Memes', 'public', conf, data, guilds, lang)
+    super('Memes', 'Adds memes channels', 'With this module you can turn text channels into meme channels which give every meme posted there upvote and downvote buttons as well as one to save the meme in your dms', 'public', conf, data, guilds, lang)
   }
 
   public onEnable() {

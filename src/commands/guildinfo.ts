@@ -23,7 +23,7 @@ export default class GuildInfoCommand extends Command {
 
     const moduleData = []
     TudeBot.modules.forEach((module, id) => {
-      moduleData.push((settings.modules[id] ? '🗹 ' : '☐ ') + module.dispName)
+      moduleData.push((settings.modules[id] ? '🗹 ' : '☐ ') + module.name)
     })
 
     channel.send({

@@ -20,7 +20,9 @@ export abstract class Module {
 
   // eslint-disable-next-line no-useless-constructor
   constructor(
-    public readonly dispName: string,
+    public readonly name: string,
+    public readonly info: string,
+    public readonly description: string,
     public readonly usageScope: ModuleUsageScope,
     public readonly conf: any,
     public readonly data: any,

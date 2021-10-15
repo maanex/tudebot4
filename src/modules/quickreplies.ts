@@ -12,7 +12,7 @@ export type Reply = {
 export default class QuickRepliesModule extends Module {
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Quick Replies', 'public', conf, data, guilds, lang)
+    super('Quick Replies', 'Write less, achieve more', 'With this module you can create and edit quick replies which you can then easily trigger using their keyword. The bot will then replace your message with the longer text you have set up previously.', 'public', conf, data, guilds, lang)
   }
 
   public onEnable() {

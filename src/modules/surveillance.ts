@@ -18,7 +18,7 @@ export default class SurveillanceModule extends Module {
   private updateInterval: any = null
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Surveillance', 'private', conf, data, guilds, lang)
+    super('Surveillance', 'Collects user telemetry data', 'This module collects data. I dont wanna write anything else here.', 'private', conf, data, guilds, lang)
   }
 
   public onEnable() {

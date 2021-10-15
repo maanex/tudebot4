@@ -8,7 +8,7 @@ export default class StayOnTopicModule extends Module {
   private sentTo: string[] = [];
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Stay on topic', 'public', conf, data, guilds, lang)
+    super('Stay on topic', 'Lets people know they\'re off-topic', 'This module will detect when the conversation goes off-topic and will redirect people to the correct channel', 'public', conf, data, guilds, lang)
   }
 
   public onEnable() {

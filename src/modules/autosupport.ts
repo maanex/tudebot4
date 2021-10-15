@@ -10,7 +10,7 @@ export default class AutoSupportModule extends Module {
   private cooldown: string[] = [];
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Auto Support', 'public', conf, data, guilds, lang)
+    super('Auto Support', 'Takes work off your support team', 'This module is currently disabled while we are working on version 2', 'public', conf, data, guilds, lang)
   }
 
   public onEnable() {

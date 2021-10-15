@@ -8,7 +8,7 @@ import LinkAnalyzer from './thebrain/link-analyzer'
 export default class ChatGuard extends Module {
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('ChatGuard Automod', 'public', conf, data, guilds, lang)
+    super('ChatGuard Automod', 'Keeps your server clean', 'ChatGuard is TudeBot\'s auto moderator. It will protect you from some basic spam. It is not the most powerful tool out there as of right now.', 'public', conf, data, guilds, lang)
   }
 
   public onEnable() {

@@ -13,7 +13,7 @@ export default class TheBrainModule extends Module {
 
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('The Brain', 'public', conf, data, guilds, lang)
+    super('The Brain', 'Gives the bot personality', 'Enabling this module will affect other modules too. The bot will gain its own personality of sorts, which makes things a little less formal and a little more funny.', 'public', conf, data, guilds, lang)
 
     this.witClient = new Wit({
       accessToken: TudeBot.config.thirdparty.wit.token

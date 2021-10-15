@@ -25,7 +25,7 @@ export default class CommandsModule extends Module {
   //
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Commands', 'public', conf, data, guilds, lang)
+    super('Commands', 'Enables legacy commands', 'This module is deprecated as commands were moved over to slash commands. You can still chose to use this module to get access to older commands.', 'public', conf, data, guilds, lang)
   }
 
   //
