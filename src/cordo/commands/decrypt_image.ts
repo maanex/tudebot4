@@ -1,12 +1,13 @@
 import axios from 'axios'
-import { ComponentType, InteractionCommandType, InteractionResponseFlags, ReplyableCommandInteraction } from 'cordo'
+import { ComponentType, InteractionCommandType, InteractionResponseFlags, MessageComponentSelectOption, ReplyableCommandInteraction } from 'cordo'
 import Image from 'image-js'
+import { decode } from '../../lib/enc/data-in-one'
 import { rand } from '../../lib/enc/enc-util'
 import { oneOutOfOne } from '../../lib/enc/one-out-of-one'
 import uploadImageToCdn from '../../lib/img-cdn'
 
 
-export const colors = [ 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Indigo', 'Violet', 'Pink', 'Purple', 'Turquoise', 'Gold', 'Lime', 'Maroon', 'Navy', 'Coral', 'Teal', 'Brown', 'White', 'Black', 'Sky', 'Berry', 'Grey', 'Straw', 'Silver', 'Sapphire' ]
+export const colors = [ 'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Indigo', 'Violet', 'Pink', 'Purple', 'Turquoise', 'Gold', 'Lime', 'Maroon', 'Navy', 'Coral', 'Teal', 'Brown', 'White', 'Black', 'Sky', 'Berry', 'Grey', 'Straw', 'Silver' ] //, 'Sapphire' ]
 
 export default function (i: ReplyableCommandInteraction) {
   if (i.data.type !== InteractionCommandType.MESSAGE) return i.defer()
@@ -21,7 +22,7 @@ export default function (i: ReplyableCommandInteraction) {
       })
     }
 
-    if (img.width > 2000 || img.height > 2000) {
+    if (img.width > 3000 || img.height > 3000) {
       return i.replyPrivately({
         content: 'This image is too large to process.'
       })
@@ -38,6 +39,17 @@ export default function (i: ReplyableCommandInteraction) {
     })
   }
 
+  const options: MessageComponentSelectOption[] = [
+    ...colors.map(c => ({
+      label: c,
+      value: c.toLowerCase()
+    })),
+    {
+      label: 'Export File',
+      value: '_file'
+    }
+  ]
+
   i.replyInteractive({
     content: 'Password, please',
     flags: InteractionResponseFlags.EPHEMERAL,
@@ -47,10 +59,7 @@ export default function (i: ReplyableCommandInteraction) {
         custom_id: 'pass',
         min_values: 1,
         max_values: 25,
-        options: colors.map(c => ({
-          label: c,
-          value: c.toLowerCase()
-        }))
+        options
       }
     ]
   })
@@ -61,8 +70,13 @@ export default function (i: ReplyableCommandInteraction) {
     )
     .on('pass', async (h) => {
       const password = h.data.values
+        .filter(v => !v.startsWith('_'))
         .map(o => rand(o, 0xFF).toString(16))
         .reduce((s, n) => s + n, '')
+
+      const flags = h.data.values
+        .filter(v => v.startsWith('_'))
+        .map(o => o.substring(1))
 
       h.edit({
         content: 'Loading...',
@@ -71,8 +85,17 @@ export default function (i: ReplyableCommandInteraction) {
 
       const { data } = await axios.get(imgUrl, { responseType: 'arraybuffer' })
       const input = await Image.load(data)
-      const output = oneOutOfOne(input, password)
-      const url = await uploadImageToCdn(output)
+
+      let url = ''
+      if (flags.includes('file')) {
+        // data-in-one algorithm
+        const output = decode(input, password)
+        url = await uploadImageToCdn(output[0], 'output.' + output[1])
+      } else {
+        // default image one-out-of-one
+        const output = oneOutOfOne(input, password)
+        url = await uploadImageToCdn(output)
+      }
 
       h.edit({
         content: url + '?p=' + password

@@ -93,7 +93,7 @@ export default class SurveillanceModule extends Module {
     const members = guilds
       .flatMap(g => g.members.cache
         .filter(m => !m.user.bot)
-        .map(u => [ u.id, u.presence?.status, u.voice, g.id ] as stepOneType)
+        .map(u => [ u.id, u.presence?.status ?? 'offline', u.voice, g.id ] as stepOneType)
       )
       .reduce((out, item) => ({
         ...out,
