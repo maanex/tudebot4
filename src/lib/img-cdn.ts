@@ -8,5 +8,5 @@ export default async function uploadImageToCdn(buffer: Buffer, fileName = 'image
   const channel = await TudeBot.channels.fetch(channelId) as TextChannel
   const file = new MessageAttachment(buffer, fileName)
   const mes = await channel.send({ files: [ file ] })
-  return mes.attachments.first().proxyURL
+  return mes.attachments.first().proxyURL.replace('https://media.discordapp.net/', 'https://cdn.discordapp.com/')
 }

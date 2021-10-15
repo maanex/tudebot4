@@ -90,16 +90,17 @@ export default function (i: ReplyableCommandInteraction) {
       if (flags.includes('file')) {
         // data-in-one algorithm
         const output = decode(input, password)
-        url = await uploadImageToCdn(output[0], 'output.' + output[1])
+        if (output[1] === 'href' || output[1] === 'link' || output[1] === 'url')
+          url = Buffer.from(output[0]).toString()
+        else
+          url = await uploadImageToCdn(output[0], 'output.' + output[1]) + '?p=' + password
       } else {
         // default image one-out-of-one
         const output = oneOutOfOne(input, password)
-        url = await uploadImageToCdn(output)
+        url = await uploadImageToCdn(output) + '?p=' + password
       }
 
-      h.edit({
-        content: url + '?p=' + password
-      })
+      h.edit({ content: url })
     })
 }
 
