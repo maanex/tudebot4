@@ -11,7 +11,7 @@ export default class HappyBirthdayModule extends Module {
 
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Happy Birthday', 'Makes sure you never forget about a birthday', 'This module will let your entire server know about important birthdays', 'private', conf, data, guilds, lang)
+    super('Happy Birthday', '🍰', 'Makes sure you never forget about a birthday', 'This module will let your entire server know about important birthdays', 'private', conf, data, guilds, lang)
   }
 
   public onEnable() {

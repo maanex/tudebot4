@@ -30,5 +30,5 @@
   ],
   "include": [
     "./src/**/*"
-  ]
+, "_temp/math.ts"  ]
 }

@@ -11,7 +11,7 @@ export default function (i: GenericInteraction): InteractionApplicationCommandCa
     .filter(([ _, data ]) => !!data)
 
   const modulesStr = modules
-    .map(([ _, module ]) => `**${module.name}** — ${module.info}`)
+    .map(([ _, module ]) => `${module.emoji} **${module.name}** — ${module.info}`)
     .join('\n')
 
   return {
@@ -24,8 +24,10 @@ export default function (i: GenericInteraction): InteractionApplicationCommandCa
         placeholder: 'Click to edit module settings',
         options: modules.map(([ id, m ]) => ({
           label: `Edit ${m.name}`,
-          value: id
-        }))
+          value: id,
+          emoji: { name: m.emoji }
+        })),
+        visible: !!modules.length
       },
       {
         type: ComponentType.LINE_BREAK
@@ -34,14 +36,14 @@ export default function (i: GenericInteraction): InteractionApplicationCommandCa
         type: ComponentType.BUTTON,
         style: ButtonStyle.SECONDARY,
         label: 'Back',
-        emoji: Emojis.sockping,
+        emoji: { name: Emojis.leftCaret.name },
         custom_id: 'settings_main'
       },
       {
         type: ComponentType.BUTTON,
         style: ButtonStyle.PRIMARY,
         label: 'Add Modules',
-        custom_id: 'settings_modules_store_main'
+        custom_id: 'settings_modules_store_0'
       }
     ]
   }

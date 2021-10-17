@@ -13,7 +13,7 @@ export default class DailyTopicModule extends Module {
   private cronjob: cron.CronJob;
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Daily Topic', 'Sends one topic of the day, every day', 'With this module your chat will never die. Or at least it will get revived every 24h when the bot sends a new topic of the day.', 'public', conf, data, guilds, lang)
+    super('Daily Topic', '🧩', 'Sends one topic of the day, every day', 'With this module your chat will never die. Or at least it will get revived every 24h when the bot sends a new topic of the day.', 'public', conf, data, guilds, lang)
   }
 
   public onEnable() {

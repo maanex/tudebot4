@@ -60,6 +60,7 @@ export default class Emojis {
   public static readonly points = new Emojis('681782061312638976', 'points')
   public static readonly streakMono = new Emojis('', '🔥', false, '🔥')
   public static readonly streak = new Emojis('', '🔥', false, '🔥')
+  public static readonly leftCaret = new Emojis('', '🔥', false, '🔥') // TODO
 
   public static readonly progressBar = {
     LEFT_EMPTY: new Emojis('654357985845575716', 'xpbarleftempty'),
