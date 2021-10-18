@@ -1,4 +1,4 @@
-import { InteractionApplicationCommandCallbackData, InteractionCommandType, InteractionResponseFlags, ReplyableCommandInteraction } from 'cordo'
+import { InteractionApplicationCommandCallbackData, InteractionCommandType, ReplyableCommandInteraction } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
 import { TudeBot } from '../..'
 import Emojis from '../../int/emojis'
@@ -7,29 +7,27 @@ import UserStalker from '../../modules/thebrain/user-stalker'
 
 export default async function (i: ReplyableCommandInteraction) {
   if (!i.member) {
-    return i.reply({
+    return i.replyPrivately({
       title: 'Nope',
       description: 'Run this in a server dude'
     })
   }
 
-  i.defer()
+  i.defer(i.data.type === InteractionCommandType.USER)
 
   const user = (i.data.option.user || (i.data.type === InteractionCommandType.USER && i.data.target.id) || i.user.id) + ''
-  const flags = i.data.type === InteractionCommandType.USER ? InteractionResponseFlags.EPHEMERAL : undefined
 
   try {
     const channel = await TudeBot.channels.fetch(i.channel_id) as TextChannel
     const member = await channel.guild.members.fetch(user)
     const message = await buildMessage(channel, member)
-    i.reply({ ...message, flags })
+    i.reply(message)
     return true
   } catch (ex) {
     console.error(ex)
     i.reply({
       title: 'Cringe',
-      description: 'Something failed lmao',
-      flags
+      description: 'Something failed lmao'
     })
     return false
   }
