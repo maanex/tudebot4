@@ -9,9 +9,9 @@ export default class SurveillanceModule extends Module {
   private static presenceLookup: Record<PresenceStatus, number> = {
     invisible: 0,
     offline: 0,
-    idle: 1,
-    online: 2,
-    dnd: 3
+    idle: 10,
+    online: 20,
+    dnd: 30
   }
 
   private memberGuildsCache: Map<string, string> = new Map()
@@ -123,9 +123,9 @@ export default class SurveillanceModule extends Module {
   private generateDeviceIndicator(clientStatus: ClientPresenceStatusData): number {
     if (!clientStatus) return 0
     let out = 0
-    if (clientStatus.desktop) out += 0.1
-    if (clientStatus.mobile) out += 0.2
-    if (clientStatus.web) out += 0.4
+    if (clientStatus.desktop) out += 1
+    if (clientStatus.mobile) out += 2
+    if (clientStatus.web) out += 4
     return out
   }
 
