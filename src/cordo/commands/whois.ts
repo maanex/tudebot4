@@ -1,4 +1,4 @@
-import { InteractionApplicationCommandCallbackData, InteractionCommandType, ReplyableCommandInteraction } from 'cordo'
+import { InteractionApplicationCommandCallbackData, InteractionCommandType, InteractionResponseFlags, ReplyableCommandInteraction } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
 import { TudeBot } from '../..'
 import Emojis from '../../int/emojis'
@@ -13,21 +13,23 @@ export default async function (i: ReplyableCommandInteraction) {
     })
   }
 
-  const user = (i.data.option.user || (i.data.type === InteractionCommandType.USER && i.data.target.id) || i.user.id) + ''
-
   i.defer()
+
+  const user = (i.data.option.user || (i.data.type === InteractionCommandType.USER && i.data.target.id) || i.user.id) + ''
+  const flags = i.data.type === InteractionCommandType.USER ? InteractionResponseFlags.EPHEMERAL : undefined
 
   try {
     const channel = await TudeBot.channels.fetch(i.channel_id) as TextChannel
     const member = await channel.guild.members.fetch(user)
     const message = await buildMessage(channel, member)
-    i.reply(message)
+    i.reply({ ...message, flags })
     return true
   } catch (ex) {
     console.error(ex)
     i.reply({
       title: 'Cringe',
-      description: 'Something failed lmao'
+      description: 'Something failed lmao',
+      flags
     })
     return false
   }

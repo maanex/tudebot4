@@ -1,4 +1,4 @@
-import { PresenceStatus, VoiceState } from 'discord.js'
+import { ClientPresenceStatusData, PresenceStatus, VoiceState } from 'discord.js'
 import { TudeBot } from '../index'
 import Metrics from '../lib/metrics'
 import { Module } from '../types/types'
@@ -32,10 +32,11 @@ export default class SurveillanceModule extends Module {
       if (!guilds) return
 
       // DOPE console.log(after.user.username, Object.entries(after.clientStatus).map(e => `[${e[0]}: ${e[1]}]`).join(' '))
+      const deviceIndicator = this.generateDeviceIndicator(after.clientStatus)
 
       Metrics.gaugeSurveillanceUsers
         .labels({ user: this.data.users[user] ?? user, guilds })
-        .set(SurveillanceModule.presenceLookup[after.status])
+        .set(SurveillanceModule.presenceLookup[after.status] + deviceIndicator)
     })
 
     TudeBot.on('voiceStateUpdate', (before, after) => {
@@ -85,36 +86,47 @@ export default class SurveillanceModule extends Module {
   }
 
   private async updateAll() {
-    type stepOneType = [string, PresenceStatus, VoiceState, string]
-    type stepTwoType = Record<string, [ PresenceStatus, VoiceState, string[] ]>
+    type stepOneType = [string, PresenceStatus, ClientPresenceStatusData, VoiceState, string]
+    type stepTwoType = Record<string, [ PresenceStatus, ClientPresenceStatusData, VoiceState, string[] ]>
 
     const gdata = this.getGuilds()
     const guilds = await Promise.all(Object.keys(gdata).map(i => TudeBot.guilds.fetch(i)))
     const members = guilds
       .flatMap(g => g.members.cache
         .filter(m => !m.user.bot)
-        .map(u => [ u.id, u.presence?.status ?? 'offline', u.voice, g.id ] as stepOneType)
+        .map(u => [ u.id, u.presence?.status ?? 'offline', u.presence?.clientStatus, u.voice, g.id ] as stepOneType)
       )
       .reduce((out, item) => ({
         ...out,
         [item[0]]: out[item[0]]
-          ? [ item[1], item[2], [ ...out[item[0]][2], item[3] ]]
-          : [ item[1], item[2], [ item[3] ]]
+          ? [ item[1], item[2], item[3], [ ...out[item[0]][3], item[4] ]]
+          : [ item[1], item[2], item[3], [ item[4] ]]
       }), {}) as stepTwoType
 
     for (const person of Object.entries(members)) {
       const user = this.data.users[person[0]] ?? person[0]
-      const guilds = person[1][2].map(id => gdata[id] ?? id).join('-')
+      const guilds = person[1][3].map(id => gdata[id] ?? id).join('-')
       this.memberGuildsCache.set(person[0], guilds)
+
+      const deviceIndicator = this.generateDeviceIndicator(person[1][1])
 
       Metrics.gaugeSurveillanceUsers
         .labels({ user, guilds })
-        .set(SurveillanceModule.presenceLookup[person[1][0]] ?? -1)
+        .set((SurveillanceModule.presenceLookup[person[1][0]] ?? -1) + deviceIndicator)
 
       // Metrics.gaugeSurveillanceVoice
       //   .labels({ user, guilds })
       //   .set(person[1][1]?.channel ? (person[1][1].mute ? 0.5 : 1) : 0)
     }
+  }
+
+  private generateDeviceIndicator(clientStatus: ClientPresenceStatusData): number {
+    if (!clientStatus) return 0
+    let out = 0
+    if (clientStatus.desktop) out += 0.1
+    if (clientStatus.mobile) out += 0.2
+    if (clientStatus.web) out += 0.4
+    return out
   }
 
 }
