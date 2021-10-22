@@ -1,13 +1,13 @@
 FROM node:16-slim
 
 RUN apt-get update
-RUN apt-get add git
+RUN apt-get install git
 
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
 RUN apt-get install -y -q --no-install-recommends libfontconfig1
-RUN apt-get add --update --no-cache --virtual .gyp \
+RUN apt-get install --update --no-cache --virtual .gyp \
     make \
     g++ \
     jpeg-dev \
