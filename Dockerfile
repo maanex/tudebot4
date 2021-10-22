@@ -5,17 +5,17 @@ RUN apt install git
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
-RUN apt install --update --no-cache --virtual .gyp \
-    libc6-compat \
-    make \
-    g++ \
-    jpeg-dev \
-    cairo-dev \
-    giflib-dev \
-    pango-dev \
-    libtool \
-    autoconf \
-    automake
+# RUN apt install --update --no-cache --virtual .gyp \
+#     libc6-compat \
+#     make \
+#     g++ \
+#     jpeg-dev \
+#     cairo-dev \
+#     giflib-dev \
+#     pango-dev \
+#     libtool \
+#     autoconf \
+#     automake
 
 COPY package*.json ./
 
