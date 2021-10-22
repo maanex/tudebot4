@@ -5,8 +5,8 @@ RUN apk add git
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
-RUN apk add --update --no-cache libfontconfig
 RUN apk add --update --no-cache --virtual .gyp \
+    fontconfig \
     make \
     g++ \
     jpeg-dev \
