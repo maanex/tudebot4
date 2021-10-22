@@ -1,12 +1,12 @@
 FROM node:16
 
-RUN apk add git
+RUN sudo apt install git
 
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
-RUN apk add libc6-compat
-RUN apk add --update --no-cache --virtual .gyp \
+RUN sudo apt install --update --no-cache --virtual .gyp \
+    libc6-compat \
     make \
     g++ \
     jpeg-dev \
