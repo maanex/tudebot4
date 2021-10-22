@@ -31,7 +31,6 @@ export default class SurveillanceModule extends Module {
       const guilds = this.memberGuildsCache.get(user)
       if (!guilds) return
 
-      // DOPE console.log(after.user.username, Object.entries(after.clientStatus).map(e => `[${e[0]}: ${e[1]}]`).join(' '))
       const deviceIndicator = this.generateDeviceIndicator(after.clientStatus)
 
       Metrics.gaugeSurveillanceUsers

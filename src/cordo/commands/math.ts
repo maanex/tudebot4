@@ -1,162 +1,130 @@
-import * as Math from 'mathjs'
-import * as svg2img from 'svg2img'
-import { mathjax } from 'mathjax-full/js/mathjax'
-import { AsciiMath } from 'mathjax-full/js/input/asciimath'
-import { SVG } from 'mathjax-full/js/output/svg'
-import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor'
-import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html'
-import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages'
-import { ButtonStyle, ComponentType, ReplyableCommandInteraction } from 'cordo'
-import { Canvas } from 'skia-canvas'
+import { ButtonStyle, ComponentType, InteractionApplicationCommandCallbackData, MessageComponent, MessageEmbed, ReplyableCommandInteraction } from 'cordo'
 import Emojis from '../../int/emojis'
 import uploadImageToCdn from '../../lib/img-cdn'
+import { renderMathTerm } from '../../lib/math/rendering/terms/render-term'
+import { ParsedTerm, parseTerm } from '../../lib/math/logic/parse-term'
+import { mathModule2dPlot } from '../../lib/math/modules/2d-plot'
+import { mathModule1dResult } from '../../lib/math/modules/1d-result'
+import { mathModule2dTable } from '../../lib/math/modules/2d-table'
+import { mathModule2dAlgebra } from '../../lib/math/modules/2d-algebra'
+import { mathModule3dTemp } from '../../lib/math/modules/3d-temp'
 
+
+export type MathModuleInput = {
+  term: ParsedTerm
+  state: any
+  event: string
+}
+
+export type MathModuleOutput = {
+  content: MessageEmbed
+  buttons?: MessageComponent[]
+}
+
+const modules: Record<
+  0 | 1 | 2, {
+    name: string,
+    func: (input: MathModuleInput) => MathModuleOutput | Promise<MathModuleOutput>
+  }[]
+> = {
+  0: [
+    { name: 'Result', func: mathModule1dResult }
+  ],
+  1: [
+    { name: '2D Plot', func: mathModule2dPlot },
+    { name: 'Values', func: mathModule2dTable },
+    { name: 'Algebra', func: mathModule2dAlgebra }
+  ],
+  2: [
+    { name: 'Heads up', func: mathModule3dTemp }
+  ]
+}
 
 export default async function (i: ReplyableCommandInteraction) {
   i.defer()
 
-  const term = i.data.option.term as string
-  const termFormatted = formatTerm(term)
+  const input = i.data.option.term as string
+  const term = parseTerm(input)
 
-  let res: {
-    status: 'fail' | 'success'
-    content?: string
-    image?: string
-  } = {
-    status: 'fail',
-    content: 'Internal Error'
-  }
-
-  try {
-    const compiled = Math.compile(termFormatted)
-    try {
-      res = {
-        status: 'success',
-        content: compiled.evaluate()
-      }
-    } catch (ex) {
-      if (ex.message.startsWith('Undefined symbol')) {
-        const varName = ex.message.replace('Undefined symbol ', '')[0]
-        const xAxis = range(-10, 10, 100)
-        const yAxis = xAxis.map(x => compiled.evaluate({ [varName]: x }))
-
-        // const buff = renderSimpleGraph(300, 100, 0xFFFFFF, -10, 10, yAxis)
-        const buff = await renderMath(termFormatted)
-        const image = await uploadImageToCdn(buff)
-
-        res = {
-          status: 'success',
-          image
-        }
-      } else {
-        res = {
-          status: 'fail',
-          content: ex.message
-        }
-      }
-    }
-  } catch (ex) {
-    res = {
-      status: 'fail',
-      content: ex.message
-    }
-  }
-
-  const output = res.status === 'fail'
-    ? `\nError: ${res.content}`
-    : res.content
-      ? `\`\`\`${res.content}\`\`\``
-      : ''
-
-  const description = `${Emojis.modlog.userJoin} **Input:** \`\`\`${term}\`\`\`\n\n${Emojis.modlog.userQuit} **Output**: ${output}`
-
-  i
-    .replyInteractive({
-      description,
-      image: res.image,
-      components: [
-        {
-          type: ComponentType.BUTTON,
-          style: ButtonStyle.SECONDARY,
-          label: 'Query Wolfram Alpha',
-          custom_id: 'query_wolfram_alpha'
-        }
-      ]
+  if (!term.success) {
+    return i.reply({
+      title: Emojis.modlog.warning.string + ' Error',
+      description: term.message
     })
+  }
+
+  const inBuff = await renderMathTerm(term.input)
+  const inUrl = await uploadImageToCdn(inBuff)
+
+  const mods = modules[term.dimension]
+  let currentMod = 0
+  const states = []
+  for (let i = 0; i < mods.length; i++)
+    states.push({})
+
+  const content = await reRender(
+    mods[currentMod], {
+      event: '',
+      state: states[currentMod],
+      term
+    }, inUrl
+  )
+  i
+    .replyInteractive(content)
     .withTimeout(
       5 * 60 * 1000,
       j => j.disableComponents(),
-      { onInteraction: 'removeTimeout' }
+      { onInteraction: 'restartTimeout' }
     )
-    .on('query_wolfram_alpha', (h) => {
-      h.ack()
+    .on('usemod_$mod', async (h) => {
+      currentMod = parseInt(h.params.mod)
+      const content = await reRender(
+        mods[currentMod], {
+          event: '',
+          state: states[currentMod],
+          term
+        }, inUrl
+      )
+      h.edit(content)
+    })
+    .on('$event', async (h) => {
+      const content = await reRender(
+        mods[currentMod], {
+          event: h.params.event,
+          state: states[currentMod],
+          term
+        }, inUrl
+      )
+      h.edit(content)
     })
 }
 
-/*
- *
- */
-
-function formatTerm(term: string) {
-  return term
-    .replaceAll('²', '^2')
-    .replaceAll('³', '^3')
-}
-
-function range(from: number, to: number, stepCount: number): number[] {
-  const delta = to - from
-  const out = new Array(stepCount)
-  for (let i = 0; i < stepCount; i++)
-    out[i] = from + (delta) / stepCount * i
-  return out
-}
-
-function renderSimpleGraph(width: number, height: number, color: number, from: number, to: number, yAxis: number[]): Buffer {
-  const canv = new Canvas(width, height)
-  const ctx = canv.getContext('2d')
-
-  ctx.fillStyle = '#182927'
-  ctx.fillRect(0, 0, width, height)
-  ctx.fillStyle = '#FFFFFF'
-  ctx.fillRect(0, 0, 20, 20)
-
-  return Buffer.from(canv.toBuffer('png'))
-}
-
-function renderMath(input: string, color: number = 0xFFFFFF, background: number = undefined): Promise<Buffer> {
-  const adaptor = liteAdaptor()
-  RegisterHTMLHandler(adaptor)
-
-  const am = new AsciiMath({})
-  const svg = new SVG({
-    fontCache: 'local',
-    scale: 1
-  })
-  const html = mathjax.document('', {
-    InputJax: am,
-    OutputJax: svg
-  })
-  const node = html.convert(input, {
-    display: false,
-    em: 16,
-    ex: 8
-  })
-
-  let img = adaptor
-    .innerHTML(node)
-    .replaceAll('currentColor', `#${color.toString(16).padStart(6, '0')}`)
-
-  if (background !== undefined) {
-    const bounds = img.match(/viewBox="([0-9.-]+) ([0-9.-]+) ([0-9.-]+) ([0-9.-]+)"/).slice(1, 5).map(parseFloat)
-    const path = `M ${bounds[0]},${bounds[1]} L ${bounds[0]},${bounds[3]} L ${bounds[2]},${bounds[3]} L ${bounds[2]},${bounds[1]} Z`
-    img = img.replace(/(<g .*?>)/g, `$1 <path d="${path}" fill="#${background.toString(16).padStart(6, '0')}"></path>`)
+async function reRender(module: typeof modules['0'][number], input: MathModuleInput, inUrl: string): Promise<InteractionApplicationCommandCallbackData> {
+  const result = await module.func(input)
+  result.content.color = 0x2F3136
+  result.content.title = result.content.title ? `${Emojis.modlog.userQuit.string} ${result.content.title}` : undefined
+  return {
+    embeds: [
+      {
+        description: `${Emojis.modlog.userJoin} **Input:**`,
+        color: 0x2F3136,
+        image: { url: inUrl }
+      },
+      result.content
+    ],
+    components: [
+      ...(result.buttons ?? []),
+      {
+        type: ComponentType.LINE_BREAK,
+        visible: !!result.buttons?.length
+      },
+      ...modules[input.term.dimension].map((mod, index) => ({
+        type: ComponentType.BUTTON,
+        style: mod.name === module.name ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY,
+        disabled: mod.name === module.name,
+        label: mod.name,
+        custom_id: `usemod_${index}`
+      }) as MessageComponent)
+    ]
   }
-
-  return new Promise((res, rej) => {
-    const conv = <unknown>svg2img as typeof svg2img.default
-    conv(img, (err, buff) => {
-      if (err) return rej(err)
-      res(buff)
-    })
-  })
 }
