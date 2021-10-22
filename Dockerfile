@@ -6,7 +6,7 @@ RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
 RUN apk add --update --no-cache --virtual .gyp \
-    libfontconfig1 \
+    libfontconfig \
     make \
     g++ \
     jpeg-dev \
