@@ -5,9 +5,8 @@ RUN apk add git
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
+RUN apk update && apk add --no-cache libc6-compat
 RUN apk add --update --no-cache --virtual .gyp \
-    fontconfig \
-    libc6-compat \
     make \
     g++ \
     jpeg-dev \
