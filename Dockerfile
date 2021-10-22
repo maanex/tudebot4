@@ -1,11 +1,11 @@
 FROM node:16
 
-RUN sudo apt install git
+RUN apt install git
 
 RUN mkdir -p /usr/tudebot
 WORKDIR /usr/tudebot
 
-RUN sudo apt install --update --no-cache --virtual .gyp \
+RUN apt install --update --no-cache --virtual .gyp \
     libc6-compat \
     make \
     g++ \
