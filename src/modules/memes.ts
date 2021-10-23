@@ -127,7 +127,6 @@ export default class MemesModule extends Module {
           ]
         })
       }
-      console.log('mr8')
     })
 
     TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {

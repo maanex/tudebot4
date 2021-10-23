@@ -7,7 +7,7 @@ import { mathModule2dPlot } from '../../lib/math/modules/2d-plot'
 import { mathModule1dResult } from '../../lib/math/modules/1d-result'
 import { mathModule2dTable } from '../../lib/math/modules/2d-table'
 import { mathModule2dAlgebra } from '../../lib/math/modules/2d-algebra'
-import { mathModule3dTemp } from '../../lib/math/modules/3d-temp'
+import { mathModule3dFlatPlot } from '../../lib/math/modules/3d-flat-plot'
 
 
 export type MathModuleInput = {
@@ -36,7 +36,7 @@ const modules: Record<
     { name: 'Algebra', func: mathModule2dAlgebra }
   ],
   2: [
-    { name: 'Heads up', func: mathModule3dTemp }
+    { name: 'Flat Plot', func: mathModule3dFlatPlot }
   ]
 }
 
