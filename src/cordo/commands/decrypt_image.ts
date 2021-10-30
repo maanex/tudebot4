@@ -58,7 +58,7 @@ export default function (i: ReplyableCommandInteraction) {
         type: ComponentType.SELECT,
         custom_id: 'pass',
         min_values: 1,
-        max_values: 25,
+        max_values: options.length,
         options
       }
     ]

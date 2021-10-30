@@ -98,7 +98,7 @@ function finalize(i: ReplyableCommandInteraction | ReplyableComponentInteraction
         type: ComponentType.SELECT,
         custom_id: 'pass',
         min_values: 1,
-        max_values: 25,
+        max_values: colors.length,
         flags: [ InteractionComponentFlag.ACCESS_EVERYONE ],
         options: colors.map(c => ({
           label: c,
