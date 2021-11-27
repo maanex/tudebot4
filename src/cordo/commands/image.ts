@@ -13,7 +13,8 @@ export default async function (i: ReplyableCommandInteraction) {
   i.defer()
 
   const url = await findImage(kind, i)
-  i.reply({ content: url })
+  if (url) i.reply({ content: url })
+  else i.reply({ content: 'No image found! *Oh no*' })
 }
 
 export async function findImage(kind: string, i: ReplyableCommandInteraction): Promise<string> {
@@ -46,10 +47,6 @@ export async function findImage(kind: string, i: ReplyableCommandInteraction): P
   if (kind === 'inspiration') {
     const { data: o } = await axios.get('http://inspirobot.me/api?generate=true')
     return o
-  }
-  if (kind === 'jesus') {
-    const buff = await TudeBot.obrazium.getJesus()
-    return uploadImageToCdn(buff)
   }
   if (kind === 'you') {
     const user = await TudeBot.users.fetch(i.user.id)

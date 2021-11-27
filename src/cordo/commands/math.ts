@@ -8,6 +8,7 @@ import { mathModule1dResult } from '../../lib/math/modules/1d-result'
 import { mathModule2dTable } from '../../lib/math/modules/2d-table'
 import { mathModule2dAlgebra } from '../../lib/math/modules/2d-algebra'
 import { mathModule3dFlatPlot } from '../../lib/math/modules/3d-flat-plot'
+import { mathModule3dIsoPlot } from '../../lib/math/modules/3d-iso-plot'
 
 
 export type MathModuleInput = {
@@ -36,7 +37,8 @@ const modules: Record<
     { name: 'Algebra', func: mathModule2dAlgebra }
   ],
   2: [
-    { name: 'Flat Plot', func: mathModule3dFlatPlot }
+    { name: 'Flat Plot', func: mathModule3dFlatPlot },
+    { name: 'Isometric Plot', func: mathModule3dIsoPlot }
   ]
 }
 

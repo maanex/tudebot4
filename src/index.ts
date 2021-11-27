@@ -8,7 +8,6 @@ import Database from './database/database'
 import MongoAdapter from './database/mongo.adapter'
 import { logVersionDetails } from './lib/git-parser'
 import ParseArgs from './lib/parse-args'
-import Obrazium from './thirdparty/obrazium/obrazium'
 import Server from './server/server'
 import PerspectiveAPI from './thirdparty/googleapis/perspective-api'
 import AlexaAPI from './thirdparty/alexa/alexa-api'
@@ -24,7 +23,6 @@ export class TudeBotClient extends Client {
   public modules: Map<string, Module> = null;
   public guildSettings: Map<string, GuildSettings> = null;
 
-  public obrazium: Obrazium = null;
   public perspectiveApi: PerspectiveAPI = null;
   public alexaAPI: AlexaAPI = null;
 
@@ -57,7 +55,6 @@ export class TudeBotClient extends Client {
         await Database.init()
         await Server.start(this.config.server.port)
 
-        this.obrazium = new Obrazium(this.config.thirdparty.obrazium.token)
         this.perspectiveApi = new PerspectiveAPI(this.config.thirdparty.googleapis.key)
         this.alexaAPI = new AlexaAPI(this.config.thirdparty.alexa.key)
 

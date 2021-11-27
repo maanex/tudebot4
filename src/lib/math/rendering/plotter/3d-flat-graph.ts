@@ -15,7 +15,22 @@ export async function renderSimple3dFlatGraph(width: number, height: number, col
   const xDelta = Math.abs(toX - fromX)
   const yDelta = Math.abs(toY - fromY)
 
-  let val: number
+  let val = 0
+  let max = -99999
+  let min = 99999
+  for (let x = padding; x < width; x++) {
+    for (let y = 0; y < height - padding; y++) {
+      val = func(
+        fromX + (x - padding) / (width - padding) * xDelta,
+        fromY + y / (height - padding) * yDelta
+      )
+
+      if (val > max) max = val
+      if (val < min) min = val
+    }
+  }
+  const delta = (max - min) || 1
+
   for (let x = padding; x < width; x++) {
     for (let y = 0; y < height - padding; y++) {
       val = func(
@@ -23,7 +38,8 @@ export async function renderSimple3dFlatGraph(width: number, height: number, col
         fromY + y / (height - padding) * yDelta
       )
       if (isNaN(val) || val <= -Infinity || val >= Infinity) continue
-      ctx.fillStyle = `hsl(${val}deg, 50%, 50%)`
+
+      ctx.fillStyle = `hsl(${(val - min) / delta * 300}deg, 50%, 50%)`
       ctx.fillRect(x, y, 1, 1)
     }
   }

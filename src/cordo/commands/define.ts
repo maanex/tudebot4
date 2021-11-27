@@ -7,16 +7,24 @@ export default async function (i: ReplyableCommandInteraction) {
   const definitions = o.list.sort((a, b) => (b.thumbs_up - b.thumbs_down) - (a.thumbs_up - a.thumbs_down))
   const term = i.data.option.term[0].toUpperCase() + (i.data.option.term as string).substring(1).toLowerCase()
 
-  const buildResponse: (i: number) => InteractionApplicationCommandCallbackData = (i: number) => ({
-    content: `[${term}](<${definitions[i].permalink}>) — ${definitions[i].definition.replace(/\[(.+?)\]/g, '[$1](<https://www.urbandictionary.com/define.php?term=$1##>)').split('.php?term=').map(e => e.includes('##>') ? `${e.split('##>')[0].split(' ').join('%20')}>${e.split('##>')[1]}` : e).join('.php?term=')}`,
+  const buildResponse: (index: number) => InteractionApplicationCommandCallbackData = (index: number) => ({
+    content: `[${term}](<${definitions[index].permalink}>) — ${definitions[index].definition.replace(/\[(.+?)\]/g, '[$1](<https://www.urbandictionary.com/define.php?term=$1##>)').split('.php?term=').map(e => e.includes('##>') ? `${e.split('##>')[0].split(' ').join('%20')}>${e.split('##>')[1]}` : e).join('.php?term=')}`,
     components: [
       {
         type: ComponentType.BUTTON,
         style: ButtonStyle.SECONDARY,
-        label: 'Show a different definition',
-        custom_id: `show_${i + 1}`,
+        label: '<',
+        custom_id: `show_${index - 1}`,
         flags: [ InteractionComponentFlag.ACCESS_EVERYONE ],
-        disabled: definitions.length <= i + 1
+        disabled: index <= 0
+      },
+      {
+        type: ComponentType.BUTTON,
+        style: ButtonStyle.SECONDARY,
+        label: 'Next definition',
+        custom_id: `show_${index + 1}`,
+        flags: [ InteractionComponentFlag.ACCESS_EVERYONE ],
+        disabled: definitions.length <= index + 1
       }
     ]
   })
