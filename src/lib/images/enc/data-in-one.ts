@@ -1,5 +1,5 @@
 import Image from 'image-js'
-import { changeColorDepth, getPixelsArray } from './enc-util'
+import { changeColorDepth, getPixelsArray } from '../image-util'
 
 
 const MAX_BIT_DEPTH = 16

@@ -1,6 +1,6 @@
 import { InteractionCommandType, ReplyableCommandInteraction } from 'cordo'
 import parseImageFromMessage from '../../lib/parsing/parse-image-from-message'
-import imageEncrypt from '../actions/image-encrypt'
+import imageFilter from '../actions/image-filter'
 
 export default function (i: ReplyableCommandInteraction) {
   if (i.data.type !== InteractionCommandType.MESSAGE) return
@@ -12,5 +12,5 @@ export default function (i: ReplyableCommandInteraction) {
     })
   }
 
-  imageEncrypt(i, urlOrMessage, i.data.target.id)
+  imageFilter(i, urlOrMessage, i.data.target.id)
 }

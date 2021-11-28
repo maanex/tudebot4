@@ -1,6 +1,6 @@
 import { ButtonStyle, ComponentType, InteractionApplicationCommandCallbackData, MessageComponent, MessageEmbed, ReplyableCommandInteraction } from 'cordo'
 import Emojis from '../../int/emojis'
-import uploadImageToCdn from '../../lib/img-cdn'
+import uploadImageToCdn from '../../lib/images/img-cdn'
 import { renderMathTerm } from '../../lib/math/rendering/terms/render-term'
 import { ParsedTerm, parseTerm } from '../../lib/math/logic/parse-term'
 import { mathModule2dPlot } from '../../lib/math/modules/2d-plot'

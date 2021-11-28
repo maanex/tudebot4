@@ -1,5 +1,5 @@
 import { MessageAttachment, TextChannel } from 'discord.js'
-import { TudeBot } from '..'
+import { TudeBot } from '../..'
 
 
 const channelId = '886200758142369822'

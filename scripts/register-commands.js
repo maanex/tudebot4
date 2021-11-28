@@ -212,6 +212,18 @@ const commands = [
   {
     name: 'Decrypt Image',
     type: 3
+  },
+  {
+    name: 'Select Image',
+    type: 3
+  },
+  {
+    name: 'Show Source',
+    type: 3
+  },
+  {
+    name: 'Apply Image Filter',
+    type: 3
   }
 ]
 
@@ -256,4 +268,8 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     }
   }
 }
-run(false, true, [ 'math' ])
+// run(false, true, [ 'math' ])
+
+// run(false, true, [ 'Select Image' ], '342620626592464897')
+// run(false, true, [ 'Show Source' ], '342620626592464897')
+run(false, true, [ 'Apply Image Filter' ], '342620626592464897')

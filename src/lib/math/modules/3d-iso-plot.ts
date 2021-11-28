@@ -1,6 +1,6 @@
 import { ButtonStyle, ComponentType } from 'cordo'
 import { MathModuleInput, MathModuleOutput } from '../../../cordo/commands/math'
-import uploadImageToCdn from '../../img-cdn'
+import uploadImageToCdn from '../../images/img-cdn'
 import { render3dIsoGraph } from '../rendering/plotter/3d-iso-graph'
 
 

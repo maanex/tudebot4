@@ -2,10 +2,10 @@ import axios from 'axios'
 import { ReplyableCommandInteraction } from 'cordo'
 import Image from 'image-js'
 import { TudeBot } from '../..'
-import generateFunnyImage from '../../lib/images/generate-funny-image'
-import { oneInOne } from '../../lib/enc/one-in-one'
-import uploadImageToCdn from '../../lib/img-cdn'
-import { generateTellmeImage } from '../../lib/images/generate-tellme-image'
+import generateFunnyImage from '../../lib/images/generators/generate-funny-image'
+import { oneInOne } from '../../lib/images/enc/one-in-one'
+import uploadImageToCdn from '../../lib/images/img-cdn'
+import { generateTellmeImage } from '../../lib/images/generators/generate-tellme-image'
 
 
 export default async function (i: ReplyableCommandInteraction) {

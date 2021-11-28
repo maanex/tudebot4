@@ -1,5 +1,6 @@
 import { Image } from 'image-js'
-import { getPixelsArray, grabbit, makeMap, rand } from './enc-util'
+import { getPixelsArray } from '../image-util'
+import { grabbit, makeMap, rand } from './enc-util'
 
 
 export function oneFlip(image: Image, password: string): Buffer {

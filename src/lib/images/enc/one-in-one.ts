@@ -1,5 +1,6 @@
 import { Image } from 'image-js'
-import { changeColorDepth, getPixelsArray, grabbit, makeMap, rand } from './enc-util'
+import { changeColorDepth, getPixelsArray } from '../image-util'
+import { grabbit, makeMap, rand } from './enc-util'
 
 
 export function oneInOne(disguise: Image, as: Image, password: string): Buffer {

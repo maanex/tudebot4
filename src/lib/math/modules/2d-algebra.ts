@@ -2,7 +2,7 @@ import * as Math from 'mathjs'
 import { ButtonStyle, ComponentType } from 'cordo'
 import { MathModuleInput, MathModuleOutput } from '../../../cordo/commands/math'
 import { renderMathTerm } from '../rendering/terms/render-term'
-import uploadImageToCdn from '../../img-cdn'
+import uploadImageToCdn from '../../images/img-cdn'
 
 
 const modeNames = {
