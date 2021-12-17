@@ -19,7 +19,7 @@
     "canvas": "^2.8.0",
     "chalk": "^3.0.0",
     "colorthief": "^2.3.2",
-    "cordo": "^1.9.4",
+    "cordo": "^1.9.5",
     "cron": "^1.7.2",
     "discord.js": "^13.1.0",
     "eslint": "^7.17.0",
