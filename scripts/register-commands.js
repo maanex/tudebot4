@@ -292,8 +292,9 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 }
 // run(false, true, [ 'math' ])
 
-// run(false, true, [ 'Select Image' ], '342620626592464897')
-// run(false, true, [ 'Show Source' ], '342620626592464897')
-// run(false, true, [ 'Apply Image Filter' ], '342620626592464897')
-// run(false, true, [ 'remindme' ], '342620626592464897')
-run(false, true, [ 'reminders' ], '342620626592464897')
+// run(true, false, [ 'Encrypt Image' ])
+// run(true, false, [ 'Decrypt Image' ])
+// run(false, true, [ 'Select Image' ])
+// run(false, true, [ 'Show Source' ])
+// run(false, true, [ 'remindme' ])
+// run(false, true, [ 'reminders' ])
