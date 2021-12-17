@@ -197,6 +197,28 @@ const commands = [
     ]
   },
   {
+    name: 'remindme',
+    description: 'Remind you about something later on',
+    options: [
+      {
+        type: 3,
+        name: 'when',
+        description: 'When do you want to be reminded?',
+        required: true
+      },
+      {
+        type: 3,
+        name: 'about',
+        description: 'What is it you want me to remind you about?',
+        required: false
+      }
+    ]
+  },
+  {
+    name: 'reminders',
+    description: 'View and manage your reminders'
+  },
+  {
     name: 'settings',
     description: 'TudeBot Settings'
   },
@@ -272,4 +294,6 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 
 // run(false, true, [ 'Select Image' ], '342620626592464897')
 // run(false, true, [ 'Show Source' ], '342620626592464897')
-run(false, true, [ 'Apply Image Filter' ], '342620626592464897')
+// run(false, true, [ 'Apply Image Filter' ], '342620626592464897')
+// run(false, true, [ 'remindme' ], '342620626592464897')
+run(false, true, [ 'reminders' ], '342620626592464897')
