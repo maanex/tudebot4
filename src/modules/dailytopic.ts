@@ -4,6 +4,7 @@ import * as cron from 'cron'
 import axios from 'axios'
 import { Module } from '../types/types'
 import { TudeBot } from '../index'
+import randomWikiContent from '../lib/wikipedia/random-wiki-content'
 
 
 export default class DailyTopicModule extends Module {
@@ -21,6 +22,7 @@ export default class DailyTopicModule extends Module {
     // this.cronjob = cron.job('0 0 * * *', () => this.run())
     // this.cronjob = cron.job('* * * * *', () => this.run())
     // this.cronjob.start()
+    // setInterval(() => this.run(), 5000)
   }
 
   public onBotReady() {
@@ -45,7 +47,7 @@ export default class DailyTopicModule extends Module {
   private generateTopic(guildid: string, maxAttempts = 3): Promise<string> {
     // TODO save last week of topics in an array to not get the same kind of topic too many times in a row
 
-    const kind = 'weird' // findKind()
+    const kind = 'wikipedia' // findKind()
     try {
       return this.topics[kind]()
     } catch (ex) {
@@ -80,6 +82,15 @@ export default class DailyTopicModule extends Module {
       const weirds = this.data.weirds
       const weird = weirds[Math.floor(Math.random() * weirds.length)]
       return Promise.resolve(weird)
+    },
+    wikipedia: async () => {
+      const article = await randomWikiContent()
+      return article.content
+        .split('\n')
+        .filter(l => !!l)
+        .slice(0, 18)
+        .join('\n')
+        .substring(0, 1980)
     }
   }
 

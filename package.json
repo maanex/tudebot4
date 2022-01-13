@@ -27,6 +27,7 @@
     "express-rate-limit": "^5.1.1",
     "git-last-commit": "^1.0.0",
     "helmet": "^3.22.0",
+    "html-entities": "^2.3.2",
     "image-js": "^0.33.0",
     "jimp": "^0.16.1",
     "mathjax-full": "^3.2.0",

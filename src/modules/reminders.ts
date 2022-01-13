@@ -168,20 +168,44 @@ export default class RemindersModule extends Module {
     const content = data.subscribers.map(s => `<@${s.toString()}>`).join(' ') || undefined
 
     const channel = await TudeBot.channels.fetch(data.channel.toString())
-    ;(channel as TextChannel).send({
-      content,
-      reply: {
-        messageReference: data.source?.toString(),
-        failIfNotExists: false
-      },
-      embeds: [ {
-        color: 0x2F3136,
-        author: {
-          name: 'Reminder!'
+    try {
+      const mes = await (channel as TextChannel).send({
+        content,
+        reply: {
+          messageReference: data.source?.toString(),
+          failIfNotExists: false
         },
-        description: data.title
-      } ]
-    })
+        embeds: [ {
+          color: 0x2F3136,
+          author: {
+            name: 'Reminder!'
+          },
+          description: data.title
+        } ]
+      })
+      if (!mes) this.triggerReminderBackup(data)
+    } catch (ex) {
+      this.triggerReminderBackup(data)
+    }
+  }
+
+  public async triggerReminderBackup(data: ReminderData) {
+    for (const sub of data.subscribers) {
+      const user = await TudeBot.users.fetch(sub.toString())
+      if (!user) continue
+      try {
+        const dms = user.dmChannel ?? await user.createDM()
+        dms.send({
+          embeds: [ {
+            color: 0x2F3136,
+            author: {
+              name: 'Reminder!'
+            },
+            description: data.title
+          } ]
+        })
+      } catch (ex) {}
+    }
   }
 
   public async getRemindersForUser(user: Long): Promise<ReminderData[]> {
