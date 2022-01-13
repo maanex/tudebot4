@@ -1,5 +1,6 @@
 import { Message, MessageReaction, User, TextChannel } from 'discord.js'
 import { CronJob } from 'cron'
+import axios from 'axios'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import { DbStats } from '../database/dbstats'
@@ -79,8 +80,21 @@ export default class MemesModule extends Module {
 
         for (const e of emojis) {
           try {
-            const mes2 = await mes.channel.messages.fetch(mes.id)
-            await mes2.react(e).catch(console.error)
+            // const mes2 = await mes.channel.messages.fetch(mes.id)
+            // await mes2.react(e).catch(console.error)
+            const encoded = e.startsWith(':')
+              ? e.substring(1)
+              : encodeURIComponent(e)
+            await axios.put(
+              `https://discord.com/api/v9/channels/${mes.channelId}/messages/${mes.id}/reactions/${encoded}/@me`,
+              {},
+              {
+                headers: {
+                  Authorization: `Bot ${TudeBot.token}`
+                }
+              }
+            )
+            await new Promise((res: any) => setTimeout(res, 1500))
           } catch (ex) {
             console.error(ex)
           }
