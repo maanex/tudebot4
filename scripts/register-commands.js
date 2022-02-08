@@ -7,6 +7,17 @@ if (!config) throw new Error('Config not found. Please cd into /scripts')
 const token = config.bot.token
 const clientid = config.bot.clientid
 
+const int = {
+  runOpts: [
+    {
+      type: 3,
+      name: 'src',
+      description: 'Source',
+      required: true
+    }
+  ]
+}
+
 const commands = [
   {
     name: 'whois',
@@ -224,6 +235,51 @@ const commands = [
   },
 
   {
+    name: 'q',
+    description: 'Q',
+    options: [
+      {
+        type: 3,
+        name: 'q',
+        description: 'Q',
+        required: true,
+        autocomplete: true
+      }
+    ]
+  },
+
+  {
+    name: 'run',
+    description: 'Run a script or program',
+    options: [
+      {
+        type: 1,
+        name: 'js',
+        description: 'Run JavaScript',
+        options: int.runOpts
+      },
+      {
+        type: 1,
+        name: 'java',
+        description: 'Run Java',
+        options: int.runOpts
+      },
+      {
+        type: 1,
+        name: 'python',
+        description: 'Run Python',
+        options: int.runOpts
+      },
+      {
+        type: 1,
+        name: 'gpl',
+        description: 'Run a Gibu Pipeline •',
+        options: int.runOpts
+      }
+    ]
+  },
+
+  {
     name: 'Whois',
     type: 2
   },
@@ -298,3 +354,5 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'Show Source' ])
 // run(false, true, [ 'remindme' ])
 // run(false, true, [ 'reminders' ])
+// run(false, true, [ 'q' ], '342620626592464897')
+run(false, true, [ 'run' ], '342620626592464897')
