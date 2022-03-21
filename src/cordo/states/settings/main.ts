@@ -11,6 +11,12 @@ export default function (_i: GenericInteraction): InteractionApplicationCommandC
         style: ButtonStyle.PRIMARY,
         label: 'Edit Modules',
         custom_id: 'settings_modules_main'
+      },
+      {
+        type: ComponentType.BUTTON,
+        style: ButtonStyle.SECONDARY,
+        label: 'View Config',
+        custom_id: 'settings_config_view'
       }
     ]
   }

@@ -37,10 +37,9 @@ export class TudeBotClient extends Client {
     this.modules = new Map()
     this.guildSettings = new Map()
 
-    if (this.devMode)
-      console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '))
+    if (this.devMode) console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '))
+    else logVersionDetails()
 
-    logVersionDetails()
     fixReactionEvent(this)
     moment.locale('en-gb')
     Metrics.init()

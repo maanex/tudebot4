@@ -1,3 +1,5 @@
+import { InteractionComponentFlag } from 'cordo'
+import CordoAPI from 'cordo/dist/api'
 import { Message } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
@@ -13,6 +15,24 @@ export default class QuotesModule extends Module {
     TudeBot.on('message', (mes) => {
       if (!this.isMessageEventValid(mes)) return
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
+
+      // mes.reply({
+      //   content: 'Zitat Einreichen',
+      //   components: [
+      //     {
+      //       type: 'ACTION_ROW',
+      //       components: [
+      //         {
+      //           type: 'BUTTON',
+      //           style: 'SUCCESS',
+      //           label: 'Open Modal',
+      //           customId: CordoAPI.compileCustomId('test_modal', [ InteractionComponentFlag.ACCESS_EVERYONE ])
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // })
+      // return
 
       if (!mes.mentions.users.size) {
         mes.reply('Bidde `@User [text]` machen. Dange.').then((m: Message) => setTimeout(() => m.delete(), 20000))

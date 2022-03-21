@@ -1,4 +1,4 @@
-import { Message, Channel, User, TextChannel, TextBasedChannels } from 'discord.js'
+import { Message, User, TextChannel } from 'discord.js'
 import { cmesType, Command, ReplyFunction, CommandExecEvent, AwaitUserResponseFunction } from 'types/types'
 import * as chalk from 'chalk'
 import { TudeBot, config } from '../index'
@@ -232,7 +232,7 @@ export default class CommandsModule extends Module {
     return this.activeInCommandsChannel
   }
 
-  private cmes(channel: Channel | TextBasedChannels, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
+  private cmes(channel: any, author: User, text: string, type?: cmesType, description?: string, settings?: any) {
     if (type === 'error') text = ':x: ' + text
     if (type === 'success') text = ':white_check_mark: ' + text;
 
