@@ -44,54 +44,105 @@ export default class DailyTopicModule extends Module {
     }
   }
 
-  private generateTopic(guildid: string, maxAttempts = 3): Promise<string> {
+  public async generateTopic(guildid: string, maxAttempts = 3): Promise<string> {
     // TODO save last week of topics in an array to not get the same kind of topic too many times in a row
 
-    const kind = 'wikipedia' // findKind()
+    const kind = this.weightedSelect(this.topics, o => o[0])
     try {
-      return this.topics[kind]()
+      // need to do like this or trycatch won't catch (i am mad)
+      const topic = await this.topics[kind][1]()
+      return topic
     } catch (ex) {
+      console.error(ex)
       if (maxAttempts <= 1) return Promise.resolve('nah')
       return this.generateTopic(guildid, maxAttempts--)
     }
   }
 
+  private weightedSelect(input: Record<string, any>, mapFunc?: (object: any) => number): string {
+    const totalScore = Object
+      .values(input)
+      .map(obj => mapFunc?.(obj) ?? obj)
+      .reduce((a, b) => a + b, 0)
+
+    let countdown = ~~(Math.random() * totalScore)
+
+    for (const topic of Object.keys(input)) {
+      countdown -= mapFunc?.(input[topic]) ?? input[topic]
+      if (countdown <= 0) return topic
+    }
+
+    return Object.keys(input)[0]
+  }
+
   //
 
-  private topics: Record<string, () => Promise<string>> = {
-    dayfact: async () => {
+  private topics: Record<string, [number, () => Promise<string>]> = {
+    dayfact: [ 10, async () => {
       const { data } = await axios.get(`http://numbersapi.com/${new Date().getMonth() + 1}/${new Date().getDate()}/date`)
       return data
-    },
-    emoji: () => {
+    } ],
+    emoji: [ 10, () => {
       const emojis = this.data.emojis.split(' ')
       const emoji = emojis[Math.floor(Math.random() * emojis.length)]
       return Promise.resolve(emoji)
-    },
-    news: async () => {
+    } ],
+    news: [ 15, async () => {
       const { data } = await axios.get('https://www.reddit.com/r/worldnews/top.json')
       const post = data.data.children[Math.floor(Math.random() * 5)].data.title
       return post
-    },
-    website: () => {
+    } ],
+    redditImagery: [ 30, async () => {
+      const subs = {
+        // subreddit: [ weight, show caption, require image ]
+        mildlyinteresting: [ 10, true, true ],
+        woahdude: [ 10, Math.random() < 0.5, true ],
+        photoshopbattles: [ 5, true, true ],
+        BreadStapledToTrees: [ 5, false, true ],
+        fourthworldproblems: [ 5, false, true ],
+        fifthworldproblems: [ 5, true, false ],
+        HaveWeMet: [ 5, true, false ],
+        ShowerOrange: [ 2, false, true ],
+        TooAfraidToAsk: [ 8, true, false ],
+        AskReddit: [ 8, true, false ]
+      }
+      const sub = this.weightedSelect(subs)
+      const showCaption = subs[sub][1]
+      const requireImage = subs[sub][2]
+
+      const { data } = await axios.get(`https://www.reddit.com/r/${sub}/hot.json`)
+      const post = data.data.children[Math.floor(Math.random() * data.data.children.length)]
+      if (!post?.data) throw new Error('no data')
+      const caption = post.data.title?.replace(/(of )?reddit/gi, '').replace(/ {2,}/g, ' ')
+      const imageUrl = post.data.preview?.images?.length ? post.data.url : ''
+      if (!imageUrl && requireImage) throw new Error('no image')
+
+      const out = []
+      if (showCaption) out.push(caption)
+      if (imageUrl) out.push(imageUrl)
+
+      return out.join('\n')
+    } ],
+    website: [ 10, () => {
       const websites = this.data.websites
       const website = websites[Math.floor(Math.random() * websites.length)]
       return Promise.resolve(website)
-    },
-    weird: () => {
+    } ],
+    weird: [ 10, () => {
       const weirds = this.data.weirds
       const weird = weirds[Math.floor(Math.random() * weirds.length)]
       return Promise.resolve(weird)
-    },
-    wikipedia: async () => {
+    } ],
+    wikipedia: [ 15, async () => {
       const article = await randomWikiContent()
       return article.content
         .split('\n')
         .filter(l => !!l)
+        .filter(l => /^[a-z]/gi.test(l))
         .slice(0, 18)
         .join('\n')
         .substring(0, 1980)
-    }
+    } ]
   }
 
 }

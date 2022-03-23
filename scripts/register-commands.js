@@ -305,6 +305,11 @@ const commands = [
   },
 
   {
+    name: 'topic',
+    description: 'Chat dead? Get a random topic to talk about.'
+  },
+
+  {
     name: 'Whois',
     type: 2
   },
@@ -381,4 +386,5 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'reminders' ])
 // run(false, true, [ 'q' ], '342620626592464897')
 // run(false, true, [ 'run' ], '342620626592464897')
-run(false, true, [ 'puppet' ], '342620626592464897')
+// run(false, true, [ 'puppet' ], '342620626592464897')
+run(false, true, [ 'topic' ], '342620626592464897')
