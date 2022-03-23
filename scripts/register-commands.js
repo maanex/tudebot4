@@ -280,6 +280,31 @@ const commands = [
   },
 
   {
+    name: 'puppet',
+    description: 'Take control over TudeBot',
+    options: [
+      {
+        type: 1,
+        name: 'send',
+        description: 'Send a message as TudeBot'
+      },
+      {
+        type: 1,
+        name: 'edit',
+        description: 'Edit a message sent by TudeBot',
+        options: [
+          {
+            type: 3,
+            name: 'message_id',
+            description: 'Message ID',
+            required: true
+          }
+        ]
+      }
+    ]
+  },
+
+  {
     name: 'Whois',
     type: 2
   },
@@ -355,4 +380,5 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'remindme' ])
 // run(false, true, [ 'reminders' ])
 // run(false, true, [ 'q' ], '342620626592464897')
-run(false, true, [ 'run' ], '342620626592464897')
+// run(false, true, [ 'run' ], '342620626592464897')
+run(false, true, [ 'puppet' ], '342620626592464897')

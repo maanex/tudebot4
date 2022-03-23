@@ -30,7 +30,7 @@ The Tude API is core to the "Social" / "Economy" part of the bot. The api will h
 
 ### Contributors
 
-[Me, Maanex](https://maanex.tk/)
+[Me, Maanex](https://maanex.me/)
 
 *Yup, that's it. If you want to contribute, feel free to reach out to me via discord*
 
