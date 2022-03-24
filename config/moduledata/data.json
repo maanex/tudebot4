@@ -1,0 +1,62 @@
+{
+  "roleLists": {
+    "freestuff": [
+      {
+        "name": "Get pinged on bot news.",
+        "description": "Never miss out on any bot updates!",
+        "emoji": "📰",
+        "roleId": "739954256295100437"
+      },
+      {
+        "name": "Get pinged on polls.",
+        "description": "Be able to vote on decisions regarding the bot's development.",
+        "emoji": "📊",
+        "roleId": "739954268974612622"
+      },
+      {
+        "name": "Get pinged on free to keep games.",
+        "description": "Grab 'em for free, keep 'em forever.",
+        "emoji": "🎁",
+        "roleId": "739954272246038658"
+      },
+      {
+        "name": "Get pinged on free for a weekend games.",
+        "description": "Games to play for free during next weekend.",
+        "emoji": "📆",
+        "roleId": "739954274938912788"
+      },
+      {
+        "name": "Get pinged on other freebies.",
+        "description": "All sorts of other freebies. Can be DLC's or even non-game software.",
+        "emoji": "🛒",
+        "roleId": "739954277258231848"
+      },
+      {
+        "name": "Get pinged on giveaways.",
+        "description": "We're sometimes giving away stuff. Usually games. Maybe something else. Who knows.",
+        "emoji": "💸",
+        "roleId": "835889359055618082"
+      },
+      {
+        "name": "Peek development channels.",
+        "description": "Get read-only access to some of the team's channels for a behind the scenes look.",
+        "emoji": "👀",
+        "roleId": "739954313975169064"
+      }
+    ],
+    "lab": [
+      {
+        "name": "Test 2",
+        "description": "Test 2 is actually test 3 but we don't talk about that.",
+        "emoji": "🎲",
+        "roleId": "487358779025915904"
+      },
+      {
+        "name": "Test 1",
+        "description": "The first test. A true classic.",
+        "emoji": "👑",
+        "roleId": "487358755764305930"
+      }
+    ]
+  }
+}

@@ -78,6 +78,8 @@ function buildPistonRequest(language: string, script: string): any {
 }
 
 async function executeGPL(script: string): Promise<ScriptReturn> {
+  return { output: 'GPL execution is temporarily disabled.' }
+  // eslint-disable-next-line no-unreachable
   const { data, headers } = await axios.post(
     config.thirdparty.gibuapis.pipelineEndpoint,
     script,
