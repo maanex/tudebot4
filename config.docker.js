@@ -37,7 +37,8 @@ module.exports = {
       key: secret('TUDEBOT_ALEXA_KEY')
     },
     gibuapis: {
-      endpoint: secret('TUDEBOT_GIBU_ENDPOINT') || '',
+      gqlEndpoint: secret('TUDEBOT_GIBU_GQL_ENDPOINT') || '',
+      pipelineEndpoint: secret('TUDEBOT_GIBU_PIPELINE_ENDPOINT') || '',
       key: ''
     }
   },

@@ -78,28 +78,29 @@ function buildPistonRequest(language: string, script: string): any {
 }
 
 async function executeGPL(script: string): Promise<ScriptReturn> {
-  return { output: 'GPL execution is temporarily disabled.' }
-  // eslint-disable-next-line no-unreachable
-  const { data, headers } = await axios.post(
-    config.thirdparty.gibuapis.pipelineEndpoint,
-    script,
-    {
-      validateStatus: null,
-      responseType: 'arraybuffer',
-      headers: {
-        accept: '*/*',
-        'content-type': 'text/plain'
+  try {
+    const { data, headers } = await axios.post(
+      config.thirdparty.gibuapis.pipelineEndpoint,
+      script,
+      {
+        validateStatus: null,
+        responseType: 'arraybuffer',
+        headers: {
+          accept: '*/*',
+          'content-type': 'text/plain'
+        }
       }
+    )
+
+    const type = headers?.['content-type']
+    if (type?.startsWith('image')) {
+      const url = await uploadImageToCdn(data as Buffer, 'gpl-output.' + type.substring(6).split(';')[0])
+      return { output: url }
     }
-  )
 
-  const type = headers?.['content-type']
-  if (type?.startsWith('image')) {
-    const url = await uploadImageToCdn(data as Buffer, 'gpl-output.' + type.substring(6).split(';')[0])
-    return { output: url }
+    const out = JSON.parse((data as Buffer).toString())
+    return Promise.resolve({ output: `\`\`\`json\n${JSON.stringify(out, null, 2)}\`\`\`` })
+  } catch (ex) {
+    return { output: ex }
   }
-
-  console.log(data.length)
-  const out = JSON.parse((data as Buffer).toString())
-  return Promise.resolve({ output: `\`\`\`json\n${JSON.stringify(out, null, 2)}\`\`\`` })
 }

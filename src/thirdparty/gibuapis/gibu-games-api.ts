@@ -83,7 +83,8 @@ export default class GibuGamesApi {
   private static readonly ENDPOINT_URL = ''
 
   public static async getDetails(url: string): Promise<ScrapeableGameInfo | null> {
-    const apiUrl = `${config.thirdparty.gibuapis.endpoint}${this.ENDPOINT_URL}details?url=${encodeURIComponent(url)}`
+    // TODO fix
+    const apiUrl = `${config.thirdparty.gibuapis.gqlEndpoint}${this.ENDPOINT_URL}details?url=${encodeURIComponent(url)}`
     console.log(apiUrl)
     const { data, status } = await axios.get(apiUrl, {
       headers: { Authorization: config.thirdparty.gibuapis.key },
