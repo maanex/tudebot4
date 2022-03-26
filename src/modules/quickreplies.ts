@@ -1,4 +1,5 @@
 import { GuildMember, TextChannel, Webhook } from 'discord.js'
+import * as fuzzy from 'fuzzy'
 import Database from '../database/database'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
@@ -25,7 +26,7 @@ export default class QuickRepliesModule extends Module {
       if (!replies?.length) return
 
       const lookup = mes.content.toLowerCase().trim().substring(prefix.length)
-      const reply = replies.find(r => r.trigger.includes(lookup))
+      const reply = this.findMatch(replies, lookup)
       if (reply) {
         this.sendReply(mes.channel as TextChannel, mes.member, reply.response)
         if (mes.deletable) mes.delete()
@@ -40,6 +41,19 @@ export default class QuickRepliesModule extends Module {
   }
 
   //
+
+  private findMatch(replies: Reply[], lookup: string): Reply {
+    const directHit = replies.find(r => r.trigger.includes(lookup))
+    if (directHit) return directHit
+
+    const list = replies.flatMap((r, i) => r.trigger.map(t => [ t, i ]))
+    const opts: fuzzy.FilterOptions<any[]> = { extract: t => t[0] }
+    const results = fuzzy.filter(lookup, list, opts)
+
+    if (!results.length) return null
+    if (results[0].score < results[0].string.length / 2) return null
+    return replies[results[0].original[1]]
+  }
 
   public async getReplies(serverId: string): Promise<Reply[]> {
     const res = await Database.collection('quickreplies').findOne({ _id: serverId })
