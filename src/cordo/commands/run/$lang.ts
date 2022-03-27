@@ -13,8 +13,10 @@ export default async function (i: ReplyableCommandInteraction) {
   const script = i.data.option.src + ''
   const mesProm = i.reply({ content: 'Executing...' })
 
+  const context = { user: i.user }
+
   const [ result, mes ] = await Promise.all([
-    execute(lang, script),
+    execute(lang, script, context),
     mesProm
   ])
 
@@ -23,7 +25,7 @@ export default async function (i: ReplyableCommandInteraction) {
 }
 
 
-async function execute(language: string, script: string): Promise<ScriptReturn> {
+async function execute(language: string, script: string, context?: any): Promise<ScriptReturn> {
   if (script.startsWith('http')) {
     const { data, status } = await axios.get(script, { validateStatus: null })
     if (status === 200)
@@ -32,24 +34,27 @@ async function execute(language: string, script: string): Promise<ScriptReturn> 
 
   switch (language) {
     case 'gpl': return executeGPL(script)
-    default: return executeOnPiston(language, script)
+    default: return executeOnPiston(language, script, context)
   }
 }
 
-async function executeOnPiston(language: string, script: string): Promise<ScriptReturn> {
-  const payload = buildPistonRequest(language, script)
+async function executeOnPiston(language: string, script: string, context?: any): Promise<ScriptReturn> {
+  const payload = buildPistonRequest(language, script, context)
   const { data } = await axios.post('https://emkc.org/api/v2/piston/execute', payload, { validateStatus: null })
 
   return { output: `\`\`\`${data.run?.output}\`\`\`` }
 }
 
-function buildPistonRequest(language: string, script: string): any {
+function buildPistonRequest(language: string, script: string, context?: any): any {
   if (language === 'js') {
+    if (!script.includes(';') && !script.includes('return'))
+      script = `return (${script})`
+    const fullscript = `console.log(((_context)=>{${script}})(${JSON.stringify(context)})||'')`
     return {
       language: 'js',
       version: '16.3.0',
       files: [
-        { content: script }
+        { content: fullscript }
       ]
     }
   }
