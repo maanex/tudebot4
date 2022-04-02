@@ -11,7 +11,10 @@ const ITEMS_PER_PAGE = 5
 
 export default async function (i: ReplyableCommandInteraction) {
   try {
-    if (!i.member || !PermissionStrings.containsManageMessages(i.member.permissions))
+    const permissions = PermissionStrings.containsManageMessages(i.member.permissions)
+      || PermissionStrings.containsManageServer(i.member.permissions)
+
+    if (!i.member || !permissions)
       return i.replyPrivately({ title: 'No, this command is not for you!' })
 
     const quickRepliesModule = TudeBot.getModule<QuickRepliesModule>('quickreplies')

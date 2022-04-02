@@ -17,6 +17,15 @@ export default function (_i: GenericInteraction): InteractionApplicationCommandC
         style: ButtonStyle.SECONDARY,
         label: 'View Config',
         custom_id: 'settings_config_view'
+      },
+      {
+        type: ComponentType.LINE_BREAK
+      },
+      {
+        type: ComponentType.BUTTON,
+        style: ButtonStyle.SECONDARY,
+        label: 'Test (Debug)',
+        custom_id: 'settings_test'
       }
     ]
   }
