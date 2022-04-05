@@ -26,7 +26,7 @@ export async function runGpl(script: string): Promise<string> {
 
     const out = JSON.parse((data as Buffer).toString())
     const jsonString = JSON.stringify(out, null, 2)
-    const outString = `\`\`\`json\n${jsonString.length > 1980 ? jsonString.substring(0, 1980) + '...' : ''}\`\`\``
+    const outString = `\`\`\`json\n${jsonString.length > 1980 ? jsonString.substring(0, 1980) + '...' : jsonString}\`\`\``
 
     if (!out.success)
       return outString
