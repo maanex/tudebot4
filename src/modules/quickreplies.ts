@@ -98,7 +98,7 @@ export default class QuickRepliesModule extends Module {
     const res: { id: string, list: Reply[] } = await Database
       .collection('quickreplies')
       .findOne({ _id: serverId })
-    if (!res) return null
+    if (!res) return []
 
     const saveChanges = () => {
       Database.collection('quickreplies').updateOne(
