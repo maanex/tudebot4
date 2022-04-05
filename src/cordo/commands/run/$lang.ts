@@ -104,7 +104,20 @@ async function executeGPL(script: string): Promise<ScriptReturn> {
     }
 
     const out = JSON.parse((data as Buffer).toString())
-    return Promise.resolve({ output: `\`\`\`json\n${JSON.stringify(out, null, 2)}\`\`\`` })
+    const jsonString = JSON.stringify(out, null, 2)
+    const outString = `\`\`\`json\n${jsonString.length > 1980 ? jsonString.substring(0, 1980) + '...' : ''}\`\`\``
+
+    if (!out.success)
+      return { output: outString }
+
+    if (out.type === 'string')
+      return { output: out.data + '' }
+    if (out.type === 'number')
+      return { output: out.data + '' }
+    if (out.type === 'boolean')
+      return { output: out.data + '' }
+
+    return { output: outString }
   } catch (ex) {
     return { output: ex }
   }
