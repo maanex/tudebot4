@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { ReplyableCommandInteraction } from 'cordo'
-import { config } from '../../..'
-import uploadImageToCdn from '../../../lib/images/img-cdn'
+import { runGpl } from '../../../lib/gpl-wrapper'
 
 
 type ScriptReturn = {
@@ -83,42 +82,6 @@ function buildPistonRequest(language: string, script: string, context?: any): an
 }
 
 async function executeGPL(script: string): Promise<ScriptReturn> {
-  try {
-    const { data, headers } = await axios.post(
-      config.thirdparty.gibuapis.pipelineEndpoint,
-      script,
-      {
-        validateStatus: null,
-        responseType: 'arraybuffer',
-        headers: {
-          accept: '*/*',
-          'content-type': 'text/plain'
-        }
-      }
-    )
-
-    const type = headers?.['content-type']
-    if (type?.startsWith('image')) {
-      const url = await uploadImageToCdn(data as Buffer, 'gpl-output.' + type.substring(6).split(';')[0])
-      return { output: url }
-    }
-
-    const out = JSON.parse((data as Buffer).toString())
-    const jsonString = JSON.stringify(out, null, 2)
-    const outString = `\`\`\`json\n${jsonString.length > 1980 ? jsonString.substring(0, 1980) + '...' : ''}\`\`\``
-
-    if (!out.success)
-      return { output: outString }
-
-    if (out.type === 'string')
-      return { output: out.data + '' }
-    if (out.type === 'number')
-      return { output: out.data + '' }
-    if (out.type === 'boolean')
-      return { output: out.data + '' }
-
-    return { output: outString }
-  } catch (ex) {
-    return { output: ex }
-  }
+  const output = await runGpl(script)
+  return { output }
 }
