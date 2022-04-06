@@ -141,7 +141,7 @@ export default class QuickRepliesModule extends Module {
         : i.saveChanges = () => {
           Database.collection('quickreplies').updateOne(
             { _id: serverId },
-            { $set: { list } }
+            { $set: { replies } }
           )
         }
 
