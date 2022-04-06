@@ -40,7 +40,7 @@ export default class QuickRepliesModule extends Module {
 
   public async getPageDataForGuildId(guildId: string, page: number): Promise<QuickRepliesMainPageData> {
     const guild = await TudeBot.guilds.fetch(guildId)
-    const allReplies = await this.getReplies(guildId)
+    const allReplies = (await this.getReplies(guildId)) ?? []
     const replies = page < 0
       ? allReplies
       : this.getRepliesSubset(allReplies, page)
@@ -98,7 +98,7 @@ export default class QuickRepliesModule extends Module {
     const res: { id: string, list: Reply[] } = await Database
       .collection('quickreplies')
       .findOne({ _id: serverId })
-    if (!res) return []
+    if (!res) return null
 
     const saveChanges = () => {
       Database.collection('quickreplies').updateOne(
