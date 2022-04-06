@@ -3,7 +3,7 @@ import { config } from '..'
 import uploadImageToCdn from './images/img-cdn'
 
 
-export async function runGpl(script: string): Promise<string> {
+export async function runGpl(script: string, variables?: Record<string, string>): Promise<string> {
   try {
     const { data, headers } = await axios.post(
       config.thirdparty.gibuapis.pipelineEndpoint,
@@ -14,7 +14,8 @@ export async function runGpl(script: string): Promise<string> {
         headers: {
           accept: '*/*',
           'content-type': 'text/plain'
-        }
+        },
+        params: variables
       }
     )
 

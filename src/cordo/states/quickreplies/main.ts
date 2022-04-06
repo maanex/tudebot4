@@ -49,6 +49,12 @@ export default function (_i: GenericInteraction, [ pageData ]: [ QuickRepliesMai
         custom_id: 'quickreplies_new'
       },
       {
+        type: ComponentType.BUTTON,
+        style: ButtonStyle.SECONDARY,
+        label: 'Advanced Guide',
+        custom_id: 'quickreplies_advanced'
+      },
+      {
         type: ComponentType.LINE_BREAK
       },
       {

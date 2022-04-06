@@ -1,10 +1,23 @@
 import { InteractionMessage } from 'cordo'
+import { Message as DjsMessage } from 'discord.js'
 
 
-export default function parseImageFromMessage(message: InteractionMessage): [ boolean, string ] {
+export default function parseImageFromMessage(message: InteractionMessage | DjsMessage): [ boolean, string ] {
   let imgUrl = ''
-  if (message.attachments.length) {
-    const img = message.attachments.find(i => /image\/((png)|(jpeg)|(webp))/.test(i.content_type))
+  const isDjsMessage = !!(message as any).client
+
+  if (isDjsMessage && (message as DjsMessage).attachments.size) {
+    const img = (message as DjsMessage).attachments.find(i => /image\/((png)|(jpeg)|(webp))/.test(i.contentType))
+
+    if (!img)
+      return [ false, 'No valid image found. Please run this on a message with an image' ]
+
+    if (img.width > 3000 || img.height > 3000)
+      return [ false, 'This image is too large to process.' ]
+
+    imgUrl = img.proxyURL
+  } else if (!isDjsMessage && (message as InteractionMessage).attachments.length) {
+    const img = (message as InteractionMessage).attachments.find(i => /image\/((png)|(jpeg)|(webp))/.test(i.content_type))
 
     if (!img)
       return [ false, 'No valid image found. Please run this on a message with an image' ]

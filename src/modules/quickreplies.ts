@@ -4,6 +4,7 @@ import { QuickRepliesMainPageData } from '../cordo/states/quickreplies/main'
 import Database from '../database/database'
 import { TudeBot } from '../index'
 import { runGpl } from '../lib/gpl-wrapper'
+import parseImageFromMessage from '../lib/parsing/parse-image-from-message'
 import { Module } from '../types/types'
 
 
@@ -12,6 +13,17 @@ export type Reply = {
   trigger: string[]
   response: string
   saveChanges()
+}
+
+export type ScriptContext = {
+  lastImage?: string
+  lastMessage?: string
+  lastMessageAuthorName?: string
+  lastMessageAuthorId?: string
+  lastMessageAuthorAvatar?: string
+  authorName?: string
+  authorId?: string
+  authorAvatar?: string
 }
 
 export type ResponseType = 'text' | 'gpl'
@@ -59,23 +71,49 @@ export default class QuickRepliesModule extends Module {
 
   //
 
+  private lastMessageCache: Map<string, Partial<Message>> = new Map()
+  private lastImageCache: Map<string, string> = new Map()
+
   private async onMessage(mes: Message) {
     if (!this.isMessageEventValid(mes)) return
+
     const prefix = this.guilds.get(mes.guild.id).prefix || '-'
-    if (!mes.content.startsWith(prefix)) return
+
+    if (!mes.content.startsWith(prefix)) {
+      this.lastMessageCache.set(mes.channelId, mes)
+      const [ found, url ] = parseImageFromMessage(mes)
+      if (found) this.lastImageCache.set(mes.channelId, url)
+      return
+    }
 
     const replies = await this.getReplies(mes.guild.id)
     if (!replies?.length) return
 
     const lookup = mes.content.toLowerCase().trim().substring(prefix.length)
     const reply = this.findMatch(replies, lookup)
-    if (reply) {
-      if (mes.deletable) mes.delete()
-      let compiled = await QuickRepliesModule.buildReponse(reply.response)
-      if (compiled.length > 1995)
-        compiled = compiled.substring(0, 1995) + '...'
-      this.sendReply(mes.channel as TextChannel, mes.member, compiled)
+    if (!reply) return
+
+    let scriptContext: ScriptContext = {}
+    if (QuickRepliesModule.getTypeOfResponse(reply.response) !== 'text') {
+      const lastMessage = this.lastMessageCache.get(mes.channelId)
+      const lastImage = this.lastImageCache.get(mes.channelId)
+      scriptContext = {
+        lastImage: lastImage ?? '',
+        lastMessage: lastMessage?.content ?? '',
+        lastMessageAuthorName: lastMessage?.member?.nickname ?? lastMessage?.author?.username ?? '',
+        lastMessageAuthorId: lastMessage?.author?.id ?? '',
+        lastMessageAuthorAvatar: lastMessage?.author?.avatarURL() ?? '',
+        authorName: mes.member?.nickname ?? mes.author?.username ?? '',
+        authorId: mes.author?.id ?? '',
+        authorAvatar: mes.author?.avatarURL() ?? ''
+      }
     }
+
+    if (mes.deletable) mes.delete()
+    let compiled = await QuickRepliesModule.buildReponse(reply.response, scriptContext)
+    if (compiled.length > 1995)
+      compiled = compiled.substring(0, 1995) + '...'
+    this.sendReply(mes.channel as TextChannel, mes.member, compiled)
   }
 
   private findMatch(replies: Reply[], lookup: string): Reply {
@@ -185,13 +223,17 @@ export default class QuickRepliesModule extends Module {
   private async sendReply(channel: TextChannel, member: GuildMember, text: string) {
     if (!text) return
 
-    const webhook = await this.allocateWebhook(channel)
-    webhook.send({
-      content: text,
-      avatarURL: member.user.avatarURL(),
-      username: member.nickname || member.user.username,
-      allowedMentions: { parse: [] }
-    })
+    try {
+      const webhook = await this.allocateWebhook(channel)
+      webhook.send({
+        content: text,
+        avatarURL: member.user.avatarURL(),
+        username: member.nickname || member.user.username,
+        allowedMentions: { parse: [] }
+      })
+    } catch (ex) {
+      console.error(ex)
+    }
   }
 
   private async allocateWebhook(channel: TextChannel): Promise<Webhook> {
@@ -209,13 +251,28 @@ export default class QuickRepliesModule extends Module {
     return 'text'
   }
 
-  public static buildReponse(res: string): Promise<string> {
+  public static buildReponse(res: string, scriptContext: ScriptContext): Promise<string> {
     if (!/\[\[\w+\]\]\n/gm.test(res)) return Promise.resolve(res)
     const type = QuickRepliesModule.getTypeOfResponse(res)
     res = res.split('\n').slice(1).join('\n')
 
-    if (type === 'gpl')
-      return runGpl(res)
+    if (type === 'gpl') {
+      const variables = {}
+      const applyVariable = (input: string, name: string) => (input === undefined || !res.includes(name))
+        ? undefined
+        : (variables[name] = `"${input}"`)
+
+      applyVariable(scriptContext.lastImage, 'last_image')
+      applyVariable(scriptContext.lastMessage, 'last_message')
+      applyVariable(scriptContext.lastMessageAuthorName, 'last_message_author_name')
+      applyVariable(scriptContext.lastMessageAuthorId, 'last_message_author_id')
+      applyVariable(scriptContext.lastMessageAuthorAvatar, 'last_message_author_avatar')
+      applyVariable(scriptContext.authorName, 'author_name')
+      applyVariable(scriptContext.authorId, 'author_id')
+      applyVariable(scriptContext.authorAvatar, 'author_avatar')
+
+      return runGpl(res, variables)
+    }
 
     return Promise.resolve(res)
   }
