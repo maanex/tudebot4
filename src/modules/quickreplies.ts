@@ -71,7 +71,9 @@ export default class QuickRepliesModule extends Module {
     const reply = this.findMatch(replies, lookup)
     if (reply) {
       if (mes.deletable) mes.delete()
-      const compiled = await QuickRepliesModule.buildReponse(reply.response)
+      let compiled = await QuickRepliesModule.buildReponse(reply.response)
+      if (compiled.length > 1995)
+        compiled = compiled.substring(0, 1995) + '...'
       this.sendReply(mes.channel as TextChannel, mes.member, compiled)
     }
   }

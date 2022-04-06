@@ -82,6 +82,8 @@ function buildPistonRequest(language: string, script: string, context?: any): an
 }
 
 async function executeGPL(script: string): Promise<ScriptReturn> {
-  const output = await runGpl(script)
+  let output = await runGpl(script)
+  if (output.length > 1995)
+    output = output.substring(0, 1995) + '...'
   return { output }
 }
