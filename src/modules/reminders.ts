@@ -163,7 +163,7 @@ export default class RemindersModule extends Module {
   }
 
   public async triggerReminder(data: ReminderData) {
-    // console.log('REMINDER!', data.title)
+    console.log('REMINDER DEBUGGING!', JSON.stringify(data))
 
     const content = data.subscribers.map(s => `<@${s.toString()}>`).join(' ') || undefined
 
