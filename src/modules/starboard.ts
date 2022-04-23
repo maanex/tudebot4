@@ -74,13 +74,13 @@ export default class StarboardModule extends Module {
         {
           type: MessageComponentTypes.ACTION_ROW,
           components: [
-            {
-              type: MessageComponentTypes.BUTTON,
-              style: MessageButtonStyles.SECONDARY,
-              customId: CordoAPI.compileCustomId('starboard_pin_count_dummy', [ InteractionComponentFlag.ACCESS_EVERYONE ]),
-              // label: pinCount.toString(),
-              emoji: pinEmoji
-            },
+            // {
+            //   type: MessageComponentTypes.BUTTON,
+            //   style: MessageButtonStyles.SECONDARY,
+            //   customId: CordoAPI.compileCustomId('starboard_pin_count_dummy', [ InteractionComponentFlag.ACCESS_EVERYONE ]),
+            //   // label: pinCount.toString(),
+            //   emoji: pinEmoji
+            // },
             {
               type: MessageComponentTypes.BUTTON,
               style: MessageButtonStyles.LINK,
