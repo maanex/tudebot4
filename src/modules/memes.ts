@@ -27,6 +27,7 @@ export default class MemesModule extends Module {
   public onEnable() {
     TudeBot.on('message', async (mes) => {
       try {
+        if (!mes) return
         if (!this.isMessageEventValid(mes)) return
         if (!mes.attachments.size) return
         if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
@@ -106,9 +107,10 @@ export default class MemesModule extends Module {
 
     TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
       const mes = reaction.message as Message
+      if (!mes) return
       if (user.bot) return
       if (mes.author.bot) return
-      if (!mes?.guild) return
+      if (!mes.guild) return
       if (!this.isEnabledInGuild(mes.guild)) return
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
       if (!mes.attachments.size) return
@@ -145,6 +147,7 @@ export default class MemesModule extends Module {
 
     TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
       const mes = reaction?.message as Message
+      if (!mes) return
       if (user.bot) return
       if (mes.author.bot) return
       if (!mes.guild) return

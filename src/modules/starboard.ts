@@ -1,5 +1,3 @@
-import { InteractionComponentFlag } from 'cordo'
-import CordoAPI from 'cordo/dist/api'
 import { Message, MessageReaction, PartialMessage, PartialMessageReaction, PartialUser, TextChannel, User } from 'discord.js'
 import { MessageButtonStyles, MessageComponentTypes } from 'discord.js/typings/enums'
 import { TudeBot } from '../index'
