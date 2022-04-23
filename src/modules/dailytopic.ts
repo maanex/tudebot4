@@ -77,7 +77,7 @@ export default class DailyTopicModule extends Module {
 
   //
 
-  private topics: Record<string, [number, () => Promise<string>]> = {
+  public topics: Record<string, [number, () => Promise<string>]> = {
     dayfact: [ 10, async () => {
       const { data } = await axios.get(`http://numbersapi.com/${new Date().getMonth() + 1}/${new Date().getDate()}/date`)
       return data

@@ -1,3 +1,5 @@
+import { InteractionComponentFlag } from 'cordo'
+import CordoAPI from 'cordo/dist/api'
 import { Message, MessageReaction, PartialMessage, PartialMessageReaction, PartialUser, TextChannel, User } from 'discord.js'
 import { MessageButtonStyles, MessageComponentTypes } from 'discord.js/typings/enums'
 import { TudeBot } from '../index'
@@ -45,10 +47,11 @@ export default class StarboardModule extends Module {
 
     if (this.pinned.has(reaction.message.id)) return
 
-    this.pin(reaction.message, channel)
+    this.pin(reaction.message, channel, isAmount, isEmoji)
+    this.pinned.add(reaction.message.id)
   }
 
-  private async pin(message: Message | PartialMessage, toChannel: TextChannel) {
+  private async pin(message: Message | PartialMessage, toChannel: TextChannel, _pinCount: number, pinEmoji: string) {
     const webhook = await Webhooks.allocateWebhook(toChannel)
 
     let content = message.content
@@ -71,6 +74,13 @@ export default class StarboardModule extends Module {
         {
           type: MessageComponentTypes.ACTION_ROW,
           components: [
+            {
+              type: MessageComponentTypes.BUTTON,
+              style: MessageButtonStyles.SECONDARY,
+              customId: CordoAPI.compileCustomId('starboard_pin_count_dummy', [ InteractionComponentFlag.ACCESS_EVERYONE ]),
+              // label: pinCount.toString(),
+              emoji: pinEmoji
+            },
             {
               type: MessageComponentTypes.BUTTON,
               style: MessageButtonStyles.LINK,
