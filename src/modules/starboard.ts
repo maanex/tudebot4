@@ -41,7 +41,8 @@ export default class StarboardModule extends Module {
 
     const isAmount = reaction.count
     const reqAmount = data.minAmount || 1
-    if (isAmount < reqAmount) return
+    // if (isAmount < reqAmount) return
+    if (isAmount !== reqAmount) return
 
     if (this.pinned.has(reaction.message.id)) return
 
