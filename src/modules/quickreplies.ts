@@ -1,10 +1,11 @@
-import { GuildMember, Message, TextChannel, Webhook } from 'discord.js'
+import { GuildMember, Message, TextChannel } from 'discord.js'
 import * as fuzzy from 'fuzzy'
 import { QuickRepliesMainPageData } from '../cordo/states/quickreplies/main'
 import Database from '../database/database'
 import { TudeBot } from '../index'
 import { runGpl } from '../lib/gpl-wrapper'
 import parseImageFromMessage from '../lib/parsing/parse-image-from-message'
+import Webhooks from '../lib/webhooks'
 import { Module } from '../types/types'
 
 
@@ -224,7 +225,7 @@ export default class QuickRepliesModule extends Module {
     if (!text) return
 
     try {
-      const webhook = await this.allocateWebhook(channel)
+      const webhook = await Webhooks.allocateWebhook(channel)
       webhook.send({
         content: text,
         avatarURL: member.user.avatarURL(),
@@ -234,14 +235,6 @@ export default class QuickRepliesModule extends Module {
     } catch (ex) {
       console.error(ex)
     }
-  }
-
-  private async allocateWebhook(channel: TextChannel): Promise<Webhook> {
-    const existing = await channel.fetchWebhooks()
-    if (existing.size)
-      return existing.find(hook => (hook.owner as any)?.id === TudeBot.user.id) || channel.createWebhook('TudeBot Webhook')
-    else
-      return channel.createWebhook('TudeBot Webhook')
   }
 
   //

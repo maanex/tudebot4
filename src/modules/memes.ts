@@ -108,7 +108,7 @@ export default class MemesModule extends Module {
       const mes = reaction.message as Message
       if (user.bot) return
       if (mes.author.bot) return
-      if (!mes.guild) return
+      if (!mes?.guild) return
       if (!this.isEnabledInGuild(mes.guild)) return
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
       if (!mes.attachments.size) return
@@ -144,7 +144,7 @@ export default class MemesModule extends Module {
     })
 
     TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
-      const mes = reaction.message as Message
+      const mes = reaction?.message as Message
       if (user.bot) return
       if (mes.author.bot) return
       if (!mes.guild) return
