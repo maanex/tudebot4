@@ -94,7 +94,7 @@ export default class RemindersModule extends Module {
       .collection('reminders')
       .updateOne(
         { _id: new ObjectId(reminder) },
-        { $push: { reminders: person } }
+        { $push: { subscribers: person } }
       )
     return true
   }
@@ -140,17 +140,17 @@ export default class RemindersModule extends Module {
 
     const now = Date.now()
     const query = { time: { $lt: now + 1000 * 30 } }
-    const [ items ] = await Promise.all([
-      Database
-        .collection('reminders')
-        .find(query)
-        .toArray(),
-      Database
-        .collection('reminders')
-        .deleteMany(query)
-    ])
+
+    const items = await Database
+      .collection('reminders')
+      .find(query)
+      .toArray()
 
     if (!items?.length) return
+
+    await Database
+      .collection('reminders')
+      .deleteMany(query)
 
     for (const reminder of items) {
       if (RemindersModule.hybrid.has(reminder._id.toHexString())) {

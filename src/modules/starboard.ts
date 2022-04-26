@@ -50,7 +50,7 @@ export default class StarboardModule extends Module {
     this.pinned.add(reaction.message.id)
   }
 
-  private async pin(message: Message | PartialMessage, toChannel: TextChannel, _pinCount: number, pinEmoji: string) {
+  private async pin(message: Message | PartialMessage, toChannel: TextChannel, _pinCount: number, _pinEmoji: string) {
     const webhook = await Webhooks.allocateWebhook(toChannel)
 
     let content = message.content
