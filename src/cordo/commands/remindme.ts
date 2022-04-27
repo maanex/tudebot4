@@ -6,12 +6,34 @@ import RemindersModule from '../../modules/reminders'
 
 
 export default async function (i: ReplyableCommandInteraction) {
-  const time = parseTime(i.data.option.when as string)
-  if (!time) {
-    return i.replyPrivately({
-      content: `Unable to parse time \`${i.data.option.when}\``
-    })
+  const timeInput = (i.data.option.when as string).toLowerCase()
+  const times: number[] = []
+
+  if (timeInput.includes(' and ')) {
+    for (const input of timeInput.split(' and ').map(s => s.trim())) {
+      const time = parseTime(input)
+      if (!time) {
+        return i.replyPrivately({
+          content: `Unable to parse time \`${input}\``
+        })
+      }
+
+      times.push(time)
+
+      if (times.length >= 10) break
+    }
+  } else {
+    const time = parseTime(timeInput)
+    if (!time) {
+      return i.replyPrivately({
+        content: `Unable to parse time \`${i.data.option.when}\``
+      })
+    }
+
+    times.push(time)
   }
+
+  if (!times.length) return
 
   const res = await i.defer(false)
   const mes = await res.getMessage()
@@ -21,7 +43,7 @@ export default async function (i: ReplyableCommandInteraction) {
     ? (i.data.option.about + '')
     : undefined
 
-  const id = await TudeBot
+  const idsPromise = times.map(async time => await TudeBot
     .getModule<RemindersModule>('reminders')
     .registerReminder({
       time,
@@ -31,27 +53,35 @@ export default async function (i: ReplyableCommandInteraction) {
       subscribers: [
         Long.fromString(i.user.id)
       ]
-    })
+    }))
 
-  if (!id) console.log('error')
+  const ids = await Promise.all(idsPromise)
+
+  if (!ids || ids.some(id => !id)) console.log('error')
 
   const topic = title ? `about '${title}' ` : ''
-  const components: MessageComponent[] = []
-  if (id) {
-    components.push({
+  const components: MessageComponent[] = [
+    {
       type: ComponentType.BUTTON,
       style: ButtonStyle.SECONDARY,
-      custom_id: 'reminders_subscribe_' + id,
+      custom_id: 'reminders_subscribe_' + ids[0],
       label: 'Remind me too',
       flags: [
         InteractionComponentFlag.ACCESS_EVERYONE
       ]
+    }
+  ]
+
+  if (times.length === 1) {
+    i.reply({
+      description: `Alright, I'll remind you ${topic}<t:${~~(times[0] / 1000)}:R>`,
+      components
+    })
+  } else {
+    i.reply({
+      description: `Alright, I'll remind you on ${times.length} different occasions!`,
+      components
     })
   }
-
-  i.reply({
-    description: `Alright, I'll remind you ${topic}<t:${~~(time / 1000)}:R>`,
-    components
-  })
 }
 

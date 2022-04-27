@@ -14,7 +14,7 @@ export default async function (i: ReplyableComponentInteraction) {
   }
 
   const delayStr = i.data.values[0]
-  const delay = parseInt(delayStr ?? '', 10) * 1000 //* 60
+  const delay = parseInt(delayStr ?? '', 10) * 1000 * 60
   if (!delay || isNaN(delay)) return i.ack()
 
   const embeds = i.message.embeds
