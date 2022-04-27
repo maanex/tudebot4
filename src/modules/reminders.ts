@@ -1,3 +1,5 @@
+import { InteractionComponentFlag } from 'cordo'
+import CordoAPI from 'cordo/dist/api'
 import * as cron from 'cron'
 import { TextChannel } from 'discord.js'
 import { Long, ObjectId } from 'mongodb'
@@ -8,6 +10,7 @@ import { Module } from '../types/types'
 
 
 export type ReminderData = {
+  id?: string
   time: number
   title: string | undefined
   channel: Long
@@ -59,6 +62,7 @@ export default class RemindersModule extends Module {
     if (delta < RemindersModule.MAX_TIME_FOR_LOCAL_ONLY) {
       const id = RemindersModule.LOCAL_PREFIX + Date.now().toString(16)
       setTimeout(() => {
+        data.id = id
         this.triggerReminder(data)
         RemindersModule.localOnly.delete(id)
       }, delta)
@@ -72,6 +76,7 @@ export default class RemindersModule extends Module {
 
     const id = res.insertedId
     if (!id) return null
+    data.id = id
 
     if (delta < RemindersModule.MAX_TIME_FOR_HYBRID) {
       RemindersModule.hybrid.set(id.toHexString(), data)
@@ -144,7 +149,7 @@ export default class RemindersModule extends Module {
     const items = await Database
       .collection('reminders')
       .find(query)
-      .toArray()
+      .toArray() as ReminderData[]
 
     if (!items?.length) return
 
@@ -153,8 +158,9 @@ export default class RemindersModule extends Module {
       .deleteMany(query)
 
     for (const reminder of items) {
-      if (RemindersModule.hybrid.has(reminder._id.toHexString())) {
-        RemindersModule.hybrid.delete(reminder._id.toHexString())
+      reminder.id = (reminder as any)._id.toHexString()
+      if (RemindersModule.hybrid.has(reminder.id)) {
+        RemindersModule.hybrid.delete(reminder.id)
         continue
       }
 
@@ -181,7 +187,21 @@ export default class RemindersModule extends Module {
             name: 'Reminder!'
           },
           description: data.title
-        } ]
+        } ],
+        components: [
+          {
+            type: 'ACTION_ROW',
+            components: [
+              {
+                type: 'BUTTON',
+                style: 'SECONDARY',
+                label: 'Snooze',
+                emoji: '💤',
+                customId: CordoAPI.compileCustomId(`reminders_snooze_${data.id}_select`, [ InteractionComponentFlag.ACCESS_EVERYONE ])
+              }
+            ]
+          }
+        ]
       })
       if (!mes) this.triggerReminderBackup(data)
     } catch (ex) {
