@@ -25,10 +25,6 @@ export default function (i: ReplyableComponentInteraction) {
     ...i.message,
     components: [
       {
-        // this is to fix a bug with cordo, remove this once cordo 2.0 is out
-        type: ComponentType.LINE_BREAK
-      },
-      {
         type: ComponentType.SELECT,
         custom_id: `reminders_snooze_${i.params.id}_submit`,
         options: snoozeOptions,
