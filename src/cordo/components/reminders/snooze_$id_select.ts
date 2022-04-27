@@ -30,6 +30,9 @@ export default function (i: ReplyableComponentInteraction) {
         options: snoozeOptions,
         placeholder: 'Select Snooze Delay',
         flags: [ InteractionComponentFlag.ACCESS_EVERYONE ]
+      },
+      {
+        type: ComponentType.LINE_BREAK
       }
     ]
   })
