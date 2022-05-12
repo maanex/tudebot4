@@ -6,6 +6,8 @@ export default async function (i: ReplyableComponentInteraction) {
 
   i.ack()
 
+  
+
   i.replyPrivately({
     content: 'Successfully subscribed to this reminder!'
   })
