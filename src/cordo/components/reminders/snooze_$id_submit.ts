@@ -22,7 +22,7 @@ export default async function (i: ReplyableComponentInteraction) {
   let count = 1
 
   if (embeds?.length) {
-    count = parseInt(embeds[0].description?.match(/\[Snoozed (\d+)x\]/)[1] ?? '1') + 1
+    count = parseInt(embeds[0].description?.match(/\[Snoozed (\d+)x\]/)?.[1] ?? '1') + 1
     orgTitle = embeds[0].description?.replace(/^\[Snoozed( \d+x)?\] ?/, '') ?? 'Reminder'
     embeds[0].description += `\n\n<@${i.user.id}> snoozed this reminder for ${ms(delay)}`
   }
