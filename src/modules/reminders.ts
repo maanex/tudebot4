@@ -15,6 +15,7 @@ export type ReminderData = {
   title: string | undefined
   channel: Long
   source: Long
+  snooze: number
   subscribers: Long[]
 }
 

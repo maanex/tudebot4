@@ -50,6 +50,7 @@ export default async function (i: ReplyableCommandInteraction) {
       title,
       channel: Long.fromString(i.channel_id),
       source,
+      snooze: 0,
       subscribers: [
         Long.fromString(i.user.id)
       ]

@@ -7,6 +7,7 @@ import { Module } from '../types/types'
 
 export default class StarboardModule extends Module {
 
+  private avatarAlternation = false
   private pinned: Set<string>
 
   constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
@@ -64,10 +65,15 @@ export default class StarboardModule extends Module {
 
     if (!content) return
 
+    this.avatarAlternation = !this.avatarAlternation
+    // TODO make the webhook user different every alternation
+    // appending whitespace doenst work
+    // and a different image url for the same image doesnt either
+
     webhook.send({
       content,
       avatarURL: message.author.avatarURL(),
-      username: message.member?.nickname || message.author.username,
+      username: (message.member?.nickname || message.author.username),
       allowedMentions: { parse: [] },
       components: [
         {

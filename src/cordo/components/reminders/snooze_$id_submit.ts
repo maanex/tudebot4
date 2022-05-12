@@ -19,9 +19,11 @@ export default async function (i: ReplyableComponentInteraction) {
 
   const embeds = i.message.embeds
   let orgTitle = 'Reminder'
+  let count = 1
 
   if (embeds?.length) {
-    orgTitle = embeds[0].description?.replace(/^\[Snoozed\]/, '') ?? 'Reminder'
+    count = parseInt(embeds[0].description?.match(/\[Snoozed (\d+)x\]/)[1] ?? '1') + 1
+    orgTitle = embeds[0].description?.replace(/^\[Snoozed( \d+x)?\] ?/, '') ?? 'Reminder'
     embeds[0].description += `\n\n<@${i.user.id}> snoozed this reminder for ${ms(delay)}`
   }
 
@@ -33,7 +35,10 @@ export default async function (i: ReplyableComponentInteraction) {
     source: Long.fromString(orgRef?.message_id ?? '0'),
     subscribers: [ Long.fromString(i.user.id) ],
     time,
-    title: `[Snoozed] ${orgTitle}`
+    snooze: count,
+    title: count > 1
+      ? `[Snoozed ${count}x] ${orgTitle}`
+      : `[Snoozed] ${orgTitle}`
   }
 
   const module = TudeBot.getModule<RemindersModule>('reminders')
