@@ -2,7 +2,7 @@ import { Message, User, TextChannel, MessageAttachment } from 'discord.js'
 import { TudeBot } from '../index'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import MemesModule from '../modules/memes'
-import Emojis from '../int/emojis'
+import Emojis from '../lib/emojis'
 
 
 export default class AdminCommand extends Command {

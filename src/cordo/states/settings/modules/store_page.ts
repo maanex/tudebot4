@@ -1,6 +1,6 @@
 import { ButtonStyle, ComponentType, MessageComponent, GenericInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import { Module } from '../../../../types/types'
-import Emojis from '../../../../int/emojis'
+import Emojis from '../../../../lib/emojis'
 
 
 export default function (_i: GenericInteraction, [ page, maxPage, modules ]: [number, number, [string, Module][]]): InteractionApplicationCommandCallbackData {

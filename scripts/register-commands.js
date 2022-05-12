@@ -20,13 +20,13 @@ const int = {
 
 const commands = [
   {
-    name: 'whois',
-    description: 'Get detailed information about a user or bot',
+    name: 'profile',
+    description: 'See someone\'s profile',
     options: [
       {
         type: 6,
         name: 'user',
-        description: 'The user to get more information about. Defaults to yourself.',
+        description: 'The user (or bot) to view. Leave empty to see yourself!',
         required: false
       }
     ]
@@ -310,7 +310,7 @@ const commands = [
   },
 
   {
-    name: 'Whois',
+    name: 'Profile',
     type: 2
   },
   {
@@ -340,12 +340,12 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     headers: { Authorization: `Bot ${token}` }
   }
 
-  const { data } = await axios.get(`https://discord.com/api/v8/applications/${clientid}${guildid ? `/guilds/${guildid}` : ''}/commands`, opts)
+  const { data } = await axios.get(`https://discord.com/api/v10/applications/${clientid}${guildid ? `/guilds/${guildid}` : ''}/commands`, opts)
 
   if (remove) {
     await Promise.all(data
       .filter(d => !whitelist || whitelist.includes(d.name))
-      .map(d => axios.delete(`https://discord.com/api/v8/applications/${clientid}${guildid ? `/guilds/${guildid}` : ''}/commands/${d.id}`, opts))
+      .map(d => axios.delete(`https://discord.com/api/v10/applications/${clientid}${guildid ? `/guilds/${guildid}` : ''}/commands/${d.id}`, opts))
     )
   }
 
@@ -353,8 +353,9 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
     for (const command of commands) {
       if (whitelist && !whitelist.includes(command.name)) continue
       axios
-        .post(`https://discord.com/api/v8/applications/${clientid}${guildid ? `/guilds/${guildid}` : ''}/commands`, command, opts)
+        .post(`https://discord.com/api/v10/applications/${clientid}${guildid ? `/guilds/${guildid}` : ''}/commands`, command, opts)
         .catch(err => console.error(err.response.status, command.name, JSON.stringify(err.response.data, null, 2)))
+        .then(res => console.log(res.status + ' ' + res.statusText))
     }
   }
 
@@ -371,15 +372,14 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
       }
       if (whitelist && !whitelist.includes(command.name)) continue
       axios
-        .put(`https://discord.com/api/v8/applications/${clientid}/guilds/${guildid}/commands/${command.id}/permissions`, data, opts)
+        .put(`https://discord.com/api/v10/applications/${clientid}/guilds/${guildid}/commands/${command.id}/permissions`, data, opts)
         .catch(err => console.error(err.response.status, command.name, JSON.stringify(err.response.data, null, 2)))
     }
   }
 }
 // run(false, true, [ 'math' ])
 
-// run(true, false, [ 'Encrypt Image' ])
-// run(true, false, [ 'Decrypt Image' ])
+// run(true, false, [ 'admin', 'penis', 'tokens' ], '342620626592464897')
 // run(false, true, [ 'Select Image' ])
 // run(false, true, [ 'Show Source' ])
 // run(false, true, [ 'remindme' ])
@@ -389,3 +389,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'puppet' ], '342620626592464897')
 // run(false, true, [ 'topic' ], '342620626592464897')
 // run(false, true, [ 'topic', 'puppet', 'run' ])
+run(false, true, [ 'profile', 'Profile' ], '342620626592464897')

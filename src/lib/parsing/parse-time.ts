@@ -37,7 +37,7 @@ const monthDictionary = {
 
 //
 
-export function parseTime(time: string): number | undefined {
+export function parseTime(time: string, zoneOffset: number): { parsed: number | undefined, usedTimezone: boolean } {
   if (!time) return undefined
   let out: number | undefined
 
@@ -45,11 +45,11 @@ export function parseTime(time: string): number | undefined {
 
   if (/[a-z]/gi.test(time)) {
     out = attemptMsParsing(time)
-    if (time && !isNaN(out)) return out + Date.now()
+    if (time && !isNaN(out)) return { parsed: out + Date.now(), usedTimezone: false }
   }
 
   out = attemptTimeDateParsing(time)
-  if (time) return out
+  if (time) return { parsed: out + zoneOffset, usedTimezone: true }
 
   return undefined
 }
@@ -274,7 +274,7 @@ export function __run_tests__parseTime() {
 
   let parsed, pretty
   for (const test of times) {
-    parsed = parseTime(test)
+    parsed = parseTime(test, 0)
     pretty = parsed
       ? new Date(parsed).toLocaleString()
       : 'error'

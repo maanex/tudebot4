@@ -20,7 +20,7 @@ export default async function (i: ReplyableCommandInteraction) {
   const remindersFormatted = !reminders?.length
     ? 'None'
     : reminders
-      .map(r => `<t:${~~(r.time / 1000)}:f> ${truncateString(r.title, 20)}`)
+      .map(r => `<t:${~~(r.time / 1000)}:f> ${truncateString(r.title ?? '', 25)}`)
       .join('\n')
 
   reply.edit({
@@ -49,6 +49,13 @@ function getComponents(): MessageComponent[] {
       style: ButtonStyle.SECONDARY,
       label: 'Change Timezone',
       custom_id: 'reminders_change_timezone',
+      disabled: true
+    },
+    {
+      type: ComponentType.BUTTON,
+      style: ButtonStyle.SECONDARY,
+      label: 'Add to calendar',
+      custom_id: 'reminders_calendar_add',
       disabled: true
     }
   ]

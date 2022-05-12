@@ -2,6 +2,7 @@ import { ButtonStyle, ComponentType, InteractionComponentFlag, MessageComponent,
 import { Long } from 'mongodb'
 import { TudeBot } from '../..'
 import { parseTime } from '../../lib/parsing/parse-time'
+import UserProfile from '../../lib/user-profile'
 import RemindersModule from '../../modules/reminders'
 
 
@@ -9,28 +10,35 @@ export default async function (i: ReplyableCommandInteraction) {
   const timeInput = (i.data.option.when as string).toLowerCase()
   const times: number[] = []
 
+  const timezone = UserProfile.getFor(i.user).getTimezoneOffset(i)
+  let timezoneEstimation = false
+
   if (timeInput.includes(' and ')) {
     for (const input of timeInput.split(' and ').map(s => s.trim())) {
-      const time = parseTime(input)
+      const time = parseTime(input, timezone.offsetMs)
       if (!time) {
         return i.replyPrivately({
           content: `Unable to parse time \`${input}\``
         })
       }
 
-      times.push(time)
+      times.push(time.parsed)
+      if (time.usedTimezone && !timezone.explicit)
+        timezoneEstimation = true
 
       if (times.length >= 10) break
     }
   } else {
-    const time = parseTime(timeInput)
+    const time = parseTime(timeInput, timezone.offsetMs)
     if (!time) {
       return i.replyPrivately({
         content: `Unable to parse time \`${i.data.option.when}\``
       })
     }
 
-    times.push(time)
+    times.push(time.parsed)
+    if (time.usedTimezone && !timezone.explicit)
+      timezoneEstimation = true
   }
 
   if (!times.length) return
@@ -43,9 +51,9 @@ export default async function (i: ReplyableCommandInteraction) {
     ? (i.data.option.about + '')
     : undefined
 
-  const clown = title.startsWith('[Snoozed')
+  const clown = title?.startsWith('[Snoozed')
   if (clown)
-    title = title.replace(/ *\[Snoozed.*?\] */g, '🤡').trim()
+    title = title?.replace(/ *\[Snoozed.*?\] */g, '🤡').trim()
 
   const idsPromise = times.map(async time => await TudeBot
     .getModule<RemindersModule>('reminders')
@@ -82,6 +90,9 @@ export default async function (i: ReplyableCommandInteraction) {
       description: clown
         ? `🤡, 🤡 🤡 🤡 ${topic}<t:${~~(times[0] / 1000)}:R>`
         : `Alright, I'll remind you ${topic}<t:${~~(times[0] / 1000)}:R>`,
+      footer: timezoneEstimation
+        ? `Estimated your timezone to be ${timezone.zoneName}`
+        : undefined,
       components
     })
   } else {
@@ -89,6 +100,9 @@ export default async function (i: ReplyableCommandInteraction) {
       description: clown
         ? `🤡, 🤡 🤡 🤡 🤡 ${times.length} 🤡 🤡!`
         : `Alright, I'll remind you on ${times.length} different occasions!`,
+      footer: timezoneEstimation
+        ? `Estimated your timezone to be ${timezone.zoneName}`
+        : undefined,
       components
     })
   }

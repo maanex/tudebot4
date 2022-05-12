@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Message, User, MessageReaction, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
-import Emojis from '../int/emojis'
+import Emojis from '../lib/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 

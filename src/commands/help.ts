@@ -4,7 +4,7 @@ import { TudeBot } from '../index'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 import CommandsModule from '../modules/commands'
 import ParseArgs from '../lib/parsing/parse-args'
-import Emojis from '../int/emojis'
+import Emojis from '../lib/emojis'
 
 
 export default class HelpCommand extends Command {

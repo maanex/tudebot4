@@ -1,7 +1,7 @@
 import { ButtonStyle, ComponentType, GenericInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import { TudeBot } from '../../../..'
 import { Module } from '../../../../types/types'
-import Emojis from '../../../../int/emojis'
+import Emojis from '../../../../lib/emojis'
 
 
 export default function (i: GenericInteraction): InteractionApplicationCommandCallbackData {

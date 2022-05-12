@@ -5,7 +5,7 @@ import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import { DbStats } from '../database/dbstats'
 import Database from '../database/database'
-import Emojis from '../int/emojis'
+import Emojis from '../lib/emojis'
 
 
 export default class MemesModule extends Module {

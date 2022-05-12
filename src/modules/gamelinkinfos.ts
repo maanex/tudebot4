@@ -2,7 +2,7 @@ import { Message } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import GibuGamesApi from '../thirdparty/gibuapis/gibu-games-api'
-import Emojis from '../int/emojis'
+import Emojis from '../lib/emojis'
 
 
 export default class GameLinkInfos extends Module {

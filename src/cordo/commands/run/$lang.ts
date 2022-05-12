@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ReplyableCommandInteraction } from 'cordo'
-import { runGpl } from '../../../lib/gpl-wrapper'
+import { runGpl } from '../../../thirdparty/gibuapis/gpl-wrapper'
 
 
 type ScriptReturn = {

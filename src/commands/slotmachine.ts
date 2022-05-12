@@ -1,6 +1,6 @@
 /* eslint-disable no-labels */
 import { Message, User, TextChannel } from 'discord.js'
-import Emojis from '../int/emojis'
+import Emojis from '../lib/emojis'
 import { Command, CommandExecEvent, ReplyFunction } from '../types/types'
 
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { config } from '..'
-import uploadImageToCdn from './images/img-cdn'
+import { config } from '../..'
+import uploadImageToCdn from '../../lib/images/img-cdn'
 
 
 export async function runGpl(script: string, variables?: Record<string, string>): Promise<string> {

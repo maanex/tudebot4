@@ -1,7 +1,7 @@
 import { InteractionApplicationCommandCallbackData, InteractionCommandType, ReplyableCommandInteraction } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
 import { TudeBot } from '../..'
-import Emojis from '../../int/emojis'
+import Emojis from '../../lib/emojis'
 import UserStalker from '../../modules/thebrain/user-stalker'
 
 
@@ -47,13 +47,11 @@ async function buildMessage(_channel: TextChannel, member: GuildMember): Promise
 
   const generalJoinDiscord = getGeneralJoinDiscord(member)
   const generalJoinServer = getGeneralJoinServer(member)
-  // const generalLastMessage = getGeneralLastMessage(member)
   fields.push({
     name: 'General',
     value: [
       toText(generalJoinDiscord),
       toText(generalJoinServer)
-      // toText(generalLastMessage)
     ].join('\n'),
     inline: false
   })
@@ -64,24 +62,7 @@ async function buildMessage(_channel: TextChannel, member: GuildMember): Promise
       name: 'Bot Info',
       value: toText(botMeta)
     })
-  } else {
-    const thirdpartyDiscordBio = await getThirdpartyDiscordBio(member)
-    const thirdpartyGlobalBan = await getThirdpartyGlobalBan(member)
-    fields.push({
-      name: 'Third Party Services',
-      value: [
-        toText(thirdpartyDiscordBio),
-        toText(thirdpartyGlobalBan)
-      ].join('\n'),
-      inline: false
-    })
   }
-
-  // fields.push({
-  //   name: 'Overall Trustworthiness Score:',
-  //   value: `**\`\`\`js\n${info.trustworthiness.score}\`\`\`**`,
-  //   inline: false
-  // })
 
   return {
     embeds: [
@@ -122,35 +103,6 @@ function getGeneralJoinServer(member: GuildMember): [ number, string ] {
   ]
 }
 
-// function getGeneralLastMessage(member: GuildMember): [ number, string ] {
-//   return [
-//     0,
-//     member.lastMessage
-//       ? `Sent their [last message](${member.lastMessage.url}) <t:${~~(member.lastMessage.createdAt.getTime() / 1000)}:R>`
-//       : 'Has not sent any messages in a while, possibly never.'
-//   ]
-// }
-
-async function getThirdpartyDiscordBio(member: GuildMember): Promise<[ number, string ]> {
-  const data = await UserStalker.fetchDiscordBio(member.id)
-
-  return data?.found
-    ? [ 1, `[Public bio found.](${data.url}) ${data.datapoints} ${data.datapoints === 1 ? 'datapoint' : 'datapoints'}.` ]
-    : [ 0, 'No public bio found.' ]
-}
-
-async function getThirdpartyGlobalBan(member: GuildMember): Promise<[ number, string ]> {
-  const data = await UserStalker.fetchKsoftSi(member.id)
-
-  return !data
-    ? [ 1, 'No records in the global ban list found.' ]
-    : data.currentlyBanned
-      ? [ -2, `**Currently globally banned for** ${data.reason}!` ]
-      : data.previouslyBanned
-        ? [ -1, `**Previously globally banned for** ${data.reason}!` ]
-        : [ 1, `${member.user.username} is not globally banned.` ]
-}
-
 async function getBotMeta(member: GuildMember): Promise<[ number, string ]> {
   const data = await UserStalker.fetchBotMeta(member.id)
 
@@ -170,29 +122,3 @@ async function getBotMeta(member: GuildMember): Promise<[ number, string ]> {
     `${visibility}, ${codegrant}\n${policiesList}${assets}`
   ]
 }
-
-
-// function kFormatter(num: number) {
-//   return Math.abs(num) > 999 ? Math.sign(num) * (Math.floor(Math.abs(num) / 100) / 10) + 'k' : Math.sign(num) * Math.abs(num)
-// }
-
-
-/*
-
-whois command
-[x] shows when someone joined the server
-[x] how long they've been here
-[x] any records on dscbio
-[ ] any records on ksoft
-[-] profile info, badges and stuff
-[-] show club profile, really short: level, cookies
-[ ] amount of messages sent in total (idk?)
-[ ] amount of messages in the last week
-[ ] any incidents recorded (HERE: MAKE CLEANCHAT AND STUFF ALL ADD RECORDS TO A USER, LIKE INVITE LINK AND STUFF)
-MAYBE EVEN MAKE A USER ACCOUNT THAT ACTS LIKE A BOT AND JUST SPIES ON USERS CONNECTIONS
- -> from there on check out their connected accounts
-MAYBE (NO) MAKE FREESTUFF BOT CHECK USERS GUILDS
- -> NO. no.
-
-*/
-
