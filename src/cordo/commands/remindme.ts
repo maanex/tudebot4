@@ -39,9 +39,13 @@ export default async function (i: ReplyableCommandInteraction) {
   const mes = await res.getMessage()
   const source = mes ? Long.fromString(mes.id) : null
 
-  const title = i.data.option.about
+  let title = i.data.option.about
     ? (i.data.option.about + '')
     : undefined
+
+  const clown = title.startsWith('[Snoozed')
+  if (clown)
+    title = title.replace(/^\[Snoozed.*?\] */, '')
 
   const idsPromise = times.map(async time => await TudeBot
     .getModule<RemindersModule>('reminders')
@@ -60,13 +64,13 @@ export default async function (i: ReplyableCommandInteraction) {
 
   if (!ids || ids.some(id => !id)) console.log('error')
 
-  const topic = title ? `about '${title}' ` : ''
+  const topic = title ? `${clown ? '🤡' : 'about'} '${title}' ` : ''
   const components: MessageComponent[] = [
     {
       type: ComponentType.BUTTON,
       style: ButtonStyle.SECONDARY,
       custom_id: 'reminders_subscribe_' + ids[0],
-      label: 'Remind me too',
+      label: clown ? '🤡 🤡 🤡' : 'Remind me too',
       flags: [
         InteractionComponentFlag.ACCESS_EVERYONE
       ]
@@ -75,12 +79,16 @@ export default async function (i: ReplyableCommandInteraction) {
 
   if (times.length === 1) {
     i.reply({
-      description: `Alright, I'll remind you ${topic}<t:${~~(times[0] / 1000)}:R>`,
+      description: clown
+        ? `🤡, 🤡 🤡 🤡 ${topic}<t:${~~(times[0] / 1000)}:R>`
+        : `Alright, I'll remind you ${topic}<t:${~~(times[0] / 1000)}:R>`,
       components
     })
   } else {
     i.reply({
-      description: `Alright, I'll remind you on ${times.length} different occasions!`,
+      description: clown
+        ? `🤡, 🤡 🤡 🤡 🤡 ${times.length} 🤡 🤡!`
+        : `Alright, I'll remind you on ${times.length} different occasions!`,
       components
     })
   }
