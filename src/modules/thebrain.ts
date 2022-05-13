@@ -1,7 +1,7 @@
 import * as nreq from 'request'
 import { Wit } from 'node-wit'
-import { Module } from '../../types/types'
-import { config, TudeBot } from '../../index'
+import { Module } from '../types/types'
+import { config, TudeBot } from '../index'
 
 
 /** This is some wild sh*t */

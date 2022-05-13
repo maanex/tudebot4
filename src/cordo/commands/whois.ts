@@ -2,7 +2,7 @@ import { InteractionApplicationCommandCallbackData, InteractionCommandType, Repl
 import { GuildMember, TextChannel } from 'discord.js'
 import { TudeBot } from '../..'
 import Emojis from '../../lib/emojis'
-import UserStalker from '../../modules/thebrain/user-stalker'
+import UserStalker from '../../lib/users/user-stalker'
 
 
 export default async function (i: ReplyableCommandInteraction) {

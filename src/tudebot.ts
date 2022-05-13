@@ -1,6 +1,6 @@
 import { Client, ClientOptions, TextChannel, User } from 'discord.js'
 import * as chalk from 'chalk'
-import Cordo from 'cordo'
+import Cordo, { GenericInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import * as moment from 'moment'
 import { Module, ModlogFunction, GuildSettings } from './types/types'
 import Database from './database/database'
@@ -10,6 +10,8 @@ import Server from './server/server'
 import PerspectiveAPI from './thirdparty/googleapis/perspective-api'
 import AlexaAPI from './thirdparty/alexa/alexa-api'
 import Metrics from './lib/metrics'
+import Localisation from './lib/localisation'
+import UserProfile from './lib/users/user-profile'
 import { config } from '.'
 
 
@@ -166,6 +168,7 @@ export default class TudeBotClient extends Client {
       botId: config.bot.clientid,
       contextPath: [ __dirname, 'cordo' ]
     })
+    Cordo.addMiddlewareInteractionCallback(interactionCallbackMiddleware)
   }
 
   public async reload(): Promise<void> {
@@ -180,6 +183,27 @@ export default class TudeBotClient extends Client {
     return this.modules.get(name) as T
   }
 
+}
+
+function interactionCallbackMiddleware(data: InteractionApplicationCommandCallbackData, i: GenericInteraction) {
+  for (const notification of UserProfile.consumeNotifications(i.user)) {
+    if (!data.embeds) data.embeds = []
+    if (data.embeds.length >= 10) break
+
+    data.embeds.push({
+      title: notification.title,
+      description: notification.description,
+      color: notification.color,
+      thumbnail: notification.icon ? { url: notification.icon } : undefined
+    })
+  }
+
+  if (data.embeds) {
+    for (const embed of data.embeds)
+      if (!embed.color) embed.color = 0x2F3136
+  }
+
+  Localisation.translateObject(data, 'en-US', {}, 7)
 }
 
 function fixReactionEvent(bot: TudeBotClient) {

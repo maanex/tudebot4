@@ -2,7 +2,6 @@ import { Message, MessageAttachment, MessageEmbed, TextChannel } from 'discord.j
 import { config, TudeBot } from '../index'
 import { Module } from '../types/types'
 import generateInviteLinkMeme from '../lib/images/generators/generate-invite-link-meme'
-import LinkAnalyzer from './thebrain/link-analyzer'
 
 
 export default class ChatGuard extends Module {
@@ -51,8 +50,6 @@ export default class ChatGuard extends Module {
             mes.react(oneOf([ '😉', '😏' ]))
         })
       }
-
-      LinkAnalyzer.rawMessage(mes)
     })
   }
 
