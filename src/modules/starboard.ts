@@ -10,8 +10,8 @@ export default class StarboardModule extends Module {
   private avatarAlternation = false
   private pinned: Set<string>
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Starboard', '⭐', 'World famous star board!', 'React to a message with ⭐ to put it up the starboard!', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Starboard', '⭐', 'World famous star board!', 'React to a message with ⭐ to put it up the starboard!', 'public', conf, data, guilds)
   }
 
   public onEnable() {

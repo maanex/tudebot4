@@ -1,7 +1,7 @@
 import * as nreq from 'request'
 import { Wit } from 'node-wit'
 import { Module } from '../../types/types'
-import { TudeBot } from '../../index'
+import { config, TudeBot } from '../../index'
 
 
 /** This is some wild sh*t */
@@ -12,11 +12,11 @@ export default class TheBrainModule extends Module {
   public witClient;
 
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('The Brain', '🧠', 'Gives the bot personality', 'Enabling this module will affect other modules too. The bot will gain its own personality of sorts, which makes things a little less formal and a little more funny.', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('The Brain', '🧠', 'Gives the bot personality', 'Enabling this module will affect other modules too. The bot will gain its own personality of sorts, which makes things a little less formal and a little more funny.', 'public', conf, data, guilds)
 
     this.witClient = new Wit({
-      accessToken: TudeBot.config.thirdparty.wit.token
+      accessToken: config.thirdparty.wit.token
     })
   }
 

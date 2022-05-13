@@ -9,8 +9,8 @@ export default class GameLinkInfos extends Module {
 
   public readonly regexForSteam = /https?:\/\/store.steampowered\.com\/app\/[\w/]*.*/g
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Game Link Infos', '❓', 'todo', 'todo', 'private', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Game Link Infos', '❓', 'todo', 'todo', 'private', conf, data, guilds)
   }
 
   public onEnable() {

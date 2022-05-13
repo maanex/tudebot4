@@ -6,8 +6,8 @@ import Emojis from '../lib/emojis'
 
 export default class ModlogModule extends Module {
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Modlog', '📜', 'Logs for everything', 'This module can log a lot of moderation related events. Additionally other modules might also log stuff if this module is enabled.', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Modlog', '📜', 'Logs for everything', 'This module can log a lot of moderation related events. Additionally other modules might also log stuff if this module is enabled.', 'public', conf, data, guilds)
   }
 
   public onEnable() {

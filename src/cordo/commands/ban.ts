@@ -1,6 +1,6 @@
 import { ReplyableCommandInteraction } from 'cordo'
 import { TudeBot } from '../..'
-import CommandsModule from '../../modules/commands'
+import SecurityModule from '../../modules/security'
 
 
 const BAN_CREDIT_MAX_AMOUNT = 10
@@ -10,14 +10,14 @@ const banCreditTime: Map<string, number> = new Map()
 
 
 export default async function (i: ReplyableCommandInteraction) {
-  const module = TudeBot.getModule<CommandsModule>('commands')
+  const module = TudeBot.getModule<SecurityModule>('security')
 
   if (!i.member)
     return i.replyPrivately({ content: 'This command is not available here (1)' })
   if (!module.guilds.has(i.guild_id))
     return i.replyPrivately({ content: 'This command is not available here (2)' })
 
-  const config = module.guilds.get(i.guild_id).ban
+  const config = module.guilds.get(i.guild_id).commands.ban
   if (!config)
     return i.replyPrivately({ content: 'This command is not available here (3)' })
 

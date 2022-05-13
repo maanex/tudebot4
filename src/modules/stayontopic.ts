@@ -1,5 +1,6 @@
 import { Message, TextChannel, User } from 'discord.js'
 import { TudeBot } from '../index'
+import Localisation from '../lib/localisation'
 import { Module } from '../types/types'
 
 
@@ -7,8 +8,8 @@ export default class StayOnTopicModule extends Module {
 
   private sentTo: string[] = [];
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Stay on topic', '👮', 'Lets people know they\'re off-topic', 'This module will detect when the conversation goes off-topic and will redirect people to the correct channel', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Stay on topic', '👮', 'Lets people know they\'re off-topic', 'This module will detect when the conversation goes off-topic and will redirect people to the correct channel', 'public', conf, data, guilds)
   }
 
   public onEnable() {
@@ -38,11 +39,12 @@ export default class StayOnTopicModule extends Module {
   }
 
   private redirectUser(user: User, from: TextChannel, to: TextChannel, topic: string) {
-    from.send(this.lang('wrong_channel_topic', {
+    const text = Localisation.text('en-US', '=wrong_channel_topic', {
       user: user.toString(),
       topic,
       channel: to.toString()
-    }))
+    })
+    from.send(text)
   }
 
 }

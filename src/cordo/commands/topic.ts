@@ -1,7 +1,7 @@
 import { ReplyableCommandInteraction } from 'cordo'
 import DailyTopicModule from '../../modules/dailytopic'
 import { TudeBot } from '../..'
-import { timeoutOnPromise } from '../../lib/time-utils'
+import { timeoutOnPromise } from '../../lib/utils/time-utils'
 
 
 export default async function (i: ReplyableCommandInteraction) {

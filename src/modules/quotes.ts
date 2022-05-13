@@ -1,5 +1,3 @@
-import { InteractionComponentFlag } from 'cordo'
-import CordoAPI from 'cordo/dist/api'
 import { Message } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
@@ -7,8 +5,8 @@ import { Module } from '../types/types'
 
 export default class QuotesModule extends Module {
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Quotes', '💬', 'Adds quote channels', 'With this module you can turn text channels into quote channels, where every message gets presented as a quote from someone.', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Quotes', '💬', 'Adds quote channels', 'With this module you can turn text channels into quote channels, where every message gets presented as a quote from someone.', 'public', conf, data, guilds)
   }
 
   public onEnable() {

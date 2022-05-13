@@ -5,8 +5,8 @@ import { Module } from '../types/types'
 
 export default class MusicBotEnhancer extends Module {
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Music Bot Enhancer', '🎵', 'Renames music bots to the song they are playing', 'This module will rename music bots to the song they are currently playing so you can easily look this up, even from within your in-game overlay', 'private', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Music Bot Enhancer', '🎵', 'Renames music bots to the song they are playing', 'This module will rename music bots to the song they are currently playing so you can easily look this up, even from within your in-game overlay', 'private', conf, data, guilds)
   }
 
   private parserFor: { [name: string]: (mes: Message) => string } = {

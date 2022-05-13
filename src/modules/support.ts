@@ -1,5 +1,4 @@
 import { InteractionComponentFlag } from 'cordo'
-import { ComponentType } from 'discord-api-types'
 import { Message, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
@@ -7,8 +6,8 @@ import { Module } from '../types/types'
 
 export default class AutoSupportModule extends Module {
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Support Management', 'ℹ️', 'Helps your support team manage your users', 'Bla bla', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Support Management', 'ℹ️', 'Helps your support team manage your users', 'Bla bla', 'public', conf, data, guilds)
   }
 
   public onEnable() {
@@ -86,6 +85,7 @@ export default class AutoSupportModule extends Module {
 
   //
 
+  // eslint-disable-next-line require-await, @typescript-eslint/no-unused-vars
   private async findSolution(problem: string): Promise<null | [string, string]> {
     if (Math.random() < 0.5) return null
     return [ 'Test', 'very test much test here is the solution xoxo' ]

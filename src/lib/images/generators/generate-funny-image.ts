@@ -1,5 +1,5 @@
 import * as Jimp from 'jimp'
-import { perlin2, seed } from '../../perlin'
+import { perlin2, seed } from '../../alg/perlin'
 
 
 const funnies = [

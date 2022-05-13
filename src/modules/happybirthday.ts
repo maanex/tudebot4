@@ -2,6 +2,7 @@
 import { TextChannel } from 'discord.js'
 import { Module } from '../types/types'
 import { TudeBot } from '../index'
+import Localisation from '../lib/localisation'
 
 
 export default class HappyBirthdayModule extends Module {
@@ -10,8 +11,8 @@ export default class HappyBirthdayModule extends Module {
   private lastDay = '';
 
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Happy Birthday', '🍰', 'Makes sure you never forget about a birthday', 'This module will let your entire server know about important birthdays', 'private', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Happy Birthday', '🍰', 'Makes sure you never forget about a birthday', 'This module will let your entire server know about important birthdays', 'private', conf, data, guilds)
   }
 
   public onEnable() {
@@ -46,18 +47,13 @@ export default class HappyBirthdayModule extends Module {
         }
         if (!users.length) return
         const usrstr = users.map(u => `<@${u}>`).join(' & ')
-        const msg = this.lang(
-          users.length > 1
-            ? data[g].lang_mult
-            : data[g].lang_one,
-          { user: usrstr }
-        )
+        const text = Localisation.text('de', users.length > 1 ? 'birthday_message_mult' : 'birthday_message', { user: usrstr })
 
         const guild = TudeBot.guilds.resolve(g)
         if (!guild) continue
         const channel = guild.channels.resolve(guilds.get(g).channel)
         if (!channel || channel.type !== 'GUILD_TEXT') continue;
-        (channel as TextChannel).send(`@everyone ${msg}`)
+        (channel as TextChannel).send(`@everyone ${text}`)
       }
     }, Math.floor(Math.random() * maxdelay * 0), dstr, this.guilds, this.data)
   }

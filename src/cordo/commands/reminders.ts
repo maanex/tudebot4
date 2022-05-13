@@ -1,7 +1,7 @@
 import { ButtonStyle, ComponentType, MessageComponent, ReplyableCommandInteraction } from 'cordo'
 import { Long } from 'mongodb'
 import { TudeBot } from '../..'
-import { truncateString } from '../../lib/string-utils'
+import { truncateString } from '../../lib/utils/string-utils'
 import RemindersModule from '../../modules/reminders'
 
 
@@ -34,7 +34,7 @@ function getComponents(): MessageComponent[] {
   return [
     // {
     //   type: ComponentType.SELECT,
-    //   custom_id: 'usersettings_change_timezone',
+    //   custom_id: 'usersettings_timezone_change',
     //   options: [
     //     {
     //       label: 'CET (default)',
@@ -48,15 +48,14 @@ function getComponents(): MessageComponent[] {
       type: ComponentType.BUTTON,
       style: ButtonStyle.SECONDARY,
       label: 'Change Timezone',
-      custom_id: 'reminders_change_timezone',
+      custom_id: 'reminders_timezone_change',
       disabled: true
     },
     {
       type: ComponentType.BUTTON,
       style: ButtonStyle.SECONDARY,
       label: 'Add to calendar',
-      custom_id: 'reminders_calendar_add',
-      disabled: true
+      custom_id: 'reminders_calendar_add'
     }
   ]
 }

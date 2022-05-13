@@ -27,9 +27,7 @@ export abstract class Module {
     public readonly usageScope: ModuleUsageScope,
     public readonly conf: any,
     public readonly data: any,
-    public readonly guilds: Map<string, any>,
-
-    protected readonly lang: (key: string, params?: { [key: string]: string }) => string
+    public readonly guilds: Map<string, any>
   ) { }
 
   public abstract onEnable(): void;
@@ -74,50 +72,6 @@ export type UserResponseCallback = (mes: Message) => void
 
 export type AwaitUserResponseFunction = (user: User, channel: TextChannel, timeout: number, callback: UserResponseCallback) => void
 
-export type CommandExecEvent = { message: Message, sudo: boolean, label: string, awaitUserResponse: AwaitUserResponseFunction };
-
-export type CommandGroup = 'fun' | 'images' | 'apiwrapper' | 'rng' | 'internal' | 'club' | 'easteregg' | 'casino' | 'info' | 'moderation';
-
-export interface CommandSettings {
-
-  name: string;
-  aliases?: string[];
-  description: string;
-  cooldown?: number;
-  groups?: CommandGroup[];
-  sudoOnly?: boolean;
-  hideOnHelp?: boolean;
-
-}
-
-export abstract class Command {
-
-  public lang: (key: string) => string;
-  public resetCooldown: (user: User) => void;
-
-  constructor(
-    public readonly settings: CommandSettings
-  ) {
-    if (!settings.aliases) settings.aliases = []
-    if (!settings.cooldown) settings.cooldown = 0
-    if (!settings.groups) settings.groups = []
-    if (!settings.hideOnHelp) settings.hideOnHelp = false
-    if (!settings.sudoOnly) settings.sudoOnly = false
-  }
-
-  public get name(): string { return this.settings.name }
-  public get aliases(): string[] { return this.settings.aliases }
-  public get description(): string { return this.settings.description }
-  public get cooldown(): number { return this.settings.cooldown }
-  public get groups(): string[] { return this.settings.groups }
-  public get sudoOnly(): boolean { return this.settings.sudoOnly }
-  public get hideOnHelp(): boolean { return this.settings.hideOnHelp }
-
-  public abstract execute(channel: TextChannel, user: User, args: string[], event: CommandExecEvent, repl: ReplyFunction): boolean | Promise<boolean>;
-
-  public init() { }
-
-}
 
 export interface UserResponseWaiting {
   user: User,

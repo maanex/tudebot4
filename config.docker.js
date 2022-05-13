@@ -42,8 +42,13 @@ module.exports = {
       key: ''
     }
   },
+  security: {
+    vaultPublicKeyPath: secret('TUDEBOT_VAULT_PUBLIC_KEY_PATH') || '',
+    vaultPrivateKeyPath: secret('TUDEBOT_VAULT_PRIVATE_KEY_PATH') || ''
+  },
   server: {
-    port: 80
+    port: 80,
+    publicHost: 'https://tudebot.tude.network'
   },
   lang: 'en',
   admins: [

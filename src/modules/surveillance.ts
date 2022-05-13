@@ -22,8 +22,8 @@ export default class SurveillanceModule extends Module {
   private int10m: any = null
   private int1m: any = null
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Surveillance', '🕵️', 'Collects user telemetry data', 'This module collects data. I dont wanna write anything else here.', 'private', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Surveillance', '🕵️', 'Collects user telemetry data', 'This module collects data. I dont wanna write anything else here.', 'private', conf, data, guilds)
   }
 
   public onEnable() {

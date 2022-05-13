@@ -4,6 +4,7 @@ import { TudeBot } from '../../..'
 import RemindersModule from '../../../modules/reminders'
 
 
+
 export default async function (i: ReplyableComponentInteraction) {
   const id = i.params.id
 

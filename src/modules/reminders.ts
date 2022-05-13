@@ -5,7 +5,7 @@ import { TextChannel } from 'discord.js'
 import { Long, ObjectId } from 'mongodb'
 import { TudeBot } from '..'
 import Database from '../database/database'
-import { removeLongFromArray } from '../lib/long-utils'
+import { removeLongFromArray } from '../lib/utils/long-utils'
 import { Module } from '../types/types'
 
 
@@ -31,8 +31,8 @@ export default class RemindersModule extends Module {
 
   private cronjob: cron.CronJob;
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Reminders', '⏰', 'Adds commands to get reminded about stuff', 'Using /remindme you can easily create reminders', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Reminders', '⏰', 'Adds commands to get reminded about stuff', 'Using /remindme you can easily create reminders', 'public', conf, data, guilds)
   }
 
   public onEnable() {

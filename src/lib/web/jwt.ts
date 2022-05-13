@@ -4,18 +4,18 @@
  */
 
 import { readFileSync } from 'fs'
-import jwtlib from 'jsonwebtoken'
-import { config } from '..'
+import * as jwtlib from 'jsonwebtoken'
+import { config } from '../..'
 
 
 export default class JWT {
 
-  private static readonly privateKey = JWT.readFileSave('/jwt.private.key')
-  private static readonly publicKey = JWT.readFileSave('/jwt.public.key')
+  private static readonly privateKey = JWT.readFileSave(config.security.vaultPrivateKeyPath)
+  private static readonly publicKey = JWT.readFileSave(config.security.vaultPublicKeyPath)
 
   private static readFileSave(url: string): Buffer {
     try {
-      return readFileSync(config.security.vaultFolder + url)
+      return readFileSync(url)
     } catch (ex) {
       console.error(ex.message)
       return null

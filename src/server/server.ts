@@ -4,6 +4,7 @@ import * as morgan from 'morgan'
 import * as helmet from 'helmet'
 import * as chalk from 'chalk'
 import Metrics from '../lib/metrics'
+import ModulesRouter from './routes/m/router'
 
 
 export default class Server {
@@ -19,6 +20,7 @@ export default class Server {
     app.set('trust proxy', 1)
 
     app.get('/metrics', Metrics.endpoint())
+    app.use('/m', ModulesRouter.init())
 
     const server = http.createServer(app)
 

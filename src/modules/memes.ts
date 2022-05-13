@@ -6,6 +6,7 @@ import { Module } from '../types/types'
 import { DbStats } from '../database/dbstats'
 import Database from '../database/database'
 import Emojis from '../lib/emojis'
+import Localisation from '../lib/localisation'
 
 
 export default class MemesModule extends Module {
@@ -20,8 +21,8 @@ export default class MemesModule extends Module {
 
   private selfUpvoteCooldown: string[] = [];
 
-  constructor(conf: any, data: any, guilds: Map<string, any>, lang: (string) => string) {
-    super('Memes', '🗿', 'Adds memes channels', 'With this module you can turn text channels into meme channels which give every meme posted there upvote and downvote buttons as well as one to save the meme in your dms', 'public', conf, data, guilds, lang)
+  constructor(conf: any, data: any, guilds: Map<string, any>) {
+    super('Memes', '🗿', 'Adds memes channels', 'With this module you can turn text channels into meme channels which give every meme posted there upvote and downvote buttons as well as one to save the meme in your dms', 'public', conf, data, guilds)
   }
 
   public onEnable() {
@@ -118,11 +119,12 @@ export default class MemesModule extends Module {
       if (this.RATINGS[reaction.emoji.name]) {
         const rating = this.RATINGS[reaction.emoji.name]
         if (rating > 0 && reaction.emoji.name !== '⭐' && mes.author.id === user.id && !this.selfUpvoteCooldown.includes(mes.author.id)) {
-          mes.channel.send(this.lang('meme_upvote_own_post', {
+          const text = Localisation.text('en-US', 'meme_upvote_own_post', {
             user: user.toString(),
             username: user.username,
             not_cool: Emojis.notCool.string
-          }))
+          })
+          mes.channel.send(text)
           this.selfUpvoteCooldown.push(mes.author.id)
           setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5)
         }
@@ -221,14 +223,12 @@ export default class MemesModule extends Module {
 
         const now = new Date()
         channel.send({
-          embeds: [
-            {
-              title: `Meme Of The Month • ${this.lang('meme_month_' + ((now.getMonth() + 11) % 12))} ${now.getFullYear()}`,
-              description: `by ${top5[0].message.author} (▲${top5[0].rating})` + (top5[0].caption ? `\n\n**${top5[0].caption}**` : ''),
-              image: { url: top5[0].image },
-              color: 0x2F3136
-            }
-          ]
+          embeds: [ {
+            title: `Meme Of The Month • ${Localisation.getRaw('en-US', 'meme_month_' + ((now.getMonth() + 11) % 12))} ${now.getFullYear()}`,
+            description: `by ${top5[0].message.author} (▲${top5[0].rating})` + (top5[0].caption ? `\n\n**${top5[0].caption}**` : ''),
+            image: { url: top5[0].image },
+            color: 0x2F3136
+          } ]
         }).then(() => {
           const top1 = top5.splice(0, 1)[0]
           channel.send({
