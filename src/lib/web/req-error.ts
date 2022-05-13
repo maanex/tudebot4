@@ -11,7 +11,7 @@ export default class ReqError {
   public static badRequest(res: Response, error: string, message: string = ''): Response<any> {
     if (message)
       return res.status(400).json({ success: false, error, message })
-    return res.status(400).json({ success: false, error: 'Bad Request', message })
+    return res.status(400).json({ success: false, error: 'Bad Request', message: error })
   }
 
   public static missingBodyParam(res: Response, name: string): Response<any> {
