@@ -1,4 +1,5 @@
 import { ButtonStyle, ComponentType, MessageComponent, ReplyableCommandInteraction } from 'cordo'
+import { TextChannel } from 'discord.js'
 import { Long } from 'mongodb'
 import { TudeBot } from '../..'
 import { truncateString } from '../../lib/utils/string-utils'
@@ -20,12 +21,18 @@ export default async function (i: ReplyableCommandInteraction) {
   const remindersFormatted = !reminders?.length
     ? 'None'
     : reminders
-      .map(r => `<t:${~~(r.time / 1000)}:f> ${truncateString(r.title ?? '', 25)}`)
+      .map((r) => {
+        const guild = (TudeBot.channels.resolve(r.channel.toString()) as TextChannel)?.guildId ?? ''
+        const line = `<t:${~~(r.time / 1000)}:f> ${truncateString(r.title ?? '', 25)}`
+        return guild
+          ? `[🡥](https://discord.com/channels/${guild}/${r.channel}/${r.source}) ${line}`
+          : ` ? ${line}`
+      })
       .join('\n')
 
   reply.edit({
     title: 'Your Reminders',
-    description: remindersFormatted,
+    description: remindersFormatted.substring(0, 1990),
     components: getComponents()
   })
 }
