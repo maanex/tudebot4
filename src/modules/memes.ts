@@ -5,7 +5,7 @@ import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import { DbStats } from '../database/dbstats'
 import Database from '../database/database'
-import Emojis from '../lib/emojis'
+import Emojis from '../lib/data/emojis'
 import Localisation from '../lib/localisation'
 
 

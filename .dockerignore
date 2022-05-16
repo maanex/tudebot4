@@ -2,6 +2,7 @@
 
 /vault
 /files
+/project/files
 /build
 
 config/settings.json

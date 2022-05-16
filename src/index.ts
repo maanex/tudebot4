@@ -8,6 +8,7 @@ export const config = require('../config.js') as configjs
 import { Options } from 'discord.js'
 import TudeBotClient from './tudebot'
 import Localisation from './lib/localisation'
+import { UserData } from './lib/user-data'
 
 
 Localisation.load(require('../assets/data/language.json'))
@@ -33,3 +34,10 @@ export const TudeBot = new TudeBotClient({
   makeCache: Options.cacheEverything(),
   partials: []
 }, config)
+
+function startCacheClearTimers() {
+  setInterval(() => {
+    UserData.clearCache()
+  }, 1000 * 60 * 60)
+}
+startCacheClearTimers()

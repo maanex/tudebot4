@@ -3,6 +3,7 @@
 
 /vault
 /files
+/project/files
 /tmp
 
 config/settings.json

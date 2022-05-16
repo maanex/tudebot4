@@ -1,6 +1,6 @@
 /* eslint-disable no-labels */
 import { ButtonStyle, ComponentType, MessageComponent, ReplyableCommandInteraction } from 'cordo'
-import Emojis from '../../lib/emojis'
+import Emojis from '../../lib/data/emojis'
 
 
 function inRange(from: number, to: number) {

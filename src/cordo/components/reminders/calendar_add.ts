@@ -1,6 +1,6 @@
 import { ButtonStyle, ComponentType, ReplyableComponentInteraction } from 'cordo'
 import { config } from '../../..'
-import Const from '../../../lib/const'
+import Const from '../../../lib/data/const'
 import JWT from '../../../lib/web/jwt'
 
 

@@ -1,7 +1,7 @@
 import { GuildMember, Guild, TextChannel, GuildBan } from 'discord.js'
 import { modlogType, Module } from '../types/types'
 import { TudeBot } from '../index'
-import Emojis from '../lib/emojis'
+import Emojis from '../lib/data/emojis'
 
 
 export default class ModlogModule extends Module {

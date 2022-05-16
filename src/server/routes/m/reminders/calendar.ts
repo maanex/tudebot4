@@ -4,10 +4,10 @@ import { Long } from 'mongodb'
 import { TextChannel } from 'discord.js'
 import ReqError from '../../../../lib/web/req-error'
 import JWT from '../../../../lib/web/jwt'
-import Const from '../../../../lib/const'
 import Localisation from '../../../../lib/localisation'
 import { TudeBot } from '../../../..'
 import RemindersModule from '../../../../modules/reminders'
+import Const from '../../../../lib/data/const'
 
 
 const supportedFormats = [

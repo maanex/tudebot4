@@ -7,6 +7,24 @@ export default async function (i: ReplyableCommandInteraction) {
   const definitions = o.list.sort((a, b) => (b.thumbs_up - b.thumbs_down) - (a.thumbs_up - a.thumbs_down))
   const term = i.data.option.term[0].toUpperCase() + (i.data.option.term as string).substring(1).toLowerCase()
 
+  if (Math.random() < 99) {
+    const t = i.data.option.term
+    if (t === 'addGaming')
+      await i.userData.achievement('TEST_COLLECT').addCollectable('gaming')
+    else if (t === 'addCool')
+      i.userData.achievement('TEST_COLLECT').addCollectable('cool')
+    else if (t === 'addNice')
+      i.userData.achievement('TEST_COLLECT').addCollectable('nice')
+    else if (t === 'set')
+      i.userData.achievement('TEST_COLLECT').setCollectables([ 'gaming', 'cool' ])
+    else if (t === 'clear')
+      i.userData.achievement('TEST_COLLECT').setCollectables([ ])
+    else if (t === 'get')
+      i.userData.achievement('TEST_COLLECT').getCollectables().then(console.log)
+    else if (t === 'has')
+      i.userData.achievement('TEST_COLLECT').has().then(console.log)
+  }
+
   const buildResponse: (index: number) => InteractionApplicationCommandCallbackData = (index: number) => ({
     content: `[${term}](<${definitions[index].permalink}>) — ${definitions[index].definition.replace(/\[(.+?)\]/g, '[$1](<https://www.urbandictionary.com/define.php?term=$1##>)').split('.php?term=').map(e => e.includes('##>') ? `${e.split('##>')[0].split(' ').join('%20')}>${e.split('##>')[1]}` : e).join('.php?term=')}`,
     components: [

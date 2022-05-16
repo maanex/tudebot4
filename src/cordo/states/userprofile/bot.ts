@@ -1,9 +1,9 @@
 import { CommandInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
-import Emojis from '../../../lib/emojis'
+import Emojis from '../../../lib/data/emojis'
 
 
-type ArgsType = [ GuildMember, TextChannel, [ number, string ] ]
+type ArgsType = [ GuildMember, TextChannel, string ]
 
 export default function (_i: CommandInteraction, [ member, _channel, meta ]: ArgsType): InteractionApplicationCommandCallbackData {
   const fields = [ ]
@@ -30,7 +30,7 @@ export default function (_i: CommandInteraction, [ member, _channel, meta ]: Arg
 
   fields.push({
     name: 'Bot Info',
-    value: toText(meta)
+    value: toText([ undefined, meta ])
   })
 
   return {

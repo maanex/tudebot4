@@ -2,7 +2,7 @@ import { ButtonStyle, ComponentType, InteractionComponentFlag, MessageComponent,
 import { Long } from 'mongodb'
 import { TudeBot } from '../..'
 import { parseTime } from '../../lib/parsing/parse-time'
-import UserProfile from '../../lib/users/user-profile'
+import Timezones from '../../lib/timezones'
 import RemindersModule from '../../modules/reminders'
 
 
@@ -10,7 +10,7 @@ export default async function (i: ReplyableCommandInteraction) {
   const timeInput = (i.data.option.when as string).toLowerCase()
   const times: number[] = []
 
-  const timezone = UserProfile.getTimezoneOffset(i)
+  const timezone = Timezones.getTimezoneOffset(i)
   let timezoneEstimation = false
 
   if (timeInput.includes(' and ')) {

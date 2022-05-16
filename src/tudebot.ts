@@ -11,7 +11,10 @@ import PerspectiveAPI from './thirdparty/googleapis/perspective-api'
 import AlexaAPI from './thirdparty/alexa/alexa-api'
 import Metrics from './lib/metrics'
 import Localisation from './lib/localisation'
-import UserProfile from './lib/users/user-profile'
+import Mongo from './database/mongoose'
+import { UserData } from './lib/user-data'
+import Notifications from './lib/users/notifications'
+import Const from './lib/data/const'
 import { config } from '.'
 
 
@@ -26,7 +29,7 @@ export default class TudeBotClient extends Client {
   public perspectiveApi: PerspectiveAPI = null;
   public alexaAPI: AlexaAPI = null;
 
-  constructor(props: ClientOptions, config: any) {
+  constructor(props: ClientOptions, _config: any) {
     super(props)
     console.log('init')
 
@@ -39,34 +42,36 @@ export default class TudeBotClient extends Client {
     if (this.devMode) console.log(chalk.bgRedBright.black(' RUNNING DEV MODE '))
     else logVersionDetails()
 
+    this.singleInit().catch(err => console.error(err))
+  }
+
+  async singleInit() {
     fixReactionEvent(this)
-    moment.locale('en-gb')
+    ;(moment as any).locale('en-gb')
     Metrics.init()
 
-    MongoAdapter.connect(config.mongodb.url)
-      .then(async () => {
-        console.log('Connected to Mongo')
+    await MongoAdapter.connect(config.mongodb.url)
+    await Mongo.connect(config.mongodb.url)
+    console.log('Connected to Mongo')
 
-        await Database.init()
-        await Server.start(config.server.port)
+    await Database.init()
+    await Server.start(config.server.port)
 
-        this.perspectiveApi = new PerspectiveAPI(config.thirdparty.googleapis.key)
-        this.alexaAPI = new AlexaAPI(config.thirdparty.alexa.key)
+    this.perspectiveApi = new PerspectiveAPI(config.thirdparty.googleapis.key)
+    this.alexaAPI = new AlexaAPI(config.thirdparty.alexa.key)
 
-        this.on('ready', () => {
-          console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag))
+    this.on('ready', () => {
+      console.log('Bot ready! Logged in as ' + chalk.yellowBright(this.user.tag))
 
-          for (const mod of this.modules.values())
-            mod.onBotReady()
-        })
+      for (const mod of this.modules.values())
+        mod.onBotReady()
+    })
 
-        await this.loadGuilds(false)
-        await this.loadModules(false)
-        this.initCordo()
+    await this.loadGuilds(false)
+    await this.loadModules(false)
+    this.initCordo()
 
-        this.login(config.bot.token)
-      })
-      .catch(err => console.error(err))
+    this.login(config.bot.token)
   }
 
   loadGuilds(_isReload: boolean): Promise<void> {
@@ -168,6 +173,7 @@ export default class TudeBotClient extends Client {
       botId: config.bot.clientid,
       contextPath: [ __dirname, 'cordo' ]
     })
+    Cordo.setMiddlewareUserData(uid => new UserData(uid))
     Cordo.addMiddlewareInteractionCallback(interactionCallbackMiddleware)
   }
 
@@ -186,24 +192,19 @@ export default class TudeBotClient extends Client {
 }
 
 function interactionCallbackMiddleware(data: InteractionApplicationCommandCallbackData, i: GenericInteraction) {
-  for (const notification of UserProfile.consumeNotifications(i.user)) {
+  for (const notification of i.userData.consumeNotifications()) {
     if (!data.embeds) data.embeds = []
     if (data.embeds.length >= 10) break
 
-    data.embeds.push({
-      title: notification.title,
-      description: notification.description,
-      color: notification.color,
-      thumbnail: notification.icon ? { url: notification.icon } : undefined
-    })
+    data.embeds.push(Notifications.buildEmbed(notification))
   }
 
   if (data.embeds) {
     for (const embed of data.embeds)
-      if (!embed.color) embed.color = 0x2F3136
+      if (!embed.color) embed.color = Const.embedColor
   }
 
-  Localisation.translateObject(data, 'en-US', {}, 7)
+  Localisation.translateObject(data, 'en-US', {}, 10)
 }
 
 function fixReactionEvent(bot: TudeBotClient) {

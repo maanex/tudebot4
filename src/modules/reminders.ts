@@ -5,6 +5,7 @@ import { TextChannel } from 'discord.js'
 import { Long, ObjectId } from 'mongodb'
 import { TudeBot } from '..'
 import Database from '../database/database'
+import Notifications from '../lib/users/notifications'
 import { removeLongFromArray } from '../lib/utils/long-utils'
 import { Module } from '../types/types'
 
@@ -170,6 +171,7 @@ export default class RemindersModule extends Module {
   }
 
   public async triggerReminder(data: ReminderData) {
+    if (!data.subscribers.length) return
     const content = data.subscribers.map(s => `<@${s.toString()}>`).join(' ') || undefined
 
     const channel = await TudeBot.channels.fetch(data.channel.toString())
@@ -180,13 +182,12 @@ export default class RemindersModule extends Module {
           messageReference: data.source?.toString(),
           failIfNotExists: false
         },
-        embeds: [ {
-          color: 0x2F3136,
-          author: {
-            name: 'Reminder!'
-          },
-          description: data.title
-        } ],
+        embeds: [
+          Notifications.buildEmbed(
+            Notifications.createReminderNotification(data.title ?? '*no description*'),
+            true
+          )
+        ],
         components: [
           {
             type: 'ACTION_ROW',
@@ -215,13 +216,12 @@ export default class RemindersModule extends Module {
       try {
         const dms = user.dmChannel ?? await user.createDM()
         dms.send({
-          embeds: [ {
-            color: 0x2F3136,
-            author: {
-              name: 'Reminder!'
-            },
-            description: data.title
-          } ]
+          embeds: [
+            Notifications.buildEmbed(
+              Notifications.createReminderNotification(data.title ?? '*no description*'),
+              true
+            )
+          ]
         })
       } catch (ex) {}
     }

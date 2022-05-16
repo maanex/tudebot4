@@ -51,6 +51,7 @@ export default class Localisation {
 
   private static fetch(language: string, key: string): string {
     const out = Localisation.texts.get(language)?.[key]
+    if (!out) return key
     if (typeof out === 'string') return out
     return out[~~(Math.random() * out.length)]
   }

@@ -51,7 +51,7 @@ export default async function (i: ReplyableCommandInteraction) {
   member.ban({ reason: `Mod: ${i.user.username} (${i.user.id}) • Reason: ${reason} • Cleared ${clear} days • Comment: ${comment || '<none>'}`, days: parseInt(clear) })
   TudeBot.modlog(guild, 'punish', `<@${i.user.id}> banned ${member.toString()} for reason: ${reason}${comment ? `\nComment: ${comment}` : ''}`)
 
-  i.reply({ content: `<@${target}> was expelled this server with reason \`${reason}\`` })
+  i.reply({ content: `<@${target}> was expelled from this server with reason \`${reason}\`` })
 }
 
 function getBanCredit(id: string): number {

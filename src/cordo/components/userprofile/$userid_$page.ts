@@ -16,10 +16,11 @@ export default async function (i: ReplyableComponentInteraction) {
     const page = i.params.page
     const channel = await TudeBot.channels.fetch(i.channel_id) as TextChannel
     const member = await channel.guild.members.fetch(user)
+    const userData = await i.userData.fetchData()
 
     if (member.user.bot) return i.ack()
 
-    i.state(`userprofile_${page}`, member, channel)
+    i.state(`userprofile_${page}`, member, channel, userData)
   } catch (ex) {
     console.error(ex)
     i.reply({

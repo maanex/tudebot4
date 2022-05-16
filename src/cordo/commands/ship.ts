@@ -1,7 +1,7 @@
 /* eslint-disable no-labels */
 import { ReplyableCommandInteraction } from 'cordo'
 import { TudeBot } from '../..'
-import Emojis from '../../lib/emojis'
+import Emojis from '../../lib/data/emojis'
 
 
 export default async function (i: ReplyableCommandInteraction) {

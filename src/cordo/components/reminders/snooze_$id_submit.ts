@@ -13,22 +13,31 @@ export default async function (i: ReplyableComponentInteraction) {
     return
   }
 
+  i.ack()
+
   const delayStr = i.data.values[0]
   const delay = parseInt(delayStr ?? '', 10) * 1000 * 60
-  if (!delay || isNaN(delay)) return i.ack()
+  if (!delay || isNaN(delay)) return
 
   const embeds = i.message.embeds
   let orgTitle = 'Reminder'
   let count = 1
 
   if (embeds?.length) {
-    count = parseInt(embeds[0].description?.match(/\[Snoozed (\d+)x\]/)?.[1] ?? '1') + 1
+    count = embeds[0].description?.startsWith('[Snoozed]')
+      ? 2
+      : parseInt(embeds[0].description?.match(/\[Snoozed (\d+)x\]/)?.[1] ?? '0') + 1
     orgTitle = embeds[0].description?.replace(/^\[Snoozed( \d+x)?\] ?/, '') ?? 'Reminder'
     embeds[0].description += `\n\n<@${i.user.id}> snoozed this reminder for ${ms(delay)}`
   }
 
   const time = Date.now() + delay
   const orgRef = (i.message as any).message_reference
+
+  if (count === 2) await i.userData.achievement('PROCRASTINATION').grant()
+  else if (count === 20) await i.userData.achievement('MEGA_PROCRASTINATION').grant()
+  else if (count === 200) await i.userData.achievement('GIGA_PROCRASTINATION').grant()
+  else if (count === 2000) await i.userData.achievement('SUPER_PROCRASTINATION').grant()
 
   const newReminder: ReminderData = {
     channel: Long.fromString(orgRef?.channel_id ?? '0'),

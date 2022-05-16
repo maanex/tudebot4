@@ -1,7 +1,7 @@
 import { InteractionApplicationCommandCallbackData, InteractionCommandType, ReplyableCommandInteraction } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
 import { TudeBot } from '../..'
-import Emojis from '../../lib/emojis'
+import Emojis from '../../lib/data/emojis'
 import UserStalker from '../../lib/users/user-stalker'
 
 

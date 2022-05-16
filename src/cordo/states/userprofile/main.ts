@@ -1,10 +1,10 @@
 import { CommandInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
-import Emojis from '../../../lib/emojis'
+import { UserType } from '../../../database/models/user.model'
 import { userprofileComponents } from '../../shared/userprofile/components'
 
 
-type ArgsType = [ GuildMember, TextChannel ]
+type ArgsType = [ GuildMember, TextChannel, UserType ]
 
 export default function (i: CommandInteraction, [ member ]: ArgsType): InteractionApplicationCommandCallbackData {
   return {

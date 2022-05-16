@@ -8,14 +8,14 @@ export function userprofileComponents(user: InteractionUser, activePage: string)
       custom_id: `userprofile_${user.id}_main`
     },
     {
-      ...shared(activePage === 'collections'),
-      label: 'Collections',
-      custom_id: `userprofile_${user.id}_collections`
-    },
-    {
       ...shared(activePage === 'details'),
       label: 'Details',
       custom_id: `userprofile_${user.id}_details`
+    },
+    {
+      ...shared(activePage === 'achievements'),
+      label: 'Achievements',
+      custom_id: `userprofile_${user.id}_achievements`
     }
   ]
 }
