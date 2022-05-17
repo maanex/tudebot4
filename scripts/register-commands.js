@@ -389,4 +389,5 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'puppet' ], '342620626592464897')
 // run(false, true, [ 'topic' ], '342620626592464897')
 // run(false, true, [ 'topic', 'puppet', 'run' ])
-run(false, true, [ 'profile', 'Profile' ], '342620626592464897')
+run(true, false, [ 'whois', 'Whois' ])
+run(false, true, [ 'profile', 'Profile' ])

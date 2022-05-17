@@ -11,8 +11,6 @@ function secret(name) {
   }
 }
 
-TODO update mongodb url to use /tudebot collection
-
 
 module.exports = {
   bot: {
