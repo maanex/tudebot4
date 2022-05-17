@@ -24,14 +24,8 @@ export class UserData {
       .exec()
       .catch(err => void console.log(err)) as UserType
 
-    console.log('1')
-    console.log(data)
-
     if (data === null)
       data = new Mongo.User({ _id: this.userId })
-
-    console.log(data)
-    console.log('2')
 
     if (!data) return null
 
