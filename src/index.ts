@@ -5,8 +5,6 @@
 import { configjs } from './types/config'
 export const config = require('../config.js') as configjs
 
-console.log(config)
-process.exit(-1)
 
 import { Options } from 'discord.js'
 import TudeBotClient from './tudebot'
