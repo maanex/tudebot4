@@ -1,4 +1,5 @@
 import { UserData } from '../user-data'
+import { getUnixSeconds } from '../utils/time-utils'
 import Notifications from './notifications'
 
 
@@ -12,11 +13,17 @@ export type Type
   /** you need to collect X different things to get this */
   | 'collect'
 
+type Visibility
+  = 'visible'
+  | 'title_only'
+  | 'all_redacted'
+  | 'hidden'
+
 
 type Metadata = {
-  standart: { type: 'standart' }
-  counter: { type: 'counter', count: number }
-  collect: { type: 'collect', collectables: string[] }
+  standart: { type: 'standart', visibility: Visibility }
+  counter: { type: 'counter', count: number, visibility: Visibility }
+  collect: { type: 'collect', collectables: string[], visibility: Visibility }
 }
 
 export type GenericMeta = Metadata[Type]
@@ -24,29 +31,40 @@ export type GenericMeta = Metadata[Type]
 
 //
 
-function createStandart(): Metadata['standart'] {
-  return { type: 'standart' }
+type StandartArgs = {
+  visibility?: Visibility
+}
+function createStandart(args: StandartArgs): Metadata['standart'] {
+  return { type: 'standart', visibility: args.visibility || 'visible' }
 }
 
-function createCounter(count: number): Metadata['counter'] {
-  return { type: 'counter', count }
+type CounterArgs = {
+  count: number
+  visibility?: Visibility
+}
+function createCounter(args: CounterArgs): Metadata['counter'] {
+  return { type: 'counter', count: args.count, visibility: args.visibility || 'visible' }
 }
 
-function createCollect(collectables: string[]): Metadata['collect'] {
-  return { type: 'collect', collectables }
+type CollectArgs = {
+  collectables: string[]
+  visibility?: Visibility
+}
+function createCollect(args: CollectArgs): Metadata['collect'] {
+  return { type: 'collect', collectables: args.collectables, visibility: args.visibility || 'visible' }
 }
 
 //
 
 
 export const List = {
-  PROCRASTINATION: createStandart(),
-  MEGA_PROCRASTINATION: createStandart(),
-  GIGA_PROCRASTINATION: createStandart(),
-  SUPER_PROCRASTINATION: createStandart(),
-  TEST_STANDART: createStandart(),
-  TEST_COUNTER: createCounter(65),
-  TEST_COLLECT: createCollect([ 'gaming', 'cool', 'nice' ])
+  PROCRASTINATION: createCounter({ count: 2 }),
+  MEGA_PROCRASTINATION: createCounter({ count: 20, visibility: 'title_only' }),
+  GIGA_PROCRASTINATION: createCounter({ count: 200, visibility: 'all_redacted' }),
+  SUPER_PROCRASTINATION: createCounter({ count: 2000, visibility: 'hidden' }),
+  TEST_STANDART: createStandart({}),
+  TEST_COUNTER: createCounter({ count: 65 }),
+  TEST_COLLECT: createCollect({ collectables: [ 'gaming', 'cool', 'nice' ] })
 }
 
 
@@ -71,6 +89,7 @@ export interface StandartInterface {
 export interface CounterInterface {
   getMeta(): Metadata['counter']
   has(): Promise<boolean>
+  highAmount(amount: number): Promise<number>
   incAmount(amount: number): Promise<number>
   setAmount(amount: number): Promise<number>
   getAmount(): Promise<number>
@@ -111,7 +130,8 @@ function createStandartInterface(userData: UserData, name: Name, meta: Metadata[
       if (el?.unlocked) return
       if (!el) data.achievements.push({ name, unlocked: true })
       else el.unlocked = true
-      data.save()
+      el.unlockedAt = getUnixSeconds()
+      data.queueSave()
       userData.queueNotification(Notifications.createUnlockNotification(name))
     },
     async revoke(): Promise<void> {
@@ -120,7 +140,8 @@ function createStandartInterface(userData: UserData, name: Name, meta: Metadata[
       const el = data.achievements.find(a => a.name === name)
       if (!el?.unlocked) return
       else el.unlocked = false
-      data.save()
+      el.unlockedAt = getUnixSeconds()
+      data.queueSave()
     }
   }
 }
@@ -135,6 +156,29 @@ function createCounterInterface(userData: UserData, name: Name, meta: Metadata['
       return userData
         .fetchData()
         .then(d => !!d.achievements.find(a => a.name === name)?.unlocked)
+    },
+    async highAmount(amount: number): Promise<number> {
+      if (!userData) return
+      const data = await userData.fetchData()
+      let el = data.achievements.find(a => a.name === name)
+
+      if (el) {
+        if (el.unlocked) return el.counter
+        if (amount <= el.counter) return el.counter
+        el.counter = amount
+      } else {
+        el = { name, unlocked: false, counter: amount }
+        data.achievements.push(el)
+      }
+
+      if (el.counter >= meta.count) {
+        el.unlocked = true
+        el.unlockedAt = getUnixSeconds()
+        userData.queueNotification(Notifications.createUnlockNotification(name))
+      }
+
+      data.queueSave()
+      return el.counter
     },
     async incAmount(amount: number): Promise<number> {
       if (!userData) return
@@ -151,10 +195,11 @@ function createCounterInterface(userData: UserData, name: Name, meta: Metadata['
 
       if (el.counter >= meta.count) {
         el.unlocked = true
+        el.unlockedAt = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
 
-      data.save()
+      data.queueSave()
       return el.counter
     },
     async setAmount(amount: number): Promise<number> {
@@ -172,9 +217,10 @@ function createCounterInterface(userData: UserData, name: Name, meta: Metadata['
 
       if (el.counter >= meta.count) {
         el.unlocked = true
+        el.unlockedAt = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
-      data.save()
+      data.queueSave()
       return el.counter
     },
     async getAmount(): Promise<number> {
@@ -213,10 +259,11 @@ function createCollectInterface(userData: UserData, name: Name, meta: Metadata['
 
       if (el.collected.length >= meta.collectables.length) {
         el.unlocked = true
+        el.unlockedAt = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
 
-      data.save()
+      data.queueSave()
     },
     async setCollectables(items: string[]): Promise<void> {
       if (!userData) return
@@ -233,9 +280,10 @@ function createCollectInterface(userData: UserData, name: Name, meta: Metadata['
 
       if (el.collected.length >= meta.collectables.length) {
         el.unlocked = true
+        el.unlockedAt = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
-      data.save()
+      data.queueSave()
     },
     async getCollectables(): Promise<string[]> {
       if (!userData) return

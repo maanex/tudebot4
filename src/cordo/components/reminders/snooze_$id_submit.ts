@@ -24,20 +24,24 @@ export default async function (i: ReplyableComponentInteraction) {
   let count = 1
 
   if (embeds?.length) {
-    count = embeds[0].description?.startsWith('[Snoozed]')
+    let title: string = embeds[0].description ?? ''
+    if (title.startsWith('> ')) title = title.substring(2)
+    count = title.startsWith('[Snoozed]')
       ? 2
-      : parseInt(embeds[0].description?.match(/\[Snoozed (\d+)x\]/)?.[1] ?? '0') + 1
-    orgTitle = embeds[0].description?.replace(/^\[Snoozed( \d+x)?\] ?/, '') ?? 'Reminder'
+      : parseInt(title.match(/\[Snoozed (\d+)x\]/)?.[1] ?? '0') + 1
+    orgTitle = title.replace(/^\[Snoozed( \d+x)?\] ?/, '') ?? 'Reminder'
     embeds[0].description += `\n\n<@${i.user.id}> snoozed this reminder for ${ms(delay)}`
   }
 
   const time = Date.now() + delay
   const orgRef = (i.message as any).message_reference
 
-  if (count === 2) await i.userData.achievement('PROCRASTINATION').grant()
-  else if (count === 20) await i.userData.achievement('MEGA_PROCRASTINATION').grant()
-  else if (count === 200) await i.userData.achievement('GIGA_PROCRASTINATION').grant()
-  else if (count === 2000) await i.userData.achievement('SUPER_PROCRASTINATION').grant()
+  await Promise.all([
+    i.userData.achievement('PROCRASTINATION').highAmount(count),
+    i.userData.achievement('MEGA_PROCRASTINATION').highAmount(count),
+    i.userData.achievement('GIGA_PROCRASTINATION').highAmount(count),
+    i.userData.achievement('SUPER_PROCRASTINATION').highAmount(count)
+  ])
 
   const newReminder: ReminderData = {
     channel: Long.fromString(orgRef?.channel_id ?? '0'),

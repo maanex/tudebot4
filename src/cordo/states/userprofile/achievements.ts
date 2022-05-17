@@ -1,6 +1,7 @@
 import { CommandInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import { GuildMember, TextChannel } from 'discord.js'
 import { UserType } from '../../../database/models/user.model'
+import Emojis from '../../../lib/data/emojis'
 import Localisation from '../../../lib/localisation'
 import { Achievements } from '../../../lib/users/achievements'
 import { userprofileComponents } from '../../shared/userprofile/components'
@@ -19,14 +20,20 @@ function getSortingScore(a: UserAchievement): number {
 }
 
 function achievementToString(a: UserAchievement, includeProgress: boolean): string {
-  const name = Localisation.text('en-US', `=achievement_${a.name.toLowerCase()}_name`)
-  const desc = Localisation.text('en-US', `=achievement_${a.name.toLowerCase()}_desc`)
   const meta: Achievements.GenericMeta = Achievements.List[a.name]
-  const completion = (meta.type === 'counter')
-    ? `${a.counter} / ${meta.count}`
-    : (meta.type === 'collect')
-        ? `${a.collected.length} / ${meta.collectables.length}`
-        : '? / ?'
+  const name = (meta.visibility !== 'all_redacted')
+    ? Localisation.text('en-US', `=achievement_${a.name.toLowerCase()}_name`)
+    : '???'
+  const desc = (meta.visibility === 'visible')
+    ? Localisation.text('en-US', `=achievement_${a.name.toLowerCase()}_desc`)
+    : '???'
+  const completion = (meta.visibility !== 'visible')
+    ? '? / ?'
+    : (meta.type === 'counter')
+        ? `${a.counter} / ${meta.count}`
+        : (meta.type === 'collect')
+            ? `${a.collected.length} / ${meta.collectables.length}`
+            : '? / ?'
   return includeProgress
     ? `> **${name} [${completion}](https://tude.club/)**\n> ${desc}`
     : `> **${name}**\n> ${desc}`
@@ -44,15 +51,17 @@ export default function (i: CommandInteraction, [ member, _, data ]: ArgsType): 
 
   const recentlyUnlocked = achievements
     .filter(a => a.unlocked)
-    .slice(-3)
+    .sort((a, b) => (a.unlockedAt ?? 0) - (b.unlockedAt ?? 0))
+    .slice(0, 3)
 
   const closeToComplete = achievements
     .filter(a => !a.unlocked)
+    .filter(a => (Achievements.List[a.name] as Achievements.GenericMeta).visibility !== 'hidden')
     .filter(a => (a.counter ?? 0) > 0 || (a.collected ?? []).length > 0)
     .map(a => ([ a, getSortingScore(a) ] as [ typeof a, number ]))
-    .sort((a, b) => (a[1] - b[1]))
+    .sort((a, b) => (b[1] - a[1]))
     .map(a => a[0])
-    .slice(-3)
+    .slice(0, 3)
 
   return {
     embeds: [ {
@@ -63,7 +72,7 @@ export default function (i: CommandInteraction, [ member, _, data ]: ArgsType): 
       fields: [
         {
           name: 'Recently Unlocked:',
-          value: achievementsToString(recentlyUnlocked, false) + '\n** **',
+          value: achievementsToString(recentlyUnlocked, false) + '\n' + Emojis.bigSpace,
           inline: false
         },
         {

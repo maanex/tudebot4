@@ -13,6 +13,7 @@ export class UserData {
   //
 
   private static dbCacheData: Map<string, UserType> = new Map()
+  private static dbSaveQueue: Set<UserType> = new Set()
 
   public async fetchData(): Promise<UserType> {
     if (UserData.dbCacheData.has(this.userId))
@@ -21,12 +22,14 @@ export class UserData {
     let data = await Mongo.User
       .findById(this.userId)
       .exec()
-      .catch(() => undefined)
+      .catch(() => undefined) as UserType
 
     if (data === null)
       data = new Mongo.User({ _id: this.userId })
 
     if (!data) return null
+
+    data.queueSave = () => UserData.dbSaveQueue.add(data)
 
     UserData.dbCacheData.set(this.userId, data)
     return data
@@ -58,8 +61,15 @@ export class UserData {
 
   //
 
-  public static clearCache() {
+  public static async clearCache() {
+    await UserData.pushChanges()
     UserData.dbCacheData.clear()
+  }
+
+  public static async pushChanges() {
+    const copy = [ ...UserData.dbSaveQueue.values() ]
+    UserData.dbSaveQueue.clear()
+    await Promise.all(copy.map(u => u.save()))
   }
 
 }
