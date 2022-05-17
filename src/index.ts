@@ -37,11 +37,6 @@ export const TudeBot = new TudeBotClient({
 }, config)
 
 function startTimers() {
-  // Cache clearing - every hour
-  setInterval(() => {
-    UserData.clearCache()
-  }, 1000 * 60 * 60)
-
   // Database Sync - every 10 seconds
   setInterval(() => {
     UserData.pushChanges()

@@ -61,14 +61,10 @@ export class UserData {
 
   //
 
-  public static async clearCache() {
-    await UserData.pushChanges()
-    UserData.dbCacheData.clear()
-  }
-
   public static async pushChanges() {
     const copy = [ ...UserData.dbSaveQueue.values() ]
     UserData.dbSaveQueue.clear()
+    UserData.dbCacheData.clear()
     await Promise.all(copy.map(u => u.save()))
   }
 
