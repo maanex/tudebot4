@@ -22,7 +22,7 @@ export class UserData {
     let data = await Mongo.User
       .findById(this.userId)
       .exec()
-      .catch(() => undefined) as UserType
+      .catch(err => void console.log(err)) as UserType
 
     console.log('1')
     console.log(data)
