@@ -1,3 +1,4 @@
+import { IQTestCommandTests } from '../../cordo/commands/iqtest'
 import { UserData } from '../user-data'
 import { getUnixSeconds } from '../utils/time-utils'
 import Notifications from './notifications'
@@ -62,6 +63,9 @@ export const List = {
   MEGA_PROCRASTINATION: createCounter({ count: 20, visibility: 'title_only' }),
   GIGA_PROCRASTINATION: createCounter({ count: 200, visibility: 'all_redacted' }),
   SUPER_PROCRASTINATION: createCounter({ count: 2000, visibility: 'hidden' }),
+  DEFINE_ACHIEVEMENT: createStandart({ visibility: 'hidden' }),
+  VERY_SMART: createCollect({ collectables: Object.keys(IQTestCommandTests) }),
+  SELF_LOVE: createStandart({ visibility: 'title_only' }),
   TEST_STANDART: createStandart({}),
   TEST_COUNTER: createCounter({ count: 65 }),
   TEST_COLLECT: createCollect({ collectables: [ 'gaming', 'cool', 'nice' ] })
@@ -128,9 +132,8 @@ function createStandartInterface(userData: UserData, name: Name, meta: Metadata[
       const data = await userData.fetchData()
       const el = data.achievements.find(a => a.name === name)
       if (el?.unlocked) return
-      if (!el) data.achievements.push({ name, unlocked: true })
-      else el.unlocked = true
-      el.unlockedAt = getUnixSeconds()
+      if (!el) data.achievements.push({ name, unlocked: getUnixSeconds() })
+      else el.unlocked = getUnixSeconds()
       data.queueSave()
       userData.queueNotification(Notifications.createUnlockNotification(name))
     },
@@ -139,8 +142,7 @@ function createStandartInterface(userData: UserData, name: Name, meta: Metadata[
       const data = await userData.fetchData()
       const el = data.achievements.find(a => a.name === name)
       if (!el?.unlocked) return
-      else el.unlocked = false
-      el.unlockedAt = getUnixSeconds()
+      else el.unlocked = null
       data.queueSave()
     }
   }
@@ -167,13 +169,12 @@ function createCounterInterface(userData: UserData, name: Name, meta: Metadata['
         if (amount <= el.counter) return el.counter
         el.counter = amount
       } else {
-        el = { name, unlocked: false, counter: amount }
+        el = { name, unlocked: null, counter: amount }
         data.achievements.push(el)
       }
 
       if (el.counter >= meta.count) {
-        el.unlocked = true
-        el.unlockedAt = getUnixSeconds()
+        el.unlocked = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
 
@@ -189,13 +190,12 @@ function createCounterInterface(userData: UserData, name: Name, meta: Metadata['
         if (el.unlocked) return el.counter
         el.counter += amount
       } else {
-        el = { name, unlocked: false, counter: amount }
+        el = { name, unlocked: null, counter: amount }
         data.achievements.push(el)
       }
 
       if (el.counter >= meta.count) {
-        el.unlocked = true
-        el.unlockedAt = getUnixSeconds()
+        el.unlocked = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
 
@@ -211,13 +211,12 @@ function createCounterInterface(userData: UserData, name: Name, meta: Metadata['
         if (el.unlocked) return el.counter
         el.counter = amount
       } else {
-        el = { name, unlocked: false, counter: amount }
+        el = { name, unlocked: null, counter: amount }
         data.achievements.push(el)
       }
 
       if (el.counter >= meta.count) {
-        el.unlocked = true
-        el.unlockedAt = getUnixSeconds()
+        el.unlocked = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
       data.queueSave()
@@ -253,13 +252,12 @@ function createCollectInterface(userData: UserData, name: Name, meta: Metadata['
         if (!el.collected.find(i => i === item))
           el.collected.push(item)
       } else {
-        el = { name, unlocked: false, collected: [ item ] }
+        el = { name, unlocked: null, collected: [ item ] }
         data.achievements.push(el)
       }
 
       if (el.collected.length >= meta.collectables.length) {
-        el.unlocked = true
-        el.unlockedAt = getUnixSeconds()
+        el.unlocked = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
 
@@ -274,13 +272,12 @@ function createCollectInterface(userData: UserData, name: Name, meta: Metadata['
         if (el.unlocked) return
         el.collected = items
       } else {
-        el = { name, unlocked: false, collected: items }
+        el = { name, unlocked: null, collected: items }
         data.achievements.push(el)
       }
 
       if (el.collected.length >= meta.collectables.length) {
-        el.unlocked = true
-        el.unlockedAt = getUnixSeconds()
+        el.unlocked = getUnixSeconds()
         userData.queueNotification(Notifications.createUnlockNotification(name))
       }
       data.queueSave()

@@ -15,8 +15,7 @@ export type UserDataType = {
   _id: string
   achievements: {
     name: string
-    unlocked: boolean
-    unlockedAt?: number
+    unlocked: number | null
     counter?: number
     collected?: string[]
   }[]
@@ -33,8 +32,7 @@ export const UserSchema = new Schema({
   _id: String,
   achievements: [ {
     name: { type: String, required: true },
-    unlocked: { type: Boolean, required: true },
-    unlockedAt: { type: Number, required: false },
+    unlocked: { type: Number, default: null },
     counter: { type: Number, required: false },
     collected: { type: [ String ], required: false }
   } ]

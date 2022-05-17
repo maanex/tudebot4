@@ -17,6 +17,12 @@
         "achievement_giga_procrastination_desc": "Snooze a reminder two hundred times. What the fuck.",
         "achievement_super_procrastination_name": "SUPER PROCRASTINATION!!!",
         "achievement_super_procrastination_desc": "Snooze a reminder two thousand times. Get a life, holy shit.",
+        "achievement_define_achievement_name": "Define \"Achievement\"",
+        "achievement_define_achievement_desc": "What even is that?",
+        "achievement_very_smart_name": "Very Smart",
+        "achievement_very_smart_desc": "Complete every IQ test.",
+        "achievement_self_love_name": "Self Love",
+        "achievement_self_love_desc": "Ship yourself with yourself.",
         "userprofile_achievements_none": "None",
         "birthday_message": [
             "Happy Birthday {user}! :tada:",

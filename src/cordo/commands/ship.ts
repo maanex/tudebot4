@@ -25,6 +25,9 @@ export default async function (i: ReplyableCommandInteraction) {
   name2 = name2.toLowerCase()
 
   if (name1 === name2) {
+    if (name1 === i.user.username.toLowerCase())
+      await i.userData.achievement('SELF_LOVE').grant()
+
     i.reply({
       embeds: [ {
         title: 'Approve',

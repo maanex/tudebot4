@@ -19,12 +19,12 @@ function getSortingScore(a: UserAchievement): number {
   return 0
 }
 
-function achievementToString(a: UserAchievement, includeProgress: boolean): string {
+function achievementToString(a: UserAchievement, uncompleted: boolean): string {
   const meta: Achievements.GenericMeta = Achievements.List[a.name]
-  const name = (meta.visibility !== 'all_redacted')
+  const name = (!uncompleted || meta.visibility !== 'all_redacted')
     ? Localisation.text('en-US', `=achievement_${a.name.toLowerCase()}_name`)
     : '???'
-  const desc = (meta.visibility === 'visible')
+  const desc = (!uncompleted || meta.visibility === 'visible')
     ? Localisation.text('en-US', `=achievement_${a.name.toLowerCase()}_desc`)
     : '???'
   const completion = (meta.visibility !== 'visible')
@@ -34,7 +34,7 @@ function achievementToString(a: UserAchievement, includeProgress: boolean): stri
         : (meta.type === 'collect')
             ? `${a.collected.length} / ${meta.collectables.length}`
             : '? / ?'
-  return includeProgress
+  return uncompleted
     ? `> **${name} [${completion}](https://tude.club/)**\n> ${desc}`
     : `> **${name}**\n> ${desc}`
 }
@@ -51,7 +51,7 @@ export default function (i: CommandInteraction, [ member, _, data ]: ArgsType): 
 
   const recentlyUnlocked = achievements
     .filter(a => a.unlocked)
-    .sort((a, b) => (a.unlockedAt ?? 0) - (b.unlockedAt ?? 0))
+    .sort((a, b) => (a.unlocked ?? 0) - (b.unlocked ?? 0))
     .slice(0, 3)
 
   const closeToComplete = achievements

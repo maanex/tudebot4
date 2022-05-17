@@ -7,7 +7,7 @@ function inRange(from: number, to: number) {
   return from + ~~(Math.random() * (to - from))
 }
 
-const tests = [
+export const IQTestCommandTests = [
   quickTest,
   pineappleTest,
   greenTest,
@@ -17,8 +17,10 @@ const tests = [
   mathTest
 ]
 
-export default function (i: ReplyableCommandInteraction) {
-  tests[~~(Math.random() * tests.length)](i)
+export default async function (i: ReplyableCommandInteraction) {
+  const index = ~~(Math.random() * IQTestCommandTests.length)
+  await i.userData.achievement('VERY_SMART').addCollectable(Object.keys(IQTestCommandTests)[index])
+  IQTestCommandTests[index](i)
 }
 
 function quickTest(i: ReplyableCommandInteraction) {
