@@ -51,7 +51,7 @@ export default function (i: CommandInteraction, [ member, _, data ]: ArgsType): 
 
   const recentlyUnlocked = achievements
     .filter(a => a.unlocked)
-    .sort((a, b) => (a.unlocked ?? 0) - (b.unlocked ?? 0))
+    .sort((a, b) => (b.unlocked ?? 0) - (a.unlocked ?? 0))
     .slice(0, 3)
 
   const closeToComplete = achievements

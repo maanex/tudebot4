@@ -47,7 +47,7 @@ export default class HappyBirthdayModule extends Module {
         }
         if (!users.length) return
         const usrstr = users.map(u => `<@${u}>`).join(' & ')
-        const text = Localisation.text('de', users.length > 1 ? 'birthday_message_mult' : 'birthday_message', { user: usrstr })
+        const text = Localisation.text('de', users.length > 1 ? '=birthday_message_mult' : '=birthday_message', { user: usrstr })
 
         const guild = TudeBot.guilds.resolve(g)
         if (!guild) continue
