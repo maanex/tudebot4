@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { ReplyableCommandInteraction } from 'cordo'
+import { TextChannel } from 'discord.js'
+import { TudeBot } from '../../..'
 import { runGpl } from '../../../thirdparty/gibuapis/gpl-wrapper'
 
 
@@ -13,9 +15,10 @@ export default async function (i: ReplyableCommandInteraction) {
   const mesProm = i.reply({ content: 'Executing...' })
 
   const context = { user: i.user }
+  const channel = await TudeBot.channels.fetch(i.channel_id) as TextChannel
 
   const [ result, mes ] = await Promise.all([
-    execute(lang, script, context),
+    execute(lang, script, channel, i.user.id, context),
     mesProm
   ])
 
@@ -24,7 +27,7 @@ export default async function (i: ReplyableCommandInteraction) {
 }
 
 
-async function execute(language: string, script: string, context?: any): Promise<ScriptReturn> {
+async function execute(language: string, script: string, channel: TextChannel, executor: string, context?: any): Promise<ScriptReturn> {
   if (script.startsWith('http')) {
     const { data, status } = await axios.get(script, { validateStatus: null })
     if (status === 200)
@@ -32,7 +35,7 @@ async function execute(language: string, script: string, context?: any): Promise
   }
 
   switch (language) {
-    case 'gpl': return executeGPL(script)
+    case 'gpl': return executeGPL(script, channel, executor)
     default: return executeOnPiston(language, script, context)
   }
 }
@@ -81,9 +84,31 @@ function buildPistonRequest(language: string, script: string, context?: any): an
   }
 }
 
-async function executeGPL(script: string): Promise<ScriptReturn> {
+async function executeGPL(script: string, channel: TextChannel, executor: string): Promise<ScriptReturn> {
+  if (script.startsWith('$')) return dangerousEvalLocalJavascript(script.substring(1), channel, executor)
+
   let output = await runGpl(script)
   if (output.length > 1995)
     output = output.substring(0, 1995) + '...'
   return { output }
+}
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-eval */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+async function dangerousEvalLocalJavascript(script: string, channel: TextChannel, executor: string): Promise<ScriptReturn> {
+  if (executor !== '137258778092503042') return { output: 'no' }
+
+  try {
+    const guild = channel.guild
+    const bot = TudeBot
+    const self = TudeBot.user
+    const core = TudeBot.user
+
+    const built = `(async () => { ${script} })()`
+    const res = await eval(built)
+    return { output: `\`\`\`${res ?? 'empty'}\`\`\`` }
+  } catch (ex) {
+    return { output: ex + '' }
+  }
 }
