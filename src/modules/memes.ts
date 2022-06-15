@@ -119,7 +119,7 @@ export default class MemesModule extends Module {
       if (this.RATINGS[reaction.emoji.name]) {
         const rating = this.RATINGS[reaction.emoji.name]
         if (rating > 0 && reaction.emoji.name !== '⭐' && mes.author.id === user.id && !this.selfUpvoteCooldown.includes(mes.author.id)) {
-          const text = Localisation.text('en-US', 'meme_upvote_own_post', {
+          const text = Localisation.text('en-US', '=meme_upvote_own_post', {
             user: user.toString(),
             username: user.username,
             not_cool: Emojis.notCool.string
