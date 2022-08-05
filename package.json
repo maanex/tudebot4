@@ -19,6 +19,7 @@
     "axios": "^0.21.4",
     "canvas": "^2.8.0",
     "chalk": "^3.0.0",
+    "chrono-node": "^2.3.9",
     "colorthief": "^2.3.2",
     "cordo": "^1.13.3",
     "countries-and-timezones": "^3.3.0",

@@ -53,7 +53,7 @@ export default async function (i: ReplyableCommandInteraction) {
 
   const clown = title?.startsWith('[Snoozed')
   if (clown)
-    title = title?.replace(/ *\[Snoozed.*?\] */g, '🤡').trim()
+    title = title?.replace(/ *\[Snoozed.*?\]? */g, '🤡').trim()
 
   const idsPromise = times.map(async time => await TudeBot
     .getModule<RemindersModule>('reminders')
@@ -70,7 +70,7 @@ export default async function (i: ReplyableCommandInteraction) {
 
   const ids = await Promise.all(idsPromise)
 
-  if (!ids || ids.some(id => !id)) console.log('remindme:65 error')
+  if (!ids || ids.some(id => !id)) return console.log('remindme:65 error')
 
   const topic = title ? `${clown ? '🤡' : 'about'} '${title}' ` : ''
   const components: MessageComponent[] = [

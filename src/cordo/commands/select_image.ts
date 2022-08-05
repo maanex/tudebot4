@@ -3,6 +3,7 @@ import parseImageFromMessage from '../../lib/parsing/parse-image-from-message'
 import imageDecrypt from '../actions/image-decrypt'
 import imageEncrypt from '../actions/image-encrypt'
 import imageFilter from '../actions/image-filter'
+import imageFlip from '../actions/image-flip'
 
 
 export default function (i: ReplyableCommandInteraction) {
@@ -38,6 +39,12 @@ export default function (i: ReplyableCommandInteraction) {
       {
         type: ComponentType.BUTTON,
         style: ButtonStyle.SECONDARY,
+        custom_id: 'flip',
+        label: 'Flip Image'
+      },
+      {
+        type: ComponentType.BUTTON,
+        style: ButtonStyle.SECONDARY,
         custom_id: 'filter',
         label: 'Apply Filter'
       }
@@ -53,6 +60,9 @@ export default function (i: ReplyableCommandInteraction) {
     })
     .on('decrypt', (h) => {
       imageDecrypt(h, imgUrl, targetMessage.id)
+    })
+    .on('flip', (h) => {
+      imageFlip(h, imgUrl, targetMessage.id)
     })
     .on('filter', (h) => {
       imageFilter(h, imgUrl, targetMessage.id)
