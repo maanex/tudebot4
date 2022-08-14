@@ -9,7 +9,7 @@ export const config = require('../config.js') as configjs
 import { Options } from 'discord.js'
 import TudeBotClient from './tudebot'
 import Localisation from './lib/localisation'
-import { UserData } from './lib/user-data'
+import { UserData } from './lib/users/user-data'
 
 
 Localisation.load(require('../assets/data/language.json'))

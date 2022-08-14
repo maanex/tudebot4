@@ -308,6 +308,10 @@ const commands = [
     name: 'topic',
     description: 'Chat dead? Get a random topic to talk about.'
   },
+  {
+    name: 'gaming',
+    description: 'Open the TudeBot©️ Gaming Hub©️'
+  },
 
   {
     name: 'Profile',
@@ -389,5 +393,6 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'puppet' ], '342620626592464897')
 // run(false, true, [ 'topic' ], '342620626592464897')
 // run(false, true, [ 'topic', 'puppet', 'run' ])
-run(true, false, [ 'whois', 'Whois' ])
-run(false, true, [ 'profile', 'Profile' ])
+// run(true, false, [ 'whois', 'Whois' ])
+// run(false, true, [ 'profile', 'Profile' ])
+run(false, true, [ 'gaming' ])

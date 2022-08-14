@@ -1,5 +1,5 @@
 import { IQTestCommandTests } from '../../cordo/commands/iqtest'
-import { UserData } from '../user-data'
+import { UserData } from './user-data'
 import { getUnixSeconds } from '../utils/time-utils'
 import Notifications from './notifications'
 

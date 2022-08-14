@@ -1,7 +1,7 @@
-import { UserType } from '../database/models/user.model'
-import Mongo from '../database/mongoose'
-import { Achievements } from './users/achievements'
-import { Notification } from './users/notifications'
+import { UserType } from '../../database/models/user.model'
+import Mongo from '../../database/mongoose'
+import { Achievements } from './achievements'
+import { Notification } from './notifications'
 
 
 export class UserData {
