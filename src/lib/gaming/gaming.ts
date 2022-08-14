@@ -17,6 +17,7 @@ export type GameInstance<State extends Object> = {
   config: {
     language: LanguageCode
     playerSource: 'voice'
+    [key: string]: string
   }
 }
 
@@ -81,6 +82,8 @@ export class Gaming {
         playerSource: 'voice'
       }
     }
+    for (const option of gameClass.options)
+      instance.config[option.id] = option.options[0].value
 
     Gaming.runningGames.set(uid, instance)
     return instance

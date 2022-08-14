@@ -57,7 +57,7 @@ function specificSettings(game: Game<any>, instance: GameInstance<any>): Interac
         type: ComponentType.BUTTON,
         style: ButtonStyle.PRIMARY,
         label: 'Start Game',
-        custom_id: `gaming_launch_prep_${instance.uid}_start`
+        custom_id: `gaming_launch_prep_${instance.uid}_2`
       }
     ]
   }
