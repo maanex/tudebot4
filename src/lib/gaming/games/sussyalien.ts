@@ -407,7 +407,7 @@ export default class SussyalienGame implements Game<State> {
     return u.nickname || u.user.username
   }
 
-  showVoting(instance: GameInstance<State>, i: ReplyableComponentInteraction) {
+  showVoting(instance: GameInstance<State>, i: ReplyableComponentInteraction, firstTime = true) {
     if (Gaming.gatekeepPlayers(instance, i)) return
 
     if (instance.state.votingAtIndex >= instance.state.questions.length)
@@ -419,7 +419,7 @@ export default class SussyalienGame implements Game<State> {
     const notSubmitted = instance.players.filter(p => !question.alienGuesses[p.id])
     if (notSubmitted.length === 0) return this.votingIterationDone(instance, instance.state.mainMessageInteraction)
 
-    if (notSubmitted.length === instance.players.length)
+    if (firstTime)
       shuffleArray(answers)
 
     const text = (notSubmitted.length === instance.players.length)
@@ -470,7 +470,7 @@ export default class SussyalienGame implements Game<State> {
     question.alienGuesses[i.user.id] = guesses
 
     i.ack()
-    this.showVoting(instance, i)
+    this.showVoting(instance, i, false)
   }
 
   getRandomFace() {
