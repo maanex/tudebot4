@@ -299,6 +299,8 @@ export default class SussyalienGame implements Game<State> {
     if (!instance.state.questions[map[i.user.id][0]])
       return this.showNextQuestion(instance, i, false)
 
+    const isAlien = (instance.state.phase === 'alien')
+
     i.openModal({
       title: 'Zur Frage...',
       custom_id: CordoAPI.compileCustomId(Gaming.getCustomId(instance, this.submitQuestionAnswer), [ InteractionComponentFlag.ACCESS_EVERYONE ]),
@@ -308,7 +310,9 @@ export default class SussyalienGame implements Game<State> {
           style: TextInputStyle.PARAGRAPH,
           custom_id: 'answer',
           max_length: maxAnswerLength,
-          placeholder: instance.state.questions[map[i.user.id][0]].question,
+          placeholder: isAlien
+            ? '??????'
+            : instance.state.questions[map[i.user.id][0]].question,
           label: 'Deine Antwort'
         }
       ]
