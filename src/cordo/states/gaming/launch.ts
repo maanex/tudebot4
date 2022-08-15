@@ -51,7 +51,7 @@ function specificSettings(game: Game<any>, instance: GameInstance<any>): Interac
       ...game.options.map(o => ({
         type: ComponentType.SELECT,
         custom_id: `gaming_launch_conf_${instance.uid}_${o.id}_1`,
-        options: o.options
+        options: o.options.map(m => ({ ...m, default: instance.config[o.id] === m.value }))
       }) as MessageComponent),
       {
         type: ComponentType.BUTTON,

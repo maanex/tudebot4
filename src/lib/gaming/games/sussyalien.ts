@@ -1,8 +1,9 @@
+/* eslint-disable no-irregular-whitespace */
 import { ButtonStyle, ComponentType, InteractionComponentFlag, InteractionTypeModalSubmit, MessageComponent, ReplyableComponentInteraction, TextInputStyle } from 'cordo'
 import CordoAPI from 'cordo/dist/api'
 import { shuffleArray } from '../../utils/array-utils'
 import { polyfillGetSubmission } from '../../utils/cordo-utils'
-import { switchFont, truncateString } from '../../utils/string-utils'
+import { truncateString } from '../../utils/string-utils'
 import { Game, GameInfo, GameInstance, GameOption, Gaming } from '../gaming'
 
 
@@ -11,8 +12,8 @@ type State = {
     authorId: string
     question: string
     aliens: string[]
-    // [user, answer]
-    answers: [string, string][]
+    // [user, answer, isAlien]
+    answers: [string, string, boolean][]
     // guesser -> list of guessed aliens
     alienGuesses: Record<string, string[]>
   }[]
@@ -23,9 +24,28 @@ type State = {
   mainMessageInteraction: ReplyableComponentInteraction
   phase: 'innocent' | 'alien'
   votingAtIndex: number
+  globalPoints: Record<string, number>
 }
 
 const introText = 'Es haben sich Aliens auf euer Raumschiff geschlichen, wir werden einen Test durchführen der hoffentlich alle Aliens ans Licht führt. Da bei diesem Spiel viel gewartet werden muss, spielen wir mehrere Runden gleichzeitig. Klingt kompliziert, ist es aber nicht.\nFangen wir gleich an, alles andere erklärt sich dann im laufe des Spieles. Als erstes muss sich jeder von euch eine Frage überlegen die den anderen mitspielern gestellt wird.\n*Welche Fragen gut geeignet sind wird sich nach dem ersten mal Spielen zeigen*\nAlle nicht-aliens bekommen dann die Frage gestellt und dürfen sie beantworten. Sobald das geschehen ist bekommen die Aliens nur die Antworten der anderen Spieler, aber nicht die Frage selbst. Ihre Antwort ist hoffentlich so unpassend, dass es ihre wahre Identität ans Licht führt.\nAlso gut, los gehts: **denk dir eine gute Frage aus:**'
+
+const maxAnswerLength = 25
+
+const pointTable = {
+  SAME_ANSWER: -2,
+
+  GOT_GUESSED_CORRECTLY_ALIEN: -1,
+  GOT_GUESSED_FALSELY_ALIEN: 1,
+
+  GOT_GUESSED_CORRECTLY_INNOCENT: 0,
+  GOT_GUESSED_FALSELY_INNOCENT: -1,
+
+  GUESSED_CORRECTLY_ALIEN: 1,
+  GUESSED_FALSELY_ALIEN: 0,
+
+  GUESSED_CORRECTLY_INNOCENT: 1,
+  GUESSED_FALSELY_INNOCENT: 0
+}
 
 export default class SussyalienGame implements Game<State> {
 
@@ -44,7 +64,7 @@ export default class SussyalienGame implements Game<State> {
   public options: GameOption[] = [
     {
       name: 'Alien Count',
-      id: 'alien_count',
+      id: 'alienCount',
       description: 'How many aliens are among us.',
       options: [
         {
@@ -91,7 +111,8 @@ export default class SussyalienGame implements Game<State> {
       alienAnswerMap: {},
       mainMessageInteraction: null,
       phase: 'innocent',
-      votingAtIndex: 0
+      votingAtIndex: 0,
+      globalPoints: {}
     }
   }
 
@@ -180,7 +201,7 @@ export default class SussyalienGame implements Game<State> {
     const players = questions.map(q => q.authorId)
     // we now have two arrays, one with questions, one with users. Same index = they belong together
 
-    const countStr = instance.config.alien_count
+    const countStr = instance.config.alienCount
 
     for (let i = 0; i < questions.length; i++) {
       const quest = questions[i]
@@ -189,11 +210,11 @@ export default class SussyalienGame implements Game<State> {
 
       if (countStr.startsWith('rand')) {
         switch (countStr) {
-          case 'rand_0_1': count = ~~(Math.random() * 1) + 0; break
-          case 'rand_0_2': count = ~~(Math.random() * 2) + 0; break
-          case 'rand_0_3': count = ~~(Math.random() * 3) + 0; break
-          case 'rand_1_2': count = ~~(Math.random() * 1) + 1; break
-          case 'rand_1_3': count = ~~(Math.random() * 3) + 1; break
+          case 'rand_0_1': count = ~~(Math.random() * 2) + 0; break
+          case 'rand_0_2': count = ~~(Math.random() * 3) + 0; break
+          case 'rand_0_3': count = ~~(Math.random() * 4) + 0; break
+          case 'rand_1_2': count = ~~(Math.random() * 2) + 1; break
+          case 'rand_1_3': count = ~~(Math.random() * 4) + 1; break
           default: count = 1
         }
       } else {
@@ -201,7 +222,7 @@ export default class SussyalienGame implements Game<State> {
       }
 
       for (let j = 0; j < count; j++) {
-        let idx = i + j * 2 + 1
+        let idx = i + j * (players.length > 4 ? 2 : 1) + 1
         if (idx % players.length === i) idx++
         quest.aliens.push(players[idx % players.length])
       }
@@ -224,7 +245,7 @@ export default class SussyalienGame implements Game<State> {
     }
   }
 
-  showNextQuestion(instance: GameInstance<State>, i: ReplyableComponentInteraction, firstOne = true) {
+  showNextQuestion(instance: GameInstance<State>, i: ReplyableComponentInteraction, firstOne = true, invalidSubmission = false) {
     if (Gaming.gatekeepPlayers(instance, i)) return
 
     const map = instance.state.phase === 'innocent'
@@ -238,8 +259,8 @@ export default class SussyalienGame implements Game<State> {
       return this.userDoneWithQuestions(instance, i)
 
     const alienView = instance.state.phase === 'alien'
-    const alienFont = alienView
-      ? shuffleArray('Ä฿₵ＤєғĠнłᒍӄﾚʍᑎ⊙₱ႳＲᏕȶɄѴχᎽᘔᗩᗷᑢᕲᘿᖴᘜᕼᓰᒚkᒪᘻᘉᓍᕵᕴᖇSᖶᑘᐺ᙭ᖻᗱ'.split('')).join('')
+    const invalidText = invalidSubmission
+      ? '⚠️ Deine Antwort ist zu ähnlich zu einer der Vorgegebenen. Werde etwas kreativer!'
       : ''
 
     const content = {
@@ -249,7 +270,7 @@ export default class SussyalienGame implements Game<State> {
           ? 'Okay, nächste Frage:'
           : 'Hui',
       description: alienView
-        ? `> ${switchFont(question.question, alienFont)}${'?'.repeat(~~(Math.random() * 6) + 1)}\n\nAntworten der anderen:\n**${question.answers.map(a => a[1]).join('       ')}**`
+        ? `> ${'?'.repeat(~~(Math.random() * 9) + 3)}\n\nAntworten der anderen:\n**${question.answers.filter(a => !a[2]).map(a => a[1]).join('       ')}**\n\n${invalidText}`
         : question
           ? `> ${question.question}${question.question.endsWith('?') ? '' : '?'}`
           : 'Du bist fertig, erstmal. Wir warten noch schnell auf den Rest!',
@@ -275,6 +296,9 @@ export default class SussyalienGame implements Game<State> {
       ? instance.state.innocentAnswerMap
       : instance.state.alienAnswerMap
 
+    if (!instance.state.questions[map[i.user.id][0]])
+      return this.showNextQuestion(instance, i, false)
+
     i.openModal({
       title: 'Zur Frage...',
       custom_id: CordoAPI.compileCustomId(Gaming.getCustomId(instance, this.submitQuestionAnswer), [ InteractionComponentFlag.ACCESS_EVERYONE ]),
@@ -283,11 +307,18 @@ export default class SussyalienGame implements Game<State> {
           type: ComponentType.TEXT,
           style: TextInputStyle.PARAGRAPH,
           custom_id: 'answer',
+          max_length: maxAnswerLength,
           placeholder: instance.state.questions[map[i.user.id][0]].question,
           label: 'Deine Antwort'
         }
       ]
     })
+  }
+
+  stringFuzzyEquals(str1: string, str2: string): boolean {
+    str1 = str1.toLowerCase().replace(/\W/gi, '')
+    str2 = str2.toLowerCase().replace(/\W/gi, '')
+    return str1 === str2
   }
 
   submitQuestionAnswer(instance: GameInstance<State>, i: ReplyableComponentInteraction) {
@@ -298,8 +329,19 @@ export default class SussyalienGame implements Game<State> {
       ? instance.state.innocentAnswerMap
       : instance.state.alienAnswerMap
 
+    const alienTime = (instance.state.phase === 'alien')
+
+    if (alienTime) {
+      // check if they're submitting the exact same as an already provided answer
+      for (const ans of instance.state.questions[map[i.user.id][0]].answers) {
+        // answer is by another alien -> skipping
+        if (ans[2]) continue
+        if (this.stringFuzzyEquals(ans[1], answer)) return this.showNextQuestion(instance, i, false, true)
+      }
+    }
+
     const questionId = map[i.user.id].shift()
-    instance.state.questions[questionId].answers.push([ i.user.id, answer ])
+    instance.state.questions[questionId].answers.push([ i.user.id, answer, alienTime ])
     this.showNextQuestion(instance, i, false)
   }
 
@@ -373,10 +415,12 @@ export default class SussyalienGame implements Game<State> {
 
     const question = instance.state.questions[instance.state.votingAtIndex]
     const answers = [ ...question.answers ]
-    shuffleArray(answers)
 
     const notSubmitted = instance.players.filter(p => !question.alienGuesses[p.id])
     if (notSubmitted.length === 0) return this.votingIterationDone(instance, instance.state.mainMessageInteraction)
+
+    if (notSubmitted.length === instance.players.length)
+      shuffleArray(answers)
 
     const text = (notSubmitted.length === instance.players.length)
       ? ''
@@ -384,9 +428,13 @@ export default class SussyalienGame implements Game<State> {
           ? `Wir warten auf ${notSubmitted.length} weitere Leute...`
           : `Wir warten noch auf ${notSubmitted.join(', ')}`
 
+    const answersString = answers
+      .map(([ userId, answer ]) => `👤 **${this.getUsername(instance, userId)}** — "${answer}"`)
+      .join('\n\n')
+
     i.edit({
       title: `Frage ${instance.state.votingAtIndex + 1}/${instance.state.questions.length}`,
-      description: `*Jemand möchte wissen:*\n> **${question.question}**\n\nHier sind eure Antworten. Wer ist ein Alien?\n\n${text}`,
+      description: `> ${question.question}\n\n${answersString}\n\nWer ist ein Alien?\n\n${text}`,
       components: [
         {
           type: ComponentType.SELECT,
@@ -421,6 +469,7 @@ export default class SussyalienGame implements Game<State> {
     const question = instance.state.questions[instance.state.votingAtIndex]
     question.alienGuesses[i.user.id] = guesses
 
+    i.ack()
     this.showVoting(instance, i)
   }
 
@@ -433,8 +482,62 @@ export default class SussyalienGame implements Game<State> {
     else return '🧑' + color[~~(Math.random() * color.length)] + '‍' + hair[~~(Math.random() * hair.length)]
   }
 
+  // userid -> [ point delta +-, whether or not same answer as someone else ]
+  countPointsForCurrentRound(instance: GameInstance<State>): Record<string, [ number, boolean ]> {
+    const question = instance.state.questions[instance.state.votingAtIndex]
+
+    const users: Record<string, [ number, boolean ]> = {}
+    for (const answer of question.answers)
+      users[answer[0]] = [ 0, false ]
+
+    for (const answer of question.answers) {
+      const [ userId, text ] = answer
+      const isAlien = question.aliens.includes(userId)
+
+      for (const compareTo of question.answers) {
+        if (compareTo[0] === userId) continue
+        if (this.stringFuzzyEquals(text, compareTo[1])) {
+          users[userId][1] = true
+          users[userId][0] += pointTable.SAME_ANSWER
+          break
+        }
+      }
+
+      for (const guesser in question.alienGuesses) {
+        const guess = question.alienGuesses[guesser].includes(userId)
+        if (isAlien) {
+          if (guess) {
+            users[userId][0] += pointTable.GOT_GUESSED_CORRECTLY_ALIEN
+            users[guesser][0] += pointTable.GUESSED_CORRECTLY_ALIEN
+          } else {
+            users[userId][0] += pointTable.GOT_GUESSED_FALSELY_ALIEN
+            users[guesser][0] += pointTable.GUESSED_FALSELY_ALIEN
+          }
+        } else {
+          // eslint-disable-next-line no-lonely-if
+          if (guess) {
+            users[userId][0] += pointTable.GOT_GUESSED_FALSELY_INNOCENT
+            users[guesser][0] += pointTable.GUESSED_FALSELY_INNOCENT
+          } else {
+            users[userId][0] += pointTable.GOT_GUESSED_CORRECTLY_INNOCENT
+            users[guesser][0] += pointTable.GUESSED_CORRECTLY_INNOCENT
+          }
+        }
+      }
+    }
+
+    return users
+  }
+
   votingIterationDone(instance: GameInstance<State>, i: ReplyableComponentInteraction) {
     const question = instance.state.questions[instance.state.votingAtIndex]
+    const points = this.countPointsForCurrentRound(instance)
+
+    for (const user in points) {
+      if (!instance.state.globalPoints[user])
+        instance.state.globalPoints[user] = 0
+      instance.state.globalPoints[user] += points[user][0]
+    }
 
     const answers = question.answers
       .map(([ userId, answer ]) => {
@@ -444,21 +547,35 @@ export default class SussyalienGame implements Game<State> {
         const votes = Object
           .entries(question.alienGuesses)
           .map(([ who, guess ]) => {
-            const vote = guess.includes(userId) ? '✓ ' : '✗ '
+            const vote = (who === userId)
+              ? '    '
+              : guess.includes(userId)
+                ? '✓'
+                : '✗'
             const correct = (guess.includes(userId) === isAlien)
-            return correct
-              ? `[${vote} ${this.getUsername(instance, who)}](http://a)`
-              : `${vote} ${this.getUsername(instance, who)}`
+
+            let text = `${vote} ${this.getUsername(instance, who)}`
+            if (who === userId || correct) text = `[${text}](http://a)`
+
+            return text
           })
           .join('   ')
-        return `${face} **${author}** — "${answer}"\n${votes}`
+
+        const double = points[userId][1]
+        const answerFormatted = double
+          ? `~~"${answer}"~~`
+          : `"${answer}"`
+        const score = points[userId][0] > 0
+          ? `+${points[userId][0]}`
+          : points[userId][0]
+        return `${face} **${author}** — ${answerFormatted}   **${score}**\n${votes}`
       })
 
     instance.state.votingAtIndex++
 
     i.edit({
       title: `Frage ${instance.state.votingAtIndex}/${instance.state.questions.length}`,
-      description: `**${this.getUsername(instance, question.authorId)}**: ${question.question}\n\n${answers.join('\n\n')}`,
+      description: `**${this.getUsername(instance, question.authorId)}** wollte wissen:\n> ${question.question}\n\n${answers.join('\n\n')}`,
       components: [
         {
           type: ComponentType.BUTTON,
@@ -471,10 +588,14 @@ export default class SussyalienGame implements Game<State> {
   }
 
   gameDone(instance: GameInstance<State>, i: ReplyableComponentInteraction) {
+    const sumup = Object
+      .entries(instance.state.globalPoints)
+      .sort(([ _k1, v1 ], [ _k2, v2 ]) => (v2 - v1))
+      .map(([ k, v ], i) => `${i + 1}. **${this.getUsername(instance, k)}:** ${v} Punkte`)
+
     i.edit({
       title: 'Das war\'s',
-      // TODO
-      description: 'Danke fürs spielen, hier kommen noch punkte',
+      description: `Danke fürs spielen.\n\n${sumup.join('\n')}`,
       components: [
         {
           type: ComponentType.BUTTON,
@@ -493,6 +614,6 @@ export default class SussyalienGame implements Game<State> {
   // TODO missing:
   // - punktesystem -> richtig falsch geraten
   // - doppelte einreichung von innocents -> beide 0 punkte -> diverse antworten gesucht
-  // - alien darf nicht die selbe antwort einreichen die schon ein innocent gegeben hat
+  // X alien darf nicht die selbe antwort einreichen die schon ein innocent gegeben hat
 
 }
