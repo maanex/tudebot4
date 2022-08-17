@@ -29,6 +29,7 @@ export default class WerbinichGame implements Game<State> {
     minPlayers: 2,
     maxPlayers: 20,
     languages: [ 'de' ],
+    estTime: '2-200 min',
     enabled: true
   }
 

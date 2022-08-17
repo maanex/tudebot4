@@ -3,7 +3,9 @@ import { GuildMember } from 'discord.js'
 import { TudeBot } from '../..'
 import { LanguageCode } from '../data/languages'
 import SussyalienGame from './games/sussyalien'
+import ThesplitGame from './games/thesplit'
 import WerbinichGame from './games/werbinich'
+import WerewolfGame from './games/werewolf'
 
 
 export type GameInstance<State extends Object> = {
@@ -32,6 +34,7 @@ export type GameInfo = {
   minPlayers: number,
   maxPlayers: number,
   languages: LanguageCode[]
+  estTime: string
   enabled: boolean
 }
 
@@ -56,7 +59,9 @@ export class Gaming {
 
   public static allGames: Game<any>[] = [
     new WerbinichGame(),
-    new SussyalienGame()
+    new SussyalienGame(),
+    new ThesplitGame(),
+    new WerewolfGame()
   ]
 
   public static runningGames: Map<string, GameInstance<any>> = new Map()
@@ -112,8 +117,7 @@ export class Gaming {
       created: new Date(),
       finished: null,
       config: {
-        language: gameClass.info.languages[0],
-        playerSource: 'voice'
+        ...source.config
       }
     }
 

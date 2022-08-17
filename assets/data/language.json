@@ -23,6 +23,8 @@
         "achievement_very_smart_desc": "Complete every IQ test.",
         "achievement_self_love_name": "Self Love",
         "achievement_self_love_desc": "Ship yourself with yourself.",
+        "achievement_gaming_play_one_name": "TudeBot Gaming",
+        "achievement_gaming_play_one_desc": "Play a game in the TudeBot Gaming Hub",
         "userprofile_achievements_none": "None",
         "birthday_message": [
             "Happy Birthday {user}! :tada:",

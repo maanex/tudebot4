@@ -1,6 +1,7 @@
 import { ButtonStyle, ComponentType, GenericInteraction, InteractionApplicationCommandCallbackData } from 'cordo'
 import { Languages } from '../../../lib/data/languages'
 import { GameInfo, Gaming } from '../../../lib/gaming/gaming'
+import { truncateString } from '../../../lib/utils/string-utils'
 
 
 const pages: GameInfo[] = [
@@ -13,6 +14,7 @@ const pages: GameInfo[] = [
     minPlayers: 0,
     maxPlayers: 999,
     languages: [],
+    estTime: '',
     enabled: true
   },
   ...Gaming.allGames.map(g => g.info)
@@ -23,9 +25,12 @@ export default function (_i: GenericInteraction, [ pageId ]: [ string ]): Intera
 
   const page = pages.find(p => p.id === pageId) || pages[0]
 
+  let description = page.descriptionLong
+  if (!page.enabled) description += '\n\n*This game is currently disabled.*'
+
   return {
     title: page.name,
-    description: page.descriptionLong,
+    description,
     components: [
       {
         type: ComponentType.SELECT,
@@ -36,7 +41,7 @@ export default function (_i: GenericInteraction, [ pageId ]: [ string ]): Intera
           emoji: { name: p.icon },
           description: (p.id === '_hub')
             ? 'About TudeBot Gaming'
-            : `${p.minPlayers}-${p.maxPlayers} Players. ${p.languages.map(l => Languages.codeLookupNative[l]).join(', ')}`,
+            : truncateString(`${p.minPlayers}-${p.maxPlayers} Players. ${p.estTime}. ${p.languages.map(l => Languages.codeLookupNative[l]).join(', ')}`, 50),
           default: (pageId === p.id)
         }))
       },

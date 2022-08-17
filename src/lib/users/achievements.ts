@@ -66,6 +66,7 @@ export const List = {
   DEFINE_ACHIEVEMENT: createStandart({ visibility: 'hidden' }),
   VERY_SMART: createCollect({ collectables: Object.keys(IQTestCommandTests) }),
   SELF_LOVE: createStandart({ visibility: 'title_only' }),
+  GAMING_PLAY_ONE: createStandart({}),
   TEST_STANDART: createStandart({}),
   TEST_COUNTER: createCounter({ count: 65 }),
   TEST_COLLECT: createCollect({ collectables: [ 'gaming', 'cool', 'nice' ] })

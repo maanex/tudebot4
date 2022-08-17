@@ -58,6 +58,7 @@ export default class SussyalienGame implements Game<State> {
     minPlayers: 3,
     maxPlayers: 20,
     languages: [ 'en', 'de' ],
+    estTime: '10-20 min',
     enabled: true
   }
 
@@ -81,6 +82,10 @@ export default class SussyalienGame implements Game<State> {
           value: '3'
         },
         {
+          label: 'Four',
+          value: '4'
+        },
+        {
           label: 'Random between 0 and 1',
           value: 'rand_0_1'
         },
@@ -93,12 +98,40 @@ export default class SussyalienGame implements Game<State> {
           value: 'rand_0_3'
         },
         {
+          label: 'Random between 0 and 4',
+          value: 'rand_0_4'
+        },
+        {
+          label: 'Random between 0 and 5',
+          value: 'rand_0_5'
+        },
+        {
           label: 'Random between 1 and 2',
           value: 'rand_1_2'
         },
         {
           label: 'Random between 1 and 3',
           value: 'rand_1_3'
+        },
+        {
+          label: 'Random between 1 and 4',
+          value: 'rand_1_4'
+        },
+        {
+          label: 'Random between 1 and 5',
+          value: 'rand_1_5'
+        },
+        {
+          label: 'Random between 2 and 3',
+          value: 'rand_2_3'
+        },
+        {
+          label: 'Random between 2 and 4',
+          value: 'rand_2_4'
+        },
+        {
+          label: 'Random between 2 and 5',
+          value: 'rand_2_5'
         }
       ]
     }
@@ -213,8 +246,15 @@ export default class SussyalienGame implements Game<State> {
           case 'rand_0_1': count = ~~(Math.random() * 2) + 0; break
           case 'rand_0_2': count = ~~(Math.random() * 3) + 0; break
           case 'rand_0_3': count = ~~(Math.random() * 4) + 0; break
+          case 'rand_0_4': count = ~~(Math.random() * 5) + 0; break
+          case 'rand_0_5': count = ~~(Math.random() * 6) + 0; break
           case 'rand_1_2': count = ~~(Math.random() * 2) + 1; break
           case 'rand_1_3': count = ~~(Math.random() * 4) + 1; break
+          case 'rand_1_4': count = ~~(Math.random() * 5) + 1; break
+          case 'rand_1_5': count = ~~(Math.random() * 6) + 1; break
+          case 'rand_2_3': count = ~~(Math.random() * 4) + 2; break
+          case 'rand_2_4': count = ~~(Math.random() * 5) + 2; break
+          case 'rand_2_5': count = ~~(Math.random() * 6) + 2; break
           default: count = 1
         }
       } else {
@@ -256,7 +296,7 @@ export default class SussyalienGame implements Game<State> {
       : null
 
     if (!question)
-      return this.userDoneWithQuestions(instance, i)
+      return this.userDoneWithQuestions(instance, i, firstOne)
 
     const alienView = instance.state.phase === 'alien'
     const invalidText = invalidSubmission
@@ -320,8 +360,8 @@ export default class SussyalienGame implements Game<State> {
   }
 
   stringFuzzyEquals(str1: string, str2: string): boolean {
-    str1 = str1.toLowerCase().replace(/\W/gi, '')
-    str2 = str2.toLowerCase().replace(/\W/gi, '')
+    str1 = str1.toLowerCase().replace(/[^\w\d]/gi, '')
+    str2 = str2.toLowerCase().replace(/[^\w\d]/gi, '')
     return str1 === str2
   }
 
@@ -349,12 +389,12 @@ export default class SussyalienGame implements Game<State> {
     this.showNextQuestion(instance, i, false)
   }
 
-  userDoneWithQuestions(instance: GameInstance<State>, i: ReplyableComponentInteraction) {
+  userDoneWithQuestions(instance: GameInstance<State>, i: ReplyableComponentInteraction, firstOne) {
     const map = instance.state.phase === 'innocent'
       ? instance.state.innocentAnswerMap
       : instance.state.alienAnswerMap
 
-    i.edit({
+    ;(firstOne ? i.replyPrivately : i.edit)({
       title: 'Fertig!',
       description: 'Du kannst dieses Fenster jetzt schließen. Einfach unten auf den kleinen blauen text klicken ↓',
       components: []
@@ -598,7 +638,7 @@ export default class SussyalienGame implements Game<State> {
       .map(([ k, v ], i) => `${i + 1}. **${this.getUsername(instance, k)}:** ${v} Punkte`)
 
     i.edit({
-      title: 'Das war\'s',
+      title: 'Das wars',
       description: `Danke fürs spielen.\n\n${sumup.join('\n')}`,
       components: [
         {
@@ -616,8 +656,6 @@ export default class SussyalienGame implements Game<State> {
   }
 
   // TODO missing:
-  // - punktesystem -> richtig falsch geraten
-  // - doppelte einreichung von innocents -> beide 0 punkte -> diverse antworten gesucht
-  // X alien darf nicht die selbe antwort einreichen die schon ein innocent gegeben hat
+  // 0 aliens -> fehler
 
 }
