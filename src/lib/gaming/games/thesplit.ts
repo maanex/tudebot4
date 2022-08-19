@@ -18,7 +18,7 @@ export default class ThesplitGame implements Game<State> {
     minPlayers: 4,
     maxPlayers: 20,
     languages: [ 'en' ],
-    estTime: '2 min',
+    estTime: '5 min',
     enabled: false
   }
 
@@ -31,6 +31,29 @@ export default class ThesplitGame implements Game<State> {
   }
 
   startGame(_instance: GameInstance<State>, _i: ReplyableComponentInteraction) {
+    // idee:
+    // jeder spieler bekommt ein verhältniss, also z.b. 3/7
+    // dabei ist das /7 immer die anzahl der anderen spieler
+    // dann muss eine entweder oder frage gestellt werden, bei der die anderen spieler in diesem verhältnis antworten
+    // z.b. 1/4 -> "ananas auf pizza?" -> hoffentlich einer ja, 3 nein
   }
+
+
+  /*
+    The best place to ____1 is: ____2  _____3
+      eat burgers
+      watch movies
+      see your friends
+      hang out
+      make love
+      tickle someone
+      get a tatoo
+
+      school
+      a bathroom
+      at home
+      the pub
+
+  */
 
 }

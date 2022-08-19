@@ -7,18 +7,18 @@ type State = {
 }
 
 
-export default class WerewolfGame implements Game<State> {
+export default class BlackjackGame implements Game<State> {
 
   public info: GameInfo = {
-    id: 'werewolf',
-    name: 'Werwolf',
+    id: 'blackjack',
+    name: 'Black Jack',
     descriptionShort: 'TODO',
-    descriptionLong: 'Die sonst so dunklen Gassen Tudlingens werden vom hellen Schein des Vollmondes erleuchtet. Es herrscht totenstille, wärend die Dorfbewohner ängstlich in ihren Häusern sitzen. Vollmond bedeutet Werwölfe.',
-    icon: '🐺',
-    minPlayers: 3,
+    descriptionLong: 'LA, 1974. You are entering the Casino with an old smoking and $5. Time to play the small tables.',
+    icon: '🃏',
+    minPlayers: 1,
     maxPlayers: 20,
-    languages: [ 'de' ],
-    estTime: '2-10 min',
+    languages: [ 'en' ],
+    estTime: '1-20 min',
     enabled: false
   }
 

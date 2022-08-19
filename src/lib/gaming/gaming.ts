@@ -2,6 +2,8 @@ import { MessageComponentSelectOption, ReplyableComponentInteraction } from 'cor
 import { GuildMember } from 'discord.js'
 import { TudeBot } from '../..'
 import { LanguageCode } from '../data/languages'
+import BlackjackGame from './games/blackjack'
+import PokerGame from './games/poker'
 import SussyalienGame from './games/sussyalien'
 import ThesplitGame from './games/thesplit'
 import WerbinichGame from './games/werbinich'
@@ -61,7 +63,9 @@ export class Gaming {
     new WerbinichGame(),
     new SussyalienGame(),
     new ThesplitGame(),
-    new WerewolfGame()
+    new WerewolfGame(),
+    new PokerGame(),
+    new BlackjackGame()
   ]
 
   public static runningGames: Map<string, GameInstance<any>> = new Map()
