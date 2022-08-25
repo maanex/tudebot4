@@ -657,5 +657,24 @@ export default class SussyalienGame implements Game<State> {
 
   // TODO missing:
   // 0 aliens -> fehler
+  // Zu lange frage: "Wie viel Bargeld liegt in dem Zimmer in dem du gerade bist? (in Euro, bitte nur die Zahl angeben lol)"" > 100
+  // sortierung geht kaputt -> letzen beiden immer aliens
+
+  
+ki099  /usr/tudebot/build/lib/gaming/games/sussyalien.js:169
+ki099              if (countStr.startsWith('rand')) {
+ki099                           ^
+ki099  
+ki099  TypeError: Cannot read property 'startsWith' of undefined
+ki099      at SussyalienGame.assignInnocentQuestions (/usr/tudebot/build/lib/gaming/games/sussyalien.js:169:26)
+ki099      at SussyalienGame.allQuestionsSubmitted (/usr/tudebot/build/lib/gaming/games/sussyalien.js:145:14)
+ki099      at SussyalienGame.updateQuestionsScreen (/usr/tudebot/build/lib/gaming/games/sussyalien.js:124:25)
+ki099      at SussyalienGame.submitQuestionModal (/usr/tudebot/build/lib/gaming/games/sussyalien.js:142:14)
+ki099      at Object.default_1 [as handler] (/usr/tudebot/build/cordo/components/gaming/r/$uid_$func.js:13:11)
+ki099      at Function.findAndExecuteHandler (/usr/tudebot/node_modules/cordo/dist/manager/components.js:78:31)
+ki099      at Function.onComponent (/usr/tudebot/node_modules/cordo/dist/manager/components.js:49:32)
+ki099      at runMicrotasks (<anonymous>)
+ki099      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+ki099  npm notice
 
 }
