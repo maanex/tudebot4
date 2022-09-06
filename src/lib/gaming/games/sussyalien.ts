@@ -352,7 +352,7 @@ export default class SussyalienGame implements Game<State> {
           max_length: maxAnswerLength,
           placeholder: isAlien
             ? '??????'
-            : instance.state.questions[map[i.user.id][0]].question,
+            : instance.state.questions[map[i.user.id][0]].question.substring(0, 90),
           label: 'Deine Antwort'
         }
       ]
@@ -431,6 +431,8 @@ export default class SussyalienGame implements Game<State> {
         ]
       })
     } else if (instance.state.phase === 'alien') {
+      for (const question of instance.state.questions)
+        shuffleArray(question.answers)
       i.edit({
         title: 'Beep boop',
         description: `Die Aliens sind fertig. Zeit für die Ergebnisse.\n\nIhr bekommt nun der Reihe nach alle Fragen präsentiert. In der Liste seht ihr eure Mitspieler sowie deren Antworten. Wählt die Mitspieler aus, von denen ihr denkt, dass sie aliens sind.\nVorsicht: Die Aliens unterscheiden sich eventuell von Frage zu Frage!\n\nBereit? ${instance.host} bitte drücke den Knopf, wenn ihr alle so weit seid!`,
@@ -461,10 +463,8 @@ export default class SussyalienGame implements Game<State> {
     const answers = [ ...question.answers ]
 
     const notSubmitted = instance.players.filter(p => !question.alienGuesses[p.id])
-    if (notSubmitted.length === 0) return this.votingIterationDone(instance, instance.state.mainMessageInteraction)
-
-    if (firstTime)
-      shuffleArray(answers)
+    // if (notSubmitted.length === 0) return this.votingIterationDone(instance, instance.state.mainMessageInteraction) // EDITED
+    if (notSubmitted.length === 0) return this.votingIterationDone(instance, i)
 
     const text = (notSubmitted.length === instance.players.length)
       ? ''
@@ -661,20 +661,20 @@ export default class SussyalienGame implements Game<State> {
   // sortierung geht kaputt -> letzen beiden immer aliens
 
   
-ki099  /usr/tudebot/build/lib/gaming/games/sussyalien.js:169
-ki099              if (countStr.startsWith('rand')) {
-ki099                           ^
-ki099  
-ki099  TypeError: Cannot read property 'startsWith' of undefined
-ki099      at SussyalienGame.assignInnocentQuestions (/usr/tudebot/build/lib/gaming/games/sussyalien.js:169:26)
-ki099      at SussyalienGame.allQuestionsSubmitted (/usr/tudebot/build/lib/gaming/games/sussyalien.js:145:14)
-ki099      at SussyalienGame.updateQuestionsScreen (/usr/tudebot/build/lib/gaming/games/sussyalien.js:124:25)
-ki099      at SussyalienGame.submitQuestionModal (/usr/tudebot/build/lib/gaming/games/sussyalien.js:142:14)
-ki099      at Object.default_1 [as handler] (/usr/tudebot/build/cordo/components/gaming/r/$uid_$func.js:13:11)
-ki099      at Function.findAndExecuteHandler (/usr/tudebot/node_modules/cordo/dist/manager/components.js:78:31)
-ki099      at Function.onComponent (/usr/tudebot/node_modules/cordo/dist/manager/components.js:49:32)
-ki099      at runMicrotasks (<anonymous>)
-ki099      at processTicksAndRejections (node:internal/process/task_queues:96:5)
-ki099  npm notice
+// ki099  /usr/tudebot/build/lib/gaming/games/sussyalien.js:169
+// ki099              if (countStr.startsWith('rand')) {
+// ki099                           ^
+// ki099  
+// ki099  TypeError: Cannot read property 'startsWith' of undefined
+// ki099      at SussyalienGame.assignInnocentQuestions (/usr/tudebot/build/lib/gaming/games/sussyalien.js:169:26)
+// ki099      at SussyalienGame.allQuestionsSubmitted (/usr/tudebot/build/lib/gaming/games/sussyalien.js:145:14)
+// ki099      at SussyalienGame.updateQuestionsScreen (/usr/tudebot/build/lib/gaming/games/sussyalien.js:124:25)
+// ki099      at SussyalienGame.submitQuestionModal (/usr/tudebot/build/lib/gaming/games/sussyalien.js:142:14)
+// ki099      at Object.default_1 [as handler] (/usr/tudebot/build/cordo/components/gaming/r/$uid_$func.js:13:11)
+// ki099      at Function.findAndExecuteHandler (/usr/tudebot/node_modules/cordo/dist/manager/components.js:78:31)
+// ki099      at Function.onComponent (/usr/tudebot/node_modules/cordo/dist/manager/components.js:49:32)
+// ki099      at runMicrotasks (<anonymous>)
+// ki099      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+// ki099  npm notice
 
 }
