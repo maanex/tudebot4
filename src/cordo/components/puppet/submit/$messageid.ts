@@ -1,7 +1,7 @@
 import { ComponentType, InteractionComponentFlag, InteractionTypeModalSubmit, MessageComponent, ReplyableComponentInteraction } from 'cordo'
 import CordoAPI from 'cordo/dist/api'
 import PermissionStrings from 'cordo/dist/lib/permission-strings'
-import { MessageOptions, TextChannel } from 'discord.js'
+import { MessageEditOptions, MessageOptions, TextChannel } from 'discord.js'
 import { TudeBot } from '../../../..'
 import DataModule from '../../../../modules/data'
 
@@ -79,7 +79,7 @@ export default async function (i: ReplyableComponentInteraction) {
     ? [ { title: title ?? null, description: description ?? null, color: 0x2F3136 } ]
     : []
 
-  const payload: MessageOptions = {
+  const payload: MessageOptions & MessageEditOptions = {
     content: content ?? null,
     embeds,
     components: getComponentTemplate(componentTemplate)

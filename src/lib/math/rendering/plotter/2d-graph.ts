@@ -20,7 +20,7 @@ export async function renderSimple2dGraph(width: number, height: number, color: 
     ? PADDING + (points[num][0] - fromX) * SCALE
     : BASE_LINE - points[num][1] * SCALE
 
-  draw2dAxis(ctx, width, height, PADDING, color, fromX, toX, fromY, toY)
+  draw2dAxis(ctx as any, width, height, PADDING, color, fromX, toX, fromY, toY)
 
   ctx.beginPath()
   ctx.strokeStyle = '#' + color.toString(16).padStart(6, '0')

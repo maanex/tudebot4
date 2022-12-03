@@ -25,7 +25,7 @@ export class UserData {
       .catch(err => void console.log(err)) as UserType
 
     if (data === null)
-      data = new Mongo.User({ _id: this.userId })
+      data = new Mongo.User({ _id: this.userId }) as UserType
 
     if (!data) return null
 
