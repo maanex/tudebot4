@@ -7,6 +7,7 @@ import { runGpl } from '../thirdparty/gibuapis/gpl-wrapper'
 import parseImageFromMessage from '../lib/parsing/parse-image-from-message'
 import Webhooks from '../lib/webhooks'
 import { Module } from '../types/types'
+import { truncateString } from '../lib/utils/string-utils'
 
 
 export type Reply = {
@@ -112,8 +113,18 @@ export default class QuickRepliesModule extends Module {
 
     if (mes.deletable) mes.delete()
     let compiled = await QuickRepliesModule.buildReponse(reply.response, scriptContext)
+
+    if (mes.reference) {
+      const reference = await mes.channel.messages.fetch(mes.reference.messageId)
+      if (reference) {
+        const quote = truncateString(reference.cleanContent, compiled.length > 1200 ? 50 : 200).split('\n').map(s => `> ${s}`).join('\n')
+        compiled = `${quote}\n<@${reference.author.id}> ${compiled}`
+      }
+    }
+
     if (compiled.length > 1995)
       compiled = compiled.substring(0, 1995) + '...'
+
     this.sendReply(mes.channel as TextChannel, mes.member, compiled)
   }
 
