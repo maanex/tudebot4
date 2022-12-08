@@ -113,19 +113,21 @@ export default class QuickRepliesModule extends Module {
 
     if (mes.deletable) mes.delete()
     let compiled = await QuickRepliesModule.buildReponse(reply.response, scriptContext)
+    let pingUser = undefined
 
     if (mes.reference) {
       const reference = await mes.channel.messages.fetch(mes.reference.messageId)
       if (reference) {
         const quote = truncateString(reference.cleanContent, compiled.length > 1200 ? 50 : 200).split('\n').map(s => `> ${s}`).join('\n')
         compiled = `${quote}\n<@${reference.author.id}> ${compiled}`
+        pingUser = reference.author.id
       }
     }
 
     if (compiled.length > 1995)
       compiled = compiled.substring(0, 1995) + '...'
 
-    this.sendReply(mes.channel as TextChannel, mes.member, compiled)
+    this.sendReply(mes.channel as TextChannel, mes.member, compiled, pingUser)
   }
 
   private findMatch(replies: Reply[], lookup: string): Reply {
@@ -232,7 +234,7 @@ export default class QuickRepliesModule extends Module {
     )
   }
 
-  private async sendReply(channel: TextChannel, member: GuildMember, text: string) {
+  private async sendReply(channel: TextChannel, member: GuildMember, text: string, pingUser?: string) {
     if (!text) return
 
     try {
@@ -241,7 +243,7 @@ export default class QuickRepliesModule extends Module {
         content: text,
         avatarURL: member.user.avatarURL(),
         username: member.nickname || member.user.username,
-        allowedMentions: { parse: [] }
+        allowedMentions: pingUser ? { users: [ pingUser ] } : { parse: [] }
       })
     } catch (ex) {
       console.error(ex)
