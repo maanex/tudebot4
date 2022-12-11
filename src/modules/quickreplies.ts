@@ -113,7 +113,7 @@ export default class QuickRepliesModule extends Module {
 
     if (mes.deletable) mes.delete()
     let compiled = await QuickRepliesModule.buildReponse(reply.response, scriptContext)
-    let pingUser = undefined
+    let pingUser = null
 
     if (mes.reference) {
       const reference = await mes.channel.messages.fetch(mes.reference.messageId)
