@@ -48,5 +48,5 @@ export async function getCalendarV1(req: Request, res: Response) {
     })
   }
 
-  calendar.serve(res, 'tudebot-reminders.ics')
+  calendar.serve(res as any, 'tudebot-reminders.ics')
 }

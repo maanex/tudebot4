@@ -14,7 +14,7 @@ export default class Server {
 
     if (process.env.NODE_ENV !== 'production') app.use(morgan('tiny'))
     app.use(helmet())
-    app.use(express.json())
+    app.use(express.json() as any)
     app.use(this.nonJsonBodyErrorHandler())
 
     app.set('trust proxy', 1)
