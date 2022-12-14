@@ -40,7 +40,7 @@
     "jsonwebtoken": "^8.5.1",
     "mathjax-full": "^3.2.0",
     "mathjs": "^9.5.0",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "mongodb": "^3.4.1",
     "mongoose": "^6.3.3",
     "morgan": "^1.10.0",
