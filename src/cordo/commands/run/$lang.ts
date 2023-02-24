@@ -97,7 +97,10 @@ async function executeGPL(script: string, channel: TextChannel, executor: string
 /* eslint-disable no-eval */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 async function dangerousEvalLocalJavascript(script: string, channel: TextChannel, executor: string): Promise<ScriptReturn> {
-  if (executor !== '137258778092503042' && executor !== '1062275666105597962') return { output: 'no' }
+  if (executor !== '137258778092503042' // maanex (org)
+    && executor !== '1062275666105597962' // mandr
+    && executor !== '1072591753854586900' // maanex (new)
+  ) return { output: 'no' }
 
   try {
     const guild = channel.guild
