@@ -240,6 +240,7 @@ export default class QuickRepliesModule extends Module {
     try {
       const webhook = await Webhooks.allocateWebhook(channel)
       webhook.send({
+        threadId: channel.isThread ? channel.id : undefined,
         content: text,
         avatarURL: member.user.avatarURL(),
         username: member.nickname || member.user.username,
