@@ -54,7 +54,7 @@ function buildPistonRequest(language: string, script: string, context?: any): an
     const fullscript = `console.log(((_context)=>{${script}})(${JSON.stringify(context)})||'')`
     return {
       language: 'js',
-      version: '16.3.0',
+      version: '18',
       files: [
         { content: fullscript }
       ]
