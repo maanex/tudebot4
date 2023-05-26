@@ -1,4 +1,4 @@
-import { GuildMember, Message, TextChannel } from 'discord.js'
+import { GuildMember, Message, TextChannel, ThreadChannel } from 'discord.js'
 import * as fuzzy from 'fuzzy'
 import { QuickRepliesMainPageData } from '../cordo/states/quickreplies/main'
 import Database from '../database/database'
@@ -234,13 +234,13 @@ export default class QuickRepliesModule extends Module {
     )
   }
 
-  private async sendReply(channel: TextChannel, member: GuildMember, text: string, pingUser?: string) {
+  private async sendReply(channel: TextChannel | ThreadChannel, member: GuildMember, text: string, pingUser?: string) {
     if (!text) return
 
     try {
       const webhook = await Webhooks.allocateWebhook(channel)
       webhook.send({
-        threadId: channel.isThread ? channel.id : undefined,
+        threadId: channel.isThread() ? channel.id : undefined,
         content: text,
         avatarURL: member.user.avatarURL(),
         username: member.nickname || member.user.username,
