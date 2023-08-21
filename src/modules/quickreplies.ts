@@ -243,7 +243,7 @@ export default class QuickRepliesModule extends Module {
         threadId: channel.isThread() ? channel.id : undefined,
         content: text,
         avatarURL: member.user.avatarURL(),
-        username: member.nickname || member.user.username,
+        username: member.displayName || member.nickname || member.user.username,
         allowedMentions: pingUser ? { users: [ pingUser ] } : { parse: [] }
       })
     } catch (ex) {
