@@ -26,4 +26,4 @@ COPY config.docker.js config.js
 
 RUN npm run build
 
-CMD [ "npm", "start" ]
+CMD [ "node", "--version" ]
