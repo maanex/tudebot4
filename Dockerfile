@@ -1,4 +1,4 @@
-FROM node:20.18
+FROM node:22
 
 RUN apt install git
 
@@ -26,4 +26,4 @@ COPY config.docker.js config.js
 
 RUN npm run build
 
-CMD [ "node", "--version" ]
+CMD [ "npm", "start" ]
