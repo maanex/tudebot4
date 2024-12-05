@@ -12,9 +12,6 @@ import Localisation from './lib/localisation'
 import { UserData } from './lib/users/user-data'
 
 
-import { ReadableStream } from "node:stream/web";
-global.ReadableStream = ReadableStream;
-
 
 Localisation.load(require('../assets/data/language.json'))
 
