@@ -12,6 +12,10 @@ import Localisation from './lib/localisation'
 import { UserData } from './lib/users/user-data'
 
 
+import { ReadableStream } from "node:stream/web";
+this.global.ReadableStream = ReadableStream;
+
+
 Localisation.load(require('../assets/data/language.json'))
 
 export const TudeBot = new TudeBotClient({
