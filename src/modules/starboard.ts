@@ -1,5 +1,4 @@
-import { Message, MessageReaction, PartialMessage, PartialMessageReaction, PartialUser, TextChannel, User } from 'discord.js'
-import { MessageButtonStyles, MessageComponentTypes } from 'discord.js/typings/enums'
+import { ButtonStyle, ComponentType, Message, MessageReaction, PartialMessage, PartialMessageReaction, PartialUser, TextChannel, User } from 'discord.js'
 import { TudeBot } from '../index'
 import Webhooks from '../lib/webhooks'
 import { Module } from '../types/types'
@@ -77,7 +76,7 @@ export default class StarboardModule extends Module {
       allowedMentions: { parse: [] },
       components: [
         {
-          type: MessageComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [
             // {
             //   type: MessageComponentTypes.BUTTON,
@@ -87,8 +86,8 @@ export default class StarboardModule extends Module {
             //   emoji: pinEmoji
             // },
             {
-              type: MessageComponentTypes.BUTTON,
-              style: MessageButtonStyles.LINK,
+              type: ComponentType.Button,
+              style: ButtonStyle.Link,
               url: message.url,
               label: 'View Original'
             }

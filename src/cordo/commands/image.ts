@@ -50,7 +50,7 @@ export async function findImage(kind: string, i: ReplyableCommandInteraction): P
   }
   if (kind === 'you') {
     const user = await TudeBot.users.fetch(i.user.id)
-    const avatar = user.avatarURL({ format: 'png' })
+    const avatar = user.avatarURL({ extension: 'png' })
     if (Math.random() < 0.05)
       return avatar
 

@@ -1,7 +1,7 @@
 import { InteractionComponentFlag } from 'cordo'
 import CordoAPI from 'cordo/dist/api'
 import * as cron from 'cron'
-import { TextChannel } from 'discord.js'
+import { ButtonStyle, ComponentType, Embed, EmbedBuilder, TextChannel } from 'discord.js'
 import { Long, ObjectId } from 'mongodb'
 import { TudeBot } from '..'
 import Database from '../database/database'
@@ -190,11 +190,11 @@ export default class RemindersModule extends Module {
         ],
         components: [
           {
-            type: 'ACTION_ROW',
+            type: ComponentType.ActionRow,
             components: [
               {
-                type: 'BUTTON',
-                style: 'SECONDARY',
+                type: ComponentType.Button,
+                style: ButtonStyle.Secondary,
                 label: 'Snooze',
                 emoji: '💤',
                 customId: CordoAPI.compileCustomId(`reminders_snooze_${data.id}_select`, [ InteractionComponentFlag.ACCESS_EVERYONE ])

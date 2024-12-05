@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Message, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import GibuGamesApi from '../thirdparty/gibuapis/gibu-games-api'
@@ -25,7 +25,7 @@ export default class GameLinkInfos extends Module {
   }
 
   private sendPlaceholderMessage(replyTo: Message): Promise<Message> {
-    return replyTo.channel.send({
+    return (replyTo.channel as TextChannel).send({
       embed: {
         description: Emojis.loading.string,
         color: 0x2F3136

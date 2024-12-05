@@ -182,7 +182,7 @@ export default class TudeBotClient extends Client {
     fixReactionEvent(this)
     await this.loadGuilds(true)
     await this.loadModules(true)
-    this.emit('ready', this)
+    this.emit('ready', this as Client<true>)
   }
 
   public getModule<T extends Module>(name: string): T {

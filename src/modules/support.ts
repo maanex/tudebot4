@@ -1,5 +1,5 @@
 import { InteractionComponentFlag } from 'cordo'
-import { Message, TextChannel } from 'discord.js'
+import { ButtonStyle, Component, ComponentType, Message, TextChannel, ThreadAutoArchiveDuration } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 
@@ -27,14 +27,14 @@ export default class AutoSupportModule extends Module {
 
     const conf = this.guildData(mes.guild)?.channels?.[mes.channelId]
     if (!conf) return
-    if (mes.channel.type !== 'GUILD_TEXT') return
+    if (!mes.channel.isTextBased()) return
 
     const channel = mes.channel as TextChannel
 
     const thread = await channel.threads.create({
       name: mes.author.username,
       startMessage: mes,
-      autoArchiveDuration: 'MAX',
+      autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
       rateLimitPerUser: 0
     })
 
@@ -63,17 +63,17 @@ export default class AutoSupportModule extends Module {
       content: 'Did this answer your question?',
       components: [
         {
-          type: 'ACTION_ROW',
+          type: ComponentType.ActionRow,
           components: [
             {
-              type: 'BUTTON',
-              style: 'SUCCESS',
+              type: ComponentType.Button,
+              style: ButtonStyle.Success,
               customId: `::support_autosolution_${mes.author.id}_good:${InteractionComponentFlag.ACCESS_EVERYONE}`,
               label: 'Yes, that helped.'
             },
             {
-              type: 'BUTTON',
-              style: 'DANGER',
+              type: ComponentType.Button,
+              style: ButtonStyle.Danger,
               customId: `::support_autosolution_${mes.author.id}_bad:${InteractionComponentFlag.ACCESS_EVERYONE}`,
               label: 'No, that did not help.'
             }

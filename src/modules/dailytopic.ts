@@ -39,7 +39,7 @@ export default class DailyTopicModule extends Module {
       const guild = TudeBot.guilds.resolve(g)
       if (!guild) continue
       const channel = guild.channels.resolve(this.guilds.get(g).channel)
-      if (!channel || channel.type !== 'GUILD_TEXT') continue;
+      if (!channel || !channel.isTextBased()) continue;
       (channel as TextChannel).send(await this.generateTopic(g))
     }
   }

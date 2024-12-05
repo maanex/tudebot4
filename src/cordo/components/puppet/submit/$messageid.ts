@@ -1,7 +1,7 @@
 import { ComponentType, InteractionComponentFlag, InteractionTypeModalSubmit, MessageComponent, ReplyableComponentInteraction } from 'cordo'
 import CordoAPI from 'cordo/dist/api'
 import PermissionStrings from 'cordo/dist/lib/permission-strings'
-import { MessageEditOptions, MessageOptions, TextChannel } from 'discord.js'
+import { Message, MessageEditOptions, MessagePayload, TextChannel, ComponentType as DjsComponentType, MessageCreateOptions } from 'discord.js'
 import { TudeBot } from '../../../..'
 import DataModule from '../../../../modules/data'
 
@@ -18,7 +18,7 @@ function polyfillGetSubmission(name: string, components: MessageComponent[]): st
   return undefined
 }
 
-function getComponentTemplate(name: string): MessageOptions['components'] {
+function getComponentTemplate(name: string): (MessagePayload & MessageEditOptions)['components'] {
   if (!name) return []
 
   if (name.startsWith('role-select:')) {
@@ -28,10 +28,10 @@ function getComponentTemplate(name: string): MessageOptions['components'] {
 
     return [
       {
-        type: 'ACTION_ROW',
+        type: DjsComponentType.ActionRow,
         components: [
           {
-            type: 'SELECT_MENU',
+            type: DjsComponentType.StringSelect,
             customId: CordoAPI.compileCustomId('xaction_roles_select_' + id, [ InteractionComponentFlag.ACCESS_EVERYONE ]),
             options: [
               ...data[id].map(role => ({
@@ -79,7 +79,7 @@ export default async function (i: ReplyableComponentInteraction) {
     ? [ { title: title ?? null, description: description ?? null, color: 0x2F3136 } ]
     : []
 
-  const payload: MessageOptions & MessageEditOptions = {
+  const payload: Partial<MessagePayload & MessageCreateOptions & MessageEditOptions> = {
     content: content ?? null,
     embeds,
     components: getComponentTemplate(componentTemplate)

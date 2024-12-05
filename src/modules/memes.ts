@@ -124,7 +124,7 @@ export default class MemesModule extends Module {
             username: user.username,
             not_cool: Emojis.notCool.string
           })
-          mes.channel.send(text)
+          ;(mes.channel as TextChannel).send(text)
           this.selfUpvoteCooldown.push(mes.author.id)
           setTimeout(() => this.selfUpvoteCooldown.splice(this.selfUpvoteCooldown.indexOf(mes.author.id), 1), 1000 * 60 * 5)
         }
@@ -140,7 +140,7 @@ export default class MemesModule extends Module {
               image: { url: mes.attachments.first().url },
               description: `[${mes.content || '[link]'}](https://discordapp.com/channels/${mes.guild.id}/${mes.channel.id}/${mes.id})`,
               footer: { text: `Uploaded by ${mes.author.username}` },
-              timestamp: mes.createdTimestamp
+              timestamp: String(mes.createdTimestamp)
             }
           ]
         })

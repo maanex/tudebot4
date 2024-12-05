@@ -1,4 +1,4 @@
-import { MessageEmbed as DjsMessageEmbed } from 'discord.js'
+import { APIEmbed as DjsMessageEmbed } from 'discord.js'
 import { MessageEmbed as CordoMessageEmbed } from 'cordo'
 import StaticAssets, { Asset } from '../data/static-assets'
 import Localisation from '../localisation'

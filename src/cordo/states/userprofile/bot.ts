@@ -38,7 +38,7 @@ export default function (_i: CommandInteraction, [ member, _channel, meta ]: Arg
       {
         author: {
           name: member.user.username,
-          icon_url: member.user.avatarURL({ format: 'png', size: 128 })
+          icon_url: member.user.avatarURL({ extension: 'png', size: 128 })
         },
         fields
       }

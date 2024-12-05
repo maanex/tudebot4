@@ -1,4 +1,4 @@
-import { Message, MessageAttachment, MessageEmbed, TextChannel } from 'discord.js'
+import { AttachmentBuilder, Embed, EmbedBuilder, Message, SendableChannels, TextChannel } from 'discord.js'
 import { config, TudeBot } from '../index'
 import { Module } from '../types/types'
 import generateInviteLinkMeme from '../lib/images/generators/generate-invite-link-meme'
@@ -13,10 +13,11 @@ export default class ChatGuard extends Module {
   public onEnable() {
     TudeBot.on('message', (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return
-      if (mes.member.permissions.has('MANAGE_MESSAGES')) return //
-      if (mes.member.roles.highest.comparePositionTo(mes.guild.me.roles.highest) > 0) return // TODO REENABLE, DISABLED FOR EASIER TESTING
+      if (mes.member.permissions.has('ManageMessages')) return //
+      if (mes.member.roles.highest.comparePositionTo(mes.guild.members.me.roles.highest) > 0) return // TODO REENABLE, DISABLED FOR EASIER TESTING
 
       if (this.checkInviteLinks(mes)) return
+      if (!mes.channel.isSendable()) return
 
       if (config.thirdparty.googleapis.key) {
         TudeBot.perspectiveApi.analyze(mes.content).then((res) => {
@@ -24,26 +25,26 @@ export default class ChatGuard extends Module {
 
           const oneOf = (list: string[]) => list[Math.floor(Math.random() * list.length)]
           if (res.threat > 0.95) {
-            mes.channel.send(oneOf([ 'That was too much %!', 'Stop this right now %!', 'You better shut your mouth %', 'Shut up %', 'You took it too far %!' ]).split('%').join(mes.author.toString()))
+            (mes.channel as SendableChannels).send(oneOf([ 'That was too much %!', 'Stop this right now %!', 'You better shut your mouth %', 'Shut up %', 'You took it too far %!' ]).split('%').join(mes.author.toString()))
             mes.delete()
             return
           }
           if (res.severeToxicity > 0.98) {
-            mes.channel.send(oneOf([ 'Pretty rude %!', 'That was too much %!', 'Calm the fuck down %!', 'Shut up %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
+            (mes.channel as SendableChannels).send(oneOf([ 'Pretty rude %!', 'That was too much %!', 'Calm the fuck down %!', 'Shut up %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
             mes.delete()
             return
           }
           if (res.insult > 0.95) {
-            mes.channel.send(oneOf([ 'Damn %', 'Oh wow %', 'I\'ll have to remove that %', 'Pretty rude %', 'That was pretty rude %!', 'Oh come on, don\'t be like that %!' ]).split('%').join(mes.author.toString()))
+            (mes.channel as SendableChannels).send(oneOf([ 'Damn %', 'Oh wow %', 'I\'ll have to remove that %', 'Pretty rude %', 'That was pretty rude %!', 'Oh come on, don\'t be like that %!' ]).split('%').join(mes.author.toString()))
             mes.delete()
             return
           }
           if (res.toxicity > 0.95) {
-            mes.channel.send(oneOf([ '% dude. Chill!', '% chill!', 'Yo % calm down', 'No reason to rage out %!', 'Chill %', 'Calm down %' ]).split('%').join(mes.author.toString()))
+            (mes.channel as SendableChannels).send(oneOf([ '% dude. Chill!', '% chill!', 'Yo % calm down', 'No reason to rage out %!', 'Chill %', 'Calm down %' ]).split('%').join(mes.author.toString()))
             return
           }
           if (res.sexuallyExplicit > 0.95) {
-            mes.channel.send(oneOf([ 'Please keep things kid friendly %', 'No nsfw here %', 'A bit more kids friendly please %', 'That ain\'t sfw %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
+            (mes.channel as SendableChannels).send(oneOf([ 'Please keep things kid friendly %', 'No nsfw here %', 'A bit more kids friendly please %', 'That ain\'t sfw %', 'Watch your mouth %' ]).split('%').join(mes.author.toString()))
             return
           }
           if (res.flirtation > 0.95)
@@ -82,12 +83,12 @@ export default class ChatGuard extends Module {
     if (this.inviteResponseStatus === 0) {
       generateInviteLinkMeme(mes.author.username)
         .then((img) => {
-          const file = new MessageAttachment(img, `shut-up-${mes.author.username.toLowerCase()}.png`)
-          const embed = new MessageEmbed()
+          const file = new AttachmentBuilder(img).setName(`shut-up-${mes.author.username.toLowerCase()}.png`)
+          const embed = new EmbedBuilder()
             .setColor(0x2F3136)
             .setImage(`attachment://shut-up-${mes.author.username.toLowerCase()}.png`)
 
-          mes.channel.send({
+          ;(mes.channel as SendableChannels).send({
             embeds: [ embed ],
             files: [ file ]
           })

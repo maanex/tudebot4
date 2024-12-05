@@ -67,7 +67,7 @@ export default function (i: CommandInteraction, [ member, _, data ]: ArgsType): 
     embeds: [ {
       author: {
         name: member.user.username,
-        icon_url: member.user.avatarURL({ format: 'png', size: 128 })
+        icon_url: member.user.avatarURL({ extension: 'png', size: 128 })
       },
       fields: [
         {
