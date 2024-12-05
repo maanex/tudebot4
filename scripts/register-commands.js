@@ -163,6 +163,55 @@ const commands = [
     ]
   },
   {
+    name: 'cleanup',
+    description: 'Clean up chat',
+    default_permission: false,
+    options: [
+      {
+        type: 4,
+        name: 'amount',
+        description: 'The amount of messages to delete',
+        required: true
+      },
+      {
+        type: 3,
+        name: 'reason',
+        description: 'Why did you clean chat?',
+        required: true,
+        choices: [
+          { name: 'Spam', value: 'spam' },
+          { name: 'Fraud / Scamming', value: 'fraud' },
+          { name: 'Annoying', value: 'annoying' },
+          { name: 'Other', value: 'other' }
+        ]
+      },
+      {
+        type: 6,
+        name: 'filter_user',
+        description: 'Only delete messages by a specific user',
+        required: false
+      },
+      {
+        type: 3,
+        name: 'filter_contains',
+        description: 'Only delete messages that contain this text',
+        required: false
+      },
+      {
+        type: 3,
+        name: 'filter_regex',
+        description: 'Only delete messages that match this RegEx',
+        required: false
+      },
+      {
+        type: 3,
+        name: 'comment',
+        description: 'Attach a comment to the action. Could be a more detailed reason or anything else.',
+        required: false
+      }
+    ]
+  },
+  {
     name: 'showme',
     description: 'Show me something',
     options: [
@@ -395,4 +444,4 @@ async function run(remove = true, add = true, whitelist, guildid, updatePermissi
 // run(false, true, [ 'topic', 'puppet', 'run' ])
 // run(true, false, [ 'whois', 'Whois' ])
 // run(false, true, [ 'profile', 'Profile' ])
-run(false, true, [ 'gaming' ])
+run(false, true, [ 'cleanup' ])
