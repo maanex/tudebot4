@@ -1,7 +1,7 @@
 import { ComponentType, InteractionComponentFlag, InteractionTypeModalSubmit, MessageComponent, ReplyableComponentInteraction } from 'cordo'
 import CordoAPI from 'cordo/dist/api'
 import PermissionStrings from 'cordo/dist/lib/permission-strings'
-import { Message, MessageEditOptions, MessagePayload, TextChannel, ComponentType as DjsComponentType, MessageCreateOptions } from 'discord.js'
+import { Message, MessageEditOptions, MessagePayload, TextChannel, ComponentType as DjsComponentType, MessageCreateOptions, ButtonStyle } from 'discord.js'
 import { TudeBot } from '../../../..'
 import DataModule from '../../../../modules/data'
 
@@ -49,6 +49,28 @@ function getComponentTemplate(name: string): (MessagePayload & MessageEditOption
             ],
             minValues: 0,
             maxValues: data[id].length
+          }
+        ]
+      }
+    ]
+  }
+
+  if (name === 'fsb-mod-center:1') {
+    return [
+      {
+        type: DjsComponentType.ActionRow,
+        components: [
+          {
+            type: DjsComponentType.Button,
+            style: ButtonStyle.Primary,
+            label: 'Show me as Moderator',
+            customId: CordoAPI.compileCustomId('fsb_modcenter_showmod', [ InteractionComponentFlag.ACCESS_EVERYONE ])
+          },
+          {
+            type: DjsComponentType.Button,
+            style: ButtonStyle.Primary,
+            label: 'Go undercover',
+            customId: CordoAPI.compileCustomId('fsb_modcenter_hidemod', [ InteractionComponentFlag.ACCESS_EVERYONE ])
           }
         ]
       }
