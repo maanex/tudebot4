@@ -53,7 +53,7 @@
     "prom-client": "^14.0.0",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.0",
-    "skia-canvas": "^0.9.25",
+    "skia-canvas": "^2.0.0",
     "svg2img": "^0.9.3",
     "ts-node": "^8.5.4",
     "typescript": "^5.2.2",
