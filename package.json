@@ -57,6 +57,7 @@
     "svg2img": "^0.9.4",
     "ts-node": "^8.10.2",
     "typescript": "^5.7.2",
+    "undici": "^5.0.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
