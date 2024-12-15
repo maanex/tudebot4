@@ -77,29 +77,22 @@ export default class QuickRepliesModule extends Module {
   private lastImageCache: Map<string, string> = new Map()
 
   private async onMessage(mes: Message) {
-    console.log('A1')
     if (!this.isMessageEventValid(mes)) return
-    console.log('A2')
     const prefix = this.guilds.get(mes.guild.id).prefix || '-'
 
-    console.log('A3', prefix)
     if (!mes.content.startsWith(prefix)) {
-      console.log('B1')
       this.lastMessageCache.set(mes.channelId, mes)
       const [ found, url ] = parseImageFromMessage(mes)
       if (found) this.lastImageCache.set(mes.channelId, url)
       return
     }
-    console.log('B2')
 
     const replies = await this.getReplies(mes.guild.id)
     if (!replies?.length) return
-    console.log('C1')
 
     const lookup = mes.content.toLowerCase().trim().substring(prefix.length)
     const reply = this.findMatch(replies, lookup)
     if (!reply) return
-    console.log('C2')
 
     let scriptContext: ScriptContext = {}
     if (QuickRepliesModule.getTypeOfResponse(reply.response) !== 'text') {
@@ -116,11 +109,11 @@ export default class QuickRepliesModule extends Module {
         authorAvatar: mes.author?.avatarURL() ?? ''
       }
     }
-    console.log('C3')
+
     if (mes.deletable) mes.delete()
     let compiled = await QuickRepliesModule.buildReponse(reply.response, scriptContext)
     let pingUser = null
-    console.log('C4')
+
     if (mes.reference) {
       const reference = await mes.channel.messages.fetch(mes.reference.messageId)
       if (reference) {
@@ -129,7 +122,7 @@ export default class QuickRepliesModule extends Module {
         pingUser = reference.author.id
       }
     }
-    console.log('C5')
+
     if (compiled.length > 1995)
       compiled = compiled.substring(0, 1995) + '...'
 
