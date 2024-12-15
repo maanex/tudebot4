@@ -1,4 +1,4 @@
-import { ButtonStyle, ComponentType, Message, MessageReaction, PartialMessage, PartialMessageReaction, PartialUser, TextChannel, User } from 'discord.js'
+import { ButtonStyle, ComponentType, Events, Message, MessageReaction, PartialMessage, PartialMessageReaction, PartialUser, TextChannel, User } from 'discord.js'
 import { TudeBot } from '../index'
 import Webhooks from '../lib/webhooks'
 import { Module } from '../types/types'
@@ -14,7 +14,7 @@ export default class StarboardModule extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('messageReactionAdd', (a: MessageReaction, b: User) => this.onReact(a, b))
+    TudeBot.on(Events.MessageReactionAdd, (a: MessageReaction, b: User) => this.onReact(a, b))
     this.pinned = new Set()
   }
 

@@ -1,4 +1,4 @@
-import { Message, TextChannel } from 'discord.js'
+import { Events, Message, TextChannel } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 import GibuGamesApi from '../thirdparty/gibuapis/gibu-games-api'
@@ -14,7 +14,7 @@ export default class GameLinkInfos extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', (mes: Message) => {
+    TudeBot.on(Events.MessageCreate, (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return
       if (this.guildData(mes.guild).channels && !this.guildData(mes.guild).channels.includes(mes.channel.id)) return
 

@@ -1,5 +1,5 @@
 import { InteractionComponentFlag } from 'cordo'
-import { ButtonStyle, Component, ComponentType, Message, TextChannel, ThreadAutoArchiveDuration } from 'discord.js'
+import { ButtonStyle, ComponentType, Events, Message, TextChannel, ThreadAutoArchiveDuration } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 
@@ -11,7 +11,7 @@ export default class AutoSupportModule extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', mes => this.onMessage(mes))
+    TudeBot.on(Events.MessageCreate, mes => this.onMessage(mes))
   }
 
   public onBotReady() {

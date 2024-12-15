@@ -1,4 +1,4 @@
-import { ClientPresenceStatusData, PresenceStatus, VoiceState } from 'discord.js'
+import { ClientPresenceStatusData, Events, PresenceStatus, VoiceState } from 'discord.js'
 import { Long } from 'mongodb'
 import Database from '../database/database'
 import { TudeBot } from '../index'
@@ -30,7 +30,7 @@ export default class SurveillanceModule extends Module {
     this.int10m = setInterval(mod => mod.updateAll(), 1000 * 60 * 10, this)
     this.int1m = setInterval(mod => mod.datapoint1mTick(), 1000 * 60, this)
 
-    TudeBot.on('presenceUpdate', (before, after) => {
+    TudeBot.on(Events.PresenceUpdate, (before, after) => {
       const user = after?.userId ?? before?.userId
       if (!user) return
 
@@ -44,7 +44,7 @@ export default class SurveillanceModule extends Module {
         .set(SurveillanceModule.presenceLookup[after.status] + deviceIndicator)
     })
 
-    TudeBot.on('voiceStateUpdate', (before, after) => {
+    TudeBot.on(Events.VoiceStateUpdate, (before, after) => {
       const user = after?.member?.id ?? before?.member?.id
       if (!user) return
 
@@ -62,7 +62,7 @@ export default class SurveillanceModule extends Module {
         .set(val)
     })
 
-    TudeBot.on('message', (mes) => {
+    TudeBot.on(Events.MessageCreate, (mes) => {
       const user = mes.author.id
       if (!user) return
 

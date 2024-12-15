@@ -1,4 +1,4 @@
-import { AttachmentBuilder, Embed, EmbedBuilder, Message, SendableChannels, TextChannel } from 'discord.js'
+import { AttachmentBuilder, EmbedBuilder, Events, Message, SendableChannels, TextChannel } from 'discord.js'
 import { config, TudeBot } from '../index'
 import { Module } from '../types/types'
 import generateInviteLinkMeme from '../lib/images/generators/generate-invite-link-meme'
@@ -11,7 +11,7 @@ export default class ChatGuard extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('messageCreate', (mes: Message) => {
+    TudeBot.on(Events.MessageCreate, (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return
       if (mes.member.permissions.has('ManageMessages')) return //
       if (mes.member.roles.highest.comparePositionTo(mes.guild.members.me.roles.highest) > 0) return // TODO REENABLE, DISABLED FOR EASIER TESTING

@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Events, Message } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 
@@ -10,7 +10,7 @@ export default class QuotesModule extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', (mes) => {
+    TudeBot.on(Events.MessageCreate, (mes) => {
       if (!this.isMessageEventValid(mes)) return
       if (!this.guildData(mes.guild).channels.includes(mes.channel.id)) return
 

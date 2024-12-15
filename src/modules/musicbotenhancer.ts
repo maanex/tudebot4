@@ -1,4 +1,4 @@
-import { Message, VoiceState } from 'discord.js'
+import { Events, Message, VoiceState } from 'discord.js'
 import { TudeBot } from '../index'
 import { Module } from '../types/types'
 
@@ -14,7 +14,7 @@ export default class MusicBotEnhancer extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', (mes: Message) => {
+    TudeBot.on(Events.MessageCreate, (mes: Message) => {
       const opts = this.guildData(mes.guild)?.[mes.author.id]
       if (!opts) return
 
@@ -28,7 +28,7 @@ export default class MusicBotEnhancer extends Module {
       mes.member.setNickname(nickname)
     })
 
-    TudeBot.on('voiceStateUpdate', async (before: VoiceState, after: VoiceState) => {
+    TudeBot.on(Events.VoiceStateUpdate, async (before: VoiceState, after: VoiceState) => {
       if (!after?.channelId) {
         const opts = this.guildData(before.guild)?.[before.id]
         if (!opts) return

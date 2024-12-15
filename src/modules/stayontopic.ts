@@ -1,4 +1,4 @@
-import { Message, TextChannel, User } from 'discord.js'
+import { Events, Message, TextChannel, User } from 'discord.js'
 import { TudeBot } from '../index'
 import Localisation from '../lib/localisation'
 import { Module } from '../types/types'
@@ -13,7 +13,7 @@ export default class StayOnTopicModule extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', (mes: Message) => {
+    TudeBot.on(Events.MessageCreate, (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return
 
       for (const rule of this.guildData(mes.guild).rules) {

@@ -21,7 +21,7 @@ export default class TheBrainModule extends Module {
   }
 
   public onEnable() {
-    // TudeBot.on('message', (mes: Message) => {
+    // TudeBot.on(Events.MessageCreate, (mes: Message) => {
     //   if (mes.author.bot) return
     // })
   }

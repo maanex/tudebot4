@@ -1,4 +1,4 @@
-import { Message, MessageReaction, User, TextChannel } from 'discord.js'
+import { Message, MessageReaction, User, TextChannel, Events } from 'discord.js'
 import { CronJob } from 'cron'
 import axios from 'axios'
 import { TudeBot } from '../index'
@@ -26,7 +26,7 @@ export default class MemesModule extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', async (mes) => {
+    TudeBot.on(Events.MessageCreate, async (mes) => {
       try {
         if (!mes) return
         if (!this.isMessageEventValid(mes)) return
@@ -106,7 +106,7 @@ export default class MemesModule extends Module {
       }
     })
 
-    TudeBot.on('messageReactionAdd', (reaction: MessageReaction, user: User) => {
+    TudeBot.on(Events.MessageReactionAdd, (reaction: MessageReaction, user: User) => {
       const mes = reaction.message as Message
       if (!mes) return
       if (user.bot) return
@@ -147,7 +147,7 @@ export default class MemesModule extends Module {
       }
     })
 
-    TudeBot.on('messageReactionRemove', (reaction: MessageReaction, user: User) => {
+    TudeBot.on(Events.MessageReactionRemove, (reaction: MessageReaction, user: User) => {
       const mes = reaction?.message as Message
       if (!mes) return
       if (user.bot) return

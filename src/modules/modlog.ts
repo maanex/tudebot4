@@ -1,4 +1,4 @@
-import { GuildMember, Guild, TextChannel, GuildBan } from 'discord.js'
+import { GuildMember, Guild, TextChannel, GuildBan, Events } from 'discord.js'
 import { modlogType, Module } from '../types/types'
 import { TudeBot } from '../index'
 import Emojis from '../lib/data/emojis'
@@ -26,7 +26,7 @@ export default class ModlogModule extends Module {
       })
     }
 
-    TudeBot.on('guildMemberAdd', (mem: GuildMember) => {
+    TudeBot.on(Events.GuildMemberAdd, (mem: GuildMember) => {
       const flags = mem.user.flags
         .toArray()
         .filter(f => !f.includes('HOUSE') && !f.includes('SUPPORTER') && !f.includes('BOT'))
@@ -40,7 +40,7 @@ export default class ModlogModule extends Module {
       ].filter(a => !!a).join('\n'))
     })
 
-    TudeBot.on('guildMemberRemove', (mem: GuildMember) => {
+    TudeBot.on(Events.GuildMemberRemove, (mem: GuildMember) => {
       TudeBot.modlog(mem.guild, 'userQuit', [
         `${mem.user} as ${mem.user.username}`,
         `Joined <t:${~~(mem.joinedTimestamp / 1000)}:R>`,
@@ -48,11 +48,11 @@ export default class ModlogModule extends Module {
       ].filter(a => !!a).join('\n'))
     })
 
-    TudeBot.on('guildBanAdd', (ban: GuildBan) => {
+    TudeBot.on(Events.GuildBanAdd, (ban: GuildBan) => {
       TudeBot.modlog(ban.guild, 'punish', `${ban.user} as ${ban.user.username} was banned by unknown for reason ${ban.reason}`)
     })
 
-    TudeBot.on('guildBanRemove', (ban: GuildBan) => {
+    TudeBot.on(Events.GuildBanRemove, (ban: GuildBan) => {
       TudeBot.modlog(ban.guild, 'punish', `The ban for ${ban.user} as ${ban.user.username} was lifted`)
     })
   }
