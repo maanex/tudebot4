@@ -5,8 +5,8 @@
 import { configjs } from './types/config'
 export const config = require('../config.js') as configjs
 
-import { ReadableStream } from "node:stream/web";
-globalThis.ReadableStream = ReadableStream;
+import { ReadableStream } from 'node:stream/web'
+globalThis.ReadableStream = ReadableStream
 
 
 import { Options } from 'discord.js'

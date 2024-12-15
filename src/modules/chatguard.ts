@@ -11,7 +11,7 @@ export default class ChatGuard extends Module {
   }
 
   public onEnable() {
-    TudeBot.on('message', (mes: Message) => {
+    TudeBot.on('messageCreate', (mes: Message) => {
       if (!this.isMessageEventValid(mes)) return
       if (mes.member.permissions.has('ManageMessages')) return //
       if (mes.member.roles.highest.comparePositionTo(mes.guild.members.me.roles.highest) > 0) return // TODO REENABLE, DISABLED FOR EASIER TESTING
