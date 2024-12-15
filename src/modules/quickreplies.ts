@@ -34,10 +34,12 @@ export default class QuickRepliesModule extends Module {
 
   constructor(conf: any, data: any, guilds: Map<string, any>) {
     super('Quick Replies', '🗣️', 'Write less, achieve more', 'With this module you can create and edit quick replies which you can then easily trigger using their keyword. The bot will then replace your message with the longer text you have set up previously.', 'public', conf, data, guilds)
+    console.log('INIT A')
   }
 
   public onEnable() {
     TudeBot.on('message', mes => this.onMessage(mes))
+    console.log('INIT B')
   }
 
   public onBotReady() {
